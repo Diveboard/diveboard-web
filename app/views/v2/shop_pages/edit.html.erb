@@ -1,0 +1,95 @@
+<%= content_for :meta_tags do%>
+  <title>Scuba Dive Shop <%= @shop.name %> in <%= @shop.city %>, <%= @shop.country.cname %></title>
+  <meta property="fb:app_id" content="193803977296892" />
+  <meta property="og:type"   content="website" />
+  <meta property="article:publisher" content="https://www.facebook.com/Diveboard" />
+  <% if !@shop.about_html.nil? then desc = Sanitize.clean(@shop.about_html) else desc = 'Reviews, infos, bookings and more for #{@shop.name} on Diveboard. Check out what other have experienced with them and share your own story.' end%>
+  <meta property="og:description" content="<%=desc%>" />
+  <meta property="og:url"    content="<%="#{@shop.fullpermalink(:canonical)}"%>" />
+  <meta property="og:title"  content="<%="Scuba Dive Shop #{@shop.name} in #{@shop.city}, #{@shop.country.cname}"%>" />
+  <meta property="og:image"  content="<%=begin Album.find_by_id(@shop.user_proxy.gallery_album_id).pictures.sample.large rescue ROOT_URL+"img/logo_50.png" end%>"/>
+<%end%>
+
+<%= content_for :stylesheets do%>
+  <%= stylesheet_link_tag 'shop' %>
+<%end%>
+
+<%= content_for :javascripts do%>
+  <%= javascript_include_tag "shop_pages" %>
+  <% if !@category.nil?%>
+    <script type="text/javascript">
+      $(document).ready(function()
+        {
+          <% if @category == "services" %>
+          $('[scroll="#services_edit"]').trigger('click');
+          <% end %>
+        });
+    </script>
+  <% end %>
+<%end%>
+
+<%= begin
+    render :partial => 'cover_pic'
+      rescue MissingTemplate
+    end
+%>
+
+<%= begin
+  render :partial => 'tab_header'
+    rescue MissingTemplate
+  end
+%>
+
+<div class="slides">
+  <%= begin
+      render :partial => 'v2/shop_pages/edit/about_shop'
+        rescue MissingTemplate
+      end
+  %>
+  <%= begin
+      render :partial => 'v2/shop_pages/edit/pictures'
+        rescue MissingTemplate
+      end
+  %>
+  <%= begin
+      render :partial => 'v2/shop_pages/edit/services'
+        rescue MissingTemplate
+      end
+  %>
+  <%= begin
+      render :partial => 'v2/shop_pages/edit/faq'
+        rescue MissingTemplate
+      end
+  %>
+  <%= begin
+      render :partial => 'v2/shop_pages/edit/language'
+        rescue MissingTemplate
+      end
+  %>
+  <%= begin
+      render :partial => 'v2/shop_pages/edit/shop_care_edit'
+        rescue MissingTemplate
+      end
+  %>
+  <%= begin
+      render :partial => 'v2/shop_pages/edit/marketing_widget'
+        rescue MissingTemplate
+      end
+  %>
+  <%= begin
+      render :partial => 'v2/shop_pages/edit/marketing_ads'
+        rescue MissingTemplate
+      end
+  %>
+  <%= begin
+      render :partial => 'v2/modal/process'
+        rescue MissingTemplate
+      end
+  %>
+  <%= begin
+      render :partial => 'v2/modal/unlink_paypal'
+        rescue MissingTemplate
+      end
+  %>
+</div>
+<div class="sep30"></div>

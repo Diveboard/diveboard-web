@@ -1,0 +1,42 @@
+<div class="login">
+  <div class="sign_up">
+    <div class="columns">
+      <div class="column large">
+        <p class="column-title"><%= it("Join with social media", scope: ['modal', 'v2', 'sign_up_2']) %></p>
+        <button class="sign_button fb_sign_in" style="background: #4c65a4 no-repeat; background-image: url('<%= HtmlHelper.lbroot "/img/drawer/svg/facebook_icon.svg" %>');background-position: 110px 50%;;" ><%= it("Facebook", scope: ['modal', 'v2', 'sign_in_2']) %></button>
+      </div>
+      <div class="column center">
+        <div class="divider"></div>
+        <p class="column-title title-center"><%= it("OR", scope: ['modal', 'v2', 'sign_in_2']) %></p>
+      </div>
+      <div class="column large">
+        <p class="column-title"><%= it("Join with email", scope: ['modal', 'v2', 'sign_up_2']) %></p>
+        <form name="sign_menu" action="#">
+          <input type="text" name="nickname" class="input_text" placeholder="<%= it("Username*", scope: ['modal', 'v2', 'sign_in_2']) %>" >
+          <p class="nickname_error error"></p>
+          <input type="email" name="email" class="input_text" placeholder="<%= it("Email*", scope: ['modal', 'v2', 'sign_up_2']) %>">
+          <p class="email_error error"></p>
+          <input type="password" name="pass" class="input_text" placeholder="<%= it("Password*", scope: ['modal', 'v2', 'sign_in_2']) %>">
+          <p class="pass_error error"></p>
+          <div style="margin-top: 30px; width: 310px; margin: 0 auto;" >
+            <div class="column" style="width: 8%; float: left;"><input type="checkbox" name="terms" class="input_checkbox"></div>
+            <div class="column" style="width: 89%; text-align: left; float: left;"><p class="terms"><%= it("I've read and agree to the Diveboard %{terms_link:terms of use, community guidelines} and I'm over 16 years old", scope: ['modal', 'v2', 'sign_up_2'], terms_link: It.link('/about/tos')) %></p></div>
+            <div class="clear"></div>
+          </div>
+          <input type="submit" class="sign_button" value="<%= it("Become an hero", scope: ['modal', 'v2', 'sign_up_2']) %>" style="margin-top: 30px;">
+        </form>
+      </div>
+    </div>
+    <div class="clear"></div>
+    <div class="bottom">
+      <p>
+        <%= it("When you register to join our site you are also signing up to receive emails from Diveboard for all your travel inspiration, tips and exclusive offers.", scope: ['modal', 'v2', 'sign_up_2']) %>
+      </p>
+    </div>
+    <div class="bottom" style="margin-bottom: 30px;">
+      <p>
+        <%= it("Already have an account? %{signin_link:Sign in}", scope: ['modal', 'v2', 'sign_up_2'], signin_link: It.link('javascript:void(0)', modal_trigger: 'sign_in')) %>
+      </p>
+    </div>
+  </div>
+</div>

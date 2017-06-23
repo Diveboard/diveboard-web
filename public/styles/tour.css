@@ -1,0 +1,19 @@
+#container {overflow: visible !important;}
+#tour_head_title {color: #fff; width: 100%; text-align: center; margin: 30px 0px 40px 0px;}
+#tour_head_title h1 { font-size: 44px; position: relative; top: 15px;}
+#tour_slides {color: #fff; }
+#icon_groups { background-image: url(/images/tour/splitter.png); background-repeat: no-repeat; color: #fff; position: relative; }
+.slide_txt {color: #fff; width: 100%; text-align: center; font-size: 17px; margin: 10px 0px 20px 0px; height: 30px; font-weight: 300;}
+.slide_img { position: relative; text-align: center;}
+.slide_main_img { border: solid 1px #636363; box-shadow: 0px 0px 3px #000; height: 475px; width: 952px; display: table-cell;}
+.slide_pointer { background-image: url(/images/tour/pin.png); background-repeat: no-repeat; width: 50px; height: 50px; position: absolute;}
+.slide_pointer:hover { background-image: url(/images/tour/pin_hover.png); }
+.slide_pointer_text { width: 240px; position: relative; left: -100px; top: 43px; background-color: rgba(31,31,31,0.9); z-index: 5; box-shadow: 0px 0px 3px rgba(31,31,31,0.9); border: solid 1px rgba(255,255,255,0.5); border-radius: 3px; padding: 5px; display: none; line-height: 18px; text-align: left;}
+.slide_pointer_text strong {color: #f7d678; font-weight: normal;}
+.slide_pointer_text h2 {font-size: 1.15em; line-height: 18px; font-weight: bold; margin: 0px 0px 6px 0px}
+.slide_pointer:hover .slide_pointer_text {display: block;}
+.icon_cursor { position: absolute; left: -19px; z-index: 1; width: 227px; height: 95px;}
+.icon_slide { display: inline-block; width: 190px; height: 200px; text-align: center; background-position: center top; z-index: 5;}
+.icon_slide img { background-color: #999; width: 170px; height: 130px; border: solid 1px #fff; margin: 20px 0px 3px 0px; box-shadow: 0px 0px; z-index: 5; }
+
+.qtip-content { border: solid 1px rgba(255, 255, 255, 0.7); border-radius: 3px;  box-shadow: 0px 0px 2px #000;}

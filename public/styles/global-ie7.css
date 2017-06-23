@@ -1,0 +1,27 @@
+#header_container{ background-color: #19191b !important;}
+#header_user_menu{ background-color: #000000 !important;}
+#useless_user_menu{ background-color: #000000 !important;}
+
+#idx_3_top .logo{width: 235px !important;}
+#idx_3_top form{margin-left: 245px !important; margin-top: 2px;}
+#idx_3_top ul { }
+#idx_3_top .button{position: relative !important; top: 6px !important; }
+#idx_3_top li.header_user{top:0px !important;}
+#idx_3_top .header_user_profile{top : -1px !important; }
+#idx_3_top .useless_menu_container{top: -12px; position: relative;}
+#header_user_menu li{height: 20px; padding-top: 8px;}
+#useless_user_menu li{height: 20px; padding-top: 8px;}
+/*#idx_3_top li table.text_links{;top: -7px;}*/
+#idx_3_top a.text_link{position: relative; top: -7px;}
+
+
+#idx3_explore ul li {float: left;}
+#idx_3_top ul.links li{float: left;}
+#idx3_headlines ul li { float: left !important; top: 0px !important;}
+#idx_3_top ul.links li.header_user{width: 200px;}
+#idx_3_mainframe_content{z-index: 1000;}
+#idx_3_mainframe_content a.smalla {top: 0px !important; left: 70px !important;}
+#idx3_blog div.blog_date {left : -420px !important;}
+#idx3_blog div.blog_date span.new_bootom_blog_date_month{line-height: 25px !important}
+#login_popup div.remember{left: 0px !important;}
+div.logbook_profile_img{max-width: 210px; float: left;}

@@ -1,0 +1,319 @@
+  <meta name="google" value="notranslate">
+
+<%
+if @meta_obj.nil? then
+  title = it("Diveboard : Track and share your scuba diving experiences - Explore new spots and destination through dive logs", scope: ['search', 'meta_tags'])
+  description = it("Diveboard is a scuba diving community enabling divers to track their dives through an online logbook, explore new spots and destinations and share their passion", scope: ['search', 'meta_tags'])
+  if params[:action] == 'search' then
+    url = "search"
+  else
+    url = "explore"
+  end
+  %>
+  <title><%=title%></title>
+  <META NAME="Title" CONTENT="<%=title%>">
+  <meta name="description" content="<%=description%>"/>
+
+  <meta property="fb:app_id" content="<%=FB_APP_ID%>" />
+  <meta property="fb:admins" content="680251975" />
+  <meta property="fb:admins" content="1077557400" />
+  <meta property="og:site_name" content="<%= it("Diveboard : Track and share your scuba diving experiences - Explore new spots and destinations", scope: ['search', 'meta_tags']) %>" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="<%=ROOT_URL%>img/OG-thumb.png" />
+  <meta property="og:url" content="<%=HtmlHelper.find_root_for :canonical%><%=url%>" />
+  <meta property="og:title" content="<%=title%>" />
+  <meta property="og:description" content="<%=description%>" />
+
+  <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+  <%I18n.available_locales.each do |locale|%>
+    <link rel='alternate' href='<%=HtmlHelper.find_root_for(locale)%><%=url%>' hreflang="<%=locale%>" />
+    <%if locale != I18n.locale then%>
+      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+    <%end%>
+  <%end%>
+
+  <%
+
+elsif @meta_obj.class.to_s == 'Dive' then
+  if !@meta_obj.spot.region.nil? then
+    region = @meta_obj.spot.region.name
+  else
+    region = @meta_obj.spot.area_name
+  end
+
+  buddies = []+@meta_obj.buddies.map(&:nickname)
+  buddies.push @meta_obj.guide unless @meta_obj.guide.blank?
+  buddies = buddies.join(", ")
+  species = ""
+  @meta_obj.eolcnames.map{|s| species+= s.cname+", "}
+  @meta_obj.eolsnames.map{|s| species+= s.sname+", "}
+  species = species.chop.chop
+  begin
+    if @meta_obj.user.share_details_notes
+      notes = @meta_obj.notes.html_safe.gsub(/[\r|\t|\n]/," ")
+    else
+      notes = ""
+    end
+  rescue
+    notes = ""
+  end
+
+
+  title = it("Dive review of %{spot_name} in %{spot_area} - Discover where to dive in %{region} with Diveboard", scope: ['search', 'meta_tags'], spot_name: @meta_obj.spot.name, spot_area: @meta_obj.spot.area_name, region: region)
+  description = it("%{user}'s scuba dive in %{country}, %{location}: %{spot} - Depth: %{maxdepth}, duration: %{duration} - buddies: %{buddies} - species spotted : %{species} - Notes: %{notes}", scope: ['search', 'meta_tags'], user: @meta_obj.user.nickname, country: @meta_obj.spot.country.cname.titleize, location: @meta_obj.spot.location.name.titleize, spot: @meta_obj.spot.name.titleize, maxdepth: it("meter", scope: ['units'], count: @meta_obj.maxdepth), duration: it("min", scope: ['units'], count: @meta_obj.duration), buddies: buddies, species: species, notes: notes)
+  %>
+  <title><%=title%></title>
+  <META NAME="Title" CONTENT="<%=title%>">
+  <meta name="description" content="<%=description%>"/>
+
+  <meta property="fb:app_id" content="<%=FB_APP_ID%>" />
+  <meta property="fb:admins" content="680251975" />
+  <meta property="fb:admins" content="1077557400" />
+  <meta property="og:site_name" content="<%= it("Diveboard : Track and share your scuba diving experiences - Explore new spots and destinations", scope: ['search', 'meta_tags']) %>" />
+
+  <meta property="og:type" content="diveboard:dive" />
+  <meta property="og:url" content="<%=HtmlHelper.find_root_for :canonical%>explore/dives/<%=@meta_obj.id%>" />
+  <meta property="og:title" content="<%=title%>" />
+  <meta property="og:description" content="<%=description%>" />
+  <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+  <%I18n.available_locales.each do |locale|%>
+    <link rel='alternate' href='<%=HtmlHelper.find_root_for(locale)%>explore/dives/<%=@meta_obj.id%>' hreflang="<%=locale%>" />
+    <%if locale != I18n.locale then%>
+      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+    <%end%>
+  <%end%>
+  <!-- og:image tag-->
+  <%=@meta_obj.generate_image_tag.html_safe%>
+  <!-- end of og:image tag-->
+  <meta property="diveboard:spot"        content="<%=ROOT_URL%><%=@meta_obj.spot.fullpermalink(:canonical)%>" />
+  <meta property="diveboard:date"        content="<%=@meta_obj.time_in.iso8601%>" />
+  <meta property="diveboard:duration"    content="<%=@meta_obj.duration%>" />
+  <meta property="diveboard:max_depth_m" content="<%=@meta_obj.maxdepth(0).round(1)%>" />
+  <meta property="diveboard:max_depth_ft" content="<%=@meta_obj.maxdepth(1).round%>" />
+  <meta property="diveboard:buddies"    content="<%=buddies%>" />
+  <meta property="diveboard:notes"    content="<%=notes%>" />
+  <meta property="diveboard:species_spotted"    content="<%=species%>" />
+  <%@meta_obj.pictures.each do |p|%>
+  <meta property="diveboard:pictures"    content="<%=p.fullpermalink(:canonical)%>" />
+  <%end%>
+
+
+  <%
+
+
+elsif @meta_obj.class.to_s == 'User' then
+  title = it("Dive experience of %{user} - Discover where to dive in %{location} with Diveboard", scope: ['search', 'meta_tags'], user: @meta_obj.nickname, location: @meta_obj.dived_location_list)
+  description = it("Find out where to dive in %{location} with Diveboard - Get the feedback and reviews of other divers through real dive logs", scope: ['search', 'meta_tags'], location: @meta_obj.dived_location_list)
+  #TODO: add og:image tag
+  %>
+  <title><%=title%></title>
+  <META NAME="Title" CONTENT="<%=title%>">
+  <meta name="description" content="<%=description%>"/>
+
+  <meta property="fb:app_id" content="<%=FB_APP_ID%>" />
+  <meta property="fb:admins" content="680251975" />
+  <meta property="fb:admins" content="1077557400" />
+  <meta property="og:site_name" content="<%= it("Diveboard : Track and share your scuba diving experiences - Explore new spots and destinations", scope: ['search', 'meta_tags']) %>" />
+
+  <meta property="og:type" content="diveboard:diver" />
+  <meta property="og:url" content="<%=HtmlHelper.find_root_for :canonical%>explore/divers/<%=@meta_obj.vanity_url%>" />
+  <meta property="og:title" content="<%=title%>" />
+  <meta property="og:image" content="<%=@meta_obj.picture%>" />
+  <meta property="og:description" content="<%=description%>" />
+  <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+  <%I18n.available_locales.each do |locale|%>
+    <link rel='alternate' href='<%=HtmlHelper.find_root_for(locale)%>explore/divers/<%=@meta_obj.vanity_url%>' hreflang="<%=locale%>" />
+    <%if locale != I18n.locale then%>
+      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+    <%end%>
+  <%end%>
+  <%@meta_obj.dives.each do |d|%>
+  <%if d.privacy == 0%>
+  <meta property="diveboard:dives" content="<%=d.fullpermalink(:canonical)%>" />
+  <%end%>
+  <%end%>
+
+  <%
+
+
+elsif @meta_obj.class.to_s == 'Country' then
+  title = it("Scuba diving in %{name} - Discover where to dive in %{name} with Diveboard", scope: ['search', 'meta_tags'], name: @meta_obj.name)
+  description = it("Find out where to dive in %{name} with Diveboard - Get the feedback and reviews of other divers through real dive logs", scope: ['search', 'meta_tags'], name: @meta_obj.name)
+  #TODO: add og:image tag
+  %>
+  <title><%=title%></title>
+  <META NAME="Title" CONTENT="<%=title%>">
+  <meta name="description" content="<%=description%>"/>
+
+  <meta property="fb:app_id" content="<%=FB_APP_ID%>" />
+  <meta property="fb:admins" content="680251975" />
+  <meta property="fb:admins" content="1077557400" />
+  <meta property="og:site_name" content="<%= it("Diveboard : Track and share your scuba diving experiences - Explore new spots and destinations", scope: ['search', 'meta_tags']) %>" />
+
+  <meta property="og:type" content="diveboard:zone" />
+  <meta property="og:url" content="<%=@meta_obj.fullpermalink(:canonical)%>" />
+  <meta property="og:title" content="<%=title%>" />
+  <meta property="og:description" content="<%=description%>" />
+  <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+  <%I18n.available_locales.each do |locale|%>
+    <link rel='alternate' href='<%=@meta_obj.fullpermalink(locale)%>' hreflang="<%=locale%>" />
+    <%if locale != I18n.locale then%>
+      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+    <%end%>
+  <%end%>
+  <meta property="diveboard:type"      content="Country" />
+
+  <% @meta_obj.locations.each do |l| %>
+  <meta property="diveboard:sub_zones" content="<%=l.fullpermalink(:canonical)%>" />
+  <%end%>
+  <% @meta_obj.regions.each do |l| %>
+  <meta property="diveboard:sub_zones" content="<%=l.fullpermalink(:canonical)%>" />
+  <%end%>
+  <%
+
+
+elsif @meta_obj.class.to_s == 'Region' then
+  title = it("Scuba diving in %{name} - Discover where to dive in %{name} with Diveboard", scope: ['search', 'meta_tags'], name: @meta_obj.name)
+  description = it("Find out where to dive in %{name} with Diveboard - Get the feedback and reviews of other divers through real dive logs", scope: ['search', 'meta_tags'], name: @meta_obj.name)
+  %>
+  <title><%=title%></title>
+  <META NAME="Title" CONTENT="<%=title%>">
+  <meta name="description" content="<%=description%>"/>
+
+  <meta property="fb:app_id" content="<%=FB_APP_ID%>" />
+  <meta property="fb:admins" content="680251975" />
+  <meta property="fb:admins" content="1077557400" />
+  <meta property="og:site_name" content="<%= it("Diveboard : Track and share your scuba diving experiences - Explore new spots and destinations", scope: ['search', 'meta_tags']) %>" />
+
+  <meta property="og:type" content="diveboard:zone" />
+  <meta property="og:url" content="<%=@meta_obj.fullpermalink(:canonical)%>" />
+  <meta property="og:title" content="<%=title%>" />
+  <meta property="og:description" content="<%=description%>" />
+  <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+  <%I18n.available_locales.each do |locale|%>
+    <link rel='alternate' href='<%=@meta_obj.fullpermalink(locale)%>' hreflang="<%=locale%>" />
+    <%if locale != I18n.locale then%>
+      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+    <%end%>
+  <%end%>
+
+  <meta property="diveboard:type"      content="Body of Water" />
+  <% @meta_obj.locations.each do |l| %>
+  <%
+  begin
+    if l.id != 1 && l.country.id != 1%>
+  <meta property="diveboard:sub_zones" content="<%=l.fullpermalink(:canonical)%>" />
+  <%
+    end
+  rescue
+  end
+  end%>
+
+  <%
+elsif @meta_obj.class.to_s == 'Location' then
+  title = it("Scuba diving in %{name}, %{country} - Discover where to dive near %{name} with Diveboard", scope: ['search', 'meta_tags'], name: @meta_obj.name, country: @meta_obj.country.name)
+  description = it("Find out where to dive in %{name}, %{country} with Diveboard - Get the feedback and reviews of other divers through real dive logs", scope: ['search', 'meta_tags'], name: @meta_obj.name, country: @meta_obj.country.name)
+  #TODO: add og:image tag
+  %>
+  <title><%=title%></title>
+  <META NAME="Title" CONTENT="<%=title%>">
+  <meta name="description" content="<%=description%>"/>
+
+  <meta property="fb:app_id" content="<%=FB_APP_ID%>" />
+  <meta property="fb:admins" content="680251975" />
+  <meta property="fb:admins" content="1077557400" />
+  <meta property="og:site_name" content="<%= it("Diveboard : Track and share your scuba diving experiences - Explore new spots and destinations", scope: ['search', 'meta_tags']) %>" />
+
+  <meta property="og:type" content="diveboard:zone" />
+  <meta property="og:url" content="<%=@meta_obj.fullpermalink(:canonical)%>" />
+  <meta property="og:title" content="<%=title%>" />
+  <meta property="og:description" content="<%=description%>" />
+  <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+  <%I18n.available_locales.each do |locale|%>
+    <link rel='alternate' href='<%=@meta_obj.fullpermalink(locale)%>' hreflang="<%=locale%>" />
+    <%if locale != I18n.locale then%>
+      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+    <%end%>
+  <%end%>
+
+  <meta property="diveboard:type"      content="Location" />
+  <% @meta_obj.spots.each do |s| %>
+  <meta property="diveboard:spots"     content="<%=s.fullpermalink(:canonical)%>" />
+  <%end%>
+  <%
+
+
+elsif @meta_obj.class.to_s == 'Spot' then
+  title = it("%{name} - %{area} on Diveboard", scope: ['search', 'meta_tags'], name: @meta_obj.name, area: @meta_obj.area_name)
+  description = it("%{name} is a dive spot in %{area} - Find out more on Diveboard", scope: ['search', 'meta_tags'], name: @meta_obj.name, area: @meta_obj.area_name)
+  %>
+  <title><%=title%></title>
+  <META NAME="Title" CONTENT="<%=title%>">
+  <meta name="description" content="<%=description%>"/>
+
+  <meta property="fb:app_id" content="<%=FB_APP_ID%>" />
+  <meta property="fb:admins" content="680251975" />
+  <meta property="fb:admins" content="1077557400" />
+  <meta property="og:site_name" content="<%= it("Diveboard : Track and share your scuba diving experiences - Explore new spots and destinations", scope: ['search', 'meta_tags']) %>" />
+
+  <meta property="og:type" content="diveboard:spot" />
+  <meta property="og:url" content="<%=@meta_obj.fullpermalink(:canonical)%>" />
+  <meta property="og:title" content="<%=title%>" />
+  <meta property="og:description" content="<%=description%>" />
+  <meta property="og:image" content="<%=@meta_obj.staticmap%>" />
+  <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+  <%I18n.available_locales.each do |locale|%>
+    <link rel='alternate' href='<%=@meta_obj.fullpermalink(locale)%>' hreflang="<%=locale%>" />
+    <%if locale != I18n.locale then%>
+      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+    <%end%>
+  <%end%>
+
+  <meta property="diveboard:position:latitude"  content="<%=@meta_obj.lat%>" />
+  <meta property="diveboard:position:longitude" content="<%=@meta_obj.lng%>" />
+  <meta property="diveboard:country"            content="<%=@meta_obj.country.name%>" />
+  <meta property="diveboard:zones"              content="<%=@meta_obj.country.fullpermalink(:canonical)%>" />
+  <meta property="diveboard:zones"              content="<%=@meta_obj.location.fullpermalink(:canonical)%>" />
+  <meta property="diveboard:location"           content="<%=@meta_obj.location.name%>" />
+  <% if !@meta_obj.region.blank?%>
+  <meta property="diveboard:body_of_water"      content="<%=@meta_obj.region.name%>" />
+  <meta property="diveboard:zones"              content="<%=@meta_obj.region.fullpermalink(:canonical)%>" />
+  <%end%>
+
+  <% @meta_obj.dives.each do |d|%>
+  <% if d.privacy == 0%>
+  <meta property="diveboard:dives"              content="<%=d.fullpermalink(:canonical)%>" />
+  <%end%>
+  <%end%>
+
+
+<%elsif @meta_obj.class.to_s == 'Shop' then
+  title = it("%{name} on Diveboard", scope: ['search', 'meta_tags'], name: @meta_obj.name)
+  description = it("%{name} is a dive shop - Find out more on Diveboard", scope: ['search', 'meta_tags'], name: @meta_obj.name)
+  %>
+  <title><%=title%></title>
+  <META NAME="Title" CONTENT="<%=title%>">
+  <meta name="description" content="<%=description%>"/>
+
+  <meta property="fb:app_id" content="<%=FB_APP_ID%>" />
+  <meta property="fb:admins" content="680251975" />
+  <meta property="fb:admins" content="1077557400" />
+  <meta property="og:site_name" content="<%= it("Diveboard : Track and share your scuba diving experiences - Explore new spots and destinations", scope: ['search', 'meta_tags']) %>" />
+
+  <meta property="og:type" content="diveboard:sive_shop" />
+  <meta property="og:url" content="<%=HtmlHelper.find_root_for :canonical%>explore/shops/<%=@meta_obj.shop_vanity%>" />
+  <meta property="og:title" content="<%=title%>" />
+  <meta property="og:description" content="<%=description%>" />
+  <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+  <%I18n.available_locales.each do |locale|%>
+    <link rel='alternate' href='<%=HtmlHelper.find_root_for locale%>explore/shops/<%=@meta_obj.shop_vanity%>' hreflang="<%=locale%>" />
+    <%if locale != I18n.locale then%>
+      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+    <%end%>
+  <%end%>
+
+  <meta property="diveboard:position:latitude"  content="<%=@meta_obj.lat%>" />
+  <meta property="diveboard:position:longitude" content="<%=@meta_obj.lng%>" />
+
+<% end %>

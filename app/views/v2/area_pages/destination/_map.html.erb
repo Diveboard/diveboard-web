@@ -1,0 +1,84 @@
+<%= content_for :javascripts do%>
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=<%=GOOGLE_MAPS_API %>&sensor=false"></script>
+  <script type="text/javascript">
+    // When the window has finished loading create our google map below
+        google.maps.event.addDomListener(window, 'load', init);
+        
+        function init() {
+          var map_center;
+          var isLarge= false;
+            // Basic options for a simple Google Map
+            // For more options see: https://developers.google.com/maps/documentation/javascript/reference#MapOptions
+            //var point = new google.maps.LatLngBounds(new google.maps.LatLng(<%= @lat2 %>,<%=@lng2%>,true),new google.maps.LatLng(<%= @lat1 %>,<%=@lng1%>,true));
+            console.log($(window).width() > 720);
+            if($(window).width()>720){
+              isLarge  = true;
+            }
+            var mapOptions = {
+                // How zoomed in you want the map to start at (always required)
+                zoom:5,
+
+                draggable: isLarge,
+                scrollwheel: isLarge,
+                disableDoubleClickZoom: true,
+                mapTypeId: google.maps.MapTypeId.TERRAIN,
+                disableDefaultUI: true,
+                // The latitude and longitude to center the map (always required)
+                //center: point.getCenter(),
+               
+            };
+
+            // Get the HTML DOM element that will contain your map 
+            // We are using a div with id="map" seen below in the <body>
+            var mapElement = document.getElementById('map');
+
+            // Create the Google Map using out element and options defined above
+            var map = new google.maps.Map(mapElement, mapOptions);
+            var bounds = new google.maps.LatLngBounds();
+            map_center = map.getCenter();
+
+            var marker = [];
+            <% cache @route+'_map' do %>
+            <%
+              i = 0;
+              @spots.each do |s|
+            %>
+          marker[<%= i %>] = new google.maps.Marker({
+            position: new google.maps.LatLng(<%= s.lat %>, <%= s.lng %>),
+            map: map,
+            title: '<%= s.name.gsub("\n","") %>'
+          });
+
+        var contentString;
+        var infowindow;
+        google.maps.event.addListener(marker[<%= i %>], 'click', function() {
+          if (infowindow)
+            infowindow.close();
+            contentString = '<div class="marker_title"><a href=/area/<%= @geonames_country.name.to_url %>-<%= @geonames_country.shaken_id %>/<%= s.name.to_url %>-<%= s.shaken_id %>><%=s.name.gsub("\n","") %></a></div>';
+          infowindow = new google.maps.InfoWindow({
+              content: contentString
+          });
+          infowindow.open(map,marker[<%= i %>]);
+          
+        });
+
+        bounds.extend(marker[<%= i %>].getPosition());
+        <%
+            i += 1
+            end
+        %>
+        <% end %>
+        var markerCluster = new MarkerClusterer(map, marker);
+
+        map.setCenter(bounds.getCenter());
+        map.fitBounds(bounds);
+        google.maps.event.addDomListener(window, 'resize', function() {
+          map.setCenter(map_center);
+        });
+      }
+
+
+  </script>
+<%end%>
+
+<div id="map" class="destination_map"></div>

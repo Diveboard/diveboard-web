@@ -1,0 +1,125 @@
+<%= content_for :meta_tags do%>
+	<title>
+    <%= it("Scuba Dive Shop %{shop_name} in %{city}, %{country}",
+        scope: ['shop_pages', 'v2', 'cover_pic'],
+        shop_name: @shop.name,
+        city: @shop.city,
+        country: @shop.country.cname) %>
+  </title>
+  <meta property="fb:app_id" content="193803977296892" />
+  <meta property="og:type"   content="website" />
+  <meta property="article:publisher" content="https://www.facebook.com/Diveboard" />
+  <% if !@shop.about_html.nil? then desc = Sanitize.clean(@shop.about_html)
+     else desc = it("Reviews, infos, bookings and more for %{shop_name} on Diveboard. Check out what other have experienced with them and share your own story.", scope: ['shop_pages', 'v2', 'index'], shop_name: @shop.name) end%>
+  <meta property="og:description" content="<%=desc%>" />
+  <meta property="og:url"    content="<%="#{@shop.fullpermalink(:canonical)}"%>" />
+  <meta property="og:title"  content="<%= it("Scuba Dive Shop %{shop_name} in %{city}, %{country}", scope: ['shop_pages', 'v2', 'cover_pic'], shop_name: @shop.name, city: @shop.city, country: @shop.country.cname) %>" />
+  <meta property="og:image"  content="<%=begin Album.find_by_id(@shop.user_proxy.gallery_album_id).pictures.sample.large rescue ROOT_URL+"img/logo_50.png" end%>"/>
+<%end%>
+
+<%= content_for :stylesheets do%>
+	<%= stylesheet_link_tag 'shop' %>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+<%end%>
+
+
+
+<div itemscope itemtype="http://schema.org/LocalBusiness">
+  <% if @shop.all_dive_goods.count > 0 %>
+  <meta itemprop="currenciesAccepted" content="<%= @shop.currency %>" />
+  <% end %>
+  <span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+    <% if !@shop.address.nil? && @shop.address.strip.length > 0 %>
+    <meta itemprop="streetAddress" content="<%= @shop.address.gsub("\n", " ") %>" />
+    <% end %>
+    <% if !@shop.city.nil? && @shop.city.strip.length > 0 %>
+    <meta itemprop="addressLocality" content="<%= @shop.city %>" />
+    <% end %>
+    <% if !@shop.country.nil? && @shop.country && @shop.country.id != 1 %>
+    <meta itemprop="addressCountry" content="<%= @shop.country.name %>" />
+    <% end %>
+  </span>
+  <% if !@shop.email.nil? && @shop.email.strip.length > 0 %>
+  <meta itemprop="email" content="<%= @shop.email %>" />
+  <% end %>
+  <% if !@shop.phone.nil? && @shop.phone.strip.length > 0 %>
+  <meta itemprop="telephone" content="<%= @shop.phone %>" />
+  <% end %>
+  <% if !@shop.url.nil? && @shop.url.strip.length > 0 %>
+  <meta itemprop="url" content="<%= @shop.url %>" />
+  <% end %>
+  <%shop_api =  @shop.to_api(:technical, :caller => @user).to_json%>
+<div data-shop="<%=shop_api%>" class="shop_data">
+<%= begin
+		render :partial => 'cover_pic'
+			rescue MissingTemplate
+		end
+%>
+
+<%= begin
+  render :partial => 'tab_header'
+    rescue MissingTemplate
+  end
+%>
+
+<%= begin
+		render :partial => 'shop_info'
+			rescue MissingTemplate
+		end
+%>
+
+<%= begin
+		render :partial => 'shop_details'
+			rescue MissingTemplate
+		end
+%>
+
+<% if !@gallery_pictures.nil? && @gallery_pictures.count != 0 %>
+<%= begin
+		render :partial => 'gallery'
+			rescue MissingTemplate
+		end
+%>
+<% end %>
+
+<%= if !@shop.all_dive_goods.nil? && @shop.all_dive_goods.count > 0 then
+			begin
+			render :partial => 'services'
+				rescue MissingTemplate
+			end
+		end
+%>
+
+<%= begin
+		render :partial => 'spots'
+			rescue MissingTemplate
+		end
+%>
+
+<%= begin
+		render :partial => 'shop_reviews'
+			rescue MissingTemplate
+		end
+%>
+
+<% if @faqs.size != 0 %>
+  <%= begin
+      render :partial => 'faq'
+        rescue MissingTemplate
+      end
+  %>
+<% end %>
+<% if !@shop.area.nil? %>
+  <%= begin
+      render :partial => 'areas'
+        rescue MissingTemplate
+      end
+  %>
+<% end %>
+  <div class="sep30"></div>
+</div>
+
+<%= if !@user.nil? then render "v2/modal/email", :shop => @shop end %>
+<%= render "v2/modal/write_review", :shop => @shop %>
+<%= render "v2/modal/checkout" %>
+

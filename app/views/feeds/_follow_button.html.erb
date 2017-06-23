@@ -1,0 +1,7 @@
+<a href="#" class="follow_link" data-db-follow-what='<%=what%>' data-db-follow-id='<%=id%>' >
+  <span class='text_follow tooltiped'   <%if does_follow then%>style='display:none'<%end%> title='<%= it("Be notified when there is new stuff on Diveboard for %{name}", scope: ['feeds', 'follow_button'], name: name) %>'><%= it("FOLLOW", scope: ['feeds', 'follow_button']) %> <span class="symbol">+</span></span>
+  <span class='text_unfollow' <%if !does_follow then%>style='display:none'<%end%>>
+    <span class='text_nohover' <%if !does_follow then%>style='display:none'<%end%>><%= it("FOLLOWING", scope: ['feeds', 'follow_button']) %> <span class="symbol">.</span></span>
+    <span class='text_hover tooltiped'    <%if !does_follow then%>style='display:none'<%end%> title='<%= it("Stop being notified when there is new stuff on Diveboard for %{name}", scope: ['feeds', 'follow_button'], name: name) %>'><%= it("UN-FOLLOW", scope: ['feeds', 'follow_button']) %> <span class="symbol">×</span></span>
+  </span>
+</a>

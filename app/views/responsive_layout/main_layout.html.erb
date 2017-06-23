@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html class="no-js" xmlns="http://www.w3.org/1999/xhtml"
+  xml:lang="<%=I18n.locale%>" lang="<%=I18n.locale%>"
+  xmlns:fb="http://www.facebook.com/2008/fbml"
+  xmlns:og="http://opengraphprotocol.org/schema/">
+  <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# diveboard: http://ogp.me/ns/fb/diveboard#">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=yes, width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="csrf-token" content="<%= form_authenticity_token %>" />
+    <meta name="csrf-param" content="authenticity_token" />
+    <link href="https://plus.google.com/+Diveboard" rel="publisher" />
+
+
+
+    <!-- STYLESHEETS -->
+    <!-- JAMMIT EMBEDS -->
+    <%= include_stylesheets :embed, :media => :all %>
+
+    <!-- SCSS PIPELINE -->
+    <%= stylesheet_link_tag 'responsive_layout' %>
+    <%= stylesheet_link_tag params[:controller] %>
+    <%= yield :css if content_for? :css %>
+
+
+  </head>
+  <body>
+
+  <%=render :partial => 'responsive_layout/menu.html.erb' %>
+
+  <div class="content">
+    <!-- content goes here -->
+    <%= yield %>
+  </div>
+
+  <!-- JAVASCRIPTS -->
+  <%= javascript_include_tag "jquery" %>
+  </body>
+</html>

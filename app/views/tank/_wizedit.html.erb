@@ -1,0 +1,60 @@
+<div class="scuba_tank">
+	<strong><%= it("Tank", scope: ['tank', 'wizedit']) %> <span><%=idx || 1%></span>:</strong>
+	<input type="hidden" class="tank_id" value="<%=tank.id%>">
+
+	<table>
+		<tr>
+			<td><%= it("Cylinder:", scope: ['tank', 'wizedit']) %></td>
+			<td>
+				<select class="multitank grey_select"><option value="1" <%if tank.multitank == 1%>SELECTED<%end%>>1x</option><option value="2" <%if tank.multitank == 2%>SELECTED<%end%>>2x</option></select><input type="number" min=0 value="<%=tank.volume_n(si) || "0"%>" class="volume"/>
+				<select class="v_unit grey_select">
+					<option value="L" <%if si%>SELECTED<%end%>>L</option>
+					<option value="cuft" <%if !si%>SELECTED<%end%>><%= it("cuft", scope: ['tank', 'wizedit']) %></option>
+				</select>
+				<select class="material grey_select">
+					<option value="steel" <%if tank.material == "steel"%>SELECTED<%end%>><%= it("steel", scope: ['tank', 'wizedit']) %></option>
+					<option value="aluminium" <%if tank.material == "aluminium"%>SELECTED<%end%>><%= it("aluminium", scope: ['tank', 'wizedit']) %></option>
+					<option value="carbon" <%if tank.material == "carbon"%>SELECTED<%end%>><%= it("carbon", scope: ['tank', 'wizedit']) %></option>
+				</select>
+			</td>
+		</tr>
+
+
+		<tr>
+			<td><%= it("Mixture:", scope: ['tank', 'wizedit']) %></td>
+			<td>
+				<select onchange="" class="gas grey_select">
+					<option value="air" data-gas='air' <%if tank.gas_type == "air"%>SELECTED<%end%> ><%= it("air", scope: ['tank', 'wizedit']) %></option>
+					<option value="nitrox" <%if tank.gas_type == 'nitrox'%>SELECTED<%end%> ><%= it("Nitrox", scope: ['tank', 'wizedit']) %></option>
+					<option value="trimix" <%if tank.gas_type == 'trimix'%>SELECTED<%end%> ><%= it("Trimix", scope: ['tank', 'wizedit']) %></option>
+				</select>
+				<div class="custom_airmix" <%if tank.gas_type != "nitrox" && tank.gas_type != 'trimix' %>style="display:none;"<%end%>>
+					<div class='label_w_input'><%= it("O2", scope: ['tank', 'wizedit']) %></div><input type="number" class="o2 input_w_label" value="<%=tank.o2 || ""%>"/>
+					<span class='he_input' <%if tank.gas_type != "trimix"%>style="display:none;"<%end%>><div class='label_w_input'><%= it("He", scope: ['tank', 'wizedit']) %></div><input type="number" class="he input_w_label" value="<%=tank.he || ""%>"/></span>
+					<span  style='display: none;'><div class='label_w_input'><%= it("N2", scope: ['tank', 'wizedit']) %></div><input type="number" class="n2 input_w_label" value="<%=tank.n2 || ""%>"/></span>
+				</div>
+			</td>
+		</tr>
+
+
+		<tr>
+			<td><%= it("Pressure:", scope: ['tank', 'wizedit']) %></td>
+			<td>
+				<div class='label_w_input'><%= it("Start", scope: ['tank', 'wizedit']) %></div><input type="number" class="p_start input_w_label" value="<%=tank.p_start_n(si) || "0"%>" min=0 class="p_start"/>
+				<div class='label_w_input'><%= it("End:", scope: ['tank', 'wizedit']) %></div><input type="number" class="p_end input_w_label" value="<%=tank.p_end_n(si) || "0"%>" min=0 class="p_end"/>
+				<select class="p_unit grey_select">
+					<option value="bar" <%if si%>SELECTED<%end%> ><%= it("bar", scope: ['tank', 'wizedit']) %></option>
+					<option value="psi" <%if !si%>SELECTED<%end%>><%= it("psi", scope: ['tank', 'wizedit']) %></option>
+				</select>
+			</td>
+		</tr>
+
+		<tr <%if idx==1%>style="display:none;"<%end%> class="starttime">
+			<td><%= it("Start time:", scope: ['tank', 'wizedit']) %></td>
+			<td>
+				<input type="number" value="<%=tank.time_m || "0"%>" min=0 class="time_m"/> <%= it("mins from start", scope: ['tank', 'wizedit']) %>
+			</td>
+		</tr>
+	</table>
+	<a href="#" style='position: absolute; right: 10px; bottom: 5px;' onclick='$(this).parent().remove(); renumber_tanks(); return false;'><%= it("Remove", scope: ['tank', 'wizedit']) %></a>
+</div>

@@ -1,0 +1,228 @@
+<%= include_stylesheets :tour %>
+
+<div id='tour_head_title'>
+<h1 class='futuralight'>Diveboard: <%= it("Your Online Scuba Logbook", scope: ['staticpages', 'tour']) %></h1>
+</div>
+
+<div id=tour_slides>
+  <div id=slide1 class=tour_slide <%if what != 1 then%>style='display:none'<%end%>>
+    <div class=slide_img>
+      <img src='/images/tour/logbook.png' class='slide_main_img'>
+      <div class='slide_pointer' style='left: 020px; top: 50px;'>
+        <div class='slide_pointer_text'>
+          <h2><%= it("Introduce yourself", scope: ['staticpages', 'tour']) %></h2>
+          <p><%= it("You can %{strong:personalize your logbook} to display your favorite underwater picture of yourself, and to add some description about you (diving-centric only! it's no dating site!). This may help fellow-divers to understand what kind of dives you do: tech, recreational, for photography,...", scope: ['staticpages', 'tour'], strong: It.tag("strong")) %><br/>&nbsp;<br/><%= it("Of course, if you prefer to remain anonymous, these informations are %{strong:completely optional}.", scope: ['staticpages', 'tour'], strong: It.tag("strong")) %></p>
+        </div>
+      </div>
+
+      <div class='slide_pointer' style='left: 020px; top: 300px;'>
+        <div class='slide_pointer_text'>
+          <h2><%= it("View all your dives at a glance", scope: ['staticpages', 'tour']) %></h2>
+          <p><%= it("All your dives are easily accessible through the logbook %{strong:navigation bar}. For even more clarity, you can group your dives by %{strong:trip}.", scope: ['staticpages', 'tour'], strong: It.tag("strong")) %></p>
+        </div>
+      </div>
+
+      <div class='slide_pointer' style='left: 450px; top: 180px;'>
+        <div class='slide_pointer_text'>
+          <h2><%= it("Keep your memories vivid", scope: ['staticpages', 'tour']) %></h2>
+          <p><%= it("Add %{strong:pictures} and %{strong:videos} to your logbook to makes your experiences even more vivid. When you mark down a species, we let you visualize by providing %{strong:generic pictures of the animal}, thus helping your both memorize the species name and revive that encounter.", scope: ['staticpages', 'tour'], strong: It.tag("strong")) %></p>
+        </div>
+      </div>
+
+      <div class='slide_pointer' style='left: 380px; top: 325px;'>
+        <div class='slide_pointer_text'>
+          <h2><%= it("Upload your dive profiles", scope: ['staticpages', 'tour']) %></h2>
+          <p><%= it("If you have a %{strong:dive computer} that can be connected to a computer, chances are we already support it! Download our plugin, plug your computer in and we'll be able to import all the profiles it has in its memory. %{br}
+          Have you been using another %{strong:proprietary software} to store those for some time now ? We can probably import those in a glimpse!", scope: ['staticpages', 'tour'], br: It.tag("br"), strong: It.tag("strong")) %></p>
+        </div>
+      </div>
+
+      <div class='slide_pointer' style='left: 710px; top: 150px;'>
+        <div class='slide_pointer_text'>
+          <h2><%= it("Easy as 1,2,3", scope: ['staticpages', 'tour']) %></h2>
+          <p><%= it("Just login to Diveboard, hit \"%{strong:New dive}\" in the top menu, enter a few infos such as the date, maximum depth and dive time and save: your dive is logged!", scope: ['staticpages', 'tour'], strong: It.tag("strong")) %></p>
+        </div>
+      </div>
+
+      <div class='slide_pointer' style='left: 830px; top: 350px;'>
+        <div class='slide_pointer_text'>
+          <h2><%= it("Advanced 'tech' features", scope: ['staticpages', 'tour']) %></h2>
+          <p><%= it("For all the advanced %{strong:tech divers} around, or simply the data lovers, we are working on adding features meaningful to you. For instance, you'll be able to log multiple %{strong:tanks air consumption}, and we'll calculate SAC for you.", scope: ['staticpages', 'tour'], strong: It.tag("strong")) %></p>
+        </div>
+      </div>
+
+    </div>
+    <div class=slide_txt><%= it("Diveboard is your online scuba logbook: you can add as many details as you like. But of course, if you prefer to log only the basic parameters, you can also!", scope: ['staticpages', 'tour']) %></div>
+  </div>
+
+
+  <div id=slide2 class=tour_slide <%if what != 2 then%>style='display:none'<%end%>>
+    <div class=slide_img>
+      <img src='/images/tour/share.jpg' class='slide_main_img'>
+      <div class='slide_pointer' style='left: 192px; top: 10px;'>
+        <div class='slide_pointer_text'>
+          <h2><%= it("Share dives with your friends", scope: ['staticpages', 'tour']) %></h2>
+          <p><%= it("You can %{strong:share your dives} or other peoples's dives you find on Diveboard to many social networks.%{br}%{strong:Videos} can even be played directly in Facebook!", scope: ['staticpages', 'tour'], strong: It.tag("strong"), br: It.tag("br")) %></p>
+        </div>
+      </div>
+
+      <div class='slide_pointer' style='left: 550px; top:340px;'>
+        <div class='slide_pointer_text'>
+          <h2><%= it("Discuss your dive experience", scope: ['staticpages', 'tour']) %></h2>
+          <p><%= it("Diveboard integrates the Facebook comment system, which allows anyone with a Facebook account to %{strong:leave comments}.", scope: ['staticpages', 'tour'], strong: It.tag("strong")) %><br/>&nbsp;<br/><%= it("Note: having the same feature but without a need for a facebook account is planned for mid-2012.", scope: ['staticpages', 'tour']) %></p>
+        </div>
+      </div>
+
+      <div class='slide_pointer' style='left: 230px; top: 210px;'>
+        <div class='slide_pointer_text'>
+          <h2><%= it("Print your logbook", scope: ['staticpages', 'tour']) %></h2>
+          <p><%= it("If you still like to keep your logbook on (recycled!) paper, Diveboard offers a %{strong:PDF export} function to print all your dives in a native logbook format.", scope: ['staticpages', 'tour'], strong: It.tag("strong")) %></p>
+        </div>
+      </div>
+
+      <div class='slide_pointer' style='left: 633px; top: 05px;'>
+        <div class='slide_pointer_text'>
+          <h2><%= it("Easily manage the visibility of your dives", scope: ['staticpages', 'tour']) %></h2>
+          <p><%= it("All social features are centralized on the 'Share' tab of each dive.", scope: ['staticpages', 'tour']) %><br/>&nbsp;<br/><%= it("Of course, if you want to %{strong:keep your dives private}, it's also possible!", scope: ['staticpages', 'tour'], strong: It.tag("strong")) %></p>
+        </div>
+      </div>
+
+      <div class='slide_pointer' style='left: 870px; top: 125px;'>
+        <div class='slide_pointer_text'>
+          <h2><%= it("DAN Project Dive Exploration", scope: ['staticpages', 'tour']) %></h2>
+          <p><%= it("How did your dive go? Any illness or decompression symptom ?%{br}Diveboard makes it easy to fill in and send out a DAN report for your dive thus helping increase our understanding of the %{strong:decompression models} and ultimately come up with safest tables and algorithms.", scope: ['staticpages', 'tour'], br: It.tag("br"), strong: It.tag("strong")) %></p>
+        </div>
+      </div>
+
+      <div class='slide_pointer' style='left: 785px; top: 295px;'>
+        <div class='slide_pointer_text'>
+          <h2><%= it("Species spotted", scope: ['staticpages', 'tour']) %></h2>
+          <p><%= it("We're building tools to help you get better at %{strong:identifying species}. We know it's easy to say \"I saw a clownfish\", but there are tens of species of clownfishes. We'll help you narrow it down if you're interested. By providing accurate data you'll rank up as a marine biologist, ultimately helping build a %{strong:real-time community-generated map} of the evolution of the oceans' marine life.", scope: ['staticpages', 'tour'], strong: It.tag("strong")) %></p>
+        </div>
+      </div>
+
+    </div>
+    <div class=slide_txt><%= it("Create your personal place on the Internet to share your passion about scuba. You have your own address on Diveboard.com that you can easily share with other scuba enthusiasts.", scope: ['staticpages', 'tour']) %></div>
+  </div>
+
+
+  <div id=slide3 class=tour_slide <%if what != 3 then%>style='display:none'<%end%>>
+    <div class=slide_img>
+      <img src='/images/tour/explore.jpg' class='slide_main_img'>
+      <div class='slide_pointer' style='left: 780px; top: 20px;'>
+        <div class='slide_pointer_text'>
+          <h2><%= it("Navigate in a world of dive spots", scope: ['staticpages', 'tour']) %></h2>
+          <p><%= it("Easily visualize your favorite diving areas to %{strong:browse the existing spots} and discover cool dive experiences. Maybe you'll find %{strong:your next trip}!", scope: ['staticpages', 'tour'], strong: It.tag("strong")) %></p>
+        </div>
+      </div>
+
+      <div class='slide_pointer' style='left: 260px; top: 070px;'>
+        <div class='slide_pointer_text'>
+          <h2><%= it("Learn about regions", scope: ['staticpages', 'tour']) %></h2>
+          <p><%= it("Each country or area has some description written by %{strong:experienced divers} to learn more about what you need to see there. You can also enhance the content of places that you know well: it's a %{strong:wiki}!", scope: ['staticpages', 'tour'], strong: It.tag("strong")) %></p>
+        </div>
+      </div>
+
+      <div class='slide_pointer' style='left: 170px; top: 340px;'>
+        <div class='slide_pointer_text'>
+          <h2><%= it("Browse Diveboard contents", scope: ['staticpages', 'tour']) %></h2>
+          <p><%= it("Through the explore page, you can easily %{strong:discover great dives} all over the world that have been logged on Diveboard. Many divers include %{strong:pictures} to their dives on Diveboard: you're bound to find awesome places.", scope: ['staticpages', 'tour'], strong: It.tag("strong")) %></p>
+        </div>
+      </div>
+
+    </div>
+    <div class=slide_txt><%= it("Browse our interactive map and discover new spots along with the divers who dived them. Learn from their experience and make up your mind if it makes it your next objective!", scope: ['staticpages', 'tour']) %></div>
+  </div>
+
+
+  <div id=slide4 class=tour_slide <%if what != 4 then%>style='display:none'<%end%>>
+    <div class=slide_img>
+      <img src='/images/tour/mobile.jpg' class='slide_main_img' usemap='#mobile_imgmap'/>
+      <map name="mobile_imgmap">
+        <area shape="rect" coords="213,355,403,418" href="http://market.android.com/details?id=com.diveboard.mobile" target='_blank' alt="Android Market Place" />
+        <area shape="rect" coords="565,355,758,418" href="http://itunes.apple.com/us/app/diveboard/id497339427" target='_blank' alt="App Store" />
+      </map>
+    </div>
+
+    <div class=slide_txt><%= it("Bring diveboard with you when you go diving: Diveboard is available on %{iphone:IPhone} and %{android:Android}", scope: ['staticpages', 'tour'], iphone: It.link("http://itunes.apple.com/us/app/diveboard/id497339427", target: "_blank"), android: It.link("http://market.android.com/details?id=com.diveboard.mobile", target: "_blank")) %></div>
+  </div>
+
+
+
+  <div id=slide5 class=tour_slide <%if what != 5 then%>style='display:none'<%end%>>
+    <div class=slide_img>
+      <div class='slide_main_img'>
+        <div style='font-size:40px; margin: 70px 0px 50px 0px'><%= it("FREE! FREE! FREE!", scope: ['staticpages', 'tour']) %></div>
+        <p style='font-size:20px; margin: 30px; line-height: 34px;'>
+          <%= it("No tricks, Diveboard is totally free!", scope: ['staticpages', 'tour']) %><br/>&nbsp;<br/>
+          <%= it("We want you to feel as comfortable as possible so you can help us gather as much data as we can on the ecosystem and on how the human body responds to diving.", scope: ['staticpages', 'tour']) %><br/>&nbsp;<br/>
+          <%= it("Some value added services such as storing large amouts of photos do have a real cost though, so we ask for a contribution for those who want to use this service massively, but we really don't want to take the scuba diver's money!", scope: ['staticpages', 'tour']) %>
+        </p>
+      </div>
+
+    <div class=slide_txt><%= it("Diveboard is about sharing your passion, not about taking your money!", scope: ['staticpages', 'tour']) %></div>
+  </div>
+
+
+
+</div>
+
+
+<div id=icon_groups>
+  <img src='/images/tour/arrow.png' class='icon_cursor' data-init='<%=what%>' >
+  <div id=icon_slide1 class=icon_slide >
+    <img src='/images/tour/icon_logbook.jpg' class='icon_slide_img' />
+    <div class='icon_slide_text'><%= it("Logbook", scope: ['staticpages', 'tour']) %></div>
+  </div>
+  <div id=icon_slide2 class='icon_slide selected'>
+    <img src='/images/tour/icon_share.jpg' class='icon_slide_img' />
+    <div class='icon_slide_text'><%= it("Sharing", scope: ['staticpages', 'tour']) %></div>
+  </div>
+  <div id=icon_slide3 class='icon_slide selected'>
+    <img src='/images/tour/icon_explore.jpg' class='icon_slide_img' />
+    <div class='icon_slide_text'><%= it("Discovering", scope: ['staticpages', 'tour']) %></div>
+  </div>
+  <div id=icon_slide4 class='icon_slide selected'>
+    <img src='/images/tour/icon_mobile.jpg' class='icon_slide_img' />
+    <div class='icon_slide_text'><%= it("Mobile", scope: ['staticpages', 'tour']) %></div>
+  </div>
+  <div id=icon_slide5 class='icon_slide selected'>
+    <img src='/images/tour/icon_free.jpg' class='icon_slide_img' />
+    <div class='icon_slide_text'><%= it("Price", scope: ['staticpages', 'tour']) %></div>
+  </div>
+</div>
+
+<script>
+
+function move_cursor_to(icon) {
+  var x = icon.position().left;
+  x += ( icon.width() - $(".icon_cursor").width() ) / 2;
+  $(".icon_cursor").animate({ left: x }, 100);
+}
+
+$(document).ready(function(){
+
+
+  $(".icon_slide").live('hover', function(){
+    var id = $(this).attr('id').substr(5);
+    move_cursor_to($(this));
+    $(".tour_slide").hide();
+    $("#"+id).show();
+  });
+
+  $(".slide_pointer").live('hover', function(){
+    var bubble = $(this).find(".slide_pointer_text");
+    bubble.css('left','');
+    if (bubble.offset().left < 0) {
+      bubble.css('left', bubble.position().left - bubble.offset().left);
+    }
+    if (bubble.offset().left + bubble.width() > $(document).width()-50) {
+      bubble.css('left', bubble.position().left - bubble.offset().left - bubble.width() + $(document).width() - 50);
+    }
+  });
+
+  var init_id = parseInt($(".icon_cursor").attr('data-init'));
+  move_cursor_to($($(".icon_slide")[init_id-1]));
+
+});
+</script>

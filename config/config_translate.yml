@@ -1,0 +1,4 @@
+basket_status:
+  paid: Awaiting vendor confirmation
+  cancelled: Cancelled and refunded
+  hold: Vendor asked for more details

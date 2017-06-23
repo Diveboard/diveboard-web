@@ -1,0 +1,25 @@
+<!--
+  Include me with :
+  <iframe frameborder="0" height="245" with="200" scrolling="no" src="http://dev.diveboard.com/ksso/widget"></iframe>
+-->
+<%content_for :css do%>
+  <%= include_stylesheets :common, :media => :all %>
+<%end%>
+
+<div class="logbook_header">
+  <div class="main_content_header">
+    <div class="head_picture"><img src="<%=@owner.picture_small%>" alt="user picture"></div>
+    <div class="head_title"><div class="head_title_valign"><ul>
+      <li><h1 class="unstyle"><%= it("My Scuba Profile", scope: ['logbook', 'widget_profile']) %></li>
+    </ul></div></div>
+  </div>
+   <%= render :partial => 'logbook/mini_profile',  :locals => {:owner => @owner, :clickable => true, :hide_profile => false, :posts_link => false, :custom_header => true}%>
+
+
+
+
+
+  <a class="by_diveboard" href="<%=root_url%>" target="_blank">
+
+  </a>
+</div>

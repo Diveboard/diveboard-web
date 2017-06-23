@@ -1,0 +1,241 @@
+@import 'variablesv2';
+.checkoutModal {
+  @media (max-width: 750px) {
+    background: none;
+    position: fixed;
+  }
+  .modal_content_checkout {
+    width: 700px;
+    height: 680px;
+    @media (max-width: 750px) {
+      width: 100%;
+      height: calc(100% - 46px);
+      margin-top: 46px!important;
+    }
+    .title {
+    	text-align: left;
+    	color: $red-db;
+      margin-left: 0px;
+    	img path {
+    		fill: $red-db;
+    	}
+    }
+    .title_separator {
+    	margin-left: -20px;
+    	margin-right: -20px;
+    	background-color: $red-db;
+    	height: 1px;
+    	width: calc(100% + 40px);
+    }
+    .body {
+    	.item {
+        margin-top: 30px;
+        min-height: 50px;
+        vertical-align: top;
+	    	div, input {
+	    		display: inline-block;
+          height: 100%;
+          vertical-align: top;
+
+	    	}
+	    	input {
+          height: 100%;
+	    		text-align: right;
+          width: 60px;
+          border: 1px solid $light-gray-db;
+          border-radius: 3px;
+          background-color: $background-gray;
+          outline: none;
+          -webkit-appearance: none;
+          -moz-appearance:    none;
+          appearance:         none;
+	    	}
+        .number_div {
+          height: 50px;
+        }
+        .product {
+          width: 390px;
+          .primary {
+            font-weight: 600;
+          }
+        }
+        .price {
+          color: $red-db;
+          font-size: 18px;
+          font-weight: 600;
+          margin-left: 30px;
+          width: 165px;
+          .embedded {
+            height: 50px;
+            text-align: center;
+            vertical-align: middle;
+            display: table-cell;
+          }
+        }
+	    }
+      .date {
+        height: 80px;
+        width: 100%;
+        .form_date_type {
+          input {
+            padding: 5px;
+            margin: 5px;
+            border: 1px solid $light-gray-db;
+            border-radius: 3px;
+            background-color: $background-gray;
+            outline: none;
+            -webkit-appearance: none;
+            -moz-appearance:    none;
+            appearance:         none;
+          }
+        }
+        .form_date_type_period {
+          display: none;
+        }
+      }
+      .comment {
+        @media (max-width: 750px) {
+          margin-top :40px;
+        }
+        @media (min-width: 750px) {
+          margin-top :20px;
+        }
+        height: 160px;
+        width: 100%;
+        textarea {
+          height: calc(100% - 30px);
+          width: calc(100% - 30px);
+          padding: 15px;
+          border: 1px solid $light-gray-db;
+          border-radius: 3px;
+          background-color: $background-gray;
+          outline: none;
+          -webkit-appearance: none;
+          -moz-appearance:    none;
+          appearance:         none;
+        }
+      }
+      .discount {
+        margin-top: 30px;
+        height: 70px;
+        vertical-align: top;
+        div, input {
+          display: inline-block;
+          height: 100%;
+          vertical-align: top;
+        }
+        .description {
+          @media (max-width: 750px) {
+           margin-bottom :10px;
+          }
+          width: 320px;
+          font-size: 13px;
+          .primary {
+            font-weight: 600;
+          }
+        }
+        .code {
+          width: 200px;
+          input {
+            padding-left: 20px;
+            height: 50px;
+            width: calc(100% - 20px);
+            border: 1px solid $light-gray-db;
+            border-radius: 3px;
+            background-color: $background-gray;
+            outline: none;
+            -webkit-appearance: none;
+            -moz-appearance:    none;
+            appearance:         none;
+          }
+        }
+        .redeem {
+          margin-left: 10px;
+          width: 100px;
+          div {
+            height: 50px;
+            width: 100%;
+            text-align: center;
+            line-height: 50px;
+            font-weight: 600;
+          }
+        }
+      }
+      .total_checkout {
+        @media (max-width: 750px) {
+          margin-top :80px;
+          height: 160px;
+        }
+        @media (min-width: 750px) {
+          margin-top: 30px;
+          height: 130px;
+        }
+        @media (max-width: 520px) {
+          padding-top:20px;
+        }
+        position: relative;
+        width: 100%;
+        background-color: $brown-light;
+        .count {
+          padding-top: 20px;
+          width: 100%;
+          display: inline-block;
+          vertical-align: top;
+          div {
+            width: 80px;
+            text-align: right;
+            font-size: 13px;
+            display: inline-block;
+          }
+          .price {
+            color: $red-db;
+            text-align: right;
+            td {
+              padding-left: 10px;
+            }
+          }
+          .separator {
+            background-color: $mid-gray-db;
+            height: 1px;
+            width: 100%;
+          }
+          .primary {
+            font-weight: 600;
+            font-size: 16px;
+          }
+        }
+        .link {
+          position: absolute;
+          bottom: 20px;
+          right: 20px;
+          display: inline-block;
+          vertical-align: top;
+          margin-left: 260px;
+          margin-top: 45px;
+          text-align: right;
+          .red-button , .transparent_dark_gray_button {
+
+            display: inline-block;
+            vertical-align: top;
+            height: 50px;
+            line-height: 50px;
+            padding-right: 28px;
+            padding-left: 28px;
+            text-align: center;
+          }
+          .transparent_dark_gray_button {
+            height: 48px;
+            @media(max-width: 570px){
+              margin-top:5px;
+            }
+          }
+          .remove {
+            font-size: 13px;
+            margin-right: 30px;
+            color: $link-blue-db;
+          }
+        }
+      }
+    }
+  }
+}

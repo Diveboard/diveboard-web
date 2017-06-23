@@ -1,0 +1,1479 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"op",
+				"option	Tag"
+			],
+			[
+				"VA",
+				"valid_dive"
+			],
+			[
+				"bor",
+				"border-radius"
+			],
+			[
+				"inline",
+				"inline-block"
+			],
+			[
+				"di",
+				"display"
+			],
+			[
+				"wi",
+				"width"
+			],
+			[
+				"shop",
+				"shop_reviews"
+			],
+			[
+				"pu",
+				"public_reviews"
+			],
+			[
+				"loca",
+				"location_title"
+			],
+			[
+				"pic",
+				"best_pictures"
+			],
+			[
+				"margin",
+				"margin-top"
+			],
+			[
+				"user",
+				"user_proxy"
+			],
+			[
+				"back",
+				"background-color"
+			],
+			[
+				"padd",
+				"padding-left"
+			],
+			[
+				"option",
+				"optionSelected"
+			],
+			[
+				"quest",
+				"questions_for_faq"
+			],
+			[
+				"Shop",
+				"ShopQAndA"
+			],
+			[
+				"has",
+				"has_many"
+			],
+			[
+				"rec",
+				"recent_dives"
+			],
+			[
+				"marg",
+				"margin-top"
+			],
+			[
+				"margi",
+				"margin-top"
+			],
+			[
+				"count",
+				"country"
+			],
+			[
+				"err",
+				"error_msg"
+			],
+			[
+				"lang",
+				"language"
+			],
+			[
+				"to",
+				"to_s"
+			],
+			[
+				"fon",
+				"font-size"
+			],
+			[
+				"text",
+				"text-align"
+			],
+			[
+				"st",
+				"style	Attr"
+			],
+			[
+				"mar",
+				"margin-top"
+			],
+			[
+				"font",
+				"font-size"
+			],
+			[
+				"te",
+				"text-align"
+			],
+			[
+				"in",
+				"inline-block"
+			],
+			[
+				"pre",
+				"previewNode"
+			],
+			[
+				"cd",
+				"code3"
+			],
+			[
+				"log",
+				"login_form"
+			],
+			[
+				"sub",
+				"subject"
+			],
+			[
+				"su",
+				"subject"
+			],
+			[
+				"par",
+				"params"
+			],
+			[
+				"area",
+				"area_categories"
+			],
+			[
+				"find",
+				"find_best_pic"
+			],
+			[
+				"p",
+				"picture"
+			],
+			[
+				"pi",
+				"pictures_with_ratio"
+			],
+			[
+				"best",
+				"best_pictures"
+			],
+			[
+				"best_pictures",
+				"best_pictures_with_ratio"
+			],
+			[
+				"l",
+				"limit"
+			],
+			[
+				"fin",
+				"find_best_pic"
+			],
+			[
+				"max",
+				"max_ratio"
+			],
+			[
+				"min",
+				"min_ration"
+			],
+			[
+				"sh",
+				"shop"
+			],
+			[
+				"sele",
+				"selected_suggestion"
+			],
+			[
+				"sugg",
+				"selected_suggestion"
+			],
+			[
+				"sel",
+				"selected_suggestion"
+			],
+			[
+				"se",
+				"selected_suggestion"
+			],
+			[
+				"dat",
+				"dataList"
+			],
+			[
+				"geoname",
+				"geonames_core"
+			],
+			[
+				"index",
+				"index_wrapper"
+			],
+			[
+				"up",
+				"upMinLat"
+			],
+			[
+				"cate",
+				"category"
+			],
+			[
+				"Ar",
+				"AreaCategory"
+			],
+			[
+				"cat",
+				"category_hash"
+			],
+			[
+				"fina",
+				"finaltot"
+			],
+			[
+				"en",
+				"environment"
+			],
+			[
+				"be",
+				"best_pictures"
+			],
+			[
+				"rev",
+				"reviews"
+			],
+			[
+				"dive",
+				"dive_reviews"
+			],
+			[
+				"tota",
+				"total_percent"
+			],
+			[
+				"total",
+				"total_percent_add"
+			],
+			[
+				"sc",
+				"script"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "/home/diveboard/diveboard-web/app/views/v2/shop_pages/edit/_shop_care_edit.html.erb",
+			"settings":
+			{
+				"buffer_size": 13671,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/diveboard/diveboard-web/app/assets/javascripts/v2/footer.js",
+			"settings":
+			{
+				"buffer_size": 1899,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "routes.rb",
+			"settings":
+			{
+				"buffer_size": 32296,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/diveboard/diveboard-web/public/styles/baskets.css",
+			"settings":
+			{
+				"buffer_size": 16073,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/diveboard/diveboard-web/app/assets/stylesheets/v2/shop/edit/care.css.scss",
+			"settings":
+			{
+				"buffer_size": 2490,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/diveboard/diveboard-web/app/views/shop_pages/_shop_care_edit.html.erb",
+			"settings":
+			{
+				"buffer_size": 13095,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/diveboard/diveboard-web/app/assets/javascripts/v2/shop_page/edit.js",
+			"settings":
+			{
+				"buffer_size": 13244,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/diveboard/diveboard-web/app/assets/javascripts/pages/shop_page.js",
+			"settings":
+			{
+				"buffer_size": 99295,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+			[
+				"pack",
+				"Package Control: Install Package"
+			],
+			[
+				"pac",
+				"Package Control: Install Package"
+			],
+			[
+				"rei",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"in",
+				"Indentation: Reindent Lines"
+			]
+		],
+		"width": 575.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404' + 'e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by) ",
+			"import urllib2,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404' + 'e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); os.makedirs( ipp ) if not os.path.exists(ipp) else None; urllib2.install_opener( urllib2.build_opener( urllib2.ProxyHandler()) ); by = urllib2.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); open( os.path.join( ipp, pf), 'wb' ).write(by) if dh == h else None; print('Error validating download (got %s instead of %s), please try manual install' % (dh, h) if dh != h else 'Please restart Sublime Text to finish installation') ",
+			"view.encoding()"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/diveboard/diveboard-web",
+		"/home/diveboard/diveboard-web/app",
+		"/home/diveboard/diveboard-web/app/assets",
+		"/home/diveboard/diveboard-web/app/assets/javascripts",
+		"/home/diveboard/diveboard-web/app/assets/javascripts/v2",
+		"/home/diveboard/diveboard-web/app/assets/stylesheets",
+		"/home/diveboard/diveboard-web/app/controllers",
+		"/home/diveboard/diveboard-web/app/controllers/v2",
+		"/home/diveboard/diveboard-web/app/views",
+		"/home/diveboard/diveboard-web/app/views/notify_user",
+		"/home/diveboard/diveboard-web/app/views/shop_pages",
+		"/home/diveboard/diveboard-web/app/views/shop_pages/care",
+		"/home/diveboard/diveboard-web/app/views/v2",
+		"/home/diveboard/diveboard-web/app/views/v2/shop_pages",
+		"/home/diveboard/diveboard-web/app/views/v2/shop_pages/edit",
+		"/home/diveboard/diveboard-web/config",
+		"/home/diveboard/diveboard-web/config/locales",
+		"/home/diveboard/diveboard-web/config/locales/en",
+		"/home/diveboard/diveboard-web/db"
+	],
+	"file_history":
+	[
+		"/home/diveboard/diveboard-web/app/controllers/v2/shop_pages_controller.rb",
+		"/home/diveboard/diveboard-web/app/controllers/shop_pages_controller.rb",
+		"/home/diveboard/diveboard-web/app/views/v2/shop_pages/_tab_header.html.erb",
+		"/home/diveboard/diveboard-web/app/assets/javascripts/v2/shop_page/tab_header.js",
+		"/home/diveboard/diveboard-web/app/assets/javascripts/shop_pages.js",
+		"/home/diveboard/diveboard-web/app/views/shop_pages/read.html.erb",
+		"/home/diveboard/diveboard-web/app/assets/stylesheets/footer.css.scss",
+		"/home/diveboard/diveboard-web/app/assets/stylesheets/v2/footer/footer.css.scss",
+		"/home/diveboard/diveboard-web/app/views/layouts/_footer.html.erb",
+		"/home/diveboard/diveboard-web/app/views/v2/footer/_footer.html.erb",
+		"/home/diveboard/diveboard-web/app/views/v2/footer/_footer_part.html.erb",
+		"/home/diveboard/diveboard-web/script/fill_in_latlng_on_shops.rb",
+		"/home/diveboard/diveboard-web/app/models/basket.rb",
+		"/home/diveboard/diveboard-web/config/initializers/backtrace_silencers.rb",
+		"/home/diveboard/diveboard-web/public/img/home/big_arrow.svg",
+		"/home/diveboard/diveboard-web/public/styles/blog.css",
+		"/home/diveboard/diveboard-web/app/views/settings/orders.html.erb",
+		"/home/diveboard/diveboard-web/app/assets/javascripts/lib/jstemplate.js",
+		"/home/diveboard/diveboard-web/app/assets/javascripts/lib/jsTimezoneDetect.js",
+		"/home/diveboard/diveboard-web/vendor/ruby/1.9.1/bundler/gems/prawn-0e92e1ed7808/spec/jpg_spec.rb",
+		"/home/diveboard/diveboard-web/config/initializers/jammit.rb",
+		"/home/diveboard/diveboard-web/app/views/templates/template_buy_dive.erb",
+		"/home/diveboard/diveboard-web/app/assets/javascripts/pages/shop_page.js",
+		"/home/diveboard/diveboard-web/app/assets/javascripts/pages_responsive/shop_page.js",
+		"/home/diveboard/diveboard-web/app/models/shop.rb",
+		"/home/diveboard/diveboard-web/app/helpers/search_helper.rb",
+		"/home/diveboard/diveboard-web/app/models/spot.rb",
+		"/home/diveboard/diveboard-web/app/views/v2/shop_pages/edit.html.erb",
+		"/home/diveboard/diveboard-web/app/views/v2/shop_pages/_services.html.erb",
+		"/home/diveboard/diveboard-web/app/assets/javascripts/v2/shop_page/edit.js",
+		"/home/diveboard/diveboard-web/README",
+		"/home/diveboard/diveboard-web/app/views/v2/shop_pages/edit/_services.html.erb",
+		"/home/diveboard/diveboard-web/app/views/v2/shop_pages/_spots.html.erb",
+		"/home/diveboard/diveboard-web/app/views/v2/shop_pages/_shop_reviews.html.erb",
+		"/home/diveboard/diveboard-web/app/views/v2/shop_pages/_shop_details.html.erb",
+		"/home/diveboard/diveboard-web/app/views/v2/shop_pages/_shop_info.html.erb",
+		"/home/diveboard/diveboard-web/app/views/v2/shop_pages/edit/_about_shop.html.erb",
+		"/home/diveboard/diveboard-web/app/views/v2/shop_pages/_areas.html.erb",
+		"/home/diveboard/diveboard-web/app/views/v2/shop_pages/edit/_pictures.html.erb",
+		"/home/diveboard/diveboard-web/app/assets/stylesheets/v2/shop/product_list.css.scss",
+		"/home/diveboard/diveboard-web/app/views/v2/shop_pages/_cover_pic.html.erb",
+		"/home/diveboard/diveboard-web/app/assets/javascripts/v2/shop_page/pictures.js",
+		"/home/diveboard/diveboard-web/app/helpers/v2/shop_pages_helper.rb",
+		"/home/diveboard/diveboard-web/app/controllers/v2/api_controller.rb",
+		"/home/diveboard/diveboard-web/app/views/layouts/v2.html.erb",
+		"/home/diveboard/diveboard-web/app/views/admin/species_editor.html.erb",
+		"/home/diveboard/diveboard-web/vendor/ruby/1.9.1/gems/wikipedia-client-1.3.0/spec/fixtures/sanitization_samples/SMS_Elbing-raw.txt",
+		"/home/diveboard/diveboard-web/app/assets/javascripts/v2/shop_page/services.js",
+		"/home/diveboard/diveboard-web/app/assets/stylesheets/shop.css.scss",
+		"/home/diveboard/diveboard-web/config/routes.rb",
+		"/home/diveboard/diveboard-web/app/controllers/v2/area_pages_controller.rb",
+		"/home/diveboard/diveboard-web/config/application.rb",
+		"/home/diveboard/diveboard-web/app/views/v2/shop_pages/index.html.erb",
+		"/home/diveboard/diveboard-web/app/assets/stylesheets/v2/area/reviews.css.scss",
+		"/home/diveboard/diveboard-web/app/views/v2/shop_pages/reviews_append.html.erb",
+		"/home/diveboard/diveboard-web/app/assets/javascripts/v2/areapage/modal.js",
+		"/home/diveboard/diveboard-web/app/views/v2/area_pages/_reviews.html.erb",
+		"/home/diveboard/diveboard-web/app/assets/javascripts/v2/shop_page/modal.js",
+		"/home/diveboard/diveboard-web/app/assets/stylesheets/v2/shop/shop_reviews.css.scss",
+		"/home/diveboard/diveboard-web/app/models/dive.rb",
+		"/home/diveboard/diveboard-web/db/migrate/20130523133705_add_pro_plans_to_payments.rb",
+		"/home/diveboard/diveboard-web/app/models/area.rb",
+		"/home/diveboard/diveboard-web/app/assets/stylesheets/v2/shop/reviews.css.scss",
+		"/home/diveboard/diveboard-web/app/views/shop_widgets/_ratings.html.erb",
+		"/home/diveboard/diveboard-web/app/assets/stylesheets/_mixins.css.scss",
+		"/home/diveboard/diveboard-web/app/indices/shop_index.rb",
+		"/home/diveboard/diveboard-web/public/styles/global.css",
+		"/home/diveboard/diveboard-web/app/views/home/index_4.html.erb",
+		"/home/diveboard/diveboard-web/app/views/v2/homepage/index.html.erb",
+		"/home/diveboard/diveboard-web/app/assets/stylesheets/v2/button.css.scss",
+		"/home/diveboard/diveboard-web/app/views/logbook/_user_home.html.erb",
+		"/home/diveboard/diveboard-web/config/locales/en/web.yml",
+		"/home/diveboard/diveboard-web/app/assets/stylesheets/v2/area/areas.css.scss",
+		"/home/diveboard/diveboard-web/app/views/v2/homepage/_featured_destinations.html.erb",
+		"/home/diveboard/diveboard-web/app/controllers/v2/homepage_controller.rb",
+		"/home/diveboard/diveboard-web/app/controllers/home_controller.rb",
+		"/home/diveboard/diveboard-web/doc/Internationalization",
+		"/home/diveboard/diveboard-web/public/api/doc/index.html",
+		"/home/diveboard/diveboard-web/app/indices/area_index.rb",
+		"/home/diveboard/diveboard-web/script/import_taxonomy_notes.rb",
+		"/home/diveboard/diveboard-web/app/views/blog/blog_layout.html.erb",
+		"/home/diveboard/diveboard-web/config/boot.rb",
+		"/home/diveboard/diveboard-web/Gemfile",
+		"/home/diveboard/diveboard-web/app/assets/javascripts/modules/global.js",
+		"/home/diveboard/diveboard-web/vendor/ruby/1.9.1/gems/nokogiri-1.6.1/test/namespaces/test_additional_namespaces_in_builder_doc.rb",
+		"/home/diveboard/diveboard-web/app/models/tools/throttle_api.rb",
+		"/home/diveboard/diveboard-web/vendor/ruby/1.9.1/gems/unicorn-4.8.2/t/t0020-at_exit-handler.sh",
+		"/home/diveboard/diveboard-web/doc/testing",
+		"/home/diveboard/diveboard-web/vendor/ruby/1.9.1/gems/attr_required-1.0.0/attr_required.gemspec",
+		"/home/diveboard/diveboard-web/app/assets/javascripts/pages/form_review.js",
+		"/home/diveboard/diveboard-web/app/views/v2/modal/_sign_in_2.html.erb",
+		"/home/diveboard/diveboard-web/app/assets/javascripts/v2/login.js",
+		"/home/diveboard/diveboard-web/app/views/v2/modal/_sign_in.html.erb",
+		"/home/diveboard/diveboard-web/public/styles/sign_up_popup.css",
+		"/home/diveboard/diveboard-web/app/models/signature.rb",
+		"/home/diveboard/diveboard-web/script/import_gbif.rb",
+		"/home/diveboard/diveboard-web/vendor/ruby/1.9.1/gems/thinking-sphinx-3.1.0/spec/acceptance/big_integers_spec.rb",
+		"/home/diveboard/diveboard-web/app/views/v2/header/_header.html.erb",
+		"/home/diveboard/diveboard-web/app/views/v2/homepage/_cover.html.erb",
+		"/home/diveboard/diveboard-web/app/assets/stylesheets/v2/homepage/cover.css.scss",
+		"/home/diveboard/diveboard-web/app/assets/javascripts/v2/homepage/search.js",
+		"/home/diveboard/diveboard-web/app/views/v2/area_pages/_cover_pic.html.erb",
+		"/home/diveboard/diveboard-web/app/views/v2/area_pages/index.html.erb",
+		"/home/diveboard/diveboard-web/app/views/v2/area_pages/_shops.html.erb",
+		"/home/diveboard/diveboard-web/app/assets/javascripts/global_v2.js",
+		"/home/diveboard/diveboard-web/app/assets/javascripts/v2/footer.js",
+		"/home/diveboard/diveboard-web/config/facebook.yml",
+		"/home/diveboard/diveboard-web/app/assets/stylesheets/v2/mobile_header.css.scss",
+		"/home/diveboard/diveboard-web/app/views/v2/area_pages/_spot_on.html.erb",
+		"/home/diveboard/diveboard-web/app/views/v2/area_pages/_areas.html.erb",
+		"/home/diveboard/diveboard-web/app/views/v2/shop_pages/_gallery.html.erb",
+		"/home/diveboard/diveboard-web/db/migrate/20141215132023_create_shop_q_and_as.rb",
+		"/home/diveboard/diveboard-web/app/views/v2/shop_pages/_faq.html.erb",
+		"/home/diveboard/diveboard-web/app/models/user.rb",
+		"/home/diveboard/diveboard-web/app/controllers/pictures_controller.rb",
+		"/home/diveboard/diveboard-web/app/views/v2/footer/_links.html.erb",
+		"/home/diveboard/diveboard-web/app/assets/stylesheets/v2/footer/links.css.scss",
+		"/home/diveboard/diveboard-web/test/fixtures/pictures.yml",
+		"/home/diveboard/diveboard-web/app/models/picture.rb",
+		"/home/diveboard/diveboard-web/public/img/home/pinterest_icon.svg",
+		"/home/diveboard/diveboard-web/app/models/payment.rb",
+		"/home/diveboard/diveboard-web/config/unicorn_sqdev.rb",
+		"/home/diveboard/diveboard-web/app/controllers/shop_widgets_controller.rb",
+		"/home/diveboard/diveboard-web/app/controllers/commercial_shop_controller.rb",
+		"/home/diveboard/diveboard-web/db/migrate/20120127122344_add_fb_publish_info_to_dives.rb",
+		"/home/diveboard/diveboard-web/public/img/drawer/svg/add_picture.svg",
+		"/home/diveboard/diveboard-web/test/fixtures/api_keys.yml",
+		"/home/diveboard/diveboard-web/app/models/api_key.rb"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 90.0,
+		"where_history":
+		[
+			"*",
+			"/home/diveboard/diveboard-web/app/views/logbook",
+			"*",
+			"*.rb",
+			"*",
+			"/home/diveboard/diveboard-web/app/views/v2/area_pages",
+			"*",
+			"*.scss",
+			"*",
+			"*.scss",
+			"*.rb",
+			"*",
+			"*.scss",
+			"*",
+			"/home/diveboard/diveboard-web/app/assets/stylesheets/v2",
+			"*",
+			"*.rb",
+			"/home/diveboard/diveboard-web/",
+			"/home/diveboard/diveboard-web/db/migrate",
+			"*",
+			"/home/diveboard/diveboard-web/app/views/v2/area_pages",
+			"*",
+			"*.sass",
+			"*.css",
+			"*",
+			"*.js",
+			"*.erb",
+			"*.rb",
+			"",
+			"*.js",
+			"",
+			"*.rb",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"message_shop_table_next",
+			"href-hostname",
+			"languages",
+			"languages_select",
+			"strftime",
+			"function strftime",
+			"function fn",
+			"message_shop_table",
+			"message_line",
+			"init_content4_buy_manage",
+			"tmpl",
+			"c",
+			"init_content4_buy_manage",
+			"init_buy_manage",
+			"care_load",
+			"init_buy_manage",
+			"init_content4_buy_manage",
+			"G_messages",
+			"init_orders_bindings();\n  init_content_list();",
+			"sign_dives",
+			"init_content_list",
+			"tmpl",
+			"messages",
+			"each",
+			"G_messages",
+			"faq_edit",
+			"services_edit",
+			"G_shop_api",
+			"sign_spinner",
+			"validate_sign_dive",
+			"validate_sign_dive ",
+			"  <%end%>",
+			"@reviews",
+			"append_content",
+			"load_more_button",
+			"version",
+			"double_container",
+			"v2:",
+			"shop_pages:",
+			"@area.",
+			"@area",
+			"diveboardAccount.email_login",
+			"diveboardAccount",
+			"post_form_review",
+			"/api/v2/review",
+			"revie",
+			"@area.url_name",
+			"url_name",
+			"/api/shop/remove_logo",
+			"pict",
+			"ALLOWED_CATEGORIES",
+			"questions_for_faq",
+			"  img\n  {\n    position: relative;",
+			"area_name",
+			"medium",
+			"fbAsyncInit",
+			"ge",
+			"_note",
+			"note",
+			"privacy",
+			"login_modal.display",
+			".not-logged",
+			"fullpermalink",
+			"area fullpermalink",
+			"header_picture",
+			"\n<%=",
+			".signup",
+			"signup",
+			"login_modal",
+			"user_logged",
+			"right-nav-toggle",
+			"right_nav",
+			"login_modal",
+			"LightModal",
+			"login",
+			"logo_black",
+			"/login/user_login",
+			"  }",
+			"p",
+			"margin",
+			"modal_content",
+			"loginModal",
+			"left",
+			"logo",
+			"/v2/",
+			"v2/api/search",
+			"picture",
+			"shop_cover",
+			"invite_buddy",
+			"I18nLanguages",
+			"require",
+			"language_add_submit",
+			"countries",
+			"shop",
+			"code2: lang:",
+			"name: nil,",
+			"é",
+			"name:",
+			"code2:",
+			"code2:nil",
+			"3letter",
+			"\\([^,]*,",
+			"\"3letter\"",
+			"\"2letter\"",
+			"2letter",
+			"3letter",
+			"NULL",
+			"'en'",
+			"\\(3letter[^,]*,[^,]*,[^,]*,",
+			"\\lang: 'en',[^,]*,",
+			"\\(3letter[^,]*,[^,]*,",
+			"NULL",
+			"\\([^,]*,[^,]*,[^,]*,",
+			"\\lang: 'en',[^,]*,",
+			"\\([^,]*,[^,]*,",
+			"\\([^,]*,",
+			"\\([^,]*,[^,]*,",
+			",[^,]*",
+			"\\),",
+			"('",
+			"NULL",
+			"\\([^,]*,[^,]*,[^,]*,",
+			"\\([^,]*,",
+			"\\([^,]*,[^,]*,",
+			"(3letter: 'ace',NULL,",
+			"\\([^,]*,[^,]*,",
+			",[^,]*\\),",
+			"('"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"reviews",
+			"@shop.area.",
+			"login_modal2",
+			"share_to_friend",
+			"language",
+			"code2: nil, lang:",
+			"name: ",
+			"neme: ",
+			"e",
+			"name: ",
+			"code2: ",
+			"code2: nil",
+			"code3",
+			"$0 code2: ",
+			"code3",
+			"code2",
+			"\"2letter\"",
+			"\"3letter\"",
+			"nil",
+			"'fr'",
+			"$0 name: ",
+			"lang: 'en',",
+			"$0 lang: 'en',",
+			"nil",
+			"$0 name:",
+			"$0 name: ",
+			"lang: 'en', ",
+			"$0 \\lang: 'en', ",
+			"$0 lang: ",
+			"$0 2letter: ",
+			"$0'en',",
+			"$0 2letter: ",
+			")",
+			"I18nLanguages.create(3letter: '",
+			"I18nLanguages.create(3letter: ",
+			"nil",
+			"$0 name:",
+			"$0 2letter:",
+			"$02letter:",
+			"$0lang: 'en',",
+			"$0'en',",
+			")",
+			"I18nLanguages.create(3letter: '",
+			"I18nLanguages.create(3letter: ",
+			"login_modal",
+			"notify_buy",
+			"header_picture",
+			"maxLng",
+			"minLng"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/home/diveboard/diveboard-web/app/views/v2/shop_pages/edit/_shop_care_edit.html.erb",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 13671,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								11044,
+								11044
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Rails/HTML (Rails).tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2104.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/home/diveboard/diveboard-web/app/assets/javascripts/v2/footer.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1899,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								164,
+								164
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "routes.rb",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 32296,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								23270,
+								23270
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Ruby/Ruby.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 5124.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/home/diveboard/diveboard-web/public/styles/baskets.css",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 16073,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3185,
+								3185
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 40.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/home/diveboard/diveboard-web/app/assets/stylesheets/v2/shop/edit/care.css.scss",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2490,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1326,
+								1326
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 10038.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/home/diveboard/diveboard-web/app/views/shop_pages/_shop_care_edit.html.erb",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 13095,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								10475,
+								10475
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Rails/HTML (Rails).tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1768.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/home/diveboard/diveboard-web/app/assets/javascripts/v2/shop_page/edit.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 13244,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								10769,
+								10769
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 5239.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/home/diveboard/diveboard-web/app/assets/javascripts/pages/shop_page.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 99295,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								30836,
+								30836
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 12696.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 34.0
+	},
+	"input":
+	{
+		"height": 35.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"project": "diveboard.sublime-project",
+	"replace":
+	{
+		"height": 62.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"footer",
+				"app/assets/javascripts/v2/footer.js"
+			],
+			[
+				"bask",
+				"public/styles/baskets.css"
+			],
+			[
+				"jstemp",
+				"app/assets/javascripts/lib/jstemplate.js"
+			],
+			[
+				"shop_page",
+				"app/assets/javascripts/pages/shop_page.js"
+			],
+			[
+				"rou",
+				"config/routes.rb"
+			],
+			[
+				"v2/shop_page/_ser",
+				"app/views/v2/shop_pages/_services.html.erb"
+			],
+			[
+				"di",
+				"app/models/dive.rb"
+			],
+			[
+				"route",
+				"config/routes.rb"
+			],
+			[
+				"appl",
+				"config/application.rb"
+			],
+			[
+				"_rev",
+				"app/views/v2/area_pages/_reviews.html.erb"
+			],
+			[
+				"glo",
+				"public/styles/global.css"
+			],
+			[
+				"homepage/inde",
+				"app/views/v2/homepage/index.html.erb"
+			],
+			[
+				"index_4",
+				"app/views/home/index_4.html.erb"
+			],
+			[
+				"blog.cs",
+				"public/styles/blog.css"
+			],
+			[
+				"global.c",
+				"public/styles/global.css"
+			],
+			[
+				"tab_he",
+				"app/assets/javascripts/v2/shop_page/tab_header.js"
+			],
+			[
+				"area",
+				"app/models/area.rb"
+			],
+			[
+				"sign_in",
+				"app/views/v2/modal/_sign_in_2.html.erb"
+			],
+			[
+				"shop",
+				"app/models/shop.rb"
+			],
+			[
+				"area_pa",
+				"app/controllers/v2/area_pages_controller.rb"
+			],
+			[
+				"area_con",
+				"app/controllers/v2/area_pages_controller.rb"
+			],
+			[
+				"pictures.j",
+				"app/assets/javascripts/v2/shop_page/pictures.js"
+			],
+			[
+				"picture.js",
+				"app/assets/javascripts/v2/shop_page/pictures.js"
+			],
+			[
+				"user",
+				"app/models/user.rb"
+			],
+			[
+				"picture",
+				"app/controllers/pictures_controller.rb"
+			],
+			[
+				"shop_contr",
+				"app/controllers/v2/shop_pages_controller.rb"
+			],
+			[
+				"api",
+				"app/controllers/v2/api_controller.rb"
+			],
+			[
+				"faq",
+				"app/views/v2/shop_pages/_faq.html.erb"
+			],
+			[
+				"shop_pages",
+				"app/controllers/v2/shop_pages_controller.rb"
+			],
+			[
+				"spo",
+				"app/models/spot.rb"
+			],
+			[
+				"pictu",
+				"app/models/picture.rb"
+			],
+			[
+				"login_mo",
+				"app/views/layouts/_login_popup.html.erb"
+			],
+			[
+				"logi",
+				"app/assets/stylesheets/v2/modal/login_popup.css.scss"
+			],
+			[
+				"edit",
+				"app/assets/javascripts/v2/shop_page/edit.js"
+			],
+			[
+				"shop_con",
+				"app/controllers/v2/shop_pages_controller.rb"
+			],
+			[
+				"api_co",
+				"app/controllers/v2/api_controller.rb"
+			],
+			[
+				"shopde",
+				"app/models/shop_detail.rb"
+			],
+			[
+				"login",
+				"app/assets/javascripts/v2/login.js"
+			],
+			[
+				"dive",
+				"app/models/dive.rb"
+			],
+			[
+				"homepage/in",
+				"app/views/v2/homepage/index.html.erb"
+			],
+			[
+				"homepage/",
+				"app/views/v2/homepage/_featured_destinations.html.erb"
+			],
+			[
+				"mobi",
+				"app/assets/stylesheets/v2/mobile_header.css.scss"
+			],
+			[
+				"api_con",
+				"app/controllers/v2/api_controller.rb"
+			],
+			[
+				"_signin",
+				"app/views/v2/modal/_sign_in.html.erb"
+			],
+			[
+				"/v2/ho",
+				"app/controllers/v2/homepage_controller.rb"
+			],
+			[
+				"ictu",
+				"app/models/picture.rb"
+			],
+			[
+				"share",
+				"app/views/notify_user/share_to_friend.html"
+			],
+			[
+				"switch",
+				"app/views/layouts/_switch_language_dialog.html.erb"
+			],
+			[
+				"faq.html",
+				"app/views/v2/shop_pages/_faq.html.erb"
+			],
+			[
+				"controllers/v2/sho",
+				"app/controllers/v2/shop_pages_controller.rb"
+			],
+			[
+				"albu",
+				"db/migrate/20110912110400_create_picture_albums.rb"
+			],
+			[
+				"sett",
+				"app/controllers/settings_controller.rb"
+			],
+			[
+				"_serv",
+				"app/views/v2/shop_pages/_services.html.erb"
+			],
+			[
+				"config/en",
+				"config/environment.rb"
+			],
+			[
+				"gemf",
+				"Gemfile"
+			],
+			[
+				"v2/shop",
+				"app/controllers/v2/shop_pages_controller.rb"
+			],
+			[
+				"pay",
+				"app/models/payment.rb"
+			],
+			[
+				"logbo",
+				"app/controllers/logbook_controller.rb"
+			],
+			[
+				"ro",
+				"config/routes.rb"
+			],
+			[
+				"search.js",
+				"app/assets/javascripts/v2/homepage/search.js"
+			],
+			[
+				"sea",
+				"app/assets/javascripts/search.js"
+			],
+			[
+				"area_c",
+				"app/controllers/v2/area_pages_controller.rb"
+			],
+			[
+				"_score",
+				"app/views/v2/shared/_score_bullet.html.erb"
+			],
+			[
+				"shop_page_c",
+				"app/controllers/v2/shop_pages_controller.rb"
+			],
+			[
+				"header",
+				"app/assets/javascripts/v2/header.js"
+			],
+			[
+				"_cover_",
+				"app/views/v2/area_pages/_cover_pic.html.erb"
+			],
+			[
+				"homepa",
+				"app/controllers/v2/homepage_controller.rb"
+			],
+			[
+				"login.js",
+				"app/assets/javascripts/v2/login.js"
+			],
+			[
+				"_area",
+				"app/views/v2/area_pages/_areas.html.erb"
+			],
+			[
+				"featured",
+				"app/views/v2/homepage/_featured_destinations.html.erb"
+			],
+			[
+				"v2/hom",
+				"app/views/v2/homepage/index.html.erb"
+			],
+			[
+				"pictures_",
+				"app/controllers/pictures_controller.rb"
+			],
+			[
+				"r",
+				"README"
+			],
+			[
+				"tracker",
+				"app/views/layouts/_trackers.html.erb"
+			],
+			[
+				"mai_la",
+				"app/views/layouts/main_layout.html.erb"
+			],
+			[
+				"v2/home",
+				"app/controllers/v2/homepage_controller.rb"
+			],
+			[
+				"home",
+				"app/controllers/home_controller.rb"
+			],
+			[
+				"v2/a",
+				"app/controllers/v2/api_controller.rb"
+			],
+			[
+				"indices/area",
+				"app/indices/area_index.rb"
+			],
+			[
+				"controller/v2",
+				"app/controllers/v2/api_controller.rb"
+			],
+			[
+				"area_det",
+				"lib/tasks/area_detection.rake"
+			],
+			[
+				"area.r",
+				"lib/tasks/area.rake"
+			],
+			[
+				"areacotr",
+				"app/controllers/v2/area_pages_controller.rb"
+			],
+			[
+				"_cover",
+				"app/views/v2/area_pages/_cover_pic.html.erb"
+			],
+			[
+				"area/in",
+				"app/views/v2/area_pages/index.html.erb"
+			],
+			[
+				"area.",
+				"app/models/area.rb"
+			],
+			[
+				"area.ra",
+				"lib/tasks/area.rake"
+			],
+			[
+				"eols",
+				"app/models/eolsname.rb"
+			],
+			[
+				"v2",
+				"app/views/layouts/v2.html.erb"
+			],
+			[
+				"mobile_he",
+				"app/assets/stylesheets/v2/mobile_header.css.scss"
+			],
+			[
+				"mobile",
+				"app/assets/stylesheets/v2/area/mobile_cover_pic.css.scss"
+			],
+			[
+				"heade",
+				"app/assets/javascripts/v2/header.js"
+			],
+			[
+				"globaljs",
+				"app/assets/javascripts/modules/global.js"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 398.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%=I18n.locale%>">
+  <head>
+
+    <!-- FB Opengraph Tags -->
+
+    <meta property="og:title" content="Diveboard: <%= it("Track and share your scuba diving experiences - Explore new spots and destination", scope: ['layouts', 'index']) %>" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="<%=ROOT_URL%>" />
+    <meta property="og:image" content="<%="#{ROOT_URL}img/OG-thumb.png"%>" />
+    <meta property="og:description" content="<%= it("Diveboard is a scuba diving community enabling divers to track their dives through an online logbook, explore new spots and destinations and share their passion", scope: ['layouts', 'index']) %>" />
+    <meta property="og:site_name" content="Diveboard - <%= it("Track, Share and Explore Scuba Diving", scope: ['layouts', 'index']) %>" />
+    <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+    <%I18n.available_locales.each do |locale|%>
+      <link rel='alternate' href='<%=HtmlHelper.find_root_for locale%>' hreflang="<%=locale%>" />
+      <%if locale != I18n.locale then%>
+        <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+      <%end%>
+    <%end%>
+    <meta property="fb:admins" content="680251975" />
+    <meta property="fb:admins" content="1077557400" />
+
+    <!-- END FB Opengraph Tags -->
+
+    <meta name="description" content="<%= it("Diveboard is a scuba diving community enabling divers to track their dives through an online logbook, explore new spots and destinations and share their passion", scope: ['layouts', 'index']) %>"/>
+    <META NAME="Title" CONTENT="Diveboard: <%= it("Track and share your scuba diving experiences - Explore new spots and destination", scope: ['layouts', 'index']) %>">
+
+    <link rel="stylesheet" type="text/css" href="<%=auto_file_versionning("/styles/global.css")%>" media="all" />
+    <link type="text/css" href="<%=auto_file_versionning("/styles/jquery.jscrollpane.css")%>" rel="stylesheet" media="all" />
+    <title>Diveboard: <%= it("Track and share your scuba diving experiences - Explore new spots and destination", scope: ['layouts', 'index']) %></title>
+    <link rel="icon" href="<%=ROOT_URL%>img/favicon/favicon.ico" type="image/x-icon" />
+    <link rel="search" type="application/opensearchdescription+xml" title="Diveboard" href="http://www.diveboard.com/opensearch.xml" />
+
+
+        <!--[if IE]>
+      <link rel="stylesheet" type="text/css" href="<%=auto_file_versionning("/styles/global-ie.css")%>" media="all" />
+      <![endif]-->
+      <!--[if lt IE 9.0]>
+      <link rel="stylesheet" type="text/css" href="<%=auto_file_versionning("/styles/global-ie8.css")%>" media="all" />
+      <![endif]-->
+
+    <script type="text/javascript" src="/js/jquery-1.5.2.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.scrollTo.js"></script>
+    <script type="text/javascript" src="/js/jquery.autoclear.js"></script>
+    <script type="text/javascript" src="/js/jquery.qtip-1.0.0-rc3.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function () {
+      $("#slide_one_btn").click(function (ev) {
+      ev.preventDefault();
+      $("#slide_one").fadeIn('slow');
+      $("#slide_two").hide();
+      $("#slide_three").hide();
+      $("#slide_buttons").removeClass('slide_activated_two');
+      $("#slide_buttons").removeClass('slide_activated_three');
+      $("#slide_buttons").addClass('slide_activated_one');
+      });
+
+      $('.autoclear').autoclear();
+    });
+    </script>
+
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+      $("#slide_two_btn").click(function (ev) {
+      ev.preventDefault();
+      $("#slide_one").hide();
+      $("#slide_two").fadeIn('slow');
+      $("#slide_three").hide();
+      $("#slide_buttons").removeClass('slide_activated_one');
+      $("#slide_buttons").removeClass('slide_activated_three');
+      $("#slide_buttons").addClass('slide_activated_two');
+
+      });
+    });
+    </script>
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+      $("#slide_three_btn").click(function (ev) {
+      ev.preventDefault();
+      $("#slide_one").hide();
+      $("#slide_two").hide();
+      $("#slide_three").fadeIn('slow');
+      $("#slide_buttons").removeClass('slide_activated_one');
+      $("#slide_buttons").removeClass('slide_activated_two');
+      $("#slide_buttons").addClass('slide_activated_three');
+      });
+    });
+    </script>
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+      $(".slider_hideme").hide();
+      $("#mask-excerpt").width(85);
+      $(".rotate_me").addClass("slider_rotate");
+    });
+    </script>
+
+    <script type="text/javascript">
+
+$(document).ready(function() {
+
+  //Speed of the slideshow
+  var speed = 5000;
+
+  //You have to specify width and height in #slider CSS properties
+  //After that, the following script will set the width and height accordingly
+  $('#mask-gallery, #gallery li').width($('#slider').width());
+  $('#gallery').width($('#slider').width() * $('#gallery li').length);
+  $('#mask-gallery, #gallery li, #mask-excerpt, #excerpt li').height($('#slider').height());
+
+  //Assign a timer, so it will run periodically
+  var run = setInterval('newsscoller(0)', speed);
+
+  $('#gallery li:first, #excerpt li:first').addClass('selected');
+
+  //Pause the slidershow with clearInterval
+  $('#btn-pause').click(function () {
+    clearInterval(run);
+    return false;
+  });
+
+  //Continue the slideshow with setInterval
+  $('#btn-play').click(function () {
+    run = setInterval('newsscoller(0)', speed);
+    return false;
+  });
+
+  //Next Slide by calling the function
+  $('#btn-next').click(function () {
+    newsscoller(0);
+    return false;
+  });
+
+  //Previous slide by passing prev=1
+  $('#btn-prev').click(function () {
+    newsscoller(1);
+    return false;
+  });
+
+  //Mouse over, pause it, on mouse out, resume the slider show
+  $('#slider').hover(
+
+    function() {
+      clearInterval(run);
+      //$(".slider_hideme").show();
+      //$("#mask-excerpt").width(485);
+      //$(".rotate_me").removeClass("slider_rotate");
+    },
+    function() {
+      run = setInterval('newsscoller(0)', speed);
+      //$(".slider_hideme").hide();
+      //$("#mask-excerpt").width(85);
+      //$(".rotate_me").addClass("slider_rotate");
+    }
+  );
+
+  $('#mask-excerpt').hover(
+
+    function() {
+      //clearInterval(run);
+      $(".slider_hideme").show();
+      $("#mask-excerpt").width(200);
+      $(".rotate_me").removeClass("slider_rotate");
+    },
+    function() {
+      //run = setInterval('newsscoller(0)', speed);
+      $(".slider_hideme").hide();
+      $("#mask-excerpt").width(85);
+      $(".rotate_me").addClass("slider_rotate");
+    }
+  );
+
+
+  //load tooltips
+  $('.tooltiped').qtip({
+    style: {
+      name: 'dark',
+      tip: { corner: true },
+      'font-family': 'Helvetica, Verdana, Arial, sans-serif',
+      'font-size': '11px',
+      background: '#e9e9e9',
+      color: 'black',
+      border: {
+               width: 2,
+               radius: 5,
+               color: 'white'
+            }
+      },
+    position: {
+          corner: {
+             target: 'bottomRight',
+             tooltip: 'topRight'
+          }
+       }
+    });
+
+
+
+});
+
+
+function newsscoller(prev) {
+
+  //Get the current selected item (with selected class), if none was found, get the first item
+  var current_image = $('#gallery li.selected').length ? $('#gallery li.selected') : $('#gallery li:first');
+  var current_excerpt = $('#excerpt li.selected').length ? $('#excerpt li.selected') : $('#excerpt li:first');
+
+  //if prev is set to 1 (previous item)
+  if (prev) {
+
+    //Get previous sibling
+    var next_image = (current_image.prev().length) ? current_image.prev() : $('#gallery li:last');
+    var next_excerpt = (current_excerpt.prev().length) ? current_excerpt.prev() : $('#excerpt li:last');
+
+  //if prev is set to 0 (next item)
+  } else {
+
+    //Get next sibling
+    var next_image = (current_image.next().length) ? current_image.next() : $('#gallery li:first');
+    var next_excerpt = (current_excerpt.next().length) ? current_excerpt.next() : $('#excerpt li:first');
+  }
+
+  //clear the selected class
+  $('#excerpt li, #gallery li').removeClass('selected');
+
+  //reassign the selected class to current itemsssz
+  next_image.addClass('selected');
+  next_excerpt.addClass('selected');
+
+  //Scroll the items
+  $('#mask-gallery').scrollTo(next_image, 800);
+  $('#mask-excerpt').scrollTo(next_excerpt, 800);
+
+}
+
+  function fb_connect_callback(perms_list){
+    //we're on homepage, we just need to reload
+    window.location.replace("/");
+  }
+
+
+    </script>
+
+
+  </head>
+
+  <body>
+    <div id="fb-root"></div>
+    <script src="http://connect.facebook.net/<%=Rails.configuration.map_og_locales[I18n.locale]%>/sdk.js"></script>
+    <script>
+          // initialize the library with the API key
+    FB.init({ apiKey: '<%=FB_APP_ID%>',version: '2.0' });
+    </script>
+
+
+    <%= yield %>
+
+  <%= render :partial => 'layouts/trackers'  %>
+
+  </body>
+</html>

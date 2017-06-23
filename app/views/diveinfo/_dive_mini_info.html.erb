@@ -1,0 +1,32 @@
+<div class="spot_dive_frame">
+	<div class="spot_dive_frame_top_arrow"></div>	
+	<div class="spot_dive_frame_content">
+	<div class="spot_dive_frame_thumb"><img src="<%=dive.thumbnail_image_url%>" alt="#"/></div>
+	<div class="spot_dive_frame_data">
+		<h1><a href="<%=dive.fullpermalink(:locale)%>"><%=truncate(dive_title, :length=>45)%></a><br/><%="#{dive.maxdepth}m/#{dive.duration}mins"%></h1>
+		<p><%if dive.user.share_details_notes then%><%=truncate(dive.notes, :length => 185)%><%end%></p>
+		<% if !dive.species.empty?%>
+		<p class="spot_species_list spot_species_list_long"><strong>Species spotted: </strong>
+		<% charcount = 0
+			charmax = 100
+			truncated = false%>
+		<%dive.species.each do |fish|%>
+			<%if !truncated || (charcount+5) <= charmax%>
+				<a href="<%=fish[:url]%>" target="_blank" class="tooltiped" title='<%if fish[:picture].to_i >0 %><img src="<%=fish[:picture]%>"/><%end%><b><%=fish[:sname]%></b><br/><em>Data provided by <a href="http://www.eol.org" target="_blank">EOL.org</em>'><%= if (charcount + fish[:sname].length)> charmax then
+						count = charcount
+						charcount = charmax
+						truncated = true
+						truncate(fish[:sname], :length => (charmax-count)).titleize
+					else
+						charcount +=(fish[:sname].length)
+						fish[:sname].titleize
+					end %></a><%if fish != dive.species.last && charcount != charmax && !truncated%>, <%end%>
+					<% if fish != dive.species.last && (charcount+5) >= charmax && count=0 && !truncated%><a href="<%=dive.fullpermalink(:locale)%>">...</a><%end%>
+					<% break if fish != dive.species.last && (charcount+5) >= charmax && count=0 && !truncated%>
+			    <%end%>
+			<%end%>
+		</p>
+		<%end%>
+	</div>
+	</div>
+</div>

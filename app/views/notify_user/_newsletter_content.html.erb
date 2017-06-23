@@ -1,0 +1,65 @@
+<%
+
+blogpost ||= BlogPost.where(:published => 1).last
+picture_gallery ||= Picture.unscoped.where(:great_pic => 1).order('created_at DESC').limit(5)
+destination ||= Country.find_by_ccode 'FR'
+
+%>
+<% if begin blogpost rescue false end%>
+  <div class='main_article'>
+    <h2><%=blogpost.title%></h2>
+    <p>
+      <%if !blogpost.wiki.pictures.blank?%>
+      <img src="<%=blogpost.wiki.pictures.first.small%>" class='main_article_img'/>
+      <%end%>
+      <%=blogpost.abstract_html :length=>1000%>
+    </p>
+    <div class='more'>
+      <a href='<%=blogpost.fullpermalink(:locale)%>'><%= it("Read more...", scope: ['notify_user', 'newsletter_content']) %></a>
+    </div>
+    <div style='clear:both'> </div>
+  </div>
+<%end%>
+
+
+<div class='discover_pictures'>
+  <h2><%= it("Community Gallery", scope: ['notify_user', 'newsletter_content']) %></h2>
+  <div class='nospace'>
+    <%picture_gallery.each do |pic|%>
+    <div class='element'>
+      <a href="<%=pic.fullpermalink(:locale)%>">
+        <img src='<%=pic.thumb%>'>
+      </a>
+      <p>By <a href='<%=pic.user.fullpermalink(:locale)%>'><%=pic.user.nickname%></a></p>
+    </div>
+    <%end%>
+  </div>
+  <div class='more'>
+    <a href='<%=ROOT_URL%>explore'><%= it("See more...", scope: ['notify_user', 'newsletter_content']) %></a>
+  </div>
+  <div style='clear:both'> </div>
+</div>
+
+
+
+<% if begin destination rescue false end%>
+  <div class='discover_destination'>
+    <h2><%= it("Focus on...", scope: ['notify_user', 'newsletter_content']) %></h2>
+    <div class='destination_pictures nospace'>
+      <%(destination.pictures.reject do |p| !p.great_pic end) [0..2].each do |pic|%>
+        <div class='element'>
+          <div><a href="<%=pic.fullpermalink(nil, :locale)%>"><img src='<%=pic.thumb%>'></a></div>
+          <p><%= it("By %{link:%{user}}", scope: ['notify_user', 'newsletter_content'], link: pic.user.fullpermalink(:locale), user: pic.user.nickname) %></p>
+        </div>
+      <%end%>
+    </div>
+    <h3><%=destination.name%></h3>
+    <p><%=
+    HtmlHelper.sanitize( destination.wiki_html, :shift_headings => 2).html_safe
+    %></p>
+    <div class='more'>
+      <a href='<%=destination.fullpermalink(:locale)%>'><%= it("Read more...", scope: ['notify_user', 'newsletter_content']) %></a>
+    </div>
+    <div style='clear:both'> </div>
+  </div>
+<%end%>

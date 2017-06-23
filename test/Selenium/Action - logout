@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://stage.diveboard.com/" />
+<title>Action - logout</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Action - logout</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>//img[@alt='logout']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>Connect to facebook, to share your dives and photos with friends.</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>slide_two_btn</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>slide_three_btn</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='slide_one']/p</td>
+	<td>Connect to facebook, to share your dives and photos with friends.</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='index_sidebar']/div[1]/a/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>slide_two_btn</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='slide_two']/p</td>
+	<td>Explore the world of scuba diving and dive into sea wonders through fellow diver's experiences</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>slide_three_btn</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='slide_three']/p</td>
+	<td>Share your diving experiences with your friends and spread your passion.</td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='slide_one']/p</td>
+	<td>Connect to facebook, to share your dives and photos with friends.</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='index_sidebar']/div[1]/a/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>slide_two_btn</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='slide_two']/p</td>
+	<td>Explore the world of scuba diving and dive into sea wonders through fellow diver's experiences</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>slide_three_btn</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='slide_three']/p</td>
+	<td>Share your diving experiences with your friends and spread your passion.</td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/ksso</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//img[@alt='sign in']</td>
+	<td></td>
+</tr>
+</tbody></table>
+</body>
+</html>

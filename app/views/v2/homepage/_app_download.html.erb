@@ -1,0 +1,22 @@
+<div id="app_download">
+  <div class="app_container">
+    <h3><%= it("Diveboard in your pocket", scope: ['homepage', 'v2', 'app_download']) %></h3>
+    <p class="subtitle"><%= it("You can access to Diveboard anywhere and anytime with our mobile apps for iPhone, iPad and Android.", scope: ['homepage', 'v2', 'app_download']) %></p>
+    <img class="mobile_picture" src="<%= HtmlHelper.lbroot "/img/home/mobiles.png" %>" alt="" />
+    <a href="https://itunes.apple.com/us/app/diveboard/id497339427" target="_blank" class="store">
+      <table>
+        <tr>
+          <td><img src="<%= HtmlHelper.lbroot "/img/home/apple_store.svg" %>" alt="Apple Store" /></td><td><p><%= it("Download app now", scope: ['homepage', 'v2', 'app_download']) %></p></td>
+        </tr>
+      </table>
+    </a>
+    <a href="https://play.google.com/store/apps/details?id=com.diveboard.mobile" target="_blank" class="store">
+      <table>
+        <tr>
+          <td><img src="<%= HtmlHelper.lbroot "/img/home/android_store.svg" %>" alt="Google Play" /></td><td><p><%= it("Download app now", scope: ['homepage', 'v2', 'app_download']) %></p></td>
+        </tr>
+      </table>
+    </a>
+    <img class="screen" src="<%= HtmlHelper.lbroot "/img/home/android_screenshot.png" %>" alt="Diveboard android app" />
+  </div>
+</div>

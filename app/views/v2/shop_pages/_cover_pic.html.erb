@@ -1,0 +1,113 @@
+<% cover_pic = @cover_pictures.sample.large rescue @shop.user_proxy.picture %>
+
+<%= content_for :javascripts do%>
+  <script type="text/javascript">
+    $(document).ready(function()
+      {
+        $('.fb_share').click(function()
+          {
+            <%
+              fb_title = it("Scuba Dive Shop %{shop_name} in %{city}, %{country}", scope: ['shop_pages', 'v2', 'cover_pic'], shop_name: @shop.name, city: @shop.city, country: @shop.country.cname)
+            %>
+            window.open("http://www.facebook.com/share.php?u=<%=URI.escape(@shop.fullpermalink(:canonical))%>&title='<%=URI.escape("#{fb_title}") %>'", "", "width=600, height=400");
+        });
+        <% if !@cover_pictures.nil? || @cover_pictures.count > 0 %>
+          $('.pinterest_share').click(function()
+            {
+              <%
+                pinterest_description = it("Reviews, infos, bookings and more for %{shop_name} on Diveboard.", scope: ['shop_pages', 'v2', 'cover_pic'], shop_name: @shop.name)
+              %>
+              window.open('//www.pinterest.com/pin/create/button/?url=<%=URI.escape(@shop.fullpermalink(:canonical))%>&media=<%=URI.escape(cover_pic)%>&description="<%= pinterest_description %>"&data-pin-do="buttonPin"&data-pin-config="above"&data-pin-height="28"', "", "width=600, height=400");
+            });
+        <% end %>
+        $('.twitter_share').click(function()
+          {
+            window.open('http://twitter.com/home?status=<%= it("Reviews, infos, bookings and more for %{shop_name} on Diveboard.", scope: ['shop_pages', 'v2', 'cover_pic'], shop_name: @shop.name) %>', "", "width=600, height=400");
+          });
+        $('.google_share').click(function()
+          {
+            window.open('https://plus.google.com/share?url=<%=@shop.fullpermalink(:canonical)%>', "", "width=600, height=400");
+          });
+        $('.link_share').click(function()
+          {
+            $('.link_share').qtip({
+            content: {
+              text: "<%= @shop.fullpermalink(:canonical) %> <br><button style='margin: 1rem auto; display:block; display:none; -webkit-border-radius: 3px; -moz-border-radius: 3px;text-align:center; line-height: 40px; width: 120px; color:black; background: #FDBF30; min-height: 40px;'><%= it("Copy link", scope: ['shop_pages', 'v2', 'cover_pic']) %></button><br>"
+            },
+            position: {
+                my: 'bottom center',
+                at: 'top center'
+            },
+            style: {
+              classes: 'qtip-diveboard qtip-divegreen qtip-wrappall'
+            },
+            show: {
+              ready: true
+            },
+            hide: {
+              event: 'unfocus',
+              inactive: 6000
+            },
+            events: {
+              hide: function(event, api) {
+                api.destroy();
+              }
+            }
+          });
+        });
+
+      });
+  </script>
+<%end%>
+
+
+<div id="cover_pic" style="background-image: url('<%= if !@cover_pictures.nil? && @cover_pictures.count != 0 then if !@cover_pictures.sample.nil? then cover_pic end else HtmlHelper.lbroot "/img/shop/shop_default_cover.jpg" end %>')">
+  <div class="container">
+    <div class="logo">
+
+    </div>
+    <div class="infos">
+      <div class="logo">
+        <img <%= "itemprop=logo" if @shop.picture != Shop::NO_PICTURE %> src="<%=@shop.picture%>">
+      </div>
+      <h1><span itemprop="name"><%=@shop.name%></span>, <span class="country"><%=@shop.country.name%></span></h1>
+      <table class="rating">
+      <% if !@reviews.empty? %>
+        <tr>
+          <%= render "v2/shared/score_bullet", :score => @shop.overall_rating, :color => :blue %>
+          <td><p>(<%= it("%{count} reviews",
+                      scope: ['homepage', 'v2', 'featured_destinations'],
+                      count: @reviews.count) %>)</p></td>
+        </tr>
+      <%else%>
+        <tr><td><p><%= it("No reviews yet",
+                       scope: ['area_pages', 'v2', 'shops']) %></p></td></tr>
+      <%end%>
+      </table>
+    </div>
+    <div class="social">
+      <div>
+        <div class="shakable">
+          <div class="fb_share soc_button"><img src="<%= HtmlHelper.lbroot "/img/global/social/facebook_white_icon.svg" %>" alt="<%= it("Facebook",
+                                                  scope: ['diveinfo', 'buddy_editor']) %>" /></div>
+        </div >
+        <div class="shakable">
+          <div class="pinterest_share soc_button"><img src="<%= HtmlHelper.lbroot "/img/global/social/pinterest_white_icon.svg" %>" alt="<%= it("Pinterest",
+                                                   scope: ['shop_pages', 'v2', 'cover_pic']) %>" /></div>
+        </div>
+        <div class="shakable">
+          <div class="twitter_share soc_button"><img src="<%= HtmlHelper.lbroot "/img/global/social/twitter_white_icon.svg" %>" alt="<%= it("Twitter", scope: ['diveinfo', 'divepage']) %>" /></div>
+        </div>
+        <div class="shakable">
+          <div class="google_share soc_button"><img src="<%= HtmlHelper.lbroot "/img/global/social/google_plus_white_icon.svg" %>" alt="<%= it("Google Plus", scope: ['diveinfo', 'divepage']) %>" /></div>
+        </div>
+        <div class="shakable">
+          <a href="javascript:void(0)" class="share_email_button"><div class="email_share soc_button"><img src="<%= HtmlHelper.lbroot "/img/global/social/icon_enveloppe.svg" %>" alt="<%= it("Email", scope: ['widgets', 'widget_profile_edit']) %>" /></div></a>
+        </div>
+        <div class="shakable">
+          <div class="link_share soc_button"><img src="<%= HtmlHelper.lbroot "/img/global/social/icon_share_link.svg" %>" alt="<%= it("Link", scope: ['shop_pages', 'v2', 'cover_pic']) %>" /></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

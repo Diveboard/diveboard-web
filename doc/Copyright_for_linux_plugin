@@ -1,0 +1,185 @@
+                                                                                                                                                                                                                                                               
+MIME-Version: 1.0
+Sender: pascal.manchon@gmail.com
+Received: by 10.42.222.130 with HTTP; Mon, 30 May 2011 07:00:54 -0700 (PDT)
+In-Reply-To: <4DDBDBD3.8010502@rossy.co.uk>
+References: <4DD3E1D7.20402@rossy.co.uk>
+  <BANLkTim2WbFeoDEXyXyNCG8ePyArjyzLpg@mail.gmail.com>
+  <4DD64839.90007@rossy.co.uk>
+  <BANLkTinRHpC+CbNcEET1qfxbbkHUsCXCGw@mail.gmail.com>
+  <4DD6C890.4000404@rossy.co.uk>
+  <BANLkTi=-zWYF3NAcK_vh23cVHqTxedhKEg@mail.gmail.com>
+  <4DDAE159.2070203@rossy.co.uk>
+  <BANLkTi=2JuqzyrGrVpxA-PacXgWOu00nJQ@mail.gmail.com>
+  <4DDB80E9.3020408@rossy.co.uk>
+  <BANLkTinfaDX9Msecrv7sL2HbLCTcuQMS5w@mail.gmail.com>
+  <4DDBB986.8070002@rossy.co.uk>
+  <BANLkTi=0z_OKbyybmfLLa0cYOzi0--NHEQ@mail.gmail.com>
+  <4DDBDBD3.8010502@rossy.co.uk>
+Date: Mon, 30 May 2011 16:00:54 +0200
+Delivered-To: pascal.manchon@gmail.com
+X-Google-Sender-Auth: K2A40Pkcubu3EQ4HN08bVtKXNJQ
+Message-ID: <BANLkTikUd9CDZwwoF6TVB_WrkvegZAn2ug@mail.gmail.com>
+Subject: Re: Linux Support
+From: Pascal Manchon <pascal@diveboard.com>
+To: David Ross <david-db@rossy.co.uk>
+Cc: Alexander Casassovici <alex@diveboard.com>
+Content-Type: multipart/alternative; boundary=90e6ba6e842e4612e004a47eb798
+
+--90e6ba6e842e4612e004a47eb798
+Content-Type: text/plain; charset=ISO-8859-1
+
+Hi,
+
+For your information, I've just compiled the plugin on Mac and windows and
+it looks to work correctly on both platforms.
+
+Also, there is a topic we probably should have discussed before, but better
+late than never, about copyrights :)
+As you've probably seen, we're not currently releasing the source code of
+the plugin under GPL. That may come some day, depending also on the feedback
+we'll get from users, but we'd rather keep it closed-sourced for the moment.
+
+
+So, I'm suggesting that to thank you for your work and in exchange of your
+clearance to use the code you did, we add your name with our thanks on the
+"About" page (http://www.diveboard.com/about). Would you be OK for that kind
+of arrangement ?
+
+By the way, what's your occupation ? Might you be somehow interested in
+getting someday more involved on Diveboard ? ;)
+
+Thanks,
+Pascal
+
+
+
+2011/5/24 David Ross <david-db@rossy.co.uk>
+
+> Only recording changes would certainly allow devices to make better use of
+> their limited memory so I suppose it does make sense.
+>
+> The changes are now in git, hopefully I didn't break your other builds!
+>
+> I have also attached a package created on Ubuntu 11.04.
+>
+> If you get any feedback or bug reports let me know.  Also willing set up a
+> VM or two if you get requests for supporting other distributions.
+>
+> David
+>
+
+--90e6ba6e842e4612e004a47eb798
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+Hi,<div><br></div><div>For your information, I&#39;ve just compiled the plu=
+gin on Mac and windows and it looks to work correctly on both platforms.=A0=
+</div><div><br></div><div>Also, there is a topic we probably should have di=
+scussed before, but better late than never, about copyrights :)=A0</div>
+<div>As you&#39;ve probably seen, we&#39;re not currently releasing the sou=
+rce code of the plugin under GPL. That may come some day, depending also on=
+ the feedback we&#39;ll get from users, but we&#39;d rather keep it closed-=
+sourced for the moment. =A0</div>
+<div><br></div><div>So, I&#39;m suggesting that=A0to thank you for your wor=
+k and=A0in exchange of your clearance to use the code you did, we add your =
+name with our thanks on the &quot;About&quot; page (<a href=3D"http://www.d=
+iveboard.com/about">http://www.diveboard.com/about</a>). Would you be OK fo=
+r that kind of arrangement ?</div>
+<div><br></div><div>By the way, what&#39;s your occupation ? Might you be s=
+omehow interested in getting someday more involved on Diveboard ? ;)</div><=
+div><br></div><div>Thanks,</div><div>Pascal</div><div><br></div><div><br>
+<br><div class=3D"gmail_quote">2011/5/24 David Ross <span dir=3D"ltr">&lt;<=
+a href=3D"mailto:david-db@rossy.co.uk">david-db@rossy.co.uk</a>&gt;</span><=
+br><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left=
+:1px #ccc solid;padding-left:1ex;">
+Only recording changes would certainly allow devices to make better use of =
+their limited memory so I suppose it does make sense.<br>
+<br>
+The changes are now in git, hopefully I didn&#39;t break your other builds!=
+<br>
+<br>
+I have also attached a package created on Ubuntu 11.04.<br>
+<br>
+If you get any feedback or bug reports let me know. =A0Also willing set up =
+a VM or two if you get requests for supporting other distributions.<br><fon=
+t color=3D"#888888">
+<br>
+David<br>
+</font></blockquote></div><br></div>
+
+--90e6ba6e842e4612e004a47eb798--
+
+
+
+
+
+
+
+
+
+Delivered-To: pascal.manchon@gmail.com
+Received: by 10.42.222.130 with SMTP id ig2cs98425icb;
+        Mon, 30 May 2011 07:41:43 -0700 (PDT)
+Received: by 10.229.221.140 with SMTP id ic12mr3424488qcb.176.1306766502892;
+        Mon, 30 May 2011 07:41:42 -0700 (PDT)
+Return-Path: <pascal+caf_=pascal.manchon=gmail.com@diveboard.com>
+Received: from mail-qy0-f175.google.com (mail-qy0-f175.google.com [209.85.216.175])
+        by mx.google.com with ESMTPS id 15si2706799qcz.47.2011.05.30.07.41.41
+        (version=TLSv1/SSLv3 cipher=OTHER);
+        Mon, 30 May 2011 07:41:41 -0700 (PDT)
+Received-SPF: neutral (google.com: 209.85.216.175 is neither permitted nor denied by best guess record for domain of pascal+caf_=pascal.manchon=gmail.com@diveboard.com) client-ip=209.85.216.175;
+Authentication-Results: mx.google.com; spf=neutral (google.com: 209.85.216.175 is neither permitted nor denied by best guess record for domain of pascal+caf_=pascal.manchon=gmail.com@diveboard.com) smtp.mail=pascal+caf_=pascal.manchon=gmail.com@diveboard.com
+Received: by mail-qy0-f175.google.com with SMTP id 35so828610qyk.20
+        for <pascal.manchon@gmail.com>; Mon, 30 May 2011 07:41:41 -0700 (PDT)
+Received: by 10.224.216.199 with SMTP id hj7mr3304113qab.133.1306766501478;
+        Mon, 30 May 2011 07:41:41 -0700 (PDT)
+X-Forwarded-To: pascal.manchon@gmail.com
+X-Forwarded-For: pascal@diveboard.com pascal.manchon@gmail.com
+Delivered-To: pascal@diveboard.com
+Received: by 10.229.216.149 with SMTP id hi21cs149251qcb;
+        Mon, 30 May 2011 07:41:40 -0700 (PDT)
+Received: by 10.227.203.13 with SMTP id fg13mr4903107wbb.95.1306766498760;
+        Mon, 30 May 2011 07:41:38 -0700 (PDT)
+Return-Path: <david-db@rossy.co.uk>
+Received: from mail.roxweb.co.uk (server204-245.live-servers.net [213.171.204.245])
+        by mx.google.com with ESMTPS id v5si8654950wec.172.2011.05.30.07.41.37
+        (version=TLSv1/SSLv3 cipher=OTHER);
+        Mon, 30 May 2011 07:41:37 -0700 (PDT)
+Received-SPF: pass (google.com: domain of david-db@rossy.co.uk designates 213.171.204.245 as permitted sender) client-ip=213.171.204.245;
+Received: (qmail 6442 invoked by uid 513); 30 May 2011 15:41:36 +0100
+Received: from unknown (HELO ?10.100.10.21?) (david@davidrosswebdesign.com@127.0.0.1)
+  by mail.roxweb.co.uk with SMTP; 30 May 2011 15:41:36 +0100
+Message-ID: <4DE3AC9D.7040605@rossy.co.uk>
+Date: Mon, 30 May 2011 15:41:33 +0100
+From: David Ross <david-db@rossy.co.uk>
+User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.17) Gecko/20110424 Lightning/1.0b2 Thunderbird/3.1.10
+MIME-Version: 1.0
+To: Pascal Manchon <pascal@diveboard.com>
+Subject: Re: Linux Support
+References: <4DD3E1D7.20402@rossy.co.uk>  <BANLkTim2WbFeoDEXyXyNCG8ePyArjyzLpg@mail.gmail.com>  <4DD64839.90007@rossy.co.uk>  <BANLkTinRHpC+CbNcEET1qfxbbkHUsCXCGw@mail.gmail.com>  <4DD6C890.4000404@rossy.co.uk>  <BANLkTi=-zWYF3NAcK_vh23cVHqTxedhKEg@mail.gmail.com>  <4DDAE159.2070203@rossy.co.uk>  <BANLkTi=2JuqzyrGrVpxA-PacXgWOu00nJQ@mail.gmail.com>  <4DDB80E9.3020408@rossy.co.uk>  <BANLkTinfaDX9Msecrv7sL2HbLCTcuQMS5w@mail.gmail.com>  <4DDBB986.8070002@rossy.co.uk>  <BANLkTi=0z_OKbyybmfLLa0cYOzi0--NHEQ@mail.gmail.com>  <4DDBDBD3.8010502@rossy.co.uk> <BANLkTikUd9CDZwwoF6TVB_WrkvegZAn2ug@mail.gmail.com>
+In-Reply-To: <BANLkTikUd9CDZwwoF6TVB_WrkvegZAn2ug@mail.gmail.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hi Pascal, great to hear I didn't break anything else!
+
+I did notice that there was no licence, while I am a big supporter of 
+open source I also more than understand from a development point of view 
+about keeping it closed source, especially while the site is still 
+getting off the ground.
+
+While the code remains closed source it is always assuring to see that 
+there is a bulk data export option on the site so that the raw data 
+remains available to users.  It would however be nice if this had other 
+export formats such as UCDF which you are already using on the server.
+
+I'm more than happy if you wish to include me on the about page. 
+Currently I'm working as a self employed web designer and IT consultant:
+http://www.davidrosswebdesign.com/
+
+I have only recently taken up diving but I am hoping that it will become 
+a more regular hobby, if there are any specific areas I can help then 
+let me know and I'll see how much available time I have to offer.
+
+David

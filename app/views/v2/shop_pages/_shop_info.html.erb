@@ -1,0 +1,95 @@
+<div id="shop_info">
+  <div class="presentation">
+    <%if !@shop.about_html.nil? then%>
+    <p><%=@shop.about_html.gsub("\n","<br>").html_safe%></p>
+    <%end%>
+  </div>
+  <div class="package">
+    <%if @shop.all_dive_goods.count > 0%><p class="title"><%= it("%{count} diving packages and courses",
+                                                              scope: ['shop_pages', 'v2', 'shop_info'],
+                                                              count: @shop.all_dive_goods.count) %></p><%end%>
+    <% if !@shop.all_dive_goods.group_by(&:cat1)["Dives"].nil? then dive = @shop.all_dive_goods.group_by(&:cat1)["Dives"].first else dive = nil end%>
+    <% if !@shop.all_dive_goods.group_by(&:cat1)["Courses"].nil? then course = @shop.all_dive_goods.group_by(&:cat1)["Courses"].first else course = nil end%>
+    <%if !dive.nil? %>
+    <div class="product_list">
+      <p class='category'>
+        <%= it("DIVES", scope: ['feeds', 'activity_feed']) %>
+      </p>
+      <div class="product">
+        <p class="name"><%=dive.title%></p>
+        <%if !dive.description.blank?%>
+          <div class="description closed" style="display:none;"><%=dive.description.gsub("\n","<br>").html_safe%></div>
+        <%end%>
+        
+          <%if params[:vat] == 'exc'
+            price = dive.price_before_tax
+          else
+            price = dive.price_after_tax
+          end%>
+          <%if !price.nil? %>
+          <div class="price">
+            <img src="<%= HtmlHelper.lbroot "/img/shop/svg/icon_pig.svg" %>" alt="" /><p><%if dive.currency == "USD" then %>$<%=price%><%else%><%= "#{price} #{dive.currency}" %><%end%></p>
+          </div>
+          <%end%>
+        <div class="book_details">
+        <%if !dive.description.blank?%>
+          <a href="javascript:void(0)" class="details">
+            <%= it("View details",
+                scope: ['settings', 'orders']) %>
+          </a>
+        <%end%>
+          <div class="book_button" product_id="<%= dive.id %>" product_name="<%= dive.title %>" product_price="<%= price %>">
+            <p style="padding-left: 18px;">
+              <%= it("Book",
+                  scope: ['shop_pages', 'v2', 'services']) %>
+            </p><img src="<%= HtmlHelper.lbroot "/img/icon_arrow_book_now_bw.svg" %>" alt="" /></div>
+        </div>
+        <div class="clear"></div>
+      </div>
+    </div>
+    <div class="sep20"></div>
+  <%end%>
+  <%if !course.nil? %>
+    <div class="product_list">
+      <p class='category'>
+        <%= it("COURSES", scope: ['shop_pages', 'v2', 'shop_info']) %>
+      </p>
+      <div class="product">
+        <p class="name"><%=course.title%></p>
+        <%if !course.description.blank?%>
+          <div class="description closed" style="display:none;"><%=course.description.gsub("\n","<br>").html_safe%></div>
+        <%end%>
+        <div class="price">
+          <%if params[:vat] == 'exc'
+            price = course.price_before_tax
+          else
+            price = course.price_after_tax
+          end%>
+          <%if !price.nil? %>
+            <img src="<%= HtmlHelper.lbroot "/img/shop/svg/icon_pig.svg" %>" alt="" /><p><%if course.currency == "USD" then %>$<%=price%><%else%><%= "#{price} #{price.currency}" %><%end%></p>
+          <%end%>
+        </div>
+        <div class="book_details">
+        <%if !course.description.blank?%>
+          <a href="javascript:void(0)" class="details">
+            <%= it("View details",
+                scope: ['settings', 'orders']) %>
+          </a>
+        <%end%>
+          <div class="book_button" product_id="<%= course.id %>" product_name="<%= course.title %>" product_price="<%= price %>">
+          <p style="padding-left: 20px;">
+            <%= it("Book",
+                scope: ['shop_pages', 'v2', 'services']) %>
+          </p><img src="<%= HtmlHelper.lbroot "/img/icon_arrow_book_now_bw.svg" %>" alt="" /></div>
+        </div>
+        <div class="clear"></div>
+      </div>
+    </div>
+  <%end%>
+  </div>
+  <div class="clear"></div>
+  <div class="tags">
+    <div class="tag"><img src="<%= HtmlHelper.lbroot "/img/shop/svg/icon_check.svg" %>" alt="" /><p><%=@shop.category%></p></div>
+    <div class="clear"></div>
+  </div>
+</div>

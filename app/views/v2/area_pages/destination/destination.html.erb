@@ -1,0 +1,22 @@
+<%= stylesheet_link_tag "shop", media: "all"%>
+  <% if content_for? :for_head %>
+    <%= yield(:for_head) %>
+  <% end %>
+<%= render :partial => 'v2/area_pages/destination/meta_tags' %>
+<%= render :partial => 'v2/area_pages/destination/cover_pic' %>
+
+<%= render :partial => 'v2/area_pages/destination/tab_header' %>
+
+<%= render :partial => 'v2/area_pages/destination/map' %>
+
+<%= render :partial => 'v2/area_pages/destination/destination_info' %>
+
+<%= render :partial =>'v2/area_pages/destination/dives' %>
+
+<%= render :partial =>'v2/area_pages/destination/shops' %>
+<% if @area !=nil %>
+		<div style="clear:left;"></div>
+
+<%= render :partial =>'v2/area_pages/destination/arounds' %>
+<% end %>
+<div class="clear"></div>

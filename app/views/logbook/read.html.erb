@@ -1,0 +1,151 @@
+<script src="//maps.google.com/maps/api/js?sensor=false&amp;key=<%= @gmapskey%>&amp;language=<%=I18n.locale%>" type="text/javascript" >
+</script>
+<%= javascript_include_tag 'divepage' %>
+
+<%content_for :css do %>
+<%= include_stylesheets :divepage, :media => :all %>
+  <%= stylesheet_link_tag 'gallery' %>
+
+  <%= stylesheet_link_tag '/assets/explore/v2/explore/gallery/gallery' %>
+  <%= stylesheet_link_tag 'v2/idangerous.swiper' %>
+  <%= stylesheet_link_tag 'v2/lightframe/lightframe' %>
+<%end%>
+
+<script type="text/javascript" id="sourcecode">
+  var jsPane;
+  var jsPaneAPI;
+  $( function() {
+      jsPane = $('.scroll-pane').jScrollPane({showArrows: true, hideFocus:true, mouseWheelSpeed: 40});
+    jsPaneAPI = jsPane.data('jsp');
+    autodetect_computer();
+  });
+</script>
+
+
+<!-- JS to enable the page mechanics -->
+<script type="text/javascript">
+var dive_updated = false; //unhappy IE hack
+var G_dive_fishes = []; //unhappy IE hack
+var G_user_identified_species = []; //unhappy IE hack
+<%if !@user.nil? then%>
+var G_user_api = <%= @user.to_api(:public, :caller => @user).to_json.html_safe %>;
+<%end%>
+<%if !@owner.nil? then%>
+var G_owner_api = <%= @owner.to_api(:public).to_json.html_safe %>;
+<%end%>
+
+var G_all_trip_names = [
+    <% if !@user.nil? then %>
+      <%@user.dives.includes(:trip).map(&:trip_name).uniq.reject(&:nil?).each_with_index do |name, idx| %>
+      <%if idx>0 then%>,<%end%>
+      "<%=CGI.escapeHTML(name)%>"
+    <%end%>
+  <%end%> ];
+
+var G_events_registered = false;
+
+var G_unit_distance = "<%= if @user.nil? then "m" else @user.preferred_units["distance"] end %>";
+
+$.fn.clearField = function() {
+    return this.focus(function() {
+        if( this.value == this.defaultValue ) {
+            this.value = "";
+        }
+    }).blur(function() {
+        if( !this.value.length ) {
+            this.value = this.defaultValue;
+        }
+    });
+};
+
+var ajax_request;
+
+$(document).ready( function () {
+  logbook_ready();
+    if($(window).width()<730){
+      var side = $('#sidebar_manager_container');
+      $('#sidebar').remove();
+      $('#left_nav .landing_menu').append(side);
+      $('.jspPane').first().css('top','0');
+      h=$('.jspPane li').length;
+      $('#sidebar_manager_container').css('height',h*46);
+      $('#sb_fulldives').css('height',h*46);
+      $('.jspContainer').css('height',h*46);
+    }
+});
+
+//GLOBAL VARIABLE defines if we asked for a bulk upload or not...
+var wizard_bulk = <% if !@bulk_requested.nil? then %>true<%else%>false<%end%>;
+var wizard_bulk_step_load = '<%= @bulk_requested %>';
+
+
+
+</script>
+<script >
+  //Inform Analytics we are viewing the logbook
+<%if @user %>
+  <%if @user == @owner %>
+    //ga2('send', { 'hitType': 'pageview', 'page': '/mylogbook', 'title': 'Personal Logbook page' });
+    //<%@virtual_pageview = {virtualp_url: "/mylogbook" + %{@user.shaken_id}, virtualp_title: "Personal Logbook Page"}%>
+    //console.log("URL:  --  <%=@user.shaken_id%>");
+  <%else%>
+    //ga2('send', { 'hitType': 'pageview', 'page': '/logbook', 'title': 'Diveboard user Logbook page' });
+    //<%@virtual_pageview = {virtualp_url: "/logbook", virtualp_title: "Diveboard user Logbook page"}%>
+    //console.log("User visited other logbook page");
+  <%end%>
+<%else%>
+  //ga2('send', { 'hitType': 'pageview', 'page': '/logbook/', 'title': 'Diveboard user Logbook page with non registered user' });
+    //<%@virtual_pageview = {virtualp_url: "/logbook", virtualp_title: "Diveboard user Logbook page with non registered user"}%>
+    //console.log("Non registered User visited logbook page");
+<%end%>
+</script>
+
+<!-- The Sidebar starts here! -->
+<div id="share_mask" style="display:none;"></div>
+
+<div id="sidebar" class="logbook">
+  <div class="noshowhome" <%if @content=='user_home' then %>style='display:none'<%end%>>
+  </div>
+  <%= render :partial => 'logbook/mini_profile',  :locals => {:owner => @owner, :clickable => false, :hide_profile => @dive.nil? && @trip.nil?, :posts_link => @owner.shop_proxy_id.nil?, :custom_header => false} %>
+  <%nb_posts = @owner.blog_posts.where("published_at is not null").count%>
+  <%if (@user != nil && @user.can_edit?(@owner) )%>
+    <a href="/<%=@owner.vanity_url%>/new">
+    <div class='manager_button'><%= it("CREATE NEW DIVE", scope: ['logbook', 'read']) %></div>
+    </a>
+    <a href="/<%=@owner.vanity_url%>/bulk?bulk=wizard">
+    <div class='manager_button'><%= it("BULK UPLOAD / MANAGE", scope: ['logbook', 'read']) %></div>
+    </a>
+  <%end%>
+  <div id="sidebar_manager_container" class="sidebar_manager_container_visitor">
+
+    <!--<span class="main_content_header logbook_header header_title">Dive Logs</span>-->
+    <div id="sb_fulldives" class="scroll-pane">
+      <%=render partial: 'dive_list_panel'%>
+    </div>
+  </div>
+</div><!-- inline-block does not like white-spaces between the blocks.....
+
+
+--><div id="main_content_area">
+  
+    <!-- DIVE details content loaded by JS from diveinfo -->
+
+  <%=  render @content %>
+
+</div>
+
+<div id="file_mask">
+  <img src="/img/transparent_loader_3.gif" height='66px' width='66px' class="file_spinning" alt="#" />
+</div>
+<div id="file_mask_light">
+  <img src="/img/transparent_loader_2.gif" height='66px' width='66px' class="file_spinning" alt="#" />
+</div>
+
+
+<!-- Add stuff for activity_feed -->
+<%content_for :after_container do %>
+<%= render :partial => 'feeds/activity_feed', :locals => {:user => @user} unless @user.nil?%>
+<%= render :partial => 'feeds/default_activity_feed', :locals => {} if @user.nil?%>
+<%end%>
+
+<%= render :partial => 'v2/lightframe/gallery'%>

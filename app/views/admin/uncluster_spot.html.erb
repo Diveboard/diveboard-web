@@ -1,0 +1,279 @@
+<%= render :partial => 'admin_css'%>
+
+<style type="text/css">
+.cluster_table td {padding: 10px;}
+.spot_line.public_spot {background: #5f5;}
+.spot_line.publicly_visible_spot {background: #afa;}
+</style>
+
+<script type="text/javascript">
+
+$(document).ready( function () {
+  $(".move_group_into").click(move_group_into);
+  $(".move_spot_into").click(move_spot_into);
+  $(".merge_group").click(merge_group);
+
+  $('.discard_group').click(function(){ $(this).closest('.cluster_group').detach() })
+  $('.distinct_group').click(mark_distinct_group);
+  $('.discard_spot').click(function(){ $(this).closest('.spot_line').detach() })
+});
+
+
+
+
+function move_group_into(e){
+  e.preventDefault();
+  var target_id = $(this).data('target_id');
+  var group = $(this).closest('.cluster_group');
+  var target = null;
+  $(".cluster_group").each(function(i,e){
+    var c = $(e);
+    if (c.data('cluster_id') == target_id) target = c;
+  });
+  if (!target) return;
+
+  var table_target = target.find(".cluster_table");
+
+  group.find(".spot_line").each(function(i,e){
+    table_target.append(e);
+  });
+
+  target.find(".merge_group").show();
+  group.detach();
+}
+
+function move_spot_into(e){
+  e.preventDefault();
+  var target_id = $(this).closest('.move_spot_into_form').find('.target_id').val();
+  var line = $(this).closest('.spot_line');
+  var group = $(this).closest('.cluster_group');
+  var target = null;
+  $(".cluster_group").each(function(i,e){
+    var c = $(e);
+    if (c.data('cluster_id') == target_id) target = c;
+  });
+  if (!target) return;
+
+  var table_target = target.find(".cluster_table");
+  table_target.append(line);
+  target.find(".merge_group").show();
+
+  if (group.find(".spot_line").length == 0)
+    group.detach();
+}
+
+function merge_group(e){
+  e.preventDefault();
+  var group = $(this).closest('.cluster_group');
+  var master_id = group.find('input[name="master_id"]:checked').val();
+  var spot_ids = [];
+  group.find(".spot_line").each(function(i,e){
+    spot_ids.push($(e).data('spot_id'))
+  });
+
+  diveboard.mask_file(true);
+
+  $.ajax({
+    url: '/admin/uncluster_spot/merge',
+    dataType: 'json',
+    type: 'POST',
+    data:{
+      master_id: master_id,
+      spot_ids: spot_ids.join(",")
+    },
+    success:function(data){
+      if (!data.success){
+        alert("Error received");
+        console.log(data);
+        diveboard.unmask_file();
+      } else {
+        console.log(data);
+        wait_until_bg_finished(data.delayed_job, function(){
+          group.find(".spot_line").each(function(i,e){
+            location.reload();
+          });
+        });
+      }
+    },
+    error: function(request){
+      alert(request.responseText);
+      diveboard.unmask_file();
+    }
+  });
+}
+
+
+function mark_distinct_group(e){
+  e.preventDefault();
+  var back_summary = $(this).data('back_summary');
+  var group = $(this).closest('.cluster_group');
+  var cluster_id = $(this).data('link');
+  var spot_ids = [];
+  group.find(".spot_line").each(function(i,e){
+    spot_ids.push($(e).data('spot_id'))
+  });
+
+  diveboard.mask_file(true);
+
+  $.ajax({
+    url: '/admin/uncluster_spot/distinct',
+    dataType: 'json',
+    type: 'POST',
+    data:{
+      cluster_id: cluster_id,
+      spot_ids: spot_ids.join(",")
+    },
+    success:function(data){
+      if (!data.success){
+        alert("Error received");
+        console.log(data);
+        diveboard.unmask_file();
+      } else {
+        group.detach();
+        if (back_summary)
+          location = "/admin/uncluster_spot?next=1"
+        else
+          location.reload();
+      }
+    },
+    error: function(request){
+      alert(request.responseText);
+      diveboard.unmask_file();
+    }
+  });
+}
+
+
+
+function mark_moderate(){
+ e.preventDefault();
+  var group = $(this).closest('.spot_line');
+  var spot_id = $(this).data('spot_id');
+
+  diveboard.mask_file(true);
+
+  $.ajax({
+    url: '/admin/uncluster_spot/mark_moderate',
+    dataType: 'json',
+    type: 'POST',
+    data:{
+      spot_id: spot_id,
+      moderate: true
+    },
+    success:function(data){
+      if (!data.success){
+        alert("Error received");
+        console.log(data);
+        diveboard.unmask_file();
+      } else {
+        group.detach();
+        location = "/admin/uncluster_spot"
+      }
+    },
+    error: function(request){
+      alert(request.responseText);
+      diveboard.unmask_file();
+    }
+  });
+}
+
+
+
+
+function wait_until_bg_finished(id, callback)
+{
+  $.ajax({
+    url: '/admin/check_background_job/'+id,
+    dataType: 'json',
+    type: 'GET',
+    success:function(data){
+      if (data.pending) {
+        setTimeout( function(){wait_until_bg_finished(id, callback)}, 2000);
+      } else if (data.success){
+        callback();
+      } else {
+        alert("Error received");
+        console.log(data);
+        diveboard.unmask_file();
+      }
+    },
+    error: function(request){
+      alert(request.responseText);
+      diveboard.unmask_file();
+    }
+  });
+
+}
+
+
+</script>
+
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 3 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+  <h1>Spot management</h1>
+
+  <div style='margin: 30px 0px'><a class='grey_button' href='/admin/uncluster_spot'>Back to list</a> <a class='yellow_button' href='/admin/uncluster_spot?next=1'>Next</a></div>
+
+
+  <%@clusters.each do |cluster|%>
+    <%cluster_id = cluster[:id]%>
+    <%spot_ids = cluster[:spot_ids]%>
+    <%spots = Spot.where(:id => spot_ids)%>
+    <%next if spots.count == 0%>
+    <%
+      users = [];
+      spots.each do |s| users += s.dives.map(&:user_id) end
+      users.uniq!
+    %>
+    <form action='#'>
+    <div class='cluster_group' data-cluster_id='<%=cluster_id%>'>
+      <%if cluster[:linked_to].blank?%>
+        <div style='background: #f66; line-height: 3em;'>
+          CLUSTER <%=cluster_id%> - <button class='grey_button_small distinct_group' data-back_summary='true'>discard</button> [<%=pluralize(users.count, 'distinct user')%>]
+        </div>
+      <%else%>
+        <div style='background: #fea; line-height: 3em;'>
+          <a href='/admin/uncluster_spot/<%=cluster_id%>' target='_blank'>CLUSTER <%=cluster_id%></a> - <button class='grey_button_small distinct_group'  data-link='<%=cluster[:linked_to]%>'>mark distinct</button>
+        </div>
+      <%end%>
+      <form>
+        <table class='cluster_table'>
+          <%spots.each_with_index do |spot, idx|%>
+            <tr class='spot_line <%=if spot.flag_moderate_private_to_public.nil? then 'public_spot' elsif spot.is_visible_for?(nil) then 'publicly_visible_spot' end%>' data-spot_id='<%=spot.id%>'>
+              <td><input type=radio <%='checked' if idx == 0%> name='master_id' value='<%=spot.id%>' /></td>
+              <td><a href='/admin/mod_spot/<%=spot.id%>' target='_blank'><%=spot.id%></a></td>
+              <td><%=spot.name%></td>
+              <td><%=spot.country.cname%></td>
+              <td><%=spot.region.name rescue '<i>not available</i>'.html_safe%></td>
+              <td><%=spot.location.name rescue '<i>not available</i>'.html_safe%></td>
+              <td><a href='http://maps.google.com.au/maps?q=<%=spot.lat%>,<%=spot.lng%>&amp;t=k' target='_blank'><%=spot.lat%></a></td>
+              <td><a href='http://maps.google.com.au/maps?q=<%=spot.lat%>,<%=spot.lng%>&amp;t=k' target='_blank'><%=spot.lng%></a></td>
+              <td><%=spot.dives.count%></td>
+              <td><%=spot.dives.map(&:user_id).uniq.count%></td>
+              <td><%=if spot.verified_user_id then 'VALIDATED' else spot.moderate_id end%></td>
+              <td>
+                <div class='move_spot_into_form'>
+                  <input class='target_id' value='<%=cluster[:linked_to]%>'/>
+                  <button class='move_spot_into grey_button_small'>move to cluster</button>
+                </div>
+                <!--<%if spot.dives.count == 0%><button type=button class='black_button_small'>Flag to ignore</button><%end%>-->
+                <button type=button class='grey_button_small discard_spot'>remove from cluster</button>
+              </td>
+            </tr>
+          <%end%>
+        </table>
+      </form>
+      <button class='merge_group yellow_button' <%if spots.count == 1%>style='display: none'<%end%>>Merge cluster</button>
+      <%if cluster[:linked_to] then%><button class='move_group_into grey_button' data-target_id='<%=cluster[:linked_to]%>'>Move into cluster <%=cluster[:linked_to]%></button><%end%>
+    </div>
+  <%end%>
+
+
+
+
+</div>
+

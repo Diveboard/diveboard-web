@@ -1,0 +1,83 @@
+.gallery
+{
+  width: 100%;
+  margin: 0 auto;
+  padding-top: 20px;
+  margin-bottom: 120px;
+
+  .card
+  {
+    width: 318px;
+    border: 1px solid #e5e5e5;
+    background-color: white;
+    margin: 5px;
+    cursor: pointer;
+    display: inline-block;
+    vertical-align:top;
+    overflow: hidden;
+    position: relative;
+
+    .picture
+    {
+      width: 100%;
+      transition: all ease 100ms;
+
+    }
+
+    .pic_wrapper
+    {
+      overflow: hidden;
+
+      @media (min-width: 721px)
+      {
+        &:hover .picture
+        {
+          transform: scale(1.5);
+          opacity: 0.8;
+        }
+
+        &:hover .zoom 
+        {
+          display: block;
+        }
+      }
+    }
+
+    .zoom
+    {
+      display: none;
+      position: absolute;
+      top: calc(50% - 40px);
+      left: calc(50% - 40px);
+      width: 80px;
+      cursor: pointer;
+    }
+
+    .description
+    {
+      height: 30px;
+
+      .title
+      {
+        color: #3c4245;
+        font-size: 14px;
+        padding-left: 7px;
+        padding-top: 3px;
+      }
+    }
+
+    .data
+    {
+      display: none;
+    } 
+  }
+}
+
+#infscr-loading
+{
+  position: absolute;
+  bottom: -100px;
+  text-align: center;
+  width: 100%;
+  color: #3c4245;
+}

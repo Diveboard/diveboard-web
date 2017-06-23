@@ -1,0 +1,319 @@
+#sign_up_popup{
+  font-family: Quicksand, SourceSansPro, Helvetica, Verdana, Arial, sans-serif;
+}
+
+#sign_up_popup .sign_up_popup_mask{
+  background: #111 50% top repeat-x;
+  opacity: .9;
+  position: fixed;
+  top: 46px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 8000;
+}
+
+#sign_up_popup .frame{
+  width: 450px;
+  height: 435px;
+  border-top: 18px solid #FFC10E;
+  background-color: #FFFFFF;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-top: -225px;
+  margin-left: -225px;
+  z-index: 8001;
+  background-image: url(/img/map_bg.png);
+  background-size: 400px 400px;
+}
+
+#sign_up_popup .anchor{
+  display: block;
+  position: relative;
+}
+
+
+#sign_up_popup p.anchor{
+  width: 300px;
+  display: block;
+  position: relative;
+}
+
+#sign_up_popup label{
+  position: absolute;
+  top: 12px;
+  display: block;
+  font-size: 20px;
+  margin-left: 50px;
+  margin-top: 7px;
+  text-transform: uppercase;
+}
+
+#sign_up_popup .logo{
+  width: 280px;
+  height: 35px;
+  opacity: 0.8;
+  filter: alpha(opacity=80);
+  margin-top: 25px;
+  margin-bottom: 10px;
+  padding-right: 1px;
+  padding-left: 1px;
+}
+
+#sign_up_popup input{
+  width: 200px;
+  height: 60px;
+  font-size: 20px;
+  padding-left: 40px;
+  padding-right: 40px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #333;
+  /*text-transform: uppercase;*/
+  margin-bottom: 10px;
+  font-family: Quicksand;
+}
+#sign_up_popup input[type="checkbox"]{
+  display: inline-block;
+  width: 20px;
+  margin-left: 20px;
+  height: 32px;
+  font-size: 17px;
+  margin-bottom: 5px;
+}
+
+#sign_up_popup button{
+  width: 280px;
+  height: 60px;
+  font-size: 20px;
+  padding-left: 40px;
+  padding-right: 40px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #333;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  text-align: left;
+  font-family: Quicksand;
+}
+
+#sign_up_popup .title{
+  font-family: Quicksand;
+  font-size: 25px;
+  width: 280px;
+  margin-bottom: 10px;
+}
+
+
+#sign_up_popup .subtitle{
+  font-style: normal;
+  font-family: Quicksand;
+  margin-bottom: 20px;
+}
+
+#sign_up_popup .yellow_flat_button{
+  background-color: #FFC10E;
+  cursor: pointer;
+}
+#sign_up_popup .yellow_flat_button:hover{
+  background-color: #E4AD0E;
+}
+
+#sign_up_popup .facebook_flat_button{
+  background-color: #4c66a4;
+  width: 240px;
+  height: 38px;
+  font-size: 15px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #fff;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  padding-top: 22px;
+  cursor: pointer;
+}
+
+#sign_up_popup .facebook_flat_button:hover{
+  background-color: #374f8a;
+}
+
+#sign_up_popup .small input{
+  height: 38px; 
+  font-size: 17px;
+  margin-bottom: 5px;
+}
+
+#sign_up_popup .small label{
+  top: -1px;
+  font-size: 17px;
+}
+
+#sign_up_popup .small button{
+  height: 40px;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+#sign_up_popup .small .facebook_flat_button{
+  display: table-cell;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  vertical-align: middle;
+  text-align: center;
+}
+
+
+#sign_up_popup .fields_content{
+  height: 280px; 
+  width: 450px;
+  position: absolute;
+  top: 0px;
+  left: 450px;
+}
+
+
+#sign_up_popup .login{
+  margin-top: 15px;
+  height: 265px;
+}
+
+#sign_up_popup .fields_content.active{
+  left: 0px;
+}
+
+#sign_up_popup .fields{
+  height: 280px;
+  overflow: hidden;
+}
+
+#sign_up_popup .fields_content.slide_in{
+    -webkit-transform: translate(-100%, 0);
+     -moz-transform: translate(-100%, 0);
+      -ms-transform: translate(-100%, 0);
+       -o-transform: translate(-100%, 0);
+          transform: translate(-100%, 0);
+  -webkit-transition: -webkit-transform .25s ease-in; /* Changed here */ 
+     -moz-transition: -moz-transform .25s ease-in;
+       -o-transition: -o-transform .25s ease-in;
+          transition: transform .25s ease-in;
+  
+}
+
+#sign_up_popup .fields_content.slide_back{
+  -webkit-transform: translate(100%, 0);
+     -moz-transform: translate(100%, 0);
+      -ms-transform: translate(100%, 0);
+       -o-transform: translate(100%, 0);
+          transform: translate(100%, 0);
+  -webkit-transition: -webkit-transform .25s ease-in; /* Changed here */ 
+     -moz-transition: -moz-transform .25s ease-in;
+       -o-transition: -o-transform .25s ease-in;
+          transition: transform .25s ease-in;
+}
+#sign_up_popup .fields_content.left{
+  left: -100%;
+}
+
+#sign_up_popup span.symbol{
+  position: absolute;
+  top: 5px;
+  left: 300px;
+  font-size: 20px;
+}
+
+#sign_up_popup .green{
+  color: green;
+}
+
+#sign_up_popup .red{
+  color: red;
+}
+
+#sign_up_popup p.footer{
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  white-space: nowrap;
+}
+
+#sign_up_popup .error_message{
+  width: 80px;
+  position: absolute;
+  top: 22px;
+  font-size: 10px;
+  margin-left: 3px;
+  display: block;
+  text-align: left;
+  color: red;
+  left: 290px;
+}
+
+
+#sign_up_popup .small .error_message{
+  top: 10px;
+}
+
+#sign_up_popup .error_message span{
+  display: none;
+}
+
+#sign_up_popup .email_reset_confirm{
+  display: none;
+  margin-top: 14px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+#sign_up_popup .email_reset_button{
+  /*position: absolute !important;
+  bottom: 25px;
+  left: 50%;
+  margin-left: -150px;*/
+  margin-top: 10px;
+}
+
+#sign_up_popup .email_reset_field{
+  margin-top: 20px;
+}
+
+#sign_up_popup .keepsign {
+  text-align: left;
+}
+
+#sign_up_popup .keepsign label{
+  padding-top: 6px;
+  font-size: 17px;
+  height: 26px;
+  vertical-align: top;
+  position: initial;
+  margin-top: 0px;
+  top: 0px;
+  display: inline-block;
+  margin-left: 3px;
+}
+
+#sign_up_popup .signup_close{
+  text-align: right;
+  font-size: 10px;
+  position: absolute;
+  right: 4px;
+  top: -15px;
+  font-family: WebSymbolsRegular;
+  color: black;
+}
+
+#sign_up_popup .signup_close a{
+  color: #444;
+}
+
+
+
+.widget #sign_up_popup .frame {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  margin: 0px !important;
+}

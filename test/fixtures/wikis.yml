@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  latest: MyString
+  current: MyString
+  name: MyString
+  blob: MyString
+  filename: MyString
+
+two:
+  latest: MyString
+  current: MyString
+  name: MyString
+  blob: MyString
+  filename: MyString

@@ -1,0 +1,789 @@
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript" src="//maps.google.com/maps/api/js?libraries=geometry&sensor=false&v=3.7"></script>
+<%= render :partial => 'admin_css'%>
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 12 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+<h1>Detailed stats</h1>
+
+<%
+begin
+  fragment_file = Rails.cache.send(:read_entry,"views/admin_charts_page",{})
+  if params[:force_refresh] || (fragment_file && Time.now - 1.day > Time.at(fragment_file.created_at)) then
+    ActionController::Base.new.expire_fragment "admin_charts_page"
+  end
+rescue
+  Rails.logger.warn $!.message
+end
+cache "admin_charts_page" do %>
+
+<p style='font-size: 10px'>Charts generated at <%=Time.now%></p>
+
+<!--Div that will hold the charts-->
+<div id="chart_holder" style='width: 1000px'></div>
+
+<script type="text/javascript">
+
+// Load the Visualization API and the piechart package.
+google.load('visualization', '1.0', {'packages':['geochart', 'corechart']});
+// Set a callback to run when the Google Visualization API is loaded.
+google.setOnLoadCallback(function(){draw_chart()});
+
+function add_separator(text){
+  var dom = document.createElement('h3');
+  //dom.setAttribute('style', 'display:inline-block');
+  dom.innerHTML=text;
+  document.getElementById('chart_holder').appendChild(dom);
+}
+
+function draw_chart() {
+  add_separator('User base')
+  draw_chart_users();
+  draw_chart_growth();
+  add_separator('Reviews')
+  draw_chart_reviews();
+  draw_chart_rate_reviews();
+  add_separator('Content')
+  draw_chart_dives();
+  draw_chart_pictures();
+  draw_chart_computer_uploads();
+  draw_chart_comments();
+  add_separator('Activity')
+  draw_chart_activity();
+  draw_chart_distinct_visits_per_day();
+  draw_chart_activity_detailed();
+  add_separator('Returning users')
+  draw_chart_usage();
+  draw_chart_returning_users();
+  draw_chart_active_users();
+  add_separator('Map');
+  draw_chart_dive_locations();
+  draw_chart_users_locations();
+  add_separator('Explore stats');
+  draw_map_explore()
+}
+
+function draw_chart_users() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'New users');
+  data.addColumn('number', 'Total of Users');
+  data.addRows(<%= s = 0; ActiveRecord::Base.connection.select_all("select date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') week, count(*) cnt FROM users WHERE shop_proxy_id is null group by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') order by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d')").map do |e| [ e['week'], e['cnt'], s += e['cnt'] ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Users on Diveboard',
+    vAxis: {0: {title: 'Total Users'}, 1: {title: 'New Users'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "bars",
+    series: {0: {targetAxisIndex: 1}, 1: {type: "line", targetAxisIndex: 0}},
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+function draw_chart_growth() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'User base');
+  data.addRows(<%= s = 0; prev_week = 1; ActiveRecord::Base.connection.select_all("select date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') week, count(*) cnt FROM users WHERE shop_proxy_id is null group by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') order by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d')").map do |e| prev = s==0?1:s; s+=e['cnt']; [ e['week'], (100.0*e['cnt'] / prev).round(2).to_f ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Growth per week',
+    vAxis: {title: 'Growth %', viewWindowMode: 'explicit', viewWindow: {min:0, max: 11}},
+    hAxis: {title: 'Year-Week'},
+    seriesType: "area",
+    series: {0: {targetAxisIndex: 0}},
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+
+
+function draw_chart_dives() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'New dives');
+  data.addColumn('number', 'Total of Dives');
+  data.addRows(<%= s = 0; ActiveRecord::Base.connection.select_all("select date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') week, count(*) cnt FROM dives group by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') order by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d')").map do |e| [ e['week'], e['cnt'], s += e['cnt'] ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Dives on Diveboard',
+    vAxis: {0: {title: 'Total Dives'}, 1: {title: 'New Dives'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "bars",
+    series: {0: {targetAxisIndex: 1}, 1: {type: "line", targetAxisIndex: 0}},
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+
+
+function draw_chart_dive_locations() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Country');
+  data.addColumn('number', 'Nb dives');
+  data.addRows(<%= s = 0; ActiveRecord::Base.connection.select_all("select CASE countries.ccode
+    WHEN 'DZ' THEN '015'  WHEN 'EG' THEN '015' WHEN 'EH' THEN '015' WHEN 'LY' THEN '015' WHEN 'MA' THEN '015' WHEN 'SD' THEN '015' WHEN 'TN' THEN '015' WHEN 'BF' THEN '011' WHEN 'BJ' THEN '011' WHEN 'CI' THEN '011' WHEN 'CV' THEN '011' WHEN 'GH' THEN '011' WHEN 'GM' THEN '011' WHEN 'GN' THEN '011' WHEN 'GW' THEN '011' WHEN 'LR' THEN '011' WHEN 'ML' THEN '011' WHEN 'MR' THEN '011' WHEN 'NE' THEN '011' WHEN 'NG' THEN '011' WHEN 'SH' THEN '011' WHEN 'SL' THEN '011' WHEN 'SN' THEN '011' WHEN 'TG' THEN '011' WHEN 'AO' THEN '017' WHEN 'CD' THEN '017' WHEN 'ZR' THEN '017' WHEN 'CF' THEN '017' WHEN 'CG' THEN '017' WHEN 'CM' THEN '017' WHEN 'GA' THEN '017' WHEN 'GQ' THEN '017' WHEN 'ST' THEN '017' WHEN 'TD' THEN '017' WHEN 'BI' THEN '014' WHEN 'DJ' THEN '014' WHEN 'ER' THEN '014' WHEN 'ET' THEN '014' WHEN 'KE' THEN '014' WHEN 'KM' THEN '014' WHEN 'MG' THEN '014' WHEN 'MU' THEN '014' WHEN 'MW' THEN '014' WHEN 'MZ' THEN '014' WHEN 'RE' THEN '014' WHEN 'RW' THEN '014' WHEN 'SC' THEN '014' WHEN 'SO' THEN '014' WHEN 'TZ' THEN '014' WHEN 'UG' THEN '014' WHEN 'YT' THEN '014' WHEN 'ZM' THEN '014' WHEN 'ZW' THEN '014' WHEN 'BW' THEN '018' WHEN 'LS' THEN '018' WHEN 'NA' THEN '018' WHEN 'SZ' THEN '018' WHEN 'ZA' THEN '018' WHEN 'GG' THEN '154' WHEN 'JE' THEN '154' WHEN 'AX' THEN '154' WHEN 'DK' THEN '154' WHEN 'EE' THEN '154' WHEN 'FI' THEN '154' WHEN 'FO' THEN '154' WHEN 'GB' THEN '154' WHEN 'IE' THEN '154' WHEN 'IM' THEN '154' WHEN 'IS' THEN '154' WHEN 'LT' THEN '154' WHEN 'LV' THEN '154' WHEN 'NO' THEN '154' WHEN 'SE' THEN '154' WHEN 'SJ' THEN '154' WHEN 'AT' THEN '155' WHEN 'BE' THEN '155' WHEN 'CH' THEN '155' WHEN 'DE' THEN '155' WHEN 'DD' THEN '155' WHEN 'FR' THEN '155' WHEN 'FX' THEN '155' WHEN 'LI' THEN '155' WHEN 'LU' THEN '155' WHEN 'MC' THEN '155' WHEN 'NL' THEN '155' WHEN 'BG' THEN '151' WHEN 'BY' THEN '151' WHEN 'CZ' THEN '151' WHEN 'HU' THEN '151' WHEN 'MD' THEN '151' WHEN 'PL' THEN '151' WHEN 'RO' THEN '151' WHEN 'RU' THEN '151' WHEN 'SU' THEN '151' WHEN 'SK' THEN '151' WHEN 'UA' THEN '151' WHEN 'AD' THEN '039' WHEN 'AL' THEN '039' WHEN 'BA' THEN '039' WHEN 'ES' THEN '039' WHEN 'GI' THEN '039' WHEN 'GR' THEN '039' WHEN 'HR' THEN '039' WHEN 'IT' THEN '039' WHEN 'ME' THEN '039' WHEN 'MK' THEN '039' WHEN 'MT' THEN '039' WHEN 'CS' THEN '039' WHEN 'RS' THEN '039' WHEN 'PT' THEN '039' WHEN 'SI' THEN '039' WHEN 'SM' THEN '039' WHEN 'VA' THEN '039' WHEN 'YU' THEN '039' WHEN 'BM' THEN '021' WHEN 'CA' THEN '021' WHEN 'GL' THEN '021' WHEN 'PM' THEN '021' WHEN 'US' THEN '021' WHEN 'AG' THEN '029' WHEN 'AI' THEN '029' WHEN 'AN' THEN '029' WHEN 'AW' THEN '029' WHEN 'BB' THEN '029' WHEN 'BL' THEN '029' WHEN 'BS' THEN '029' WHEN 'CU' THEN '029' WHEN 'DM' THEN '029' WHEN 'DO' THEN '029' WHEN 'GD' THEN '029' WHEN 'GP' THEN '029' WHEN 'HT' THEN '029' WHEN 'JM' THEN '029' WHEN 'KN' THEN '029' WHEN 'KY' THEN '029' WHEN 'LC' THEN '029' WHEN 'MF' THEN '029' WHEN 'MQ' THEN '029' WHEN 'MS' THEN '029' WHEN 'PR' THEN '029' WHEN 'TC' THEN '029' WHEN 'TT' THEN '029' WHEN 'VC' THEN '029' WHEN 'VG' THEN '029' WHEN 'VI' THEN '029' WHEN 'BZ' THEN '013' WHEN 'CR' THEN '013' WHEN 'GT' THEN '013' WHEN 'HN' THEN '013' WHEN 'MX' THEN '013' WHEN 'NI' THEN '013' WHEN 'PA' THEN '013' WHEN 'SV' THEN '013' WHEN 'AR' THEN '005' WHEN 'BO' THEN '005' WHEN 'BR' THEN '005' WHEN 'CL' THEN '005' WHEN 'CO' THEN '005' WHEN 'EC' THEN '005' WHEN 'FK' THEN '005' WHEN 'GF' THEN '005' WHEN 'GY' THEN '005' WHEN 'PE' THEN '005' WHEN 'PY' THEN '005' WHEN 'SR' THEN '005' WHEN 'UY' THEN '005' WHEN 'VE' THEN '005' WHEN 'TM' THEN '143' WHEN 'TJ' THEN '143' WHEN 'KG' THEN '143' WHEN 'KZ' THEN '143' WHEN 'UZ' THEN '143' WHEN 'CN' THEN '030' WHEN 'HK' THEN '030' WHEN 'JP' THEN '030' WHEN 'KP' THEN '030' WHEN 'KR' THEN '030' WHEN 'MN' THEN '030' WHEN 'MO' THEN '030' WHEN 'TW' THEN '030' WHEN 'AF' THEN '034' WHEN 'BD' THEN '034' WHEN 'BT' THEN '034' WHEN 'IN' THEN '034' WHEN 'IR' THEN '034' WHEN 'LK' THEN '034' WHEN 'MV' THEN '034' WHEN 'NP' THEN '034' WHEN 'PK' THEN '034' WHEN 'BN' THEN '035' WHEN 'ID' THEN '035' WHEN 'KH' THEN '035' WHEN 'LA' THEN '035' WHEN 'MM' THEN '035' WHEN 'BU' THEN '035' WHEN 'MY' THEN '035' WHEN 'PH' THEN '035' WHEN 'SG' THEN '035' WHEN 'TH' THEN '035' WHEN 'TL' THEN '035' WHEN 'TP' THEN '035' WHEN 'VN' THEN '035' WHEN 'AE' THEN '145' WHEN 'AM' THEN '145' WHEN 'AZ' THEN '145' WHEN 'BH' THEN '145' WHEN 'CY' THEN '145' WHEN 'GE' THEN '145' WHEN 'IL' THEN '145' WHEN 'IQ' THEN '145' WHEN 'JO' THEN '145' WHEN 'KW' THEN '145' WHEN 'LB' THEN '145' WHEN 'OM' THEN '145' WHEN 'PS' THEN '145' WHEN 'QA' THEN '145' WHEN 'SA' THEN '145' WHEN 'NT' THEN '145' WHEN 'SY' THEN '145' WHEN 'TR' THEN '145' WHEN 'YE' THEN '145' WHEN 'YD' THEN '145' WHEN 'AU' THEN '053' WHEN 'NF' THEN '053' WHEN 'NZ' THEN '053' WHEN 'FJ' THEN '054' WHEN 'NC' THEN '054' WHEN 'PG' THEN '054' WHEN 'SB' THEN '054' WHEN 'VU' THEN '054' WHEN 'FM' THEN '057' WHEN 'GU' THEN '057' WHEN 'KI' THEN '057' WHEN 'MH' THEN '057' WHEN 'MP' THEN '057' WHEN 'NR' THEN '057' WHEN 'PW' THEN '057' WHEN 'AS' THEN '061' WHEN 'CK' THEN '061' WHEN 'NU' THEN '061' WHEN 'PF' THEN '061' WHEN 'PN' THEN '061' WHEN 'TK' THEN '061' WHEN 'TO' THEN '061' WHEN 'TV' THEN '061' WHEN 'WF' THEN '061' WHEN 'WS' THEN '061'
+    END sql_ccode, count(*) cnt from dives, spots, countries where dives.spot_id = spots.id and spots.country_id = countries.id and countries.ccode <> 'BLANK' group by sql_ccode").map do |e| [ e['sql_ccode'], e['cnt'] ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {
+    'width':500,
+    'height':400,
+    'resolution': 'subcontinents'
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.GeoChart(dom);
+  chart.draw(data, options);
+}
+
+
+function draw_chart_users_locations() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Country');
+  data.addColumn('number', 'Nb divers');
+  data.addRows(<%= s = 0; ActiveRecord::Base.connection.select_all("select CASE UPPER(location) WHEN 'DZ' THEN '015'  WHEN 'EG' THEN '015' WHEN 'EH' THEN '015' WHEN 'LY' THEN '015' WHEN 'MA' THEN '015' WHEN 'SD' THEN '015' WHEN 'TN' THEN '015' WHEN 'BF' THEN '011' WHEN 'BJ' THEN '011' WHEN 'CI' THEN '011' WHEN 'CV' THEN '011' WHEN 'GH' THEN '011' WHEN 'GM' THEN '011' WHEN 'GN' THEN '011' WHEN 'GW' THEN '011' WHEN 'LR' THEN '011' WHEN 'ML' THEN '011' WHEN 'MR' THEN '011' WHEN 'NE' THEN '011' WHEN 'NG' THEN '011' WHEN 'SH' THEN '011' WHEN 'SL' THEN '011' WHEN 'SN' THEN '011' WHEN 'TG' THEN '011' WHEN 'AO' THEN '017' WHEN 'CD' THEN '017' WHEN 'ZR' THEN '017' WHEN 'CF' THEN '017' WHEN 'CG' THEN '017' WHEN 'CM' THEN '017' WHEN 'GA' THEN '017' WHEN 'GQ' THEN '017' WHEN 'ST' THEN '017' WHEN 'TD' THEN '017' WHEN 'BI' THEN '014' WHEN 'DJ' THEN '014' WHEN 'ER' THEN '014' WHEN 'ET' THEN '014' WHEN 'KE' THEN '014' WHEN 'KM' THEN '014' WHEN 'MG' THEN '014' WHEN 'MU' THEN '014' WHEN 'MW' THEN '014' WHEN 'MZ' THEN '014' WHEN 'RE' THEN '014' WHEN 'RW' THEN '014' WHEN 'SC' THEN '014' WHEN 'SO' THEN '014' WHEN 'TZ' THEN '014' WHEN 'UG' THEN '014' WHEN 'YT' THEN '014' WHEN 'ZM' THEN '014' WHEN 'ZW' THEN '014' WHEN 'BW' THEN '018' WHEN 'LS' THEN '018' WHEN 'NA' THEN '018' WHEN 'SZ' THEN '018' WHEN 'ZA' THEN '018' WHEN 'GG' THEN '154' WHEN 'JE' THEN '154' WHEN 'AX' THEN '154' WHEN 'DK' THEN '154' WHEN 'EE' THEN '154' WHEN 'FI' THEN '154' WHEN 'FO' THEN '154' WHEN 'GB' THEN '154' WHEN 'IE' THEN '154' WHEN 'IM' THEN '154' WHEN 'IS' THEN '154' WHEN 'LT' THEN '154' WHEN 'LV' THEN '154' WHEN 'NO' THEN '154' WHEN 'SE' THEN '154' WHEN 'SJ' THEN '154' WHEN 'AT' THEN '155' WHEN 'BE' THEN '155' WHEN 'CH' THEN '155' WHEN 'DE' THEN '155' WHEN 'DD' THEN '155' WHEN 'FR' THEN '155' WHEN 'FX' THEN '155' WHEN 'LI' THEN '155' WHEN 'LU' THEN '155' WHEN 'MC' THEN '155' WHEN 'NL' THEN '155' WHEN 'BG' THEN '151' WHEN 'BY' THEN '151' WHEN 'CZ' THEN '151' WHEN 'HU' THEN '151' WHEN 'MD' THEN '151' WHEN 'PL' THEN '151' WHEN 'RO' THEN '151' WHEN 'RU' THEN '151' WHEN 'SU' THEN '151' WHEN 'SK' THEN '151' WHEN 'UA' THEN '151' WHEN 'AD' THEN '039' WHEN 'AL' THEN '039' WHEN 'BA' THEN '039' WHEN 'ES' THEN '039' WHEN 'GI' THEN '039' WHEN 'GR' THEN '039' WHEN 'HR' THEN '039' WHEN 'IT' THEN '039' WHEN 'ME' THEN '039' WHEN 'MK' THEN '039' WHEN 'MT' THEN '039' WHEN 'CS' THEN '039' WHEN 'RS' THEN '039' WHEN 'PT' THEN '039' WHEN 'SI' THEN '039' WHEN 'SM' THEN '039' WHEN 'VA' THEN '039' WHEN 'YU' THEN '039' WHEN 'BM' THEN '021' WHEN 'CA' THEN '021' WHEN 'GL' THEN '021' WHEN 'PM' THEN '021' WHEN 'US' THEN '021' WHEN 'AG' THEN '029' WHEN 'AI' THEN '029' WHEN 'AN' THEN '029' WHEN 'AW' THEN '029' WHEN 'BB' THEN '029' WHEN 'BL' THEN '029' WHEN 'BS' THEN '029' WHEN 'CU' THEN '029' WHEN 'DM' THEN '029' WHEN 'DO' THEN '029' WHEN 'GD' THEN '029' WHEN 'GP' THEN '029' WHEN 'HT' THEN '029' WHEN 'JM' THEN '029' WHEN 'KN' THEN '029' WHEN 'KY' THEN '029' WHEN 'LC' THEN '029' WHEN 'MF' THEN '029' WHEN 'MQ' THEN '029' WHEN 'MS' THEN '029' WHEN 'PR' THEN '029' WHEN 'TC' THEN '029' WHEN 'TT' THEN '029' WHEN 'VC' THEN '029' WHEN 'VG' THEN '029' WHEN 'VI' THEN '029' WHEN 'BZ' THEN '013' WHEN 'CR' THEN '013' WHEN 'GT' THEN '013' WHEN 'HN' THEN '013' WHEN 'MX' THEN '013' WHEN 'NI' THEN '013' WHEN 'PA' THEN '013' WHEN 'SV' THEN '013' WHEN 'AR' THEN '005' WHEN 'BO' THEN '005' WHEN 'BR' THEN '005' WHEN 'CL' THEN '005' WHEN 'CO' THEN '005' WHEN 'EC' THEN '005' WHEN 'FK' THEN '005' WHEN 'GF' THEN '005' WHEN 'GY' THEN '005' WHEN 'PE' THEN '005' WHEN 'PY' THEN '005' WHEN 'SR' THEN '005' WHEN 'UY' THEN '005' WHEN 'VE' THEN '005' WHEN 'TM' THEN '143' WHEN 'TJ' THEN '143' WHEN 'KG' THEN '143' WHEN 'KZ' THEN '143' WHEN 'UZ' THEN '143' WHEN 'CN' THEN '030' WHEN 'HK' THEN '030' WHEN 'JP' THEN '030' WHEN 'KP' THEN '030' WHEN 'KR' THEN '030' WHEN 'MN' THEN '030' WHEN 'MO' THEN '030' WHEN 'TW' THEN '030' WHEN 'AF' THEN '034' WHEN 'BD' THEN '034' WHEN 'BT' THEN '034' WHEN 'IN' THEN '034' WHEN 'IR' THEN '034' WHEN 'LK' THEN '034' WHEN 'MV' THEN '034' WHEN 'NP' THEN '034' WHEN 'PK' THEN '034' WHEN 'BN' THEN '035' WHEN 'ID' THEN '035' WHEN 'KH' THEN '035' WHEN 'LA' THEN '035' WHEN 'MM' THEN '035' WHEN 'BU' THEN '035' WHEN 'MY' THEN '035' WHEN 'PH' THEN '035' WHEN 'SG' THEN '035' WHEN 'TH' THEN '035' WHEN 'TL' THEN '035' WHEN 'TP' THEN '035' WHEN 'VN' THEN '035' WHEN 'AE' THEN '145' WHEN 'AM' THEN '145' WHEN 'AZ' THEN '145' WHEN 'BH' THEN '145' WHEN 'CY' THEN '145' WHEN 'GE' THEN '145' WHEN 'IL' THEN '145' WHEN 'IQ' THEN '145' WHEN 'JO' THEN '145' WHEN 'KW' THEN '145' WHEN 'LB' THEN '145' WHEN 'OM' THEN '145' WHEN 'PS' THEN '145' WHEN 'QA' THEN '145' WHEN 'SA' THEN '145' WHEN 'NT' THEN '145' WHEN 'SY' THEN '145' WHEN 'TR' THEN '145' WHEN 'YE' THEN '145' WHEN 'YD' THEN '145' WHEN 'AU' THEN '053' WHEN 'NF' THEN '053' WHEN 'NZ' THEN '053' WHEN 'FJ' THEN '054' WHEN 'NC' THEN '054' WHEN 'PG' THEN '054' WHEN 'SB' THEN '054' WHEN 'VU' THEN '054' WHEN 'FM' THEN '057' WHEN 'GU' THEN '057' WHEN 'KI' THEN '057' WHEN 'MH' THEN '057' WHEN 'MP' THEN '057' WHEN 'NR' THEN '057' WHEN 'PW' THEN '057' WHEN 'AS' THEN '061' WHEN 'CK' THEN '061' WHEN 'NU' THEN '061' WHEN 'PF' THEN '061' WHEN 'PN' THEN '061' WHEN 'TK' THEN '061' WHEN 'TO' THEN '061' WHEN 'TV' THEN '061' WHEN 'WF' THEN '061' WHEN 'WS' THEN '061'
+    END sql_ccode, count(*) cnt from users where location <> 'blank' and location is not null and shop_proxy_id is null group by sql_ccode").map do |e| [ e['sql_ccode'], e['cnt'] ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {
+    'width':500,
+    'height':400,
+    'resolution': 'subcontinents'
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.GeoChart(dom);
+  chart.draw(data, options);
+}
+
+
+function draw_chart_computer_uploads() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'Number of uploads');
+  data.addColumn('number', 'Number of uploads with at least 1 dive');
+  data.addRows(<%= ActiveRecord::Base.connection.select_all("
+        select date_format(DATE_SUB(uploaded_profiles.created_at, INTERVAL weekday(uploaded_profiles.created_at) day ), '%Y-%m-%d') week,
+        count(distinct uploaded_profiles.id) cnt,
+        sum(CASE WHEN dives.id IS NULL THEN 1 ELSE 0 END) no_dive_cnt
+        FROM uploaded_profiles LEFT JOIN dives ON dives.uploaded_profile_id = uploaded_profiles.id
+        WHERE uploaded_profiles.created_at >= '2011-08-29'
+        AND uploaded_profiles.source = 'computer'
+        group by date_format(DATE_SUB(uploaded_profiles.created_at, INTERVAL weekday(uploaded_profiles.created_at) day ), '%Y-%m-%d')
+        order by date_format(DATE_SUB(uploaded_profiles.created_at, INTERVAL weekday(uploaded_profiles.created_at) day ), '%Y-%m-%d') ").map do |e| [ e['week'], e['cnt'], (e['cnt']-e['no_dive_cnt']).to_i ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Computer uploads on Diveboard',
+    vAxis: {title: 'Number of uploads'},
+    hAxis: {title: 'Year-Week'},
+    lineWidth: 0,
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.AreaChart(dom);
+  chart.draw(data, options);
+}
+
+
+function draw_chart_comments() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'New comments');
+  data.addColumn('number', 'Total of comments');
+
+<%
+  ref_day = Date.new(2012,03,12)
+  comment_times = ActiveRecord::Base.connection.select_all("select raw_data from fb_comments where raw_data <> '{\"data\":[]}' ").map do |e| JSON.parse(e['raw_data'])['data'].map do |c| c['created_time'] end end
+  comment_weeks = comment_times.flatten.map do |t| ((t.to_date - ref_day)/7).floor end
+  comment_counts = {}
+  comment_weeks.each do |w|
+    comment_counts[w] ||= 0
+    comment_counts[w] += 1
+  end
+%>
+
+  data.addRows(<%= s = 0; 0.upto(comment_weeks.max).map do |w| [ ref_day + (w*7), comment_counts[w]||0, s += (comment_counts[w]||0) ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Comments on Diveboard',
+    vAxis: {0: {title: 'Total comments'}, 1: {title: 'New comments'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "bars",
+    series: {0: {targetAxisIndex: 1}, 1: {type: "line", targetAxisIndex: 0}},
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+
+
+function draw_chart_reviews() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'New reviews');
+  data.addColumn('number', 'Total of reviews');
+  data.addColumn('number', 'Total of reviews with comment');
+  data.addRows(<%= s1 = 0; s2 = 0; ActiveRecord::Base.connection.select_all("select date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') week, count(*) cnt, SUM(case when comment is not null  and comment <> \"\" then 1 else 0 end) cnt_comment FROM reviews group by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') order by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d')").map do |e| [ e['week'], e['cnt'], s1 += e['cnt'], s2 += e['cnt_comment'].to_i ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Reviews on Diveboard',
+    vAxis: {0: {title: 'Nb of reviews'}, 1: {title: 'New reviews'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "bars",
+    series: {0: {targetAxisIndex: 1}, 1: {type: "line", targetAxisIndex: 0}, 2:{type: "line", targetAxisIndex: 0}},
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+
+function draw_chart_rate_reviews() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', '% shop reviewed');
+  //data.addColumn('number', 'Maximum number of reviews');
+  data.addRows(<%= s1 = 0; s2 = 0; ActiveRecord::Base.connection.select_all("select week, total, reviewed, 100*reviewed/total percent from  (
+    select date_format(t_week, '%Y-%m-%d') week, sum(CASE WHEN t_week >= t_start then 1 else 0 end) total, sum(CASE WHEN t_week >= t_end then 1 else 0 end) reviewed from
+      (select SUBTIME( DATE_SUB(created_at, INTERVAL weekday(created_at) day), TIME(created_at)) t_week from dives group by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d')) weeks,
+      (select min(dives.created_at) t_start, min(reviews.created_at) t_end from dives left join reviews on reviews.user_id = dives.user_id and reviews.shop_id = dives.shop_id where dives.shop_id is not null group by dives.user_id, dives.shop_id) linked_reviews
+    where t_week > '2012-07-10'
+    group by date_format(t_week, '%Y-%m-%d')
+    ) reviewed_counted").map do |e|
+      [ e['week'], e['percent'].to_f.round(2).to_f ]#, e['total'].to_i
+    end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Reviews left by users for visited dive centers',
+    vAxis: {
+      0: {title: '% of shop reviewed', minValue: 0.0},
+      1: {title: 'Number of shop reviews', minValue: 0.0}
+    },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "area",
+    series: {0: {targetAxisIndex: 0}, 1: {type: "line", targetAxisIndex: 1}},
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+
+
+
+function draw_chart_pictures() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'New pictures');
+  data.addColumn('number', 'Total of pictures');
+  data.addColumn('number', 'Total of great pictures');
+  data.addRows(<%= s1 = 0; s2 = 0; ActiveRecord::Base.connection.select_all("select date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') week, count(*) cnt, SUM(great_pic) cnt2 FROM pictures group by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') order by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d')").map do |e| [ e['week'], e['cnt'], s1 += e['cnt'], s2 += e['cnt2'].to_i ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Pictures on Diveboard',
+    vAxis: {0: {title: 'Nb of pictures'}, 1: {title: 'New pictures'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "bars",
+    series: {0: {targetAxisIndex: 1}, 1: {type: "line", targetAxisIndex: 0}, 2:{type: "line", targetAxisIndex: 0}},
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+function draw_chart_activity() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'Static');
+  data.addColumn('number', 'Explore');
+  data.addColumn('number', 'Community');
+  data.addColumn('number', 'Logbook');
+  data.addColumn('number', 'Shop');
+
+  data.addRows(<%=
+    ActiveRecord::Base.connection.select_all("select date_format(DATE_SUB(time, INTERVAL weekday(time) day ), '%Y-%m-%d') week,
+        CONVERT(sum(CASE WHEN col1 IN ('home', 'about', 'settings', 'tour', 'login', 'commercial_pro') THEN nb else 0 end), SIGNED) as static,
+        CONVERT(sum(CASE WHEN col1 IN ('explore', 'gallery', 'search') THEN nb else 0 end), SIGNED) as explore,
+        CONVERT(sum(CASE WHEN col1 IN ('blog', 'widgets') THEN nb else 0 end), SIGNED) as community,
+        CONVERT(sum(CASE WHEN col1 IN ('home_logbook', 'dive_page', 'new_dive', 'trip') THEN nb else 0 end), SIGNED) as logbook,
+        CONVERT(sum(CASE WHEN col1 IN ('shop_page') THEN nb else 0 end), SIGNED) as Shop
+      FROM stats_sums
+      where aggreg = 'categ'
+      group by date_format(DATE_SUB(time, INTERVAL weekday(time) day ), '%Y-%m-%d') order by date_format(DATE_SUB(time, INTERVAL weekday(time) day ), '%Y-%m-%d')")[1..-2].map(&:values) .to_json.html_safe rescue '[]' %>);
+
+  // Set chart options
+  var options = {'title':'Hits on Diveboard',
+    vAxis: {0: {title: 'Nb of hits'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "area",
+    lineWidth: 1.5,
+    isStacked: true,
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+function draw_chart_activity_detailed() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  <%
+    cols = ActiveRecord::Base.connection.select_all("select col1
+      from stats_sums
+      where aggreg = 'categ'
+      group by col1
+      order by count(*) ASC").map(&:values).flatten
+    cols.reject! do |col| col.nil? || ['api', 'blog', 'admin'].include?(col) end
+    cols_sql = cols.map do |col| "CONVERT(sum(CASE WHEN col1 = '#{col}' THEN nb else 0 end), SIGNED) as #{col}" end .join(", ")
+  %>
+  <% cols.each do |col|%>
+  data.addColumn('number', '<%=col%>');
+  <%end%>
+  data.addRows(<%=
+    ActiveRecord::Base.connection.select_all("select date_format(DATE_SUB(time, INTERVAL weekday(time) day ), '%Y-%m-%d') week, #{cols_sql}
+      FROM stats_sums
+      where aggreg = 'categ'
+      group by date_format(DATE_SUB(time, INTERVAL weekday(time) day ), '%Y-%m-%d') order by date_format(DATE_SUB(time, INTERVAL weekday(time) day ), '%Y-%m-%d')")[1..-2].map(&:values) .to_json.html_safe unless cols.count == 0%>);
+
+  // Set chart options
+  var options = {'title':'Hits on Diveboard',
+    vAxis: {0: {title: 'Nb of hits'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "area",
+    lineWidth: 1.5,
+    isStacked: true,
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+function draw_chart_distinct_visits_per_day() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'Unique visitors (IP) per day');
+  <%cols_visits = ActiveRecord::Base.connection.select_all("select date_format(DATE_SUB(time, INTERVAL weekday(time) day ), '%Y-%m-%d') week, CONVERT(avg(nb), SIGNED)
+      FROM stats_sums
+      where aggreg = 'visits' and col1='distinct_daily_ip'
+      group by date_format(DATE_SUB(time, INTERVAL weekday(time) day ), '%Y-%m-%d') order by date_format(DATE_SUB(time, INTERVAL weekday(time) day ), '%Y-%m-%d')") %>
+  data.addRows(<%= cols_visits[1..-2].map(&:values) .to_json.html_safe unless cols_visits.count == 0%>);
+
+  // Set chart options
+  var options = {'title':'Unique visitors per day on Diveboard',
+    vAxis: {0: {title: 'Nb of visitors'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "area",
+    lineWidth: 1.5,
+    isStacked: true,
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+
+
+function draw_chart_usage() {
+  // Create the data table.
+  var data = google.visualization.arrayToDataTable(<%=
+    counts = ActiveRecord::Base.connection.select_one("select count(CASE WHEN m is null THEN uid END) as cnil,
+      count(CASE WHEN span = 0  THEN uid END) as c0,
+      count(CASE WHEN span <= 3 and span > 0 THEN uid END) as c3,
+      count(CASE WHEN span <= 6 and span > 3 THEN uid END) as c6,
+      count(CASE WHEN span <= 12 and span > 6 THEN uid END) as c12,
+      count(CASE WHEN span > 12 THEN uid END) as c99
+      from (
+      select users.id as uid, FLOOR(DATEDIFF(max(dives.created_at),min(dives.created_at))/30 ) as span, max(dives.created_at) as m
+      from users left join dives on dives.user_id = users.id
+      WHERE shop_proxy_id is null
+      group by users.id ) S") ;
+      [
+        ['Activity span', 'User count'],
+        ['Less than 1 month', counts['c0']],
+        ['1-3 months', counts['c3']],
+        ['4-6 months', counts['c6']],
+        ['7-12 months', counts['c12']],
+        ['Over 12 months', counts['c99']]
+      ].to_json.html_safe %>);
+
+  // Set chart options
+  var options = {'title':'User engagement (lifespan : longer = better)',
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.PieChart(dom);
+  chart.draw(data, options);
+}
+
+
+function draw_chart_active_users() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'Number of Active Users');
+  data.addRows(<%= ActiveRecord::Base.connection.select_all("select weeks.monday week, count(distinct user_id) cnt
+    FROM (select distinct date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') monday from dives) weeks, dives
+    where dives.created_at < DATE(weeks.monday) and dives.created_at > DATE_SUB(DATE(weeks.monday), INTERVAL 6 month)
+    group by weeks.monday").map do |e| [ e['week'], e['cnt'] ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Active Users on Diveboard (created at least 1 dive during the last 6 months',
+    vAxis: {title: 'Number of Active Users'},
+    hAxis: {title: 'Year-Week'},
+    seriesType: "line",
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+function draw_chart_returning_users() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'Number of Returning Users');
+  data.addColumn('number', '% of Returning Users');
+  data.addRows(<%= ActiveRecord::Base.connection.select_all("select
+      weeks.monday week,
+      count(distinct case when dives.created_at < DATE(weeks.monday) and dives.created_at > DATE_SUB(DATE(weeks.monday), INTERVAL 3 month) then users.id else NULL end) cnt,
+      count(distinct case when dives.created_at < DATE(weeks.monday) and dives.created_at > DATE_SUB(DATE(weeks.monday), INTERVAL 3 month) then users.id else NULL end) / count(distinct user_id) percent
+    FROM (select distinct date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') monday from dives) weeks, dives, users
+    where users.id = dives.user_id
+      and users.created_at < DATE_SUB(DATE(weeks.monday), INTERVAL 6 month)
+    group by weeks.monday").map do |e| [ e['week'], e['cnt'].to_i, (e['percent'].to_f).round(3).to_f ] end .to_json.html_safe%>);
+
+
+
+  // Set chart options
+  var options = {'title':'Returing Users on Diveboard (user created at least 6 months ago and created at least 1 dive during the last 3 months)',
+    vAxes: {1: {title: 'Number of Returning Users'}, 0: {title: '% of Returning Users', format:'#,###%'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "line",
+    series: {0: {targetAxisIndex: 1}, 1: {type: "line", targetAxisIndex: 0}},
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+
+function draw_map_explore(){
+  var dom = $("<div id='map_explore' style='width: 1000px; height: 600px;'></div>");
+  $("#chart_holder").append(dom);
+  map = new google.maps.Map(document.getElementById("map_explore"), {
+    'zoom': 2,
+    'minZoom': 2,
+    'maxZoom': 13,
+    'center': new google.maps.LatLng(0,0),
+    'streetViewControl': false,
+    'keyboardShortcuts': false,
+    'zoomControlOptions': { 'position': google.maps.ControlPosition.TOP_RIGHT },
+    'mapTypeControlOptions': { 'position': google.maps.ControlPosition.RIGHT_BOTTOM },
+    'panControlOptions': { 'position': google.maps.ControlPosition.TOP_RIGHT },
+    'mapTypeId': google.maps.MapTypeId.HYBRID
+  });
+
+  <%=ExploreHelper.stats_explore_js.html_safe%>
+}
+
+  <!-- block of newsletter stats -->
+    function draw_chart_newsletter() {
+      // Create the data table.
+      var data = new google.visualization.DataTable();
+      <%stats=ActiveRecord::Base.connection.select_all("select
+          case when params like '%source_id=%' then
+            substring(params,
+              locate('=', params, locate('source_id', params)) + 1,
+              case when locate('&', params, locate('source_id', params))>0
+              then locate('&', params, locate('source_id', params))-1
+              else length(params)
+              end - locate('=', params, locate('source_id', params))
+            )
+          else null end newsletter_id,
+        case
+        when url = '/' then 'home'
+        when url = '/community/newsletter/unsuscribe' then 'unsubscribe'
+        when url = '/explore' then 'see_more_explore'
+        when url = '/community/news' then 'blog_news'
+        when url regexp '/community/newsletter/[0-9]*$' then 'view_newsletter_online'
+        when url regexp '^/community/[^/]*/20../' then 'blog_article'
+        when url regexp '^/explore/spots/' then 'see_more_country'
+        when url regexp '^/+[^/]*/pictures/[0-9]*$' then 'picture'
+        when url regexp '^/+pro/+[^/]+' then 'shop'
+        when url regexp '^/+[^/]*/D' then 'dive'
+        when url regexp '^/+[^/]*$' then 'home_logbook'
+        else null end clic_destination,
+        count(*) nb
+        from stats_logs where params like '%source=newsletter%'
+        group by newsletter_id, clic_destination
+        having newsletter_id > 4
+        order by CONVERT(newsletter_id, UNSIGNED INTEGER), count(*) desc")
+      category_list = ['unsubscribe', 'home', 'see_more_explore', 'blog_news', 'view_newsletter_online', 'blog_article', 'see_more_country', 'picture', 'shop', 'dive', 'home_logbook', 'shop_page'];
+      %>
+      data.addColumn('string', 'Newsletter');
+      <%category_list.each do |cat|%>
+        data.addColumn('number', '<%=cat%>');
+      <%end%>
+      <%row_stats = []
+      stats.group_by do |s| s['newsletter_id'] end .each do |id, items|
+        row = []
+        counts = {}
+        items.each do |row|
+          counts[row['clic_destination']] = row['nb']
+        end
+        row.push id
+        category_list.each do |k|
+          row.push(counts[k]||0)
+        end
+        row_stats.push row
+      end%>
+      data.addRows(<%=row_stats.to_json.html_safe%>);
+
+      // Set chart options
+      var options = {'title':'newsletter clics',
+        vAxis: {0:{title: 'Number of clics'}},
+        hAxis: {title: 'Newsletter'},
+        seriesType: "bars",
+        lineWidth: 1.5,
+        isStacked: true,
+        chartArea: {left: 50, width: 780},
+        legend: {position: 'right', textStyle: { fontSize: 12}},
+        'width':1000,
+        'height':400
+      };
+
+      // Instantiate and draw our chart, passing in some options.
+      var dom = document.createElement('div');
+      dom.setAttribute('style', 'display:inline-block');
+      document.getElementById('chart_holder').appendChild(dom);
+      var chart = new google.visualization.ComboChart(dom);
+      chart.draw(data, options);
+    }
+
+    draw_chart_without_newsletter = draw_chart;
+    draw_chart = function(){
+      draw_chart_without_newsletter();
+      add_separator('Newsletter');
+      draw_chart_newsletter()
+    }
+    </script>
+
+
+    <div style='width: 1000px'>
+      <table style='text-align: center;'>
+        <tr>
+          <th>ID</th>
+          <th>Date</th>
+          <th>Total sent</th>
+          <th>Users targeted</th>
+          <th>Unique users openings</th>
+          <th>Total clics</th>
+          <th>Unique users</th>
+          <th>Unsubscribing users</th>
+          <th>% unique users / targeted</th>
+          <th>% users unsubscribing</th>
+        </tr>
+        <%ActiveRecord::Base.connection.select_all("select
+          newsletter_id,
+          newsletters.distributed_at distributed_at,
+          sent_stats.total_nb nb_sent,
+          sent_stats.nb nb_targeted,
+          count(distinct opening_user_id) unique_opening_users,
+          count(clicking_user_id) nb_clics,
+          count(distinct clicking_user_id) nb_users,
+          count(distinct unsubscribing_user_id) unsubscribing_users,
+          100*(count(distinct clicking_user_id))/sent_stats.nb clic_ratio,
+          100*count(distinct unsubscribing_user_id)/sent_stats.nb unsubscribing_ratio
+        from (
+          select *,
+          case when params like '%source_id=%' then
+            substring(params,
+              locate('=', params, locate('source_id', params)) + 1,
+              case when locate('&', params, locate('source_id', params))>0
+              then locate('&', params, locate('source_id', params))-1
+              else length(params)
+              end - locate('=', params, locate('source_id', params))
+            )
+          else null end newsletter_id,
+          case when params like '%user_id=%' then
+            substring(params,
+              locate('=', params, locate('user_id', params)) + 1,
+              case when locate('&', params, locate('user_id', params))>0
+              then locate('&', params, locate('user_id', params))-1
+              else length(params)
+              end - locate('=', params, locate('user_id', params))
+            )
+          else null end user_id,
+          case when url = '/community/newsletter/unsuscribe' then
+              case when params like '%user_id=%' then
+              substring(params,
+                locate('=', params, locate('user_id', params)) + 1,
+                case when locate('&', params, locate('user_id', params))>0
+                then locate('&', params, locate('user_id', params))-1
+                else length(params)
+                end - locate('=', params, locate('user_id', params))
+              )
+              else null end
+          else null end unsubscribing_user_id,
+          case when url = '/api/stats_trace/nl_opened' then
+              case when params like '%user_id=%' then
+              substring(params,
+                locate('=', params, locate('user_id', params)) + 1,
+                case when locate('&', params, locate('user_id', params))>0
+                then locate('&', params, locate('user_id', params))-1
+                else length(params)
+                end - locate('=', params, locate('user_id', params))
+              )
+              else null end
+          else null end opening_user_id,
+          case when url NOT LIKE '/api/%' AND url <> '/community/newsletter/unsuscribe' then
+              case when params like '%user_id=%' then
+              substring(params,
+                locate('=', params, locate('user_id', params)) + 1,
+                case when locate('&', params, locate('user_id', params))>0
+                then locate('&', params, locate('user_id', params))-1
+                else length(params)
+                end - locate('=', params, locate('user_id', params))
+              )
+              else null end
+          else null end clicking_user_id
+          from stats_logs where params like '%source=newsletter%'
+          and CASE #{StatHelper::CASE_BOT_SQL} ELSE 1 END IS NOT NULL
+        ) logs
+        LEFT JOIN (select newsletter_id nlid, count(*) total_nb, count(distinct recipient_id) nb from newsletter_users group by newsletter_id) sent_stats
+          ON logs.newsletter_id = sent_stats.nlid
+        LEFT JOIN newsletters
+          ON logs.newsletter_id = newsletters.id
+        group by newsletter_id
+        order by CONVERT(newsletter_id, UNSIGNED INTEGER)").each do |row|%>
+          <tr>
+            <td><a href='/community/newsletter/<%=row['newsletter_id']%>' target='_blank'><%=row['newsletter_id']%></a></td>
+            <td><%=row['distributed_at']%></td>
+            <td><%=row['nb_sent']%></td>
+            <td><%=row['nb_targeted']%></td>
+            <td><%=row['unique_opening_users']%></td>
+            <td><%=row['nb_clics']%></td>
+            <td><%=row['nb_users']%></td>
+            <td><%=row['unsubscribing_users']%></td>
+            <td style='font-weight: bold'><%=row['clic_ratio'].round(1).to_f rescue nil%></td>
+            <td style='color:#f00;'><%=row['unsubscribing_ratio'].round(1).to_f rescue nil%></td>
+          </tr>
+        <%end%>
+      </table>
+    </div><!-- end of newsletter stats -->
+
+<%end%>
+
+</div>

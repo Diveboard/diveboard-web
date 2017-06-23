@@ -1,0 +1,130 @@
+<%content_for :scripts do%>
+<%=javascript_include_tag 'commercial_shop'%>
+<script>$(document).ready(CommercialShop.initialize);</script>
+<%end%>
+<%content_for :css do%>
+<%=include_stylesheets :commercial_shop%>
+<%end%>
+<div class='commshop'>
+
+  <div class='main_features_area'>
+    <div class='logo'>
+      <img alt='Diveboard' src='/img/logo_black_notag2.png'/>
+      <span class='sublogo'><%= it("for business", scope: ['commercial_shop', 'index']) %></span>
+    </div>
+    <div class='tagline'>
+      <span><%= it("TURN CUSTOMERS INTO ADVOCATES", scope: ['commercial_shop', 'index']) %></span><br/>
+      <span><%= it("OFFER ONLINE BOOKINGS", scope: ['commercial_shop', 'index']) %></span><br/>
+      <span><%= it("GROW YOUR BUSINESS", scope: ['commercial_shop', 'index']) %></span>
+    </div>
+    <div class='free_signup'>
+      <a href='/login/register_pro?start=1' class='black_button'><%= it("Sign up for free", scope: ['commercial_shop', 'index']) %> &raquo;</a>
+      <a href='#plan_section' class='show_plans'><%= it("or view plans and pricing", scope: ['commercial_shop', 'index']) %></a>
+    </div>
+  </div>
+
+  <div class='join_or_view_price'>
+    <table>
+      <tr>
+        <td><div class='get_starter_td'><div class='get_started'><div><%= it("Get started!", scope: ['commercial_shop', 'index']) %></div></div><img class='get_started_arrow svg_icon' src='/img/commercial_shop/handarrow.svg'/></div></td>
+        <td><a class='join_free yellow_button' href='/login/register_pro?start=1'><%= it("Join now for free", scope: ['commercial_shop', 'index']) %></a></td>
+        <td><div class='or'><%= it("or", scope: ['commercial_shop', 'index']) %></div></td>
+        <td><a class='view_plans grey_button' href='#plan_section'><%= it("View plans and pricing", scope: ['commercial_shop', 'index']) %></a></td>
+      </tr>
+    </table>
+    <div class='arrow'><div class='l'></div><div class='r'></div></div>
+  </div>
+
+  <div class='other_features'>
+    <div class='featured_in'>
+      <div class='head'><%= it("Featured in", scope: ['commercial_shop', 'index']) %></div>
+      <div class='logos'>
+        <a target='_blank' href='http://www.divermag.com/'><img src='/img/brands/divermag_color.png' alt='DIVER Magazine'/></a>
+        <a target='_blank' href='http://www.divemagazine.co.uk/'><img src='/img/brands/divemagazine_black.png' alt='DIVE Magazine'/></a>
+        <a target='_blank' href='http://scubadiverlife.com/'><img src='/img/brands/scubadiverlife_black.png' alt='Scuba Diver Life'/></a>
+        <a target='_blank' href='http://techcrunch.com/'><img src='/img/brands/techcrunch_transparent.png' alt='Techcrunch'/></a>
+      </div>
+    </div>
+    <table>
+      <tr>
+        <td class='icon'><img src='/img/commercial_shop/basket2x.png' alt='basket' style='width: 36px; height: 33px;'/></td>
+        <td class='desc'>
+          <div class='title'><%= it("Start selling online", scope: ['commercial_shop', 'index']) %></div>
+          <div class='text'><%= it("We made it super easy to start your e-shop. Select your affiliation(s) (PADI, CMAS...) and you'll be kickstarted with a standard selection of trainings and dive packages to sell. Customize them and be ready to start selling online !", scope: ['commercial_shop', 'index']) %></div>
+        </td>
+        <td class='icon'><img src='/img/commercial_shop/map2x.png' alt='basket' style='width: 37px; height: 37px;'/></td>
+        <td class='desc'>
+          <div class='title'><%= it("Attract new customers", scope: ['commercial_shop', 'index']) %></div>
+          <div class='text'><%= it("Every day scuba divers browse on Diveboard logging and sharing their memories or planning for their next dives. Be there for them! Every review or dive logged with you can bring a customer at your door. Targeted advertising will help you be visible to divers looking at your specific location.", scope: ['commercial_shop', 'index']) %></div>
+        </td>
+      </tr>
+      <tr>
+        <td class='icon'><img src='/img/commercial_shop/tools2x.png' alt='basket' style='width: 39px; height: 39px;'/></td>
+        <td class='desc'>
+          <div class='title'><%= it("Customize your Pro Page", scope: ['commercial_shop', 'index']) %></div>
+          <div class='text'><%= it("Personalize the look and feel of your business on Diveboard. Add pictures, maps, info. Everything you want and more is included! Make it look awesome. Add Diveboard widgets to you own page and showcase your reviews and customer experiences.", scope: ['commercial_shop', 'index']) %></div>
+        </td>
+        <td class='icon'><img src='/img/commercial_shop/discuss2x.png' alt='basket' style='width: 37px; height: 35px;'/></td>
+        <td class='desc'>
+          <div class='title'><%= it("Turn customers into advocates", scope: ['commercial_shop', 'index']) %></div>
+          <div class='text'><%= it("Ask your customers to log the dives made with you and leave a review, and you'll see the Diveboard magic happen when they become your strongest advocates for months to go. We'll make sure those memories created with you remain vivid and on top of their mind.", scope: ['commercial_shop', 'index']) %></div>
+        </td>
+      </tr>
+      <!--
+      <tr>
+        <td class='icon'><img src='/img/commercial_shop/tools2x.png' alt='basket' style='width: 39px; height: 39px;'/></td>
+        <td class='desc'>
+          <div class='title'>Booking Management</div>
+          <div class='text'>Need visibility on your </div>
+        </td>
+        <td class='icon'><img src='/img/commercial_shop/discuss2x.png' alt='basket' style='width: 37px; height: 35px;'/></td>
+        <td class='desc'>
+          <div class='title'>Interact with your community</div>
+          <div class='text'>Your reputation is what matters most. Bring 5-star reviews on Diveboard, keep in touch with your past customers and increase your business. Send them messages, and share news in your customer's activity feeds to keep in touch.</div>
+        </td>
+      </tr>
+      -->
+<!--
+      <tr>
+        <td class='icon'><img src='/img/commercial_shop/embed2x.png' alt='basket' style='width: 38px; height: 38px;'/></td>
+        <td class='desc'>
+          <div class='title'>Take Diveboard home <span class='coming_soon_small'>Coming soon</span></div>
+          <div class='text'>Everything you build on Diveboard can be embedded to your website, so you don’t need to do things twice. Fuel your website with Diveboard social or e-commerce widgets and boost your viewers's experience by letting them book online.</div>
+        </td>
+        <td class='icon'><img src='/img/commercial_shop/shop2x.png' alt='basket' style='width: 37px; height: 37px;'/></td>
+        <td class='desc'>
+          <div class='title'>Reach local divers <span class='coming_soon_small'>Coming soon</span></div>
+          <div class='text'>Some people think they can only dive abroad in warm waters. Diveboard helps you find divers who live in your area and get in touch with them.</div>
+        </td>
+      </tr>
+      <tr>
+        <td class='icon'><img src='/img/commercial_shop/targetdol2x.png' alt='basket' style='width: 33px; height: 33px;'/></td>
+        <td class='desc'>
+          <div class='title'>Target your ads <span class='coming_soon_small'>Coming soon</span></div>
+          <div class='text'>We believe advertisement only makes sense when it brings value to the customer. No blind dating - we help you market your services only for divers looking for them. We don't do quantity we focus on quality.</div>
+        </td>
+        <td class='icon'><img src='/img/commercial_shop/graph2x.png' alt='basket' style='width: 36px; height: 36px;'/></td>
+        <td class='desc'>
+          <div class='title'>Stats and metrics <span class='coming_soon_small'>Coming soon</span></div>
+          <div class='text'>We build metrics that will help you understand how to optimize your business. Are you getting enough visits? Are your selling enough ? Find out what needs to be enhanced to boost yoru sales.</div>
+        </td>
+      </tr>
+-->
+    </table>
+  </div>
+
+
+
+  <div class='banner expand_business'>
+    <div class='text'><%= it("Expand your business & reach a global community of divers", scope: ['commercial_shop', 'index']) %></div>
+    <a class='yellow_button' href='/login/register_pro?start=1'><%= it("Join now for free", scope: ['commercial_shop', 'index']) %></a>
+  </div>
+
+  <div class='plan_section' id='plan_section'>
+    <h2><%= it("Diveboard Pro Plans", scope: ['commercial_shop', 'index']) %></h2>
+    <!--<p class='plan_text'>Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>-->
+
+    <%=render partial: 'plan_table', :locals => {:restart_process => true}%>
+  </div>
+
+</div>

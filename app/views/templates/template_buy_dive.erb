@@ -1,0 +1,40 @@
+<p class='question'><%= it("Please select the days on which you would like to dive", scope: ['templates', 'template_buy_dive']) %></p>
+<div class='form_date_choice'>
+  <span class='large_click'><input class='radio' type=radio name='date_type' value='one' <$ if (!item.details || !item.details.date_type || item.details.date_type == 'one') {$>checked<$}$> /><%= it("Just on one day", scope: ['templates', 'template_buy_dive']) %></span>
+  <span class='large_click'><input class='radio' type=radio name='date_type' value='period'  <$ if (item.details.date_type == 'period') {$>checked<$}$>/><%= it("Over several days", scope: ['templates', 'template_buy_dive']) %></span>
+</div>
+<div class='form_date_type_one form_date_type' <$if (item.details.date_type && item.details.date_type != 'one') {$>style='display:none'<$}$>>
+  <%=it("On:", scope: ['templates', 'template_buy_dive'])%> <input type='text' class='date_picker date_at' value='<$=item.details.date_at || item.details.date_from$>'>
+</div>
+<div class='form_date_type_period form_date_type' <$if (item.details.date_type != 'period') {$>style='display:none'<$}$>>
+  <%= it("From:", scope: ['templates', 'template_buy_dive']) %> <input type='text' class='date_picker date_from' value='<$=item.details.date_from || item.details.date_at$>'>
+  <%= it("Until:", scope: ['templates', 'template_buy_dive']) %> <input type='text' class='date_picker date_to' value='<$=item.details.date_to$>'>
+</div>
+
+<$var divers = item.details.divers || [{quantity: 1, certification: ""}]$>
+<p class='question'><%= it("How many people will attend:", scope: ['templates', 'template_buy_dive']) %> <input type='number' name='nb_divers' class='nb_divers_input inline_right_column' value='<$=divers.length$>' min='1'/></p>
+<ol class='diver_detail_list'>
+  <$for (i in divers) {divers[i].number = parseInt(i)+1;$> <$=tmpl('template_buy_dive_diver', divers[i])$> <$}$>
+</ol>
+
+<p class='question'><%= it("When would you like to dive? %{span:(only on mornings, every other day, ...)}", scope: ['templates', 'template_buy_dive'], span: It.tag("span", class: "note")) %></p>
+<textarea class='text_ans pref_when'><$=item.details.pref_when$></textarea>
+
+<p class='question'><%= it("Do you have specific requests/constraint?", scope: ['templates', 'template_buy_dive']) %></p>
+<textarea class='text_ans constraints'><$=item.details.constraints$></textarea>
+
+<p class='question'><%= it("How to contact you on short notice before the dives? %{span:(e.g. in case of bad weather)}", scope: ['templates', 'template_buy_dive'], span: It.tag("span", class: "note")) %></p>
+<textarea class='text_ans contact'><$=item.details.contact$></textarea>
+
+<$if (typeof(what.deposit) != 'undefined' && what.deposit !== null) {$>
+  <p class='question'><%= it("How would you rather pay?", scope: ['templates', 'template_buy_dive']) %></p>
+  <ol class='diver_detail_list'>
+    <li><input type='radio' name='deposit_option' value='false' <$if (!item.deposit_option) {$>checked<$}$> > <%= it("Pay the full price of <$=what.currency_symbol$><$=what.total$> inc. taxes", scope: ['templates', 'template_buy_dive']) %></li>
+    <li><input type='radio' name='deposit_option' value='true' <$if (item.deposit_option) {$>checked<$}$> > <%= it("Lock in your dives with a <$=what.currency_symbol$><$= what.deposit $> deposit and pay the balance directly to <$=shop.name$>", scope: ['templates', 'template_buy_dive']) %></li>
+  </ol>
+<$}$>
+
+<div class='diveboard_popup_buttons'>
+  <button class='grey_button cancel_button'><%= it("Cancel", scope: ['templates', 'template_buy_dive']) %></button>
+  <button class='yellow_button submit_button'><%= it("Add to basket", scope: ['templates', 'template_buy_dive']) %></button>
+</div>

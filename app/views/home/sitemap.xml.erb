@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="<%=ROOT_URL%>styles/sitemap.xsl"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>http://www.diveboard.com</loc>
+	<lastmod><%=Date.today.to_date%></lastmod>
+	<changefreq>daily</changefreq>
+	<priority>1</priority>
+  </url>
+  <url>
+    <loc>http://www.diveboard.com/about</loc>
+	<lastmod>2011-04-12</lastmod>
+	<changefreq>monthly</changefreq>
+	<priority>0.3</priority>
+  </url>
+  <url>
+    <loc>http://www.diveboard.com/tour/logbook</loc>
+	<lastmod>2012-02-20</lastmod>
+	<changefreq>monthly</changefreq>
+	<priority>0.3</priority>
+  </url>
+  <url>
+    <loc>http://www.diveboard.com/tour/sharing</loc>
+	<lastmod>2012-02-20</lastmod>
+	<changefreq>monthly</changefreq>
+	<priority>0.3</priority>
+  </url>
+  <url>
+    <loc>http://www.diveboard.com/tour/discovering</loc>
+	<lastmod>2012-02-20</lastmod>
+	<changefreq>monthly</changefreq>
+	<priority>0.3</priority>
+  </url>
+  <url>
+    <loc>http://www.diveboard.com/tour/mobile</loc>
+	<lastmod>2012-02-20</lastmod>
+	<changefreq>monthly</changefreq>
+	<priority>0.3</priority>
+  </url>
+  <url>
+    <loc>http://www.diveboard.com/tour/price</loc>
+	<lastmod>2012-02-20</lastmod>
+	<changefreq>monthly</changefreq>
+	<priority>0.3</priority>
+  </url>
+  <url>
+    <loc>http://www.diveboard.com/import</loc>
+	<lastmod>2011-04-12</lastmod>
+	<changefreq>monthly</changefreq>
+	<priority>0.3</priority>
+  </url>
+  <url>
+    <loc>http://www.diveboard.com/explore</loc>
+	<lastmod>2011-05-12</lastmod>
+	<changefreq>monthly</changefreq>
+	<priority>0.6</priority>
+  </url>
+<% Dive.where("privacy = 0").each do |dive|%>
+  <url>
+    <loc><%=dive.fullpermalink(:canonical)%></loc>
+	<lastmod><%=dive.lastmod%></lastmod>
+	<% if (Date.today.to_date - dive.lastmod.to_date).to_i < 30 %>
+	<changefreq>weekly</changefreq>
+	<%else%>
+	<changefreq>monthly</changefreq>
+	<%end%>
+	<priority>0.8</priority>
+    <image:image>
+       <image:loc><%=dive.static_map_url%></image:loc>
+    </image:image>
+	<% dive.pictures.each do |pictures|%>
+	<image:image>
+       <image:loc><%=pictures.url%></image:loc>
+    </image:image>
+	<%end%>
+  </url>
+<%end%>
+<% User.all.each do |user|%>
+	<%if !user.public_dives.empty?%>
+  <url>
+	<loc><%=user.fullpermalink(:canonical)%></loc>
+	<lastmod><%=user.lastmod%></lastmod>
+	<changefreq>weekly</changefreq>
+	<priority>0.7</priority>
+  </url>
+	<%end%>
+<%end%>
+<% Country.all.each do |country|%>
+	<% if country.id!=1%>
+  <url>
+  	<loc>http://www.diveboard.com/explore/spots/<%=country.blob%></loc>
+  	<lastmod><%begin%><%=country.wiki.updated_at.to_json.html_safe.gsub(/"/,"")%><%rescue%><%=country.updated_at.to_json.html_safe.gsub(/"/,"")%><%end%></lastmod>
+  	<changefreq>monthly</changefreq>
+  	<priority>0.7</priority>
+  </url>
+	<%
+	end
+	%>
+<%end%>
+

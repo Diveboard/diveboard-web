@@ -1,0 +1,58 @@
+<%= render :partial => 'admin_css'%>
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 2 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+<h1>User management</h1>
+
+  <div>
+  <a style='font-size: 24pt' href='?<%=@search_params.merge({:start => [@start-@limit,0].max, :limit => @limit}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&") %>'>&lt;&lt;&lt; PREV</a>
+  <a style='font-size: 24pt; float: right;' href='?<%=@search_params.merge({:start => [@start+@limit,0].max, :limit => @limit}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&") %>'>NEXT &gt;&gt;&gt;</a>
+  </div>
+  <br/>
+
+  <div>
+    <form action='/admin/users'>
+      <p style='font-size: 14px;'>Search for a user :
+        <input name=filter style='height: 30px; width: 200px;'>
+        <input type=submit class='yellow_button'>
+      </p>
+    </form>
+  </div>
+
+
+	<div class="about_profile_new_box" style="display:inline-block;width:95%;">
+		Get an <a href="/admin/users.xls">xls</a> or <a href="/admin/users.csv">csv</a> list of opt-in users
+		<span class="second_lvl_header"style="display:block;">User list (editable)</span>
+		<table style="border-style:solid; border-width:3px; border-color:#ccc; border-radius: 15px; font-size:11px; width: 100%;">
+			<tr>
+        <th><a href=/admin/users?sort=id >ID</a></th>
+        <th><a href=/admin/users?sort=fb_id>FB_ID</a></th>
+        <th><a href=/admin/users?sort=nickname>NickName</a></th>
+        <th><a href=/admin/users?sort=vanity_url>Vanity_url</a></th>
+        <th>Role</th>
+        <th><a href='/admin/users?sort=count(distinct dives.id) DESC'>Nb dives</a></th>
+        <th><a href='/admin/users?sort=count(distinct pictures.id) DESC'>Nb pics</a></th>
+        <th><a href='/admin/users?sort=created_at DESC'>Created</a></th>
+        <th><a href='/admin/users?sort=updated_at DESC'>Updated</a></th>
+        <th> </th></tr>
+			<%@user_list.each do |user|%>
+			<tr><td><a href='/admin/users/<%=user["id"]%>'><%=user["id"]%></a><td><%=user["fb_id"]%></td><td><%=user["nickname"]%></td><td style='max-width:200px; word-wrap: break-word;'><a href="/<%=user["vanity_url"]%>"><%=user["vanity_url"]%></a></td><td><%=user["role"]%></td>
+			<td><a href='/admin/dives/?search_user_id=<%=user["id"]%>'><%=user["nb_dives"]%></a></td>
+			<td><%=user["nb_pics"]%></td>
+      <td><%=user["created_at"]%></td><td><%=user["updated_at"]%></td>
+      <td><a href="/admin/users/<%=user["id"]%>">Edit</a></td></tr>
+			<%end%>
+		</table>
+		
+	</div>
+
+  <br/>
+  <div>
+  <a style='font-size: 24pt' href='?<%=@search_params.merge({:start => [@start-@limit,0].max, :limit => @limit}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&") %>'>&lt;&lt;&lt; PREV</a>
+  <a style='font-size: 24pt; float: right;' href='?<%=@search_params.merge({:start => [@start+@limit,0].max, :limit => @limit}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&") %>'>NEXT &gt;&gt;&gt;</a>
+  </div>
+
+</div>

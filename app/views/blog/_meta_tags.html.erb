@@ -1,0 +1,71 @@
+<%
+  diveboard_tagline = "Diveboard: "+ it("Track and share your scuba diving experiences - Explore new spots and destinations", scope: ['blog', 'meta_tags'])
+  diveboard_short_tagline = "Diveboard: "+ it("Your online scuba logbook.", scope: ['blog', 'meta_tags'])
+%>
+<%= auto_discovery_link_tag(:rss, root_url+"community/feed") %>
+
+  <% case @content%>
+    <% when :post%>
+      <%= auto_discovery_link_tag(:rss, root_url+"community/feed/"+@post.user.vanity_url) %>
+      <title><%="#{@post.title(begin @user.id rescue nil end)} - Post by #{@post.user.nickname}"%></title>
+      <meta property="fb:app_id" content="193803977296892" />
+      <meta property="og:type"   content="article" />
+      <meta property="article:publisher" content="https://www.facebook.com/Diveboard" />
+      <meta property="og:published_time" content="<%=@post.published_at.iso8601%>" />
+      <meta property="og:updated_time" content="<%=@post.updated_at.iso8601%>" />
+      <meta property="og:description" content="<%=@post.abstract%>" />
+      <meta property="og:url"    content="<%="#{@post.fullpermalink(:canonical)}"%>" />
+      <meta property="og:title"  content="<%=@post.title%>" />
+      <meta property="og:image"  content="<%=begin @post.wiki.pictures.first.large rescue ROOT_URL+"img/logo_50.png" end%>" />
+
+      <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+      <%I18n.available_locales.each do |locale|%>
+        <link rel='alternate' href='<%=@post.fullpermalink(locale)%>' hreflang="<%=locale%>" />
+        <%if locale != I18n.locale then%>
+          <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+        <%end%>
+      <%end%>
+
+
+    <% when :user%>
+      <title><%= it("Scuba diving thoughts by %{author}", scope: ['blog', 'meta_tags'], author: @author.nickname) %></title>
+      <%= auto_discovery_link_tag(:rss, root_url+"community/feed/"+@author.vanity_url) %>
+      <meta property="fb:app_id" content="193803977296892" />
+      <meta property="og:type"   content="diveboard:blog" />
+      <meta property="og:url"    content="<%=@author.fullpermalink(:canonical)%>/posts" />
+      <meta property="og:title"  content="<%= it("Scuba diving thoughts by %{author}", scope: ['blog', 'meta_tags'], author: @author.nickname) %>" />
+      <meta property="og:image"  content="<%=@author.picture_large%>" />
+      <meta property="og:site_name" content="<%=diveboard_tagline%>" />
+      <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+      <%I18n.available_locales.each do |locale|%>
+        <link rel='alternate' href="<%=@author.fullpermalink(locale)%>/posts" hreflang="<%=locale%>" />
+        <%if locale != I18n.locale then%>
+          <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+        <%end%>
+      <%end%>
+      <%@author.blog_posts.includes(:user).each do |d|%>
+        <%if !d.published_at.nil?%><meta property="diveboard:article" content="<%=d.fulltinypermalink%>" /><%end%>
+      <%end%>
+    <% when :edit%>
+      <title><%="Wiki editor"%></title>
+    <% when :newsletter%>
+      <title><%=@title%></title>
+    <% else %>
+      <title><%= it("SCUBA Diving Discussions and news on Diveboard: Share your thoughts, experiences or questions and participate in discussions over our favorite topic!", scope: ['blog', 'meta_tags']) %></title>
+      <meta property="fb:app_id" content="193803977296892" />
+      <meta property="og:type"   content="diveboard:blog" />
+      <meta property="og:url"    content="<%=HtmlHelper.find_root_for :canonical%>community" />
+      <meta property="og:title"  content="<%= it("SCUBA Diving Discussions and news on Diveboard", scope: ['blog', 'meta_tags']) %>" />
+      <meta property="og:image"  content="<%=ROOT_URL+"img/logo_50.png"%>" />
+      <meta property="og:site_name" content="<%=diveboard_tagline%>" />
+      <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+      <%I18n.available_locales.each do |locale|%>
+        <link rel='alternate' href="<%=HtmlHelper.find_root_for locale%>community" hreflang="<%=locale%>" />
+        <%if locale != I18n.locale then%>
+          <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+        <%end%>
+      <%end%>
+      <%BlogPost.where(:published=>true).each do |d|%>
+        <%if !d.published_at.nil?%><meta property="diveboard:article" content="<%=d.fulltinypermalink%>" /><%end%>
+      <%end%>
+  <% end %>

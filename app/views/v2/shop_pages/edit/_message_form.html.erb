@@ -1,0 +1,33 @@
+<% with_cancel ||= false
+reload_url ||= nil
+%>
+<table class='shop_message_to_customer'>
+  <tr>
+    <th><%= it("Select a topic:", scope: ['care', 'shop_pages', 'message_form']) %></th>
+    <td>
+      <select class="topic_text">
+        <option class='option' data-value=''></option>
+        <option class='option' data-value='Information request'><%= it("Information request", scope: ['care', 'shop_pages', 'message_form']) %></option>
+        <option class='option' data-value='Congratulations !'><%= it("Congratulations!", scope: ['care', 'shop_pages', 'message_form']) %></option>
+        <option class='option' data-value='Thank you !'><%= it("Thank you!", scope: ['care', 'shop_pages', 'message_form']) %></option>
+      </select>
+      <div style="display: inline-block;"><%= it("Other:", scope: ['care', 'shop_pages', 'message_form']) %> <input></input><button class='yellow_button_small'><%= it("OK", scope: ['care', 'shop_pages', 'message_form']) %></button></div>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <th><%= it("Message:", scope: ['care', 'shop_pages', 'message_form']) %></th>
+    <td><textarea class='message_text'></textarea></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>
+      <button class='yellow_button submit_group_inquiry' data-group_id='<%=shop.user_proxy.id%>' data-to_id='<%=customer.id%>' <%if reload_url%>data-reload_url='<%=reload_url%>'<%end%>>Send new message
+      </button> 
+      <%if with_cancel%>
+        <button class='grey_button cancel_group_inquiry'><%= it("Cancel", scope: ['care', 'shop_pages', 'message_form']) %>
+        </button>
+      <%end%>
+    </td>
+  </tr>
+</table>

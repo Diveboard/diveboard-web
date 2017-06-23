@@ -1,0 +1,394 @@
+<%= javascript_include_tag 'divepage', defer: true %>
+<%content_for :css do %>
+<%= include_stylesheets :search, :media => :all %>
+<%end%>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+
+    <script type="text/javascript">
+
+
+    function fold_search_opt(ev)
+    {
+      if (ev)
+        ev.preventDefault();
+
+      if ( !$('#search_opt_box').is(':visible') || $('#search_opt_box').height() <= 5 ) {
+        $('#search_opt_box').animate({height: 200, 'margin-bottom': -50}, 500)
+        $('#search_advanced_show').hide();
+        $('#search_advanced_hide').show();
+      } else
+      {
+        $('#search_opt_box').animate({height: 2, 'margin-bottom': 0}, 500)
+        $('#search_advanced_hide').hide();
+        $('#search_advanced_show').show();
+      }
+    }
+
+    function submit_search()
+    {
+      $('#form_search').submit();
+    }
+
+
+    $(document).ready(function() {
+      $('.search_advanced_link').click(fold_search_opt);
+
+      $('#search_field').example('<%= it("E.g. Egypt, John Doe, Dive Shack, ...", scope: ['search', 'search']) %>');
+
+      $('#search_submit_button').click(function(ev){ev.preventDefault(); $('#form_search').submit(); });
+
+      //load tooltips
+      $('.tooltiped').qtip({
+        style: {
+          tip: { corner: true },
+          classes: "ui-tooltip-diveboard"
+        },
+        position: {
+          at: "bottom center",
+          my: "top right"
+        }
+      });
+
+    });
+
+    </script>
+
+    <div class='container_search'>
+
+      <form id=form_search action=/search method=get>
+
+        <div id=search_main_box style='<%if @search_text.blank?%>margin: 100px 0px 200px 0px;<%end%>'>
+          <div id=search_intro class='futura' ><%= it("Search Diveboard for interesting dives. Find the next spot you want to dive.", scope: ['search', 'search']) %></div>
+          <input name='s' id='search_field' value="<%= @search_text %>">
+          <div id='search_submit_button' class='yellow_button'><%= it("SEARCH", scope: ['search', 'search']) %></div>
+          <!--
+          <a class='search_advanced_link' id='search_advanced_show' href='#search_opt_box'>Show advanced options</a>
+          <a class='search_advanced_link hidden' id='search_advanced_hide' href='#search_opt_box'>Hide advanced options</a>
+          -->
+        </div>
+
+        <!--
+        <div id=search_opt_box style='height:0px'>
+          <div id=search_opt_content >
+            <div class=search_opt_content_col>
+              <p>Your search must match either :</p>
+              <div class=search_options>
+                <input value='false' type=hidden name='in_dive' />
+                <input value='false' type=hidden name='in_spot' />
+                <input value='false' type=hidden name='in_fish' />
+                <input value='false' type=hidden name='in_picture'/>
+                <input value='false' type=hidden name='in_user' />
+
+                <p><input type=checkbox value='true' checked name='in_dive' /> comments</p>
+                <p><input type=checkbox value='true' checked name='in_spot' /> spot/location/country</p>
+                <p><input type=checkbox value='true' checked name='in_fish' /> fish spotted</p>
+                <p><input type=checkbox value='true' checked name='in_picture'/> fish tagged in pictures</p>
+                <p><input type=checkbox value='true' checked name='in_user' /> diver info</p>
+              </div>
+            </div>
+            <div class=search_opt_content_col>
+              <p>Results must have :</p>
+              <div class=search_options>
+                <input value='false' type=hidden name='with_picture' />
+                <input value='false' type=hidden name='with_fish' />
+                <input value='false' type=hidden name='with_shop' />
+
+                <p><input type=checkbox value='true' name='with_picture'/> pictures</p>
+                <p><input type=checkbox value='true' name='with_fish'/> fish tag</p>
+                <p><input type=checkbox value='true' name='with_shop'/> dive club</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        -->
+
+      </form>
+      <% if @location.count > 0 %>
+      <div class='search_result_container_title'><p><%= it("LOCATION", scope: ['search', 'search']) %></p></div>
+          <div style='display: inline-block;'><div id=search_result_box class='search_result_container'>
+            <div class='search_result_container_content'>
+              <% count = 0 %>
+              <% @location.each do |l| %>
+                <div style='display: inline-block; margin:5px 20px'>
+                  <a href='<%=l.destinationLink%>' style='color:#333;'>
+                    <div class='search_result_item sr_shop'>
+                      <div class='content'>
+                        <%=l.name%>
+                        <%if (!l.country_code.nil? && l.country_code != 'BLANK')%>
+                          <br/>
+                        <%end%>
+                        <%if !l.country_code.nil? && l.country_code != 'BLANK'%>
+                          <img src='<%=l.country.flag_small%>'/> <%=l.country.name%>
+                        <%end%>
+                        <% if @distances != nil && @points !=nil %>
+                        <br/>
+                        <%= @distances[count].round(2) %> km from <%= @points[count].name %> <% end %><% count+=1 %> 
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              <% end %>
+            </div>
+          </div>
+      </div>
+      <% end %>
+      <%if @countries.count > 0 then%>          
+      <div class='search_result_container_title'><p><%= it("COUNTRIES", scope: ['search', 'search']) %></p></div>
+        <div style='display: inline-block;'><div id=search_result_box class='search_result_container'>
+          <div class='search_result_container_content'>
+            <%if @show_count then %>
+              <p class=search_result_count>
+                <%if @countries_count >= @per_page%>
+                  <%= it("%{strong:Over %{count}} country name found:", scope: ['search', 'search'], strong: It.tag("strong"), count: @countries_count) %>
+                <%else%>
+                  <%= it("%{strong:%{count}} country name found:", scope: ['search', 'search'], strong: It.tag("strong"), count: @countries_count) %>
+                <%end%>
+                <% if @countries && @countries.count < @countries_count then%> <a href='/search?<%=@search_params.merge({:more => :countries}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&")%>'><%= it("View all results...", scope: ['search', 'search']) %></a> <%end%>
+              </p>
+            <%else%>
+              <p class=search_result_count><%= it("Displaying results %{strong:%{start_page}-%{end_page}}:", scope: ['search', 'search'], strong: It.tag("strong"), start_page: (@page_num-1)*@per_page+1, end_page: (@page_num-1)*@per_page+@per_page) %></p>
+            <%end%>
+            <% @countries && @countries.each do |country|%>
+              <div style='display: inline-block; margin:5px 20px'>
+                <a href='<%=country.fullpermalink(:locale)%>' style='color:#333;'>
+                  <div class='search_result_item sr_country'>
+                    <img class='icon' src='<%=country.flag_big%>'/>
+                    <div class='content'>
+                      <%=country.name%>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            <%end%>
+
+            <%if !@show_count && (@page_num > 1 || @shops_count >= @per_page)%><div class='search_result_nextback'><%end%>
+            <%if !@show_count && @page_num > 1%>
+              <a class='back' href='/search?<%=@search_params.merge({:page => @page_num-1}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&")%>'>&lt;&lt;&lt; <%= it("View previous results", scope: ['search', 'search']) %></a>
+            <%end%>
+            <%if !@show_count && @countries_count >= @per_page && (@page_num + 1) * @per_page < 1000 %>
+              <a class='next' href='/search?<%=@search_params.merge({:page => @page_num+1}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&")%>'><%= it("View next results", scope: ['search', 'search']) %> &gt;&gt;&gt;</a>
+            <%end%>
+            <%if !@show_count && (@page_num > 1 || @shops_count >= @per_page)%><div style='clear: both;'> </div></div><%end%>
+          </div>
+        </div></div>
+      <%end%>
+
+
+      <%if @shops.count > 0 then%>          
+      <div class='search_result_container_title'><p><%= it("SHOPS", scope: ['search', 'search']) %></p></div>
+        <div style='display: inline-block;'><div id=search_result_box class='search_result_container'>
+          <div class='search_result_container_content'>
+            <%if @show_count then %>
+              <p class=search_result_count>
+                <%if @shops_count >= @per_page%>
+                  <%= it("%{strong:Over %{count}} shops found:", scope: ['search', 'search'], strong: It.tag("strong"), count: @shops_count) %>
+                <%else%>
+                  <%= it("%{strong:%{count}} shops found:", scope: ['search', 'search'], strong: It.tag("strong"), count: @shops_count) %>
+                <%end%>
+                <% if @shops && @shops.count < @shops_count then%><a href='/search?<%=@search_params.merge({:more => :shops}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&")%>'><%= it("View all results...", scope: ['search', 'search']) %></a><%end%>
+              </p>
+            <%else%>
+              <p class=search_result_count><%= it("Displaying results %{strong:%{start_page}-%{end_page}}:", scope: ['search', 'search'], strong: It.tag("strong"), start_page: (@page_num-1)*@per_page+1, end_page: (@page_num-1)*@per_page+@per_page) %></p>
+            <%end%>
+
+            <% @shops && @shops.each do |shop|%>
+              <div style='display: inline-block; margin:5px 20px'>
+                <a href='<%=shop.user_proxy.fullpermalink(:locale)%>' style='color:#333;'>
+                  <div class='search_result_item sr_shop'>
+                    <img class='icon' src='<%=shop.user_proxy.picture%>'/>
+                    <div class='content'>
+                      <%=shop.name%>
+                      <%if (!shop.country_code.nil? && shop.country_code != 'BLANK') || !shop.city.blank?%>
+                        <br/>
+                      <%end%>
+                      <%if !shop.country_code.nil? && shop.country_code != 'BLANK'%>
+                        <img src='<%=shop.country.flag_small%>'/> <%=shop.country.name%>
+                      <%end%>
+                      <%if (!shop.country_code.nil? && shop.country_code != 'BLANK') && !shop.city.blank?%>
+                      -
+                      <%end%>
+                      <%=shop.city%>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            <%end%>
+
+            <%if !@show_count && (@page_num > 1 || @shops_count >= @per_page)%><div class='search_result_nextback'><%end%>
+            <%if !@show_count && @page_num > 1%>
+              <a class='back' href='/search?<%=@search_params.merge({:page => @page_num-1}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&")%>'>&lt;&lt;&lt; <%= it("View previous results", scope: ['search', 'search']) %></a>
+            <%end%>
+            <%if !@show_count && @shops_count >= @per_page && (@page_num + 1) * @per_page < 1000 %>
+              <a class='next' href='/search?<%=@search_params.merge({:page => @page_num+1}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&")%>'><%= it("View next results", scope: ['search', 'search']) %> &gt;&gt;&gt;</a>
+            <%end%>
+            <%if !@show_count && (@page_num > 1 || @shops_count >= @per_page)%><div style='clear: both;'> </div></div><%end%>
+          </div>
+        </div></div>
+      <%end%>
+
+
+
+      <%if @users.count > 0 then%>
+          <div class='search_result_container_title'><p><%= it("LOGBOOKS", scope: ['search', 'search']) %></p></div>
+
+        <div style='display: inline-block;'><div id=search_result_box class='search_result_container'>
+          <div class='search_result_container_content'>
+            <%if @show_count then %>
+              <p class=search_result_count>
+                <%if @users_count >= @per_page%>
+                  <%= it("%{strong:Over %{count}} users found:", scope: ['search', 'search'], strong: It.tag("strong"), count: @users_count) %>
+                <%else%>
+                  <%= it("%{strong:%{count}} users found:", scope: ['search', 'search'], strong: It.tag("strong"), count: @users_count) %>
+                <%end%>
+                <% if @users && @users.count < @users_count then%> <a href='/search?<%=@search_params.merge({:more => :users}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&")%>'><%= it("View all results...", scope: ['search', 'search']) %></a> <%end%>
+              </p>
+            <%else%>
+              <p class=search_result_count><%= it("Displaying results %{strong:%{start_page}-%{end_page}}:", scope: ['search', 'search'], strong: It.tag("strong"), start_page: (@page_num-1)*@per_page+1, end_page: (@page_num-1)*@per_page+@per_page) %></p>
+            <%end%>
+
+            <% @users && @users.each do |user|%>
+              <div style='display: inline-block; margin:5px 20px'>
+              <a href='<%=user.fullpermalink(:locale)%>' style='color:#333;'>
+                <div class='search_result_item sr_user'>
+                  <img class='icon' src='<%=user.picture%>'/>
+                  <div class='content'>
+                    <%=user.nickname%>
+                  </div>
+                </div>
+              </a>
+              </div>
+            <%end%>
+
+            <%if !@show_count && (@page_num > 1 || @shops_count >= @per_page)%><div class='search_result_nextback'><%end%>
+            <%if !@show_count && @page_num > 1%>
+              <a class='back' href='/search?<%=@search_params.merge({:page => @page_num-1}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&")%>'>&lt;&lt;&lt; <%= it("View previous results", scope: ['search', 'search']) %></a>
+            <%end%>
+            <%if !@show_count && @users_count >= @per_page && (@page_num + 1) * @per_page < 1000 %>
+              <a class='next' href='/search?<%=@search_params.merge({:page => @page_num+1}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&")%>'><%= it("View next results", scope: ['search', 'search']) %> &gt;&gt;&gt;</a>
+            <%end%>
+            <%if !@show_count && (@page_num > 1 || @shops_count >= @per_page)%><div style='clear: both;'> </div></div><%end%>
+          </div>
+        </div></div>
+      <%end%>
+
+
+
+      <%if @spots.count > 0 then%>
+          <div class='search_result_container_title'><p>SPOTS</p></div>
+        <div style='display: inline-block;'><div id=search_result_box class='search_result_container'>
+          <div class='search_result_container_content'>
+            <%if @show_count then %>
+              <p class=search_result_count>
+                <%if @spots_count >= @per_page%>
+                  <%= it("%{strong:Over %{count}} spots found:", scope: ['search', 'search'], strong: It.tag("strong"), count: @spots_count) %>
+                <%else%>
+                  <%= it("%{strong:%{count}} spots found:", scope: ['search', 'search'], strong: It.tag("strong"), count: @spots_count) %>
+                <%end%>
+                <% if @spots && @spots.count < @spots_count then%> <a href='/search?<%=@search_params.merge({:more => :spots}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&")%>'><%= it("View all results...", scope: ['search', 'search']) %></a> <%end%>
+              </p>
+            <%else%>
+              <p class=search_result_count><%= it("Displaying results %{strong:%{start_page}-%{end_page}}:", scope: ['search', 'search'], strong: It.tag("strong"), start_page: (@page_num-1)*@per_page+1, end_page: (@page_num-1)*@per_page+@per_page) %></p>
+            <%end%>
+
+            <% @spots && @spots.each do |spot|%>
+              <div style='display: inline-block; margin:5px 20px'>
+                <a href='<%=spot.fullpermalink(:locale)%>' style='color:#333;'>
+                  <div class='search_result_item sr_shop'>
+                    <div class='content'>
+                      <%=spot.name%>
+                      <%if !spot.country_id.nil? && spot.country_id != 1%>
+                        <br/>
+                        <img src='<%=spot.country.flag_small%>' style='width:'/> <%=spot.country.name%>
+                      <%end%>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            <%end%>
+
+            <%if !@show_count && (@page_num > 1 || @shops_count >= @per_page)%><div class='search_result_nextback'><%end%>
+            <%if !@show_count && @page_num > 1%>
+              <a class='back' href='/search?<%=@search_params.merge({:page => @page_num-1}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&")%>'>&lt;&lt;&lt; <%= it("View previous results", scope: ['search', 'search']) %></a>
+            <%end%>
+            <%if !@show_count && @spots_count >= @per_page && (@page_num + 1) * @per_page < 1000 %>
+              <a class='next' href='/search?<%=@search_params.merge({:page => @page_num+1}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&")%>'><%= it("View next results", scope: ['search', 'search']) %> &gt;&gt;&gt;</a>
+            <%end%>
+            <%if !@show_count && (@page_num > 1 || @shops_count >= @per_page)%><div style='clear: both;'> </div></div><%end%>
+          </div>
+        </div></div>
+      <%end%>
+
+      <% if @posts.count >0%>
+      <div class='search_result_container_title'><p><%= it("COMMUNITY POSTS", scope: ['search', 'search']) %></p></div>
+      <div style='display: inline-block;'><div id=search_result_box class='search_result_container'>
+          <div class='search_result_container_content'>
+            <%if @show_count then %>
+              <p class=search_result_count>
+                <%if @posts_count >= @per_page%>
+                  <%= it("%{strong:Over %{count}} posts found:", scope: ['search', 'search'], strong: It.tag("strong"), count: @posts_count) %>
+                <%else%>
+                  <%= it("%{strong:%{count}} posts found:", scope: ['search', 'search'], strong: It.tag("strong"), count: @posts_count) %>
+                <%end%>
+                <% if @posts && @posts.count < @posts_count then%> <a href='/search?<%=@search_params.merge({:more => :posts}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&")%>'><%= it("View all results...", scope: ['search', 'search']) %></a> <%end%>
+              </p>
+            <%else%>
+              <p class=search_result_count><%= it("Displaying results %{strong:%{start_page}-%{end_page}}:", scope: ['search', 'search'], strong: It.tag("strong"), start_page: (@page_num-1)*@per_page+1, end_page: (@page_num-1)*@per_page+@per_page) %></p>
+            <%end%>
+
+            <% @posts && @posts.each do |post|%>
+              <div style='display: inline-block; margin:5px 20px'>
+                <a href='<%=post.fullpermalink(:locale)%>' style='color:#333;'>
+                  <div class='search_result_item sr_post blog_full_article'>
+                    <div class='content blog_excerpt'>
+
+                      <%if !post.wiki.pictures.blank?%>
+                      <img src="<%=post.wiki.pictures.first.small%>" style="float: left; width: 100px"/>
+                      <%end%>
+                      <b><%=post.title%> by <%=post.user.nickname%></b><br/>
+                      <p><%=truncate(strip_tags(post.wiki.html), :length=>500)%> <a href="<%=post.fullpermalink(:locale)%>"><%= it("READ MORE", scope: ['search', 'search']) %></a></p>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            <%end%>
+
+            <%if !@show_count && (@page_num > 1 || @posts_count >= @per_page)%><div class='search_result_nextback'><%end%>
+            <%if !@show_count && @page_num > 1%>
+              <a class='back' href='/search?<%=@search_params.merge({:page => @page_num-1}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&")%>'>&lt;&lt;&lt; <%= it("View previous results", scope: ['search', 'search']) %></a>
+            <%end%>
+            <%if !@show_count && @spots_count >= @per_page && (@page_num + 1) * @per_page < 1000 %>
+              <a class='next' href='/search?<%=@search_params.merge({:page => @page_num+1}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&")%>'><%= it("View next results", scope: ['search', 'search']) %> &gt;&gt;&gt;</a>
+            <%end%>
+            <%if !@show_count && (@page_num > 1 || @posts_count >= @per_page)%><div style='clear: both;'> </div></div><%end%>
+          </div>
+        </div></div>
+      <%end%>
+
+      <%if !@search_text.blank? && @posts.count == 0 && @spots.count == 0 && @shops.count == 0 && @countries.count == 0 && @users.count == 0 then%>
+          <div class='search_result_container_title'><p><%= it("Oooops !", scope: ['search', 'search']) %></p></div>
+
+        <div id=search_result_box class='search_result_container'>
+          <div class='search_result_container_content'>
+            <div class=search_examples>
+              <%if @too_short then%>
+                <p style='font-weight: bold; '><%= it("Sorry, the searched string '%{text}' is too short. Please try again with a string of at least %{number} characters.", scope: ['search', 'search'], text: @search_text, number: @too_short) %></p>
+              <%else%>
+                <p style='font-weight: bold; '><%= it("Sorry, no result was found.", scope: ['search', 'search']) %></p>
+              <%end%>
+              <br/>
+              <% if !@search_examples.nil? then %>
+                <p><%= it("On the other hand, you may want to try one of the following search. We guarantee you'll find something with any of them !", scope: ['search', 'search']) %></p>
+                <ul>
+                  <% @search_examples.each do |string| %>
+                    <li><a href='/search?s=<%=CGI.escape(string)%>'><%=string.titleize%></a></li>
+                  <%end%>
+                </ul>
+              <%end%>
+            </div>
+          </div>
+        </div>
+      <%end%>
+
+
+
+    </div>

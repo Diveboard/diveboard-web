@@ -1,0 +1,290 @@
+$header-height: 52px;
+$yellow-db: #FDC90C;
+
+body.home-page
+{
+  .content
+  {
+    padding-top:0;
+  }
+}
+#cover
+{
+  z-index: 1;
+  width: 100%;
+  background: url('/img/home/turtle.jpg') no-repeat;
+  background-position: 0 75%;
+  background-size: cover;
+  height: 440px;
+  background-color: #303336;
+  position: relative;
+  padding-top: - $header-height;
+  @media (max-width: 960px)
+  {
+    height: 400px;
+  }
+  @media (max-width: 750px)
+  {
+    height: 320px;
+  }
+  @media (max-width: 480px)
+  {
+    background-size: auto 100%;
+    background-position: 45%;
+  }
+
+  .fixed_header
+  {
+    width: 100%;
+    height: $header-height;
+    position: absolute;
+    z-index: 3;
+    top: 0;
+    transition: ease 100ms;
+    overflow: hidden;
+    left: 0;
+    color: white;
+    a{
+      color: white;
+    }    
+  }
+}
+#cover_up
+{
+  position: absolute;
+  z-index: 3;
+  width: 100%;
+  padding-top: - $header-height;
+  @media (max-width: 480px)
+  {
+    background-size: auto 100%;
+    background-position: 45%;
+  }
+  .container
+  {
+    position: absolute;
+    bottom: 130px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    @media (max-width: 960px)
+    {
+      bottom: 60px;
+    }
+    @media (max-width: 750px)
+    {
+      bottom: 30px;
+    }
+    .title
+    {
+      max-width: 940px;
+      margin: 0 auto;
+      padding-left: 20px;
+      padding-right: 10px;
+      text-shadow: 2px 2px 2px grey;
+      color: white;
+      @media (max-width: 750px)
+      {
+        padding-left: 10px;
+      }
+
+      .main_title
+      {
+        font-size: 36px;
+        font-weight: 600;
+        text-shadow: 0px 2px 0px rgba(0,0,0,0.50);
+        @media (max-width: 750px)
+        {
+          font-size: 26px;
+        }
+      }
+
+      .subtitle
+      {
+        font-size: 24px;
+        margin-top: 5px;
+        margin-bottom: 30px;
+        text-shadow: 0px 2px 0px rgba(0,0,0,0.50);
+        @media (max-width: 960px)
+        {
+          margin-bottom: 15px;
+          font-size: 22px;
+        }
+        @media (max-width: 750px)
+        {
+          font-size: 18px;
+        }
+      }
+    }
+  }
+
+  .search_bar
+  {
+    max-width: 940px;
+    margin: 0 auto;
+    height: 51px;
+    background-color: #e9eff3;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    border-radius: 30px;
+    position: relative;
+    padding-top: 9px;
+    padding-right: 11px;
+    padding-left: 9px;
+    @media (max-width: 750px)
+    {
+      padding-right: 0px;
+    }
+    table
+    {
+      border-collapse: collapse;
+      border: none;
+      width: 100%;
+      .pin_td
+      {
+        text-align: center;
+        width: 65px;
+        @media (max-width: 750px)
+        {
+          width: 30px;
+          padding-top: 3px;
+        }
+      }
+    }
+    .search
+    {
+      width: 100%;
+      position: relative;
+      input
+      {
+        height: 40px;
+        width: calc(100% - 33px - 115px);
+        border: 1px solid #cccccc;
+        -webkit-border-radius: 20px;
+        -moz-border-radius: 20px;
+        border-radius: 20px;
+        color: black;
+        font-size: 14px;
+        padding-left: 33px;
+        padding-right: 115px;
+        outline: none;
+      }
+      button
+      {
+        position: absolute;
+        right: 1px;
+        top: 3px;
+        height: 36px;
+        width: 95px;
+        border: 1px solid #fdc90c;
+        -webkit-border-radius: 18px;
+        -moz-border-radius: 18px;
+        border-radius: 18px;
+        background-color: #fdc90c;
+        color: #3c4245;
+        font-size: 14px;
+        cursor: pointer;
+
+        @media (max-width: 750px)
+        {
+          display: none;
+        }
+      }
+      .search_button:hover, .search_button:active
+      {
+        border: 1px solid #3c4245;
+        background-color: #3c4245;
+        color: #fdc90c;
+      }
+      .search_text
+      {
+        @media (max-width: 750px)
+        {
+          display: none;
+        }
+      }
+      .search_icon
+      {
+        display: none;
+        @media (max-width: 750px)
+        {
+          display: block;
+        }
+      }
+      $suggestion-left: 20px;
+      .suggestions {
+        width: calc(100% - 115px);
+        @media (max-width: 750px)
+        {
+          width: calc(100% - 60px);
+        }
+        position: absolute;
+        margin: -1px auto 0;
+        margin-left: 20px;
+        padding: 0;
+        list-style-type: none;
+        border: 1px solid #d5d4d4;
+        background: #fff;
+        font-size: 13px;
+        color: #555; 
+        -moz-border-radius: 2px;
+        -webkit-border-radius: 2px;
+        border-radius: 2px;  
+        -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        li {
+          height: 25px;
+          padding: 0 10px;
+          line-height: 25px;
+          border-top: 1px solid #f5f5f5;
+          z-index: 3;
+        }
+        li a {
+          text-decoration: none;
+          color: black;
+          display:block;
+        }
+        li:hover, li:active, .selected {
+          background: #fffac2;
+          background-position: 320px center;
+          border-top-color: #fffac2
+        }
+        li:first-child {
+          border: none;
+        }
+      }
+    }
+    @media (max-width: 1000px)
+    {
+      width: calc(100% - 40px);
+    }
+    @media (max-width: 750px)
+    {
+      width: calc(100% - 20px);
+      height: 40px;
+      padding-top: 0px;
+      background-color: white;
+      border: 1px solid #cccccc;
+      .search
+      {
+        input
+        {
+          height: 40px;
+          border: none;
+          padding-left: 10px;
+          padding-right: 15px;
+          width: calc(100% - 70px);
+        }
+        button
+        {
+          height: 36px;
+          width: 38px;
+          border: none;
+          top: 2px;
+          right: 2px;
+        }
+      }
+    }
+  }
+}

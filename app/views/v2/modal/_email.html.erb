@@ -1,0 +1,175 @@
+<%= content_for :javascripts do%>
+  <script type="text/javascript">
+    $(document).ready(function()
+      {
+        email_modal = new LightModal('email_modal');
+        email_modal.trigger['send_email'] = function()
+        {
+          // TODO send share email
+          if (email_modal.context.type == 'share') {
+            data = {
+                from: $('#email_modal .modal_content .from_input').val(),
+                to: $('#email_modal .modal_content .to_input').val(),
+                subject: $('#email_modal .modal_content .subject_input').val(),
+                message: $('#email_modal .modal_content .message_text').html()
+              };
+            if(validateEmail(data.from) && validateEmail(data.to)){ 
+              email_modal.display('processing_share');
+              $.ajax({
+                url: window.location.origin + window.location.pathname + '/share',
+                type: "POST",
+                dataType: 'json',
+                data: data,
+                success: function(data){
+                  email_modal.display('success_share');
+                }
+              });
+            }
+            else alert("Sorry it seems there is a mistake in one of the email, please check them.");
+            return ;
+          }
+          email_modal.display('processing');
+          data = {
+              subject: $('#email_modal .modal_content .subject_input').val(),
+              message: $('#email_modal .modal_content .message_text').html()
+            };
+          $.ajax({
+            url: window.location.origin + window.location.pathname + '/buy',
+            dataType: 'json',
+            data: data,
+            type: "POST",
+            success: function(data){
+              email_modal.display('success');
+            }
+          });
+
+        };
+
+        $('.share_email_button').click(function()
+          {
+            $('.modal_slides .title').html("Sending your mail");
+            email_modal.display('initial', {type: 'share'});
+            $('.to_field').html('<input type="text" class="to_input" id="to" />');
+            $('.from_section').show();
+            $('.from_field').html('<input type="text" class="from_input" id="from" />');
+            $('.subject_input').val('Check out this awesome Diveshop');
+            $('.message_text').html('Hi,\n\nYou might be interested on checking <%= shop.name if defined?(shop) %> in <%= shop.country.cname if defined?(shop) %>');
+          });
+
+        // $('.book_button').tclick(function()
+        // {
+        //   ga('send', 'event', 'shop', 'book_now');
+        //   $('.modal_slides .title').html("Contact shop owner");
+        //   var product_name = $(this).attr('product_name');
+        //   email_modal.display('initial', {product_id: $(this).attr('product_id'), product_name: product_name, type: 'book'});
+        //   $('.from_section').hide();
+        //   $('.to_field').html('<%= shop.name if defined?(shop) %>');
+        //   $('.subject_input').val('Booking ' + product_name);
+        //   $('.message_text').html('Hi,\n\nI would like to book the product "' + product_name + '" with your shop <%= shop.name if defined?(shop) %>.\n\nThank you very much !');
+        // });
+
+        $('.lightframe_share_email_button').click(function()
+          {
+            link = LightFrame.pictureList[LightFrame.swipe.activeIndex].fullpermalink;
+            if (link == '#')
+              link = window.location.href.replace('#', '');
+            $('.modal_slides .title').html("Sending your mail");
+            email_modal.display('initial', {type: 'share'});
+            $('.to_field').html('<input type="text" class="to_input" id="to" />');
+            $('.from_section').show();
+            $('.from_field').html('<input type="text" class="from_input" id="from" />');
+            $('.subject_input').val('Check out this awesome Picture');
+            $('.message_text').html('Hi,\n\nYou might be interested on checking this picture ' + link);
+          });
+      });
+     function validateEmail($email) {
+      if($email!=""){      
+        var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+        return emailReg.test( $email );
+      }else{return false}
+
+    };
+  </script>
+<% end %>
+
+<div id="email_modal" class="emailModal modal">
+  <div class="modal_content">
+  </div>
+
+  <div class="modal_slides">
+    <div modal_id="initial" modal_class="modal_content_initial">
+      <a href="javascript:void(0)" class="close" modal_trigger="close"></a>
+      <div class="title">Contact shop owner</div>
+      <div class="modal_body">
+        <table class="email_table">
+          <tr class="from_section" style="display: none;">
+            <td class="col1"><label for="from">From:</label></td>
+            <td class="from_field">
+              
+            </td>
+          </tr>
+          <tr>
+            <td class="col1"><label for="to">To:</label></td>
+            <td class="to_field">
+              
+            </td>
+          </tr>
+          <tr>
+            <td><label for="subject">Subject:</label></td><td><input type="text" id="subject" class="subject_input" value="" /></td>
+          </tr>
+          <tr>
+            <td class="message"><label for="message">Message:</label></td>
+            <td><textarea id="message" class="message_text"></textarea></td>
+          </tr>
+        </table>
+      </div>
+      <div class="modal_button">
+        <a href="javascript:void(0)" modal_trigger="send_email">Send Message</a>
+      </div>
+    </div>
+
+    <div modal_class="modal_content_processing" modal_id="processing">
+      <div class="title">Contact shop owner</div>
+      <div class="modal_body">
+        <div class="description">
+          <img src="<%= HtmlHelper.lbroot "/img/transparent_loader.gif" %>" alt="" /><br>
+          Processing please wait
+        </div>
+      </div>
+    </div>
+    <div modal_class="modal_content_processing" modal_id="processing_share">
+      <div class="title">Sending your mail</div>
+      <div class="modal_body">
+        <div class="description">
+          <img src="<%= HtmlHelper.lbroot "/img/transparent_loader.gif" %>" alt="" /><br>
+          Processing please wait
+        </div>
+      </div>
+    </div>
+
+    <div modal_class="modal_content_success" modal_id="success">
+      <a href="javascript:void(0)" class="close" modal_trigger="close"></a>
+      <div class="title">Contact shop owner</div>
+      <div class="modal_body">
+        <div class="description">
+         Your message has been sent. The shop will contact you as soon as possible. Thanks for booking with us.
+        </div>
+      </div>
+      <div class="modal_button">
+        <a href="javascript:void(0)" modal_trigger="close">Close</a>
+      </div>
+    </div>
+    <div modal_class="modal_content_success" modal_id="success_share">
+      <a href="javascript:void(0)" class="close" modal_trigger="close"></a>
+      <div class="title">Sending your mail</div>
+      <div class="modal_body">
+        <div class="description">
+         Your message has been sent. Thanks for sharing our page.
+        </div>
+      </div>
+      <div class="modal_button">
+        <a href="javascript:void(0)" modal_trigger="close">Close</a>
+      </div>
+    </div>
+  </div>
+</div>

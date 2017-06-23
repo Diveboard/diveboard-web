@@ -1,0 +1,54 @@
+Internationalization is a 2 step process:
+
+1/ make your file i18n ready by turning strings into variables
+see examples below :
+<%= it("string_id", scope: ['staticpages', 'agent']) %>
+
+Choosing a string id:
+* it can be the string itself or something shorter
+* If your string has some html tags inside, make sure to have the string id finish with _html
+** tip: in oneskyapp the id can be updated in "phrases management": https://diveboard.oneskyapp.com/admin/phrase/list/project/17859 -> find the phrase and click the wheel at the bottom right
+* There can be no "." in the id
+
+The string id in the example above will translate in OneSkyApp ass staticpages.agent.string_id
+
+Here are a few examples of the use of variables in translations:
+<div><%=it("This is the homepage for %{something}", something: "me" )%></div>
+
+  <div><%=it("This isThis isThis isThis isThis is a %{link:simple test}", link: It.link("#", style: 'color: #0f0') )%></div>
+
+  <div><%=it("This is the homepage for %{user}", user: link_to(@user.nickname, @user.fullpermalink) )%></div>
+
+  <div><%=it("This is a paragraph %{br} this is another one", br: It.tag('br') )%></div>
+
+
+
+  fr:
+    units:
+      minute:
+        zero: '%{count} minute'
+        one: '%{count} minute'
+        other: '%{count} minutes'
+
+
+  <%=I18n.t 'minute', scope: ['units'], count: 0%>
+
+
+      <div style='min-height: 40px; background: #f70'>  <os-p key="diveinfo.buddy_editor.add_one_of_your_past_dive_buddies"><%=t 'diveinfo.buddy_editor.add_one_of_your_past_dive_buddies'%></os-p>
+        <%= render partial: 'layouts/toto', locals: {nb_iter: 7}
+        %>
+      </div>
+
+
+
+
+
+JS
+===
+
+I18n.t(["js","wizard","This will delete the %{count} selected dives. Are you sure ?"], {count: list_of_dives.length})
+
+
+2/ On you environment download the updated strings file from OneSkyApp
+# bundle exec rake i18n:onesky_get
+

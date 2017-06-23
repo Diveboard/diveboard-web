@@ -1,0 +1,2 @@
+class DBArgumentError < DBException
+end

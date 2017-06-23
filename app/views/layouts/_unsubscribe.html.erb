@@ -1,0 +1,38 @@
+<div>
+  <%if begin recipient.class.to_s == "Shop" rescue false end%>
+  <span ><%= it("You received this email as the contact email for %{name}.", scope: ['layouts', 'unsubscribe'], name: recipient.nickname) %>
+  <%if begin !recipient.is_claimed? && !claim.nil? rescue false end%>
+    <br/>
+    <%= it("You haven't claimed your %{shop_link:page} yet - to edit it and make it awesome create a personal account on Diveboard and %{claim_link:claim your page}.", scope: ['layouts', 'unsubscribe'], shop_link: It.link(recipient.fullpermalink(:locale)), claim_link: It.link(claim) ) %>
+  <%end%>
+  </span>
+  <%else%>
+  <span ><%= it("You received this email either because you're a Diveboard user or because you've been tagged as a buddy in a user's dive.", scope: ['layouts', 'unsubscribe']) %></span>
+  <%end%>
+  <br/>
+  <%
+    unsub_link = ROOT_URL + "community/newsletter/unsuscribe?scope="
+    unsub_link += tag.split("-")[0] rescue ""
+    begin
+      if recipient.class.to_s != "String"  && !recipient.nil? then
+        unsub_link += "&recipient_id=#{recipient.shaken_id}&recipient_email=#{recipient.contact_email}"
+      else
+        unsub_link += "&email=#{recipient}"
+      end
+    rescue
+    end
+  %>
+  <%= it("Click here to %{unsub_link:unsubscribe}.", scope: ['layouts', 'unsubscribe'], unsub_link: unsub_link) %>
+  <%if begin recipient.class.to_s == "User" rescue false end%>
+    <%= it("Or check out your %{link:settings} page.", scope: ['layouts', 'unsubscribe'], link: It.link(ROOT_URL)) %>
+  <%end%>
+</div>
+<%if begin recipient.class.to_s == "User" rescue false end%>
+<div>
+  <%= it("Forgot your Diveboard password?", scope: ['layouts', 'unsubscribe']) %>
+  <a  href="<%=ROOT_URL%>login/register?help=pwd"><%= it("Get instructions on how to reset it.", scope: ['layouts', 'unsubscribe']) %></a>
+</div>
+<%end%>
+<div>
+  <a href="<%=ROOT_URL%>"  style="border:none;color:#0084b4;text-decoration:none;text-decoration:none;font-size:11px;line-height:17px;color:#999999;text-shadow:0 1px 0 #fff;"><%= it("All rights reserved Diveboard.com", scope: ['layouts', 'unsubscribe']) %></a>
+</div>

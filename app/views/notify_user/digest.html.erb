@@ -1,0 +1,279 @@
+<style>
+.main_info.digest_email {margin-left: -20px; margin-right: -20px; margin-top: 0px;}
+.digest_email .headline {font-size: 1.4em;margin: 20px -5px;}
+.digest_email .activity_item {margin: -10px 40px 0px 40px; padding-top: 10px; clear: both}
+.digest_email .activity_item + .activity_item {border-top: 1px solid #ccc; margin-top: 15px;}
+.digest_email .activity_item .activity_thumb {margin: 15px 10px -5px 10px; float: left; height: 75px;}
+.digest_email .activity_item .activity_thumb img {width: 60px; height: 60px; }
+.digest_email .activity_item .item_content {}
+.digest_email .activity_title {font-size: 1.1em; color: #000; margin: 10px 10px 10px 10px; }
+.digest_email .activity_title a {}
+.digest_email .activity_author {font-size: 0.80em; color: #999; margin-top: -10px;}
+.digest_email .activity_comment {font-size: 0.90em;margin: 10px 10px 10px 10px; line-height: 1.35em;}
+.digest_email .activity_comment p + p {margin-top: 0.5em;}
+.digest_email .activity_action  {text-align: right; font-size: 0.9em; margin: -2px 0px;}
+.digest_email .great_pics {text-align: center; font-size: 0px;}
+.digest_email .great_pic {display: inline-block; font-size: 11px; text-align: left; margin: 3px;}
+.digest_email .great_pic img {width: 90px; height: 90px;}
+.digest_email .great_pic a {color: #333;}
+.digest_email .hr {border-top: 1px solid #ccc; margin-top: 30px; margin-bottom: 30px;}
+</style>
+<div class="main_info digest_email" align="left">
+
+  <p class='headline'><%= it("What you may have missed on Diveboard this week", scope: ['notify_user', 'digest']) %>:</p>
+  <%notification_count = @notifications.count %>
+  <%if notification_count > 0 then%>
+
+    <%@notifications.each do |notif|%>
+      <%case notif.kind%>
+        <%when 'great_picture' then%>
+          <div class='activity_item <%=notif.kind%>'>
+            <a class='activity_thumb' href='<%=ROOT_URL%>explore/gallery'><img src='<%=notif.about.thumbnail%>'/></a>
+            <div class='item_content'>
+              <p class='activity_title'><%= it("On the hall of fame", scope: ['notify_user', 'digest']) %></p>
+              <%if notif.about.dive && notif.about.dive.spot_id != 1 then%>
+                <%if notif.about.dive.spot.country.id != 1 then %>
+                  <p class='activity_comment'><%= it("This picture is part of %{about_link:your dive of %{date}} on %{spot}, %{spot_country}, and has been added on %{gallery_link:Diveboard Gallery}", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale)), date: l(notif.about.dive.time_in.to_date, format: :long), spot: notif.about.dive.spot.name, spot_country: notif.about.dive.spot.country.name, gallery_link: ROOT_URL + "explore/gallery") %></a>.</p>
+                <%else%>
+                  <p class='activity_comment'><%= it("This picture is part of %{about_link:your dive of %{date}} on %{spot}, and has been added on %{gallery_link:Diveboard Gallery}.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale)), date: l(notif.about.dive.time_in.to_date, format: :long), gallery_link: ROOT_URL + "explore/gallery") %></p>
+                <%end%>
+              <%elsif notif.about.dive %>
+                <p class='activity_comment'><%= it("This picture is part of %{about_link:your dive of %{date}}, and received new likes this week.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale)), date: l(notif.about.dive.time_in.to_date, format: :long)) %></p>
+              <%else%>
+                <p class='activity_comment'><%= it("This picture is available %{about_link:on Diveboard}, and received new likes this week.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale))) %></p>
+              <%end%>
+            </div>
+          </div>
+
+        <%when 'like_picture' then%>
+          <div class='activity_item <%=notif.kind%>'>
+            <a class='activity_thumb' href='<%=notif.about.fullpermalink(:locale)%>'><img src='<%=notif.about.thumbnail%>'/></a>
+            <div class='item_content'>
+              <p class='activity_title'><%= it("Great shot !", scope: ['notify_user', 'digest']) %></p>
+              <%if notif.about.dive && notif.about.dive.spot_id != 1 then%>
+                <%if notif.about.dive.spot.country.id != 1 then%>
+                  <p class='activity_comment'><%= it("This picture is part of %{about_link:your dive of %{date}} on %{spot}, %{spot_country}, and received new likes this week.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale)), date: l(notif.about.dive.time_in.to_date, format: :long), spot: notif.about.dive.spot.name, spot_country: notif.about.dive.spot.country.name) %></p>
+                <%else%>
+                  <p class='activity_comment'><%= it("This picture is part of %{about_link:your dive of %{date}} on %{spot}, and received new likes this week.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale)), date: l(notif.about.dive.time_in.to_date, format: :long), spot: notif.about.dive.spot.name) %></p>
+                <%end%>
+              <%elsif notif.about.dive %>
+                <p class='activity_comment'><%= it("This picture is part of %{about_link:your dive of %{date}}, and received new likes this week.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale)), date: l(notif.about.dive.time_in.to_date, format: :long)) %></p>
+              <%else%>
+                <p class='activity_comment'><%= it("This picture is available %{about_link:on Diveboard}, and received new likes this week.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale))) %></p>
+              <%end%>
+            </div>
+          </div>
+
+        <%when 'comment_picture' then%>
+          <div class='activity_item <%=notif.kind%>'>
+            <a class='activity_thumb' href='<%=notif.about.fullpermalink(:locale)%>'><img src='<%=notif.about.thumbnail%>'/></a>
+            <div class='item_content'>
+              <p class='activity_title'><%= it("New comments", scope: ['notify_user', 'digest']) %></p>
+              <%if notif.about.dive && notif.about.dive.spot_id != 1 then%>
+                <%if notif.about.dive.spot.country.id != 1 then%>
+                  <p class='activity_comment'><%= it("This picture is part of %{about_link:your dive of %{date}} on %{spot}, %{spot_country}, and has been commented this week.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale)), date: l(notif.about.dive.time_in.to_date, format: :long), spot: notif.about.dive.spot.name, spot_country: notif.about.dive.spot.country.name) %></p>
+                <%else%>
+                  <p class='activity_comment'><%= it("This picture is part of %{about_link:your dive of %{date}} on %{spot}, and has been commented this week.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale)), date: l(notif.about.dive.time_in.to_date, format: :long), spot: notif.about.dive.spot.name) %></p>
+                <%end%>
+              <%elsif notif.about.dive %>
+                <p class='activity_comment'><%= it("This picture is part of %{about_link:your dive of %{date}}, and has been commented this week.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale)), date: l(notif.about.dive.time_in.to_date, format: :long)) %></p>
+              <%else%>
+                <p class='activity_comment'><%= it("This picture is available %{about_link:on Diveboard}, and has been commented this week.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale))) %></p>
+              <%end%>
+            </div>
+          </div>
+
+        <%when 'like_dive' then%>
+          <div class='activity_item <%=notif.kind%>'>
+            <a class='activity_thumb' href='<%=notif.about.fullpermalink(:locale)%>'><img src='<%=notif.about.thumbnail_image_url%>'/></a>
+            <div class='item_content'>
+              <p class='activity_title'><%= it("An amazing dive", scope: ['notify_user', 'digest']) %></p>
+              <%if notif.about.spot_id != 1  then%>
+                <%if notif.about.spot.country.id != 1 then%>
+                  <p class='activity_comment'><%= it("%{about_link:Your dive of %{date}} on %{spot}, %{spot_country}, and received new likes this week.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale)), date: l(notif.about.time_in.to_date, format: :long), spot: notif.about.spot.name, spot_country: notif.about.spot.country.name) %></p>
+                <%else%>
+                  <p class='activity_comment'><%= it("%{about_link:Your dive of %{date}} on %{spot}, and received new likes this week.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale)), date: l(notif.about.time_in.to_date, format: :long), spot: notif.about.spot.name) %></p>
+                <%end%>
+              <%else%>
+                <p class='activity_comment'><%= it("%{about_link:Your dive} available on Diveboard received new likes this week.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale))) %></p>
+              <%end%>
+            </div>
+          </div>
+
+        <%when 'signatureok' then%>
+          <div class='activity_item <%=notif.kind%>'>
+            <a class='activity_thumb' href='<%=notif.about.fullpermalink(:locale)%>'><img src='<%=notif.about.thumbnail_image_url%>'/></a>
+            <div class='item_content'>
+              <p class='activity_title'><%= it("Got a new stamp", scope: ['notify_user', 'digest']) %></p>
+              <%if notif.about.spot_id != 1  then%>
+                <%if notif.about.spot.country.id != 1 then%>
+                  <p class='activity_comment'><%= it("%{about_link:Your dive of %{date}} on %{spot}, %{spot_country} has been approved.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale)), date: l(notif.about.time_in.to_date, format: :long), spot: notif.about.spot.name, spot_country: notif.about.spot.country.name) %></p>
+                <%else%>
+                  <p class='activity_comment'><%= it("%{about_link:Your dive of %{date}} on %{spot} has been approved.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale)), date: l(notif.about.time_in.to_date, format: :long), spot: notif.about.spot.name) %></p>
+                <%end%>
+              <%else%>
+                <p class='activity_comment'><%= it("%{about_link:Your dive} available on Diveboard has been approved.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale))) %></p>
+              <%end%>
+            </div>
+          </div>
+
+        <%when 'signatureko' then%>
+          <div class='activity_item <%=notif.kind%>'>
+            <a class='activity_thumb' href='<%=notif.about.fullpermalink(:locale)%>'><img src='<%=notif.about.thumbnail_image_url%>'/></a>
+            <div class='item_content'>
+              <p class='activity_title'><%= it("Faking a dive ?", scope: ['notify_user', 'digest']) %></p>
+              <%if notif.about.spot_id != 1  then%>
+                <%if notif.about.spot.country.id != 1 then%>
+                  <p class='activity_comment'><%= it("The requested signature for %{about_link:your dive of %{date}} on %{spot}, %{spot_country} has been rejected.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale)), date: l(notif.about.time_in.to_date, format: :long), spot: notif.about.spot.name, spot_country: notif.about.spot.country.name) %></p>
+                <%else%>
+                  <p class='activity_comment'><%= it("The requested signature for %{about_link:your dive of %{date}} on %{spot} has been rejected.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale)), date: l(notif.about.time_in.to_date, format: :long), spot: notif.about.spot.name) %></p>
+                <%end%>
+              <%else%>
+                <p class='activity_comment'><%= it("The requested signature for %{about_link:your dive} has been rejected.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale))) %></p>
+              <%end%>
+            </div>
+          </div>
+
+        <%when 'comment_dive' then%>
+          <div class='activity_item <%=notif.kind%>'>
+            <a class='activity_thumb' href='<%=notif.about.fullpermalink(:locale)%>'><img src='<%=notif.about.thumbnail_image_url%>'/></a>
+            <div class='item_content'>
+              <p class='activity_title'><%= it("Feedback on your dive", scope: ['notify_user', 'digest']) %></p>
+              <%if notif.about.spot_id != 1  then%>
+                <%if notif.about.spot.country.id != 1 then%>
+                  <p class='activity_comment'><%= it("%{about_link:Your dive of %{date}} on %{spot}, %{spot_country} has been commented this week.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale)), date: l(notif.about.time_in.to_date, format: :long), spot: notif.about.spot.name, spot_country: notif.about.spot.country.name) %></p>
+                <%else%>
+                  <p class='activity_comment'><%= it("%{about_link:Your dive of %{date}} on %{spot} has been commented this week.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale)), date: l(notif.about.time_in.to_date, format: :long), spot: notif.about.spot.name) %></p>
+                <%end%>
+              <%else%>
+                <p class='activity_comment'><%= it("%{about_link:The dive} available on Diveboard, and received new likes this week.", scope: ['notify_user', 'digest'], about_link: It.link(notif.about.fullpermalink(:locale))) %></p>
+              <%end%>
+            </div>
+          </div>
+
+        <%when 'like_blogpost' then%>
+          <%if notif.about.blog_category_id == BlogCategory.find_by_name("Question").id then%>
+            <div class='activity_item <%=notif.kind%>'>
+              <a class='activity_thumb' href='<%=notif.about.fullpermalink(:locale)%>'><img src='<%=notif.about.thumbnail%>'/></a>
+              <div class='item_content'>
+                <p class='activity_title'><%= it("Good question", scope: ['notify_user', 'digest']) %></p>
+                <p class='activity_comment'><%= it("%{link:Your question} entitled %{l_quote}%{title}%{r_quote} has been appreciated and received new likes this week.", scope: ['notify_user', 'digest'], link: It.link(notif.about.fullpermalink(:locale)), l_quote: "<i>&laquo;".html_safe, title: notif.about.title, r_quote: "&raquo;</i>".html_safe) %></p>
+              </div>
+            </div>
+          <%else%>
+            <div class='activity_item <%=notif.kind%>'>
+              <a class='activity_thumb' href='<%=notif.about.fullpermalink(:locale)%>'><img src='<%=notif.about.thumbnail%>'/></a>
+              <div class='item_content'>
+                <p class='activity_title'><%= it("You made your point", scope: ['notify_user', 'digest']) %></p>
+                <p class='activity_comment'><%= it("%{link:Your article} entitled %{l_quote}%{title}%{r_quote} has been appreciated and received new likes this week.", scope: ['notify_user', 'digest'], link: It.link(notif.about.fullpermalink(:locale)), l_quote: "<i>&laquo;".html_safe, title: notif.about.title, r_quote: "&raquo;</i>".html_safe) %></p>
+              </div>
+            </div>
+          <%end%>
+
+        <%when 'comment_blogpost' then%>
+          <%if notif.about.blog_category_id == BlogCategory.find_by_name("Question").id then%>
+            <div class='activity_item <%=notif.kind%>'>
+              <a class='activity_thumb' href='<%=notif.about.fullpermalink(:locale)%>'><img src='<%=notif.about.thumbnail%>'/></a>
+              <div class='item_content'>
+                <p class='activity_title'><%= it("Some answers", scope: ['notify_user', 'digest']) %></p>
+                <p class='activity_comment'><%= it("%{link:Your question} entitled %{l_quote}%{title}%{r_quote} has received some new answers.", scope: ['notify_user', 'digest'], link: It.link(notif.about.fullpermalink(:locale)), l_quote: "<i>&laquo;".html_safe, title: notif.about.title, r_quote: "&raquo;</i>".html_safe) %></p>
+              </div>
+            </div>
+          <%else%>
+            <div class='activity_item <%=notif.kind%>'>
+              <a class='activity_thumb' href='<%=notif.about.fullpermalink(:locale)%>'><img src='<%=notif.about.thumbnail%>'/></a>
+              <div class='item_content'>
+                <p class='activity_title'><%= it("Discussing your article", scope: ['notify_user', 'digest']) %></p>
+                <p class='activity_comment'><%= it("%{link:Your article} entitled %{l_quote}%{title}%{r_quote} has been commented this week.", scope: ['notify_user', 'digest'], link: It.link(notif.about.fullpermalink(:locale)), l_quote: "<i>&laquo;".html_safe, title: notif.about.title, r_quote: "&raquo;</i>".html_safe) %></p>
+              </div>
+            </div>
+          <%end%>
+
+        <%when 'tag_dive' then%>
+          <div class='activity_item <%=notif.kind%>'>
+            <a class='activity_thumb' href='<%=notif.about.fullpermalink(:locale)%>'><img src='<%=notif.about.user.picture%>'/></a>
+            <div class='item_content'>
+              <p class='activity_title'><%= it("Hello buddy", scope: ['notify_user', 'digest']) %></p>
+              <%if notif.about.spot_id != 1 %>
+                <p class='activity_comment'><%= it("%{link:You have been tagged} on a dive in %{it}%{spot}%{c_it} by %{user}.", scope: ['notify_user', 'digest'], link: It.link(notif.about.fullpermalink(:locale)), it: "<i>".html_safe, spot: notif.about.spot.name, c_it: "</i>".html_safe, user: notif.about.user.nickname) %></p>
+              <%else%>
+                <p class='activity_comment'><%= it("%{link:You have been tagged} on a dive by %{user}.", scope: ['notify_user', 'digest'], link: It.link(notif.about.fullpermalink(:locale)), user: notif.about.user.nickname) %></p>
+              <%end%>
+            </div>
+          </div>
+
+        <%when 'reply_review' then%>
+          <div class='activity_item <%=notif.kind%>'>
+            <%if notif.about.shop.user_proxy.pict%><a class='activity_thumb' href='<%=notif.about.shop.fullpermalink(:locale)%>'><img src='<%=notif.about.shop.user_proxy.picture%>'/></a><%end%>
+            <div class='item_content'>
+              <p class='activity_title'><%=notif.about.shop.name%></p>
+              <p class='activity_comment'><%= it("%{link:Your review} for %{shop} has been commented.", scope: ['notify_user', 'digest'], link: It.link(notif.about.shop.fullpermalink(:locale)), shop: notif.about.shop.name) %></p>
+            </div>
+          </div>
+
+        <%when 'shop_granted_rights' then%>
+          <div class='activity_item <%=notif.kind%>'>
+            <%if notif.about.user_proxy.pict%><a class='activity_thumb' href='<%=notif.about.fullpermalink(:locale)%>'><img src='<%=notif.about.user_proxy.picture%>'/></a><%end%>
+            <div class='item_content'>
+              <p class='activity_title'><%= it("You are the boss", scope: ['notify_user', 'digest']) %></p>
+              <p class='activity_comment'><%= it("%{link:You have been approved as asministrator} for %{name}.", scope: ['notify_user', 'digest'], link: It.link(notif.about.fullpermalink(:locale)), name: notif.about.name) %></p>
+            </div>
+          </div>
+
+        <%when 'dive_missing_review' then%>
+          <div class='activity_item <%=notif.kind%>'>
+            <%if notif.about.user_proxy.pict%><a class='activity_thumb' href='<%=notif.about.fullpermalink(:locale)%>'><img src='<%=notif.about.user_proxy.picture%>'/></a><%end%>
+            <div class='item_content'>
+              <p class='activity_title'><%= it("Did you like diving with %{user}?", scope: ['notify_user', 'digest'], user: notif.about.user_proxy.nickname) %></p>
+              <p class='activity_comment'><%= it("You declared diving with %{user}. Don't forget to %{link:leave a short review} that will help other divers to choose a dive center.", scope: ['notify_user', 'digest'], user: notif.about.user_proxy.nickname, link: It.link(notif.about.fullpermalink(:locale)) + "/review") %></p>
+            </div>
+          </div>
+
+        <%else notification_count -= 1%>
+
+      <%end%>
+    <%end%>
+
+    <div class='hr'></div>
+  <%end #if @notifications.count > 0%>
+
+  <%if notification_count > 0 && @other_stuff.count > 0 then%>
+    <p class='headline'><%= it("Other things you might be interested in", scope: ['notify_user', 'digest']) %>:</p>
+  <%end%>
+
+  <%if @other_stuff.count > 0%>
+    <%@other_stuff.each do |o|%>
+      <%case when o.is_a?(BlogPost) && o.blog_category_id == BlogCategory.find_by_name("Question").id%>
+        <div class='activity_item blog_post'>
+          <a class='activity_thumb' href='<%=o.fullpermalink(:locale)%>'><img src='<%=ROOT_URL%>img/question_mark.png'/></a>
+          <!--TODO: translate title? -->
+          <div class='activity_title'><a href='<%=o.fullpermalink(:locale)%>'><%=o.title%> <%=o.id%></a></div>
+          <div class='activity_author'><%= it("by %{user} - %{date}", scope: ['notify_user', 'digest'], user: o.user.nickname, date: l(o.created_at.to_date, format: :short)) %></div>
+          <div class='activity_comment'><%=o.abstract_html length: 500%></div>
+          <div class='activity_action'><%= it("%{link:View answers %{raquo}}", scope: ['notify_user', 'digest'], link: o.fullpermalink(:locale), raquo: "&raquo;".html_safe) %></div>
+        </div>
+      <%when o.is_a?(BlogPost)%>
+        <div class='activity_item blog_post'>
+          <a class='activity_thumb' href='<%=o.fullpermalink(:locale)%>'><img src='<%=o.thumbnail%>'/></a>
+          <div class='activity_title'><a href='<%=o.fullpermalink(:locale)%>'><%=o.title%></a></div>
+          <div class='activity_author'><%= it("by %{user} - %{date}", scope: ['notify_user', 'digest'], user: o.user.nickname, date: l(o.created_at.to_date, format: :short)) %></div>
+          <div class='activity_comment'><%=o.abstract_html length: 500%></div>
+          <div class='activity_action'><%= it("%{link:Read more %{raquo}}", scope: ['notify_user', 'digest'], link: It.link(o.fullpermalink(:locale)), raquo: "&raquo;".html_safe) %></div>
+        </div>
+      <%end%>
+    <%end%>
+
+    <div class='hr'></div>
+  <%end%>
+
+  <p class='headline'><%= it("And some great pictures from the community", scope: ['notify_user', 'digest']) %>:</p>
+
+  <div class='great_pics'>
+    <%@great_pics.each do |p|%>
+      <div class='great_pic'>
+        <a href='<%=p.fullpermalink(:locale)%>'><img src='<%=p.thumbnail%>'/><div><%= it("by %{user}", scope: ['notify_user', 'digest'], user: p.user.nickname) %></div></a>
+      </div>
+    <%end%>
+  </div>
+
+</div>

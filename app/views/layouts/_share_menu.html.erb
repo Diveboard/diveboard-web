@@ -1,0 +1,19 @@
+<%canonical ||= full%>
+<div id="diveboard_share_menu" style="display:none;">
+  <a href="#" id="share_close">x</a>
+  <div class="accordian">
+    <ul>
+      <li><%= it("Share on social networks", scope: ['layouts', 'share_menu']) %></li>
+      <li>
+        <a href="//www.facebook.com/share.php?u=<%=canonical%>" style="background-color: transparent;" target="_blank"><img src="/img/facebook_share_button_small.gif" width='60px' height='18px' /></a>
+        <a href="//twitter.com/share" class="twitter-share-button" data-url="<%=tiny%>" data-text="<%=text%>" data-count="none" data-via="diveboard"><%= it("Tweet", scope: ['layouts', 'share_menu']) %></a><script type="text/javascript" src="//platform.twitter.com/widgets.js" async ></script><span style="width: 10px; display: inline-block;"></span>
+        <g:plusone callback="notify_google_like" href="<%=canonical%>" annotation="none"></g:plusone>
+      </li>
+      <li><%= it("Grab the link", scope: ['layouts', 'share_menu']) %></li>
+      <li>
+        <span class="diveboard_share_menu_40"><%= it("Long link:", scope: ['layouts', 'share_menu']) %></span><input type="text" value="<%="#{full}"%>" class="share_link_input"><br/>
+        <span class="diveboard_share_menu_40"><%= it("Short link:", scope: ['layouts', 'share_menu']) %></span><input type="text" value="<%="#{tiny}"%>" class="share_link_input">
+      </li>
+    </ul>
+  </div>
+</div>

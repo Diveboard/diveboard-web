@@ -1,0 +1,188 @@
+@import 'variablesv2';
+
+#shop_details
+{
+  max-width: $home-width;
+  margin: 0 auto;
+  padding-bottom: 20px;
+  background-color: white;
+  border: 1px solid #dfdfdf;
+  margin-top: 10px;
+  .group
+  {
+    display: inline-block;
+    vertical-align: top;
+    min-height: 90px;
+    padding-top: 10px;
+    padding-left: 14px;
+    border-top: solid 1px #dfdfdf;
+
+
+    p
+    {
+      font-weight: 600;
+    }
+    .member
+    {
+      color: $light-blue-db;
+    }
+  }
+
+  
+  .overall_rating
+  {
+    display: inline-block;
+    vertical-align: top;
+    padding-top: 30px;
+    border-top: none;
+
+    .outter-bullet-blue
+    {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+    }
+
+    .outter-bullet-empty
+    {
+      width: 24px;
+      height: 24px;
+    }
+
+    .inner-bullet-full-blue, .inner-bullet-blue
+    {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+
+    }
+
+    .inner-bullet-half-blue
+    {
+      width: 10px;
+      height: 20px;
+      border-radius: 20px 0 0 20px;
+      margin-top: 2px;
+      margin-left: 2px;
+    }
+
+    a
+    {
+      text-decoration: none;
+      color: $light-blue-db;
+      font-weight: bold;
+    }
+
+    p
+    {
+      margin-top: 4px;
+    }
+  }
+
+  .detailed_ratings
+  {
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    border-top: none;
+
+    p
+    {
+      float: right;
+      margin-right: 15px;
+      font-weight: 600;
+      font-size: 14px;
+    }    
+
+    .light-blue-button
+    {
+      right: 0;
+      top: calc(50% - 20px);
+      position: absolute;
+
+      @media (max-width: 720px)
+      {
+        right: initial;
+        top: -34px;
+        left: 14px;
+      }
+    } 
+
+    .outter-bullet-blue
+    {
+      margin-right: 5px;
+    }
+  }
+
+  .languages
+  {
+    img 
+    {
+      width: 30px;
+      height: 20px;
+      display: inline-block;
+      border-radius: 3px;
+      margin-top: 10px;
+    } 
+  }
+
+  .affiliations
+  {
+    img 
+    {
+      width: 80px;
+      max-height: 80px;
+      display: inline-block;
+      margin-top: 10px;
+    } 
+  }
+
+  .crew 
+  {
+    a
+    {
+      text-decoration: none;
+      color: $light-blue-db;
+      font-weight: bold;
+    }
+  }
+  .col1
+  {
+    width: calc(33% - 14px);
+
+    @media (max-width: 720px)
+    {
+      width: calc(100% - 14px);
+    }
+  }
+
+  .col2
+  {
+    width: calc(66% - 14px);
+
+    @media (max-width: 720px)
+    {
+      width: auto;
+    }
+  }
+
+  .sep_1
+  {
+    display: inline-block;
+    vertical-align: top;
+    width: 1px;
+    background: #dfdfdf;
+    height: 100px;
+
+    @media (max-width: 720px)
+    {
+      display: none;
+    }
+  }
+  .affiliated
+  {
+    vertical-align: middle;
+    display: inline-block;
+    height: 100%;
+  }
+}

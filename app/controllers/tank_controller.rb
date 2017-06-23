@@ -1,0 +1,2 @@
+class TankController < ApplicationController
+end

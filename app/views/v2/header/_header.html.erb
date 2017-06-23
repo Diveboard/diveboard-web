@@ -1,0 +1,193 @@
+<%= content_for :css do%>
+  <% stylesheet_link_tag "header" %>
+<% end %>
+
+<%= content_for :javascripts_v1_patch do %>
+  <%= javascript_include_tag "global_v2" %>
+<% end %>
+<%= content_for :javascripts do%>
+  <%= javascript_include_tag "shop_pages" %>
+  <script type="text/javascript">
+    DiveboardCheckoutCore.checkout_basket = <%= begin (@baskets.to_api(:items, :private => true)).to_json.html_safe  rescue "{}" end %>;
+    <% if @shop %>
+      DiveboardCheckoutCore.shop_id = <%= @shop.id %>;
+    <% end %>
+  </script>
+<%end%>
+<%= content_for :javascripts do%>
+
+  <script>
+    $( document ).ready(function () {
+      Header.initialize();
+      $('.help_button').click(showClassicWidget);
+    });
+  </script>
+  <!-- TODO put uservoice into another js file ? -->
+  <!-- UserVoice JavaScript SDK (only needed once on a page) -->
+  <script>(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/LzrfYcu1lRWktttfGQfHOw.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})()</script>
+
+  <!-- A function to launch the Classic Widget -->
+  <script>
+  UserVoice = window.UserVoice || [];
+  function showClassicWidget() {
+    UserVoice.push(["set", "locale", "en"]);
+    UserVoice.push(['showLightbox', 'classic_widget', {
+      mode: 'full',
+      primary_color: '#cc6d00',
+      link_color: '#007dbf',
+      default_mode: 'support',
+      forum_id: 133120
+    }]);
+  }
+  </script>
+<%end%>
+
+<%= content_for :header do %>
+  <nav id="left_nav" class="drawer">
+    <div class="landing_menu">
+      <form action="/search">
+        <input class="search search_input" type="text" name="s" placeholder="<%= it("Location", scope: ['header', 'v2', 'header']) %>">
+        <button class="search_icon"><img src="<%= HtmlHelper.lbroot "/img/home/icon_search.svg" %>" alt="<%= it("Search", scope: ['header', 'v2', 'header']) %>" /></button>
+        <ul class="suggestions" style="display:none;">
+        </ul>
+      </form>
+      <div class="dash_group">
+        <a href="/explore"><div class="dash_el"><img src="<%= HtmlHelper.lbroot "/img/drawer/svg/explore.svg" %>"/><%= it("Explore", scope: ['header', 'v2', 'header']) %></div></a>
+        <a href="/explore/gallery"><div class="dash_el"><img src="<%= HtmlHelper.lbroot "/img/drawer/svg/gallery.svg" %>"/><%= it("Gallery", scope: ['header', 'v2', 'header']) %></div></a>
+        <a href="/community"><div class="dash_el"><img src="<%= HtmlHelper.lbroot "/img/drawer/svg/community.svg" %>"/><%= it("Community", scope: ['header', 'v2', 'header']) %></div></a>
+      </div>
+    </div>
+    <div class="footer">
+      <img src="<%= HtmlHelper.lbroot "/img/drawer/svg/logo_short_blanc.svg" %>" class="footer_logo">
+      <div style="background: grey; margin: 1rem auto; height:1px; width: 80%; "></div>
+      <div style="text-align: center;">
+        <a href="/about" style="display: inline-block; margin-right: 3rem;"><%= it("About us", scope: ['header', 'v2', 'header']) %></a>
+        <a href="javascript:void(0)" class="help_button" style="display: inline-block; margin-right: 3rem;"><%= it("Help", scope: ['header', 'v2', 'header']) %></a>
+        <% if false %>
+        <img class='switch_language' src="/img/flags/<%=Rails.configuration.map_flag_locales[I18n.locale]%>.gif" alt="<%=I18n.locale%>">
+        <% end %>
+      </div>
+      <div style="background: grey; margin: 1rem auto; height:1px; width: 80%; "></div>
+    </div>
+  </nav>
+
+  <div id="empty_space"></div>
+
+  <nav id="right_nav" class="drawer">
+    <% if !@user.nil? %>
+    <div class="user_dashboard ">
+      <div class="user_profile logged">
+        <a href="/<%=@user.vanity_url%>">
+          <div style="padding: 0.3rem;border: solid 1px;display: inline-block;border-radius: 50%;"><img class="avatar" src="<%=@user.picture%>"></div>
+          <p class="user_name"><%= if !@user.first_name.nil? then @user.first_name else @user.nickname end%></p>
+        </a>
+      </div>
+      <div style="background: grey; margin:0rem auto; height:1px; width: 80%; "></div>
+      <div class="dash_group">
+        <a href="/<%=@user.vanity_url%>"><div class="dash_el"><img src="<%= HtmlHelper.lbroot "/img/drawer/svg/logbook.svg" %>"/><%= it("Logbook", scope: ['layouts', 'top_menu']) %></div></a>
+        <a href="/<%=@user.vanity_url%>/new"><div class="dash_el"><img src="<%= HtmlHelper.lbroot "/img/drawer/svg/add_dive.svg" %>"/><%= it("New Dive", scope: ['layouts', 'top_menu']) %></div></a>
+        <a href="/<%=@user.vanity_url%>/bulk?bulk=manager"><div class="dash_el"><img src="<%= HtmlHelper.lbroot "/img/drawer/svg/add_shop.svg" %>"/><%= it("Dive Manager", scope: ['layouts', 'top_menu']) %></div></a>
+        <a href="/<%=@user.vanity_url%>/posts"><div class="dash_el"><img src="<%= HtmlHelper.lbroot "/img/drawer/post.png" %>"/><%= it("Posts", scope: ['layouts', 'top_menu']) %></div></a>
+        <a href="/community/new"><div class="dash_el"><img src="<%= HtmlHelper.lbroot "/img/drawer/post_new.png" %>"/><%= it("New Post", scope: ['layouts', 'top_menu']) %></div></a>
+        <%
+          shops_owned = @user.shops_owned
+          if shops_owned.length > 0 && shops_owned.length <= 5
+            shops_owned.each do |shop|
+        %>
+        <a href="<%= shop.fullpermalink(:locale) %>"><div class="dash_el"><img src="<%= HtmlHelper.lbroot "/img/drawer/svg/shops.svg" %>"/><%= shop.name %></div></a>
+        <%
+            end
+          end
+        %>
+      </div>
+      <div style="background: grey; margin: 0rem auto; margin-top: 1rem; margin-bottom:1rem; height:1px; width: 80%; "></div>
+      <div style="text-align:center; ">
+        <a href="/settings" style="text-decoration: none;">
+          <div class="subicon"><img src="<%= HtmlHelper.lbroot "/img/drawer/svg/settings.svg" %>"/><%= it("Settings", scope: ['layouts', 'top_menu']) %></div>
+        </a>
+        <a id="logout_button" href="javascript:void(0)">
+          <div class="subicon"><img src="<%= HtmlHelper.lbroot "/img/drawer/svg/log_out.svg" %>"/><%= it("Log Out", scope: ['layouts', 'top_menu']) %></div>
+        </a>
+      </div>
+      <div style="background: grey; margin: 1rem auto; height:1px; width: 80%; "></div>
+    </div>
+    <%end%>
+    <% if false #@user.nil?
+      %>
+      <div id="sign_in_menu" class="sign_menu" style="margin-top:30px">
+        <%= render "v2/modal/sign_in"%>
+        <button id="sign-up-button" class="sign_button">Sign up for free</button>
+      </div>
+      <div id="sign_up_menu" class="sign_menu inactive">
+        <%=render "v2/modal/sign_up"%>
+      </div>
+      <div id="reset_pass_menu" class="sign_menu inactive">
+        <%= render "v2/modal/sign_reset_pass"%>
+        </div>
+    <%end%>
+  </nav>
+
+  <% if @page_home then %>
+    <div id="header" class="sticky_header home_page">
+  <% else %>
+    <div id="header" class="sticky_header">
+  <% end %>
+    <div class="drawer-toggle" ></div>
+    <div class="nav-links"><a href="/explore"><p><%= it("Explore", scope: ['header', 'v2', 'header']) %></p></a>/<a href="/explore/gallery"><p><%= it("Gallery", scope: ['header', 'v2', 'header'])%></p></a>/<a href="/community"><p><%= it("Community", scope: ['header', 'v2', 'header']) %></p></a></div>
+    <div class="logo_container"><a href="/?redirect="><img src="<%= HtmlHelper.lbroot "/img/drawer/svg/logo_topbar_mobile.svg" %>" alt="Diveboard" /></a></div>
+    
+    <%if !@user.nil?%>
+      <div class="right-nav-toggle user_logged"><div class="round_border"><img src="<%=@user.picture%>"><p><%= if !@user.first_name.nil? then @user.first_name else @user.nickname end%></p></div></div>
+    <%else%>
+      <div class="right-nav-toggle signup not-logged" ><div class="round_border"><p><%= it("Sign up / sign in", scope: ['header', 'v2', 'header']) %></p></div></div>
+    <% end %>
+
+    <div class="search">
+      <div id="search-ic">
+        <img src="<%= HtmlHelper.lbroot "/img/drawer/svg/icon_search_topar_mobile.svg" %>">
+      </div>
+      <div class="search_bar">
+        <form action="/search">
+          <input type="text" name="s" placeholder="Location" class="search_input"/>
+          <button class="search_button"><%= it("Search", scope: ['header', 'v2', 'header']) %></button>
+          <ul id="suggestions" class="suggestions" style="display:none;">
+          </ul>
+        </form>
+      </div>
+    </div>
+    <div class="basket" style="<%= if (@baskets.nil? || @baskets.length==0) then "display:none" end%>">
+      <div id="basket-ic">
+        <img id="black_basket" src="<%= HtmlHelper.lbroot "/img/global/icon_basket_navigation.svg" %>">
+        <img id="white_basket" src="<%= HtmlHelper.lbroot "/img/global/icon_basket_navigation_white.svg" %>" style="display:none">
+        <div class="circle item_count"></div>
+      </div>
+      <div class="basket_content" style="display:none;">
+        <script type="text/html" id="header_basket_item_tmpl">
+            <$ if (item.shop!=null){ $>
+              <div class="shop">
+              <div class="shop_name"><$= item.shop $></div>
+              <!--<div class="price"><$= item.total $></div>-->
+              </div>
+            <$ } $>
+          <li>
+            <div class="title"><$= item.title $></div>
+            <div class="quantity">x<$= item.quantity $></div>
+            <div class="price"><$= item.line_price_after_tax_in_string $></div>
+            <img class="delete" data-item-id="<$= item.id $>" src="<%= HtmlHelper.lbroot "/img/global/icon_corbeille_panier.svg" %>">
+          </li>
+          <$ if (item.total!=null){ $>
+              <div class="total">
+                
+                <span>Total</span>
+                <span class="price"><$= item.total $></span>
+
+                <a class="red-button checkout-now" href="/pro/checkout#item-<$= item.firstId $>"  >Checkout now</a>
+            </div>
+          <$ } $>
+        </script>
+        <ul class="items">
+        </ul>
+      </div>
+    </div>
+  </div>
+<% end %>

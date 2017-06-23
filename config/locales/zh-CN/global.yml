@@ -1,0 +1,125 @@
+---
+zh-CN:
+  globals:
+    shop:
+      qa:
+        questions:
+          deco_chambers: 最近的减压舱的位置
+          staff: 工作人员
+          boat: 船
+          shore_dives: 海岸潜水
+          deco_chamber: "Location of nearest Deco Chamber"
+          tanks: 气罐
+          gases: 气体
+          gear: 租赁的装备
+          services: 现场服务
+          payment: 接受的支付方式
+          best_period: 去那儿的最佳月份
+          hotels: 附近的旅馆
+          transfers: 去/从旅馆的交通
+          parking: 私人停车位
+          other_activities: 对于非潜水员
+          gear_sales: 装备销售
+          gear_maintenance: 装备日常维护
+        hint:
+          deco_chambers: 最近的减压舱有多远？
+          staff: "请展示您的员工、 导游及他们的专长"
+          boat: "您配有什么样的船？船上有多少潜水员 / 非潜水员？都配有什么设备（氧气，茶，......）？"
+          shore_dives: 您做海岸潜水吗？是在您的屋礁上吗？
+          deco_chamber: "How far is the closest decompression chamber ?"
+          tanks: 您使用的气罐是钢的还是铝的？容量多少？
+          gases: 您提供高氧气体还是氦氧氮混合气体？能提供任何标准混合气吗？
+          gear: "可供出租的装备有哪些 (潜水衣，BCD，照相机，电脑，...)？什么品牌？"
+          services: "你们会提供哪些服务？更衣室、 等级房间、 淋浴、 游泳池、 按摩池......"
+          payment: 您接受哪些在线支付方式？
+          best_period: 是否有什么特定时期才能看到一些特殊的海洋生物？
+          hotels: 您会推荐附近的哪家酒店
+          transfers: 你们会负责你们地区的酒店接送吗？
+          parking: 会为您的客户提供专用的停车场吗？
+          other_activities: 你们会为非潜水员们组织活动吗？在你们地区，为非潜水员们组织的重大活动是什么？
+          gear_sales: "你们会现场销售装备吗？哪种类型 / 什么品牌？客户通过您来购买的理由？您是该品牌的经销商吗？"
+          gear_maintenance: "您能对装备进行现场维护吗？哪一种 & 什么品牌？您有品牌的维护认证吗？"
+    divetype:
+      recreational: 休闲
+      training: 培训
+      ? "night dive"
+      : 夜潜
+      ? "deep dive"
+      : 深潜
+      drift: 漂移
+      wreck: 沉船
+      cave: 洞穴
+      reef: 珊瑚礁
+      photo: 照片
+      research: 研究
+      ? "Photo Survey"
+      : 浏览照片
+      Shore: 海岸
+      Twilight: 黎明
+      Drift: 漂移
+      Tech: 技术
+      ? "Ice Diving"
+      : "Ice Diving"
+      ? "Boat Dive"
+      : 船
+      Video: Video
+      Sidemount: Sidemount
+      Recreational: 休闲
+      Reef: 珊瑚礁
+      Photo: 照片
+    watertype:
+      salt: 海水
+      fresh: 淡水
+    visibility:
+      bad: 差
+      average: 一般
+      good: 良
+      excellent: 非常好
+    gear_categories:
+      BCD: 浮力辅助设备
+      Boots: 潜水靴
+      Camera: 相机
+      Compass: 指南针
+      Computer: 计算机
+      Cylinder: 气瓶
+      ? "Dive skin"
+      : 水母衣
+      ? "Dry suit"
+      : 干式潜水服
+      Fins: 潜水蛙鞋
+      Gloves: 手套
+      Hood: 潜水帽
+      Knife: 潜水刀
+      ? "Lift bag"
+      : 浮力袋
+      Light: 轻装式
+      Mask: 面镜
+      Other: 其他
+      Rebreather: 呼吸器
+      Regulator: 调节器
+      Scooter: 推进器
+      ? "Wet suit"
+      : 湿式防寒衣
+    tank_material:
+      aluminium: 铝
+      steel: 钢
+      carbon: 碳
+    current:
+      none: 无
+      light: 缓
+      medium: 中等
+      strong: 强
+      extrme: 急湍
+    long:
+      current:
+        light: "缓 (达1海里)"
+        mediume: "中 （达2海里）"
+        strong: "强 （高达每小时 3 海里）"
+        extreme: "急湍（超过每小时 3 海里）"
+        none: 无
+  blog:
+    feed_rss:
+      ? "%{user}'s scuba dive in %{spot_name}"
+      : "%{user}在%{spot_name}水肺潜水"
+      ? "Dive spot: %{country}, %{location}, %{spot} - Depth: %{dive_maxdepth}m, duration: %{dive_duration}mins - buddies: %{buddies} - species spotted : %{species} - Notes: %{notes}"
+      : "潜水点： %{country}， %{location}， %{spot} ---深度： %{dive_maxdepth}m，持续时间：%{dive_duration}分钟---他/她的小伙伴们： %{buddies} ---发现物种： %{species} ---备注：%{notes}"

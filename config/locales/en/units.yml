@@ -1,0 +1,51 @@
+---
+en:
+  time:
+    formats:
+      full: "%A %B %d, %Y"
+      ? "H:M"
+      : "%H:%M"
+  date:
+    formats:
+      d/m/y: "%d/%m/%y"
+  units:
+    dive:
+      one: "%{count} dive"
+      other: "%{count} dives"
+    meter:
+      one: "%{count}m"
+      other: "%{count}m"
+    min:
+      one: "%{count} min"
+      other: "%{count} min"
+    temperature:
+      F: "%{count}ºF"
+      C: "%{count}ºC"
+      K: "%{count}ºK"
+    weight:
+      kg: "%{count}kg"
+      lbs: "%{count}lbs"
+    distance:
+      m: "%{count}m"
+      ft: "%{count}ft"
+      in: "%{count}in"
+      cm: "%{count}cm"
+    pressure:
+      bar: "%{count}bar"
+      psi: "%{count}psi"
+    year:
+      one: "%{count} year"
+      other: "%{count} years"
+    day:
+      one: "%{count} day"
+      other: "%{count} days"
+    hr:
+      one: "%{count} hr"
+      other: "%{count} hrs"
+    like:
+      one: "%{count} like"
+      other: "%{count} likes"
+  number:
+    format:
+      delimiter: ","
+      separator: "."

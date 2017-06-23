@@ -1,0 +1,403 @@
+<%= content_for :javascripts do%>
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=<%=GOOGLE_MAPS_API %>&sensor=false"></script>
+  <script type="text/javascript">
+    // When the window has finished loading create our google map below
+        /*google.maps.event.addDomListener(window, 'load', init);
+        
+        function init() {
+          var map_center;
+            var mapOptions = {
+                zoom: 9,
+                mapTypeId: google.maps.MapTypeId.TERRAIN,
+                center: new google.maps.LatLng(<%= @shop.lat %>, <%= @shop.lng %>),
+               
+            };
+            var mapElement = document.getElementById('map');
+            var map = new google.maps.Map(mapElement, mapOptions);
+            map_center = map.getCenter();
+      }*/
+
+      var language_stack_item = 0;
+      var staff_stack_item = 0;
+
+      function language_delete(delete_button)
+      {
+        var grid = $('.language-stack').data('gridstack');
+        grid.remove_widget($(delete_button).closest('.grid-stack-item'));
+        changes_list['shopedit_lang'] = 1;
+      }
+
+      function staff_delete(delete_button)
+      {
+        var grid = $('.staff-stack').data('gridstack');
+        grid.remove_widget($(delete_button).closest('.grid-stack-item'));
+        changes_list['shopedit_staff'] = 1;
+      }
+
+      function language_add_submit(code, value)
+      {
+        //var value = $('#add_language_form input').val().trim();
+        $('#add_language_form input').val('');
+        if (value.length == 0)
+          return false;
+
+        var new_elem = $('<div></div>').attr('class', 'grid-stack-item language-member').attr('data-gs-x', 0).attr('data-gs-y', language_stack_item + 1).attr('data-gs-width', 1).attr('data-gs-height', 1).attr('data-gs-no-resize', true).append($('<div></div>').attr('class', 'grid-stack-item-content').append($('<p>').attr('data-code', code).html(value)).append($('<div>').attr('class', 'delete')));
+
+        var grid = $('.language-stack').data('gridstack');
+        grid.add_widget(new_elem);
+        new_elem.find('.delete').click(function()
+          {
+            language_delete(this);
+          });
+        language_stack_item++;
+        return false;
+      }
+
+      function staff_add_submit()
+      {
+        var value = $('#add_staff_form input').val().trim();
+        $('#add_staff_form input').val('');
+        if (value.length == 0)
+          return false;
+
+        var new_elem = $('<div></div>').attr('class', 'grid-stack-item staff-member').attr('data-gs-x', 0).attr('data-gs-y', staff_stack_item + 1).attr('data-gs-width', 1).attr('data-gs-height', 1).attr('data-gs-no-resize', true).append($('<div></div>').attr('class', 'grid-stack-item-content').append($('<p>').html(value)).append($('<div>').attr('class', 'delete')));
+
+        var grid = $('.staff-stack').data('gridstack');
+        grid.add_widget(new_elem);
+        new_elem.find('.delete').click(function()
+          {
+            staff_delete(this);
+          });
+        staff_stack_item++;
+        return false;
+      }
+
+      function initialize_shop_location_edit()
+      {
+        var lat, lng, zoom, show_shop_pin;
+
+        if (!$.isNumeric($("#shopedit_lat").val()) || !$.isNumeric($("#shopedit_lng").val()))
+        {
+          lat = 0;
+          lng = 0;
+          zoom = 1;
+          show_shop_pin = false;
+        }
+        else
+        {
+          lat = $("#shopedit_lat").val();
+          lng = $("#shopedit_lng").val();
+          zoom = 11;
+          show_shop_pin = true;
+        }
+
+        try
+        {
+          var image = new google.maps.MarkerImage('/img/explore/marker_shop.png',
+          new google.maps.Size(14, 14),
+          new google.maps.Point(0,0),
+          new google.maps.Point(7, 7));
+          var shadow = new google.maps.MarkerImage('/img/explore/marker_shop_shadow.png',
+          new google.maps.Size(14, 15),
+          new google.maps.Point(0,0),
+          new google.maps.Point(7, 10));
+
+          var latlng = new google.maps.LatLng(lat,lng);
+          var myOptions = {
+            zoom: zoom,
+            minZoom: 1,
+            center: latlng,
+            mapTypeId: google.maps.MapTypeId.TERRAIN,
+            panControl: false,
+            zoomControl: true,
+            mapTypeControl: false,
+            scaleControl: false,
+            streetViewControl: false
+          };
+          map = new google.maps.Map(document.getElementById("shopedit_gmap"),myOptions);
+          var marker = new google.maps.Marker({
+            position: latlng,
+            map: map,
+            icon: image,
+            shadow: shadow,
+            visible: show_shop_pin,
+            draggable: true
+          });
+
+          google.maps.event.addListener(marker, 'dragend', function() {
+            //infowindow.open(map,marker);
+            map.setCenter(marker.position);
+            var lat = marker.position.lat();
+            var lng = marker.position.lng();
+            $("#shopedit_lat").val(lat);
+            stack_changes($("#shopedit_lat"));
+            $("#shopedit_lng").val(lng);
+            stack_changes($("#shopedit_lng"));
+          });
+
+          var place_pin_button = $("#shopedit_gmap_placepin");
+
+          $("#shopedit_lat, #shopedit_lng").bind('change', function(){
+            var lat = parseFloat($("#shopedit_lat").val());
+            var lng = parseFloat($("#shopedit_lng").val());
+            if ($.isNumeric($("#shopedit_lat").val()) && $.isNumeric($("#shopedit_lng").val()) ) {
+              var latlng = new google.maps.LatLng(lat, lng);
+              marker.setPosition(latlng);
+              marker.setVisible(true);
+              map.setCenter(marker.position);
+              place_pin_button.hide();
+            } else {
+              marker.setVisible(false);
+              place_pin_button.show();
+            }
+          });
+
+          $("#shopedit_gmap_placepin").bind('click', function(){
+            var center = map.getCenter();
+            marker.setPosition(center);
+            $("#shopedit_lat").val(center.lat());
+            $("#shopedit_lng").val(center.lng());
+            marker.setVisible(true);
+            place_pin_button.hide();
+          });
+         
+          if (show_shop_pin) place_pin_button.hide();
+          else place_pin_button.show();
+
+        } catch(e){
+          if (console && console.log)
+            console.log(e.message)
+        }
+
+      }
+
+      $(document).ready(function()
+        {
+          var options = {
+            cell_height: 40,
+            vertical_margin: 10,
+            width: 1
+          };
+          $('.language-stack').gridstack(options);
+          $('.staff-stack').gridstack(options);
+          $('#add_staff_form').submit(staff_add_submit);
+          $('#add_staff_form .add').click(staff_add_submit);
+
+          $('.shop_staff .delete').click(function()
+            {
+              staff_delete(this);
+            });
+
+          $('.shop_languages .delete').click(function()
+            {
+              language_delete(this);
+            });
+
+          var guessed_code = country_code_from_name($('#shopedit_country').val());
+          $('#shopedit_country_field').find('img').attr("src","<%= HtmlHelper.lbroot "/img/flags/" %>" + guessed_code.toLowerCase() + ".gif");
+
+          $(".autocomplete_country input").autocomplete({  source : countries,
+            open: function(){
+              $(this).attr("shortname","blank");
+              $('#shopedit_country_field').find('img').attr("src","/img/flags/blank.gif");
+            },
+            select: function(event, ui) {
+              //get spot details and show them
+              //selected is ui.item.id
+              $('#shopedit_country_field').find('img').attr("src","<%= HtmlHelper.lbroot "/img/flags/" %>"+ui.item.name.toLowerCase()+".gif");
+              $(this).closest('.autocomplete_country').find('.short_code').val(ui.item.name);
+              $(this).attr("shortname",ui.item.name.toLowerCase());
+            },
+            close: function(event, ui){
+            },
+            change: function(event,ui){
+              var guessed_code = country_code_from_name($(this).val());
+              if ($(this).attr("shortname") == 'blank' && guessed_code != 'blank' && guessed_code != ''){
+                $('#shopedit_country_field').find('img').attr("src","<%= HtmlHelper.lbroot "/img/flags/" %>"+guessed_code.toLowerCase()+".gif");
+                $(this).closest('.autocomplete_country').find('.short_code').val(guessed_code);
+                $(this).attr("shortname",guessed_code.toLowerCase());
+                $(this).val(country_name_from_code(guessed_code));
+              } else if ($(this).attr("shortname") == 'blank') {
+                $(this).val("");
+                $(this).closest('.autocomplete_country').find('.short_code').val("");
+              }
+              stack_changes(this);
+            },
+            autoFocus:true
+          });
+
+          $(".autocomplete_language input").autocomplete({  source : language,
+            open: function(){
+              //$(this).attr("shortname","blank");
+            },
+            select: function(event, ui) {
+              //get spot details and show them
+              //selected is ui.item.id
+              //$(this).closest('.autocomplete_language').find('.short_code').val(ui.item.name);
+              //$(this).attr("shortname",ui.item.name.toLowerCase());
+              event.preventDefault();
+              stack_changes(this);
+              language_add_submit(ui.item.name.toLowerCase(), ui.item.value);
+            },
+            close: function(event, ui){
+            },
+            change: function(event,ui){
+            },
+            autoFocus:true
+          });
+          initialize_shop_location_edit();
+        });
+  </script>
+<%end%>
+
+<div class="about_shop section section-active" id="shop_info_edit">
+  <div id="category_title">
+    <h2>About the shop</h2>
+    <input type="hidden" id="shop_id" value="<%= @shop.id %>" />
+    <div class="clear"></div>
+  </div>
+  <div class="left-container">
+    <table>
+      <tr>
+        <td width="250"><label for="shopedit_name">Business Name</label></td><td><input type="text" id="shopedit_name" value="<%= @shop.name %>" placeholder="Business Name" /></td>
+      </tr>
+      <tr>
+        <td><label for="shopedit_category">Business Type</label></td>
+        <td>
+          <select id="shopedit_category">
+            <%
+              shop_categories = ["Dive Center", "Dive Club", "Dive Instructor", "Dive Shop", "Travel Agency", "Liveaboard", "Hotel", "Manufacturer"]
+              shop_categories.each do |sc|
+            %>
+            <option value="<%= sc %>"<%= sc == @shop.category ? " selected" : "" %>><%= sc %></option>
+            <% end %>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td><label for="shopedit_address">Address</label><p class="sub_label">Address of your offices (where you expect your customers to come!). Include also the zip code and city</p></td>
+        <td><textarea id="shopedit_address" class="shopedit_address" placeholder="Shop Address"><%= @shop.address %></textarea></td>
+      </tr>
+      <tr>
+        <td><label for="shopedit_city">City</label></td><td><input type="text" id="shopedit_city" value="<%= @shop.city %>" placeholder="City" /></td>
+      </tr>
+      <tr>
+        <td id="shopedit_country_field"><label for="shopedit_country">Country</label><img src="" /></td>
+        <td><span class="autocomplete_country"><input type="text" id="shopedit_country" value="<%= @shop.country.cname %>" placeholder="Country" /></span>
+          
+        </td>
+      </tr>
+      <tr>
+        <td><label for="shopedit_phone">Phone</label><p class="sub_label">Please use international format<br />
+        E.g. +33 1 234567890</p></td><td><input type="text" id="shopedit_phone" value="<%= @shop.phone %>" placeholder="Phone Number" /></td>
+      </tr>
+      <tr>
+        <td><label for="shopedit_email">Email</label></td><td><input type="text" id="shopedit_email" value="<%= @shop.email %>" placeholder="Email Address" /></td>
+      </tr>
+      <tr>
+        <td><label for="shopedit_openings">Opening times</label>
+          <p class="sub_label">E.g.:<br>
+            <i>1p.m. - 7p.m. tue-fri<br>
+            8a.m - 9p.m. sat-sun<br>
+            Closed on monday and bank holidays</i>
+          </p></td>
+        <td><textarea id="shopedit_openings" placeholder="Shop Opening Times"><%= @shop.openings %></textarea></td>
+      </tr>
+      <tr>
+        <td><label for="shopedit_web">Your official web page</label></td><td><input type="text" id="shopedit_web" value="<%= @shop.web %>" placeholder="Official Web Page" /></td>
+      </tr>
+      <tr>
+        <td><label for="shopedit_facebook">Facebook fan page</label></td><td><input type="text" id="shopedit_facebook" value="<%= @shop.facebook %>" placeholder="Facebook Fan Page" /></td>
+      </tr>
+      <tr>
+        <td><label for="shopedit_twitter">Twitter account</label></td><td><input type="text" id="shopedit_twitter" value="<%= @shop.twitter %>" placeholder="Twitter Account" /></td>
+      </tr>
+      <tr>
+        <td><label for="shopedit_google_plus">Google+ page</label></td><td><input type="text" id="shopedit_google_plus" value="<%= @shop.google_plus %>" placeholder="Google+ Page" /></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="right-container">
+    <label for="shopedit_about_html">Description</label><br>
+    <textarea id="shopedit_about_html" placeholder="Write something about your shop"><%= @shop.about_html %></textarea>
+  </div>
+
+  <div class="shop_location">
+    <p class="title">Shop Location</p>
+    <div id="shopedit_gmap_placepin" class="button">Place pin on map</div>
+    <div id="shopedit_gmap" class="map"></div>
+    <table>
+      <tr>
+        <td><p class="title">Coordinate</p></td>
+        <td><label for="shopedit_lat">Latitude</label></td><td><input type="text" id="shopedit_lat" value="<%= @shop.lat %>" placeholder="Lat°" /></td>
+        <td><label for="shopedit_lng">Longitude</label></td><td><input type="text" id="shopedit_lng" value="<%= @shop.lng %>" placeholder="Lng°" /></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="shop_affiliations">
+    <p class="title">Affiliations</p>
+    <p class="sub_label">Which organization are you affilated with?</p>
+    <table>
+      <tr>
+        <td><input type="checkbox" id="cert_cmas" name="affiliations" value="cert_cmas" <%= (@shop.affiliated.include? 'CMAS') ? "checked" : "" %> /><label for="cert_cmas">CMAS</label></td>
+        <td><input type="checkbox" id="cert_padi" name="affiliations" value="cert_padi" <%= (@shop.affiliated.include? 'PADI') ? "checked" : "" %> /><label for="cert_padi">PADI</label></td>
+        <td><input type="checkbox" id="cert_ssi" name="affiliations" value="cert_ssi" <%= (@shop.affiliated.include? 'SSI') ? "checked" : "" %> /><label for="cert_ssi">SSI</label></td>
+        <td><input type="checkbox" id="cert_bsac" name="affiliations" value="cert_bsac" <%= (@shop.affiliated.include? 'BSAC') ? "checked" : "" %> /><label for="cert_bsac">BSAC</label></td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" id="cert_naui" name="affiliations" value="cert_naui" <%= (@shop.affiliated.include? 'NAUI') ? "checked" : "" %> /><label for="cert_naui">NAUI</label></td>
+        <td><input type="checkbox" id="cert_utd" name="affiliations" value="cert_utd" <%= (@shop.affiliated.include? 'UTD') ? "checked" : "" %> /><label for="cert_utd">UTD</label></td>
+        <td><input type="checkbox" id="cert_raid" name="affiliations" value="cert_raid" <%= (@shop.affiliated.include? 'RAID') ? "checked" : "" %> /><label for="cert_utd">RAID</label></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="clear"></div>
+
+  <div class="shop_languages">
+    <p class="title">Spoken Languages</p>
+    <form id="add_language_form">
+      <table>
+        <tr>
+          <td class="autocomplete_language"><input type="text" id="shopedit_lang" value="" placeholder="Add a language" /></td>
+        </tr>
+      </table>
+    </form>
+    <div id="language-stack" class="grid-stack language-stack">
+      <% @languages_selected.each do |l| %>
+        <div class="grid-stack-item language-member ui-draggable" data-gs-x="0" data-gs-y="0" data-gs-width="1" data-gs-height="1" data-gs-no-resize="true">
+          <div class="grid-stack-item-content ui-draggable-handle">
+            <p data-code="<%= l.code3 %>">
+              <%= l.name %>
+            </p>
+            <div class="delete">
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="shop_staff">
+    <p class="title">Staff Members</p>
+    <form id="add_staff_form">
+      <table>
+        <tr>
+          <td><input type="text" id="shopedit_staff" value="" placeholder="Add a staff" /></td>
+          <td><div class="yellow_button add">Add</div></td>
+        </tr>
+      </table>
+    </form>
+    <div id="staff-stack" class="grid-stack staff-stack">
+      <%
+        @shop.teams.each do |staff|
+      %>
+      <div class="grid-stack-item staff-member ui-draggable" data-gs-x="0" data-gs-y="0" data-gs-width="1" data-gs-height="1" data-gs-no-resize="true"><div class="grid-stack-item-content ui-draggable-handle"><p><%= staff %></p><div class="delete"></div></div></div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="clear"></div>
+</div>

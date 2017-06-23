@@ -1,0 +1,107 @@
+<%= content_for :javascripts do%>
+  <script type="text/javascript">
+
+
+  $(document).ready(function(){
+    $('#loadMoreSpot').click(function(){
+
+      $('.spot').show();
+      $('.destination_spot').show();
+      $('#loadMoreSpot').hide();
+      
+    })
+  });
+  </script>
+
+<% end %>
+  <% if @regions!=nil %>
+      <% count = 0 %>
+    <div id="destination_spots">
+
+    <h2><%= it("Best dive spots in ",scope: ['area_pages', 'v2', 'destination']) %><%= @name %></h2>
+
+    <% @regions.each do |r| %>
+      <% if r != nil && r.best_pics.first!=nil%>
+                  <% count +=1 %>
+
+        <a class="spot" href="/area/<%= @geonames_country.name.to_url %>-<%= @geonames_country.shaken_id%>/<%= r.name.to_url %>-<%= r.shaken_id%>"<% if count > 4 %> style="display:none" <% end %>>
+        <div class="destination_spot">
+          <img src=<%= r.best_pics.first.large %> >
+          <div class="spot_infos_holder">
+            <p class="spot_infos"><%= r.name %> <%= r.dives.count%> dives</p>
+          </div>
+        </div>
+        </a>
+      <% end %>
+    <% end %>
+    <div style="clear:left;"></div>
+    <% if count != nil && count >=4 %>
+      <a id="loadMoreSpot" class="load_more_button"><%= it("Load More",scope: ['area_pages', 'v2', 'destination']) %></a>
+    <% end %>
+    </div>
+  <% elsif @spots != nil && @spot ==nil %>
+    <% count = 0 %>
+    <div id="destination_spots">
+
+    <h2><%= it("Best dive spots in ",scope: ['area_pages', 'v2', 'destination'])%> <%= @name %></h2>
+
+    <% @spots.each do |s| %>
+      <% if s != nil && s.best_pics.first!=nil%>
+            <% count +=1 %>
+
+      <a class="spot" href="/area/<%= @geonames_country.name.to_url %>-<%= @geonames_country.shaken_id%>/<%= @region.name.to_url %>-<%= @region.shaken_id%>/<%= s.name.to_url %>-<%= s.shaken_id%>" <% if count > 4 %> style="display:none" <% end %>>
+      <div class="destination_spot">
+        <img src=<%= s.best_pics.first.large %> >
+        <div class="spot_infos_holder">
+          <p class="spot_infos"><%= s.name %> <%= s.dives.count%> dives </p>
+          <table class="rating">
+            <tr>
+              <%= render "v2/shared/score_bullet", :score => s.mark, :color => :blue %>
+            </tr>
+          </table>
+        </div>
+      </div>
+      </a>
+      <% end %>
+    <% end %>
+    <div style="clear:left;"></div>
+    <% if count != nil && count >=4 %>
+      <a id="loadMoreSpot" class="load_more_button"><%= it("Load More",scope: ['area_pages', 'v2', 'destination']) %></a>
+    <% end %>
+    </div>
+
+  <% else %>
+    <% if @spots.count >0 %>
+      <% 
+        hasPict = false 
+        @spots.each do |s|
+          if s.pictures.count > 0
+            hasPict = true
+          end
+        end
+      %>
+
+      <% if hasPict %>
+        <div id="destination_spots">
+        <% count = 0 %>
+
+        <h2><%= it("Pictures from ",scope: ['area_pages', 'v2', 'destination']) %><%= @name %></h2>
+
+        <% @spots.each do |ss| %>
+          <% ss.pictures.each do |s| %>
+          <% count += 1 %>
+            <div class="destination_spot"<% if count > 4 %> style="display:none" <% end %>>
+              <img src=<%= s.large %> >
+            </div>
+          <% end %>
+        <% end %>
+        <div style="clear:left;"></div>
+          <% if count != nil && count >=4 %>
+            <a id="loadMoreSpot" class="load_more_button"><%= it("Load More",scope: ['area_pages', 'v2', 'destination']) %></a>
+          <% end %>
+
+        </div>
+      <% end %>
+    <%end %>
+  <% end %>
+

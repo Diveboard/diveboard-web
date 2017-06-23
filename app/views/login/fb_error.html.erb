@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%=I18n.locale%>" xmlns:fb="http://www.facebook.com/2008/fbml">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<meta name="csrf-token" content="<%= form_authenticity_token %>" />
+	<meta name="csrf-param" content="authenticity_token" />
+
+  <title><%= it("FB-Connect Denied", scope: ['login', 'fb_error']) %></title>
+	<script type="text/javascript" src="/js/jquery-1.5.2.min.js"></script>
+	<script type="text/javascript" src="/js/jquery.qtip-1.0.0-rc3.min.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="<%=auto_file_versionning("/styles/global.css")%>" media="all" />
+  <link rel="icon" href="<%=ROOT_URL%>img/favicon/favicon.ico" type="image/x-icon" />
+
+  <style type="text/css">
+    body { font-family: Helvetica, Verdana, Arial, sans-serif; background-image: url(/img/main_bg.jpg); color: #1d1d1d; background-color: #222; text-align:justify;}
+    h1 { font-size: 26px; color: #3e3e3e; line-height: 1.5em; }
+	.no_content{background: url(/img/no_content_bg.jpg); color: #3e3e3e; font-size: 12px; height: 271px; width: 450px; padding: 55px 80px 40px 130px; margin-left: auto; margin-right: auto;}
+	.no_content img {margin-bottom: 5px; margin-left: auto; margin-right: auto;}
+  </style>
+
+	<script type="text/javascript">
+	$(document).ready(function () {
+		
+		//load tooltips
+		$('.tooltiped').qtip({
+			style: {
+				name: 'dark',
+				tip: {corner: true},
+				'font-family': 'Helvetica, Verdana, Arial, sans-serif',
+				'font-size': '11px',
+				background: '#e9e9e9',
+				color: 'black',
+				border: {
+				         width: 2,
+				         radius: 5,
+				         color: 'white'
+				      }
+				},
+			position: {
+			      corner: {
+			         target: 'bottomMiddle',
+			         tooltip: 'topMiddle'
+			      }
+			   }
+			});
+		
+	});
+	</script>
+
+</head>
+
+<body>
+  <!-- This file lives in public/404.html -->
+	<div class="no_content">
+	<h1><%= it("Facebook denied the connection", scope: ['login', 'fb_error']) %></h1>
+	<p><%= it("For some reason, Facebook did not let us check your id. Maybe you blocked Diveboard?%{br}
+		Just so you know, we take privacy very seriously and would not do any thing to cross the line. If you have some concerns usign FB Connect, feel free to share them with us !", scope: ['login', 'fb_error'], br: It.tag("br")) %>
+	</p>
+		
+	<h2><%= it("Head back to the %{link:home boat} where it's safe.", scope: ['login', 'fb_error'], link: "/") %></h2>
+
+	<p style="text-transform: uppercase; font-weight: bold; margin-top: 10px; font-size: 12px;"><%= it("Bubbling on Diveboard", scope: ['login', 'fb_error']) %>:</p>
+		<div style="margin-top: 7px; left: -10px; position: relative;">
+			<div class="triple_box" style="padding-left:8px;">
+			    <strong><%= it("Latest Dives", scope: ['login', 'fb_error']) %></strong>
+			    <ul class="small_pic_row" style="line-height: 5px;">
+			        <% Dive.first.recent_dives(4).each do |recentdive| %>
+			        <li>
+			            <a href="<%= recentdive.fullpermalink(:locale) %>">
+			            <img src="<%= recentdive.user.picture_small%>" width="44px" height="44px" alt="#" class="triple_box_content tooltiped" title='<%="#{recentdive.user.nickname} in #{recentdive.spot.location}"%>'/>
+			            </a>
+			        </li>
+			        <% end %>
+			    </ul>
+			</div>
+			<div style="width: 9px; height: 98px; float: left;"></div>
+			<div class="triple_box" style="padding-left:8px;">
+			    <strong><%= it("Latest pictures", scope: ['login', 'fb_error']) %></strong>
+			    <ul class="small_pic_row" style="line-height: 5px;">
+			        <% Dive.first.recent_pictures(4).each do |recentpicture| %>
+			        <li>
+			            <a href="<%= recentpicture.dive.fullpermalink(:locale) %>">
+			            <img src="<%= recentpicture.thumbnail%>" width="44px" height="44px" alt="#" class="triple_box_content  tooltiped" title='<%="#{recentpicture.dive.user.nickname} in #{recentpicture.dive.spot.country.cname}"%>'/>
+			            </a>
+			        </li>
+			        <% end %>
+			    </ul>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,40 @@
+---
+zh-CN:
+  time:
+    formats:
+      full: "%A%B %d,%Y"
+      ? "H:M"
+      : "%H:%M"
+  date:
+    formats:
+      d/m/y: "%d/%m /%y"
+  units:
+    dive:
+      other: "%{count}次潜水"
+    meter:
+      other: "%{count}m"
+    min:
+      other: "%{count}min"
+    temperature:
+      F: "%{count}℉"
+      C: "%{count}ºC"
+      K: "%{count}ºK"
+    weight:
+      kg: "%{count}kg"
+      lbs: "%{count}磅"
+    distance:
+      m: "%{count}m"
+      ft: "%{count}ft"
+      in: "%{count}in"
+      cm: "%{count}cm"
+    pressure:
+      bar: "%{count}bar"
+      psi: "%{count}psi"
+    year:
+      other: "%{count}年"
+    day:
+      other: "%{count}天"
+    hr:
+      other: "%{count}小时"
+    like:
+      other: "%{count}个赞"

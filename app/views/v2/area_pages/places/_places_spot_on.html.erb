@@ -1,0 +1,253 @@
+<%= content_for :javascripts do%>
+	<script type="text/javascript">
+		$(document).ready(function()
+		{
+			<%
+				picture_array = []
+				count = 0
+				i = 0
+				j = 0
+
+				while count < 6 do
+					if !@best_pictures[i].nil?
+						picture_array.push(@best_pictures[i].id)
+						i += 1
+					elsif !@pictures[j].nil?
+						picture_array.push(@pictures[j].id)
+						j += 1
+					end
+					count += 1
+				end
+			%>
+			LightFrame.init(<%= picture_array.to_json %>);
+		});
+	</script>
+<% end %>
+
+<%
+	i = 0
+	j = 0
+%>
+
+<% if @best_pictures.count + @pictures.count >= 6 %>
+<div id="spot_on">
+	<div id="category_title">
+		<h2>
+			<%= it("Best pictures",
+					scope: ['area_pages', 'v2', 'spot_on']) %>
+		</h2>
+		<a class="see_all_button button" href="/explore/gallery?area_id=<%=@geonames_core.id%>">
+			<%= it("See all",
+					scope: ['homepage', 'v2', 'latest_photos']) %>
+		</a>
+		<div class="clear"></div>
+	</div>
+	<div class="first_col">
+		<div class="card">
+			<%
+				if !@best_pictures[i].nil?
+					picture = @best_pictures[i]
+					i += 1
+				elsif !@pictures[j].nil?
+					picture = @pictures[j]
+					j += 1
+				end
+			%>
+			<a href="javascript:void(0)" onclick="LightFrame.displayLive(<%= picture.id %>)">
+				<div class="pic_wrapper">
+					<div class="picture">
+						<img src="<%= picture.medium %>" alt="Diving in <%= picture.dive.spot.area_name %> - By <%= picture.user.nickname %>" />
+					</div>
+					<img class="zoom" src="<%= HtmlHelper.lbroot "/img/gallery/icon_zoom.svg" %>" alt="" />
+				</div>
+			</a>
+			<p class="title ellipsis">
+			<%=
+				if picture.dive.nil? || picture.dive.spot.nil? || picture.dive.spot.name.strip.length == 0
+					it("By %{user_name}",
+					scope: ['homepage', 'v2', 'latest_photos'],
+					user_name: picture.user.nickname)
+				else
+					it("By %{user_name} - %{location_name}",
+					scope: ['homepage', 'v2', 'latest_photos'],
+					user_name: picture.user.nickname,
+					location_name: picture.dive.spot.name)
+				end
+			%>
+			</p>
+		</div>
+		<div class="card last">
+			<%
+				if !@best_pictures[i].nil?
+					picture = @best_pictures[i]
+					i += 1
+				elsif !@pictures[j].nil?
+					picture = @pictures[j]
+					j += 1
+				end
+			%>
+			<a href="javascript:void(0)" onclick="LightFrame.displayLive(<%= picture.id %>)">
+				<div class="pic_wrapper">
+					<div class="picture">
+						<img src="<%= picture.medium %>" alt="Diving in <%= picture.dive.spot.area_name %> - By <%= picture.user.nickname %>" />
+					</div>
+					<img class="zoom" src="<%= HtmlHelper.lbroot "/img/gallery/icon_zoom.svg" %>" alt="" />
+				</div>
+			</a>
+			<p class="title ellipsis">
+			<%=
+				if picture.dive.nil? || picture.dive.spot.nil? || picture.dive.spot.name.strip.length == 0
+					it("By %{user_name}",
+					scope: ['homepage', 'v2', 'latest_photos'],
+					user_name: picture.user.nickname)
+				else
+					it("By %{user_name} - %{location_name}",
+					scope: ['homepage', 'v2', 'latest_photos'],
+					user_name: picture.user.nickname,
+					location_name: picture.dive.spot.name)
+				end
+			%>
+			</p>
+		</div>
+		<div class="card">
+			<%
+				if !@best_pictures[i].nil?
+					picture = @best_pictures[i]
+					i += 1
+				elsif !@pictures[j].nil?
+					picture = @pictures[j]
+					j += 1
+				end
+			%>
+			<a href="javascript:void(0)" onclick="LightFrame.displayLive(<%= picture.id %>)" alt="Diving in <%= picture.dive.spot.area_name %> - By <%= picture.user.nickname %>" />
+			<div class="pic_wrapper">
+					<div class="picture">
+						<img src="<%= picture.medium %>">
+					</div>
+					<img class="zoom" src="<%= HtmlHelper.lbroot "/img/gallery/icon_zoom.svg" %>" alt="" />
+				</div>
+			</a>
+			<p class="title ellipsis">
+			<%=
+				if picture.dive.nil? || picture.dive.spot.nil? || picture.dive.spot.name.strip.length == 0
+					it("By %{user_name}",
+					scope: ['homepage', 'v2', 'latest_photos'],
+					user_name: picture.user.nickname)
+				else
+					it("By %{user_name} - %{location_name}",
+					scope: ['homepage', 'v2', 'latest_photos'],
+					user_name: picture.user.nickname,
+					location_name: picture.dive.spot.name)
+				end
+			%>
+			</p>
+		</div>
+		<div class="card last">
+			<%
+				if !@best_pictures[i].nil?
+					picture = @best_pictures[i]
+					i += 1
+				elsif !@pictures[j].nil?
+					picture = @pictures[j]
+					j += 1
+				end
+			%>
+			<a href="javascript:void(0)" onclick="LightFrame.displayLive(<%= picture.id %>)">
+				<div class="pic_wrapper">
+					<div class="picture">
+						<img src="<%= picture.medium %>" alt="Diving in <%= picture.dive.spot.area_name %> - By <%= picture.user.nickname %>" />
+					</div>
+					<img class="zoom" src="<%= HtmlHelper.lbroot "/img/gallery/icon_zoom.svg" %>" alt="" />
+				</div>
+			</a>
+			<img class="zoom" src="<%= HtmlHelper.lbroot "/img/gallery/icon_zoom.svg" %>" alt="" />
+			<p class="title ellipsis">
+			<%=
+				if picture.dive.nil? || picture.dive.spot.nil? || picture.dive.spot.name.strip.length == 0
+					it("By %{user_name}",
+					scope: ['homepage', 'v2', 'latest_photos'],
+					user_name: picture.user.nickname)
+				else
+					it("By %{user_name} - %{location_name}",
+					scope: ['homepage', 'v2', 'latest_photos'],
+					user_name: picture.user.nickname,
+					location_name: picture.dive.spot.name)
+				end
+			%>
+			</p>
+		</div>
+	</div>
+	<div class="second_col">
+		<div class="card">
+			<%
+				if !@best_pictures[i].nil?
+					picture = @best_pictures[i]
+					i += 1
+				elsif !@pictures[j].nil?
+					picture = @pictures[j]
+					j += 1
+				end
+			%>
+			<a href="javascript:void(0)" onclick="LightFrame.displayLive(<%= picture.id %>)">
+				<div class="pic_wrapper">
+					<div class="picture">
+						<img src="<%= picture.medium %>" alt="Diving in <%= picture.dive.spot.area_name %> - By <%= picture.user.nickname %>" />
+					</div>
+					<img class="zoom" src="<%= HtmlHelper.lbroot "/img/gallery/icon_zoom.svg" %>" alt="" />
+				</div>
+			</a>
+			<p class="title ellipsis">
+			<%=
+				if picture.dive.nil? || picture.dive.spot.nil? || picture.dive.spot.name.strip.length == 0
+					it("By %{user_name}",
+					scope: ['homepage', 'v2', 'latest_photos'],
+					user_name: picture.user.nickname)
+				else
+					it("By %{user_name} - %{location_name}",
+					scope: ['homepage', 'v2', 'latest_photos'],
+					user_name: picture.user.nickname,
+					location_name: picture.dive.spot.name)
+				end
+			%>
+			</p>
+		</div>
+		<div class="card last">
+			<%
+				if !@best_pictures[i].nil?
+					picture = @best_pictures[i]
+					i += 1
+				elsif !@pictures[j].nil?
+					picture = @pictures[j]
+					j += 1
+				end
+			%>
+			<a href="javascript:void(0)" onclick="LightFrame.displayLive(<%= picture.id %>)">
+				<div class="pic_wrapper">
+					<div class="picture">
+						<img src="<%= picture.medium %>" alt="Diving in <%= picture.dive.spot.area_name %> - By <%= picture.user.nickname %>" />
+					</div>
+					<img class="zoom" src="<%= HtmlHelper.lbroot "/img/gallery/icon_zoom.svg" %>" alt="" />
+				</div>
+			</a>
+			<p class="title ellipsis">
+			<%=
+				if picture.dive.nil? || picture.dive.spot.nil? || picture.dive.spot.name.strip.length == 0
+					it("By %{user_name}",
+					scope: ['homepage', 'v2', 'latest_photos'],
+					user_name: picture.user.nickname)
+				else
+					it("By %{user_name} - %{location_name}",
+					scope: ['homepage', 'v2', 'latest_photos'],
+					user_name: picture.user.nickname,
+					location_name: picture.dive.spot.name)
+				end
+			%>
+			</p>
+		</div>
+	</div>
+	<div class="clear"></div>
+</div>
+
+<%= render :partial => 'v2/lightframe/gallery'%>
+
+<% end %>

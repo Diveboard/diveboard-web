@@ -1,0 +1,97 @@
+<$
+try {if(!with_arrow) var a=1;} catch(e){with_arrow = false}
+
+var limited_dives = [];
+
+if (zone.dives) {
+  var cnt = 0;
+  var ldives = []
+  for (var i in zone.dives)
+    ldives.push(zone.dives[i]);
+  ldives = ldives.sort(function(a,b){
+    if (a.score == b.score) return(0);
+    return (a.score < b.score ? 1:-1);
+  });
+
+  for (var i in ldives) {
+    limited_dives.push(ldives[i]);
+    if (cnt++ > 15)
+      break;
+  }
+}
+
+$>
+
+
+<div id='xp_p2_info_tab' class='xp_result_tab xp_result_list xp_wiki'>
+  <div class="xp_p2_info_tab_wiki_edit" <$ if (!zone.wiki_html){$>style="display:none;"<$}$>>
+    <a href="#" class="xp_wiki_edit">EDIT <span class="symbol">S</span></a>
+  </div>
+  <div class="xp_wiki_contribute" <$ if (zone.wiki_html){$>style="display:none;"<$}$>>
+    <h1>No entry (yet)</h1>
+    <p>No one has contributed content yet. If you know this place, feel free to contribute!</p>
+    <a class="yellow_button" href="#" style="float:right;">Contribute</a>
+  </div>
+  <div class="xp_p2_info_tab_wiki wiki_display <$if (zone.wiki_html){$>haswiki<$}$>" <$if (zone.wiki_html){$>obj_type="<$= zone['class']$>" obj_id="<$=zone.id$>"<$}$>>
+    <$ if (zone.wiki_html){$><$= zone.wiki_html$>
+    <$ } else {$><img src="/img/transparent_loader_2.gif" height='66px' width='66px' style="margin-left:185px; margin-top:50px" alt='#' /><$}$>
+  </div>
+</div>
+
+
+<div id='xp_p2_dives_tab' class='xp_result_tab xp_result_list'>
+  <ul class='xp_panel_list'>
+  <$ for (var i in limited_dives){ var dive = limited_dives[i];$>
+    <li class='xp_panel_list_item xp_p2_dive_item' data-xp_data='{"dive_id": <$=dive.id$>,"spot_id": <$=dive.spot.id$>}'>
+      <$ if (dive.featured_picture_thumbnail){$><div class='xp_pli_img'><img src='<$=dive.featured_picture_thumbnail$>' /></div>
+      <$} else {$><div class='xp_pli_img'><img src='/<$=dive.user.vanity_url$>/<$=dive.id$>/profile.png?g=xxsmall_blue' /></div><$}$>
+      <div class='xp_pli_txt'>
+        <h4 class='xp_pli_head'><$=dive.date$> - <$=dive.spot.name$></h4>
+        <div class='xp_pli_content'>
+          <p><$=dive.duration$> min - <$=Math.round(dive.maxdepth)$> m</p>
+          <p><a href='<$=dive.permalink$>' target='_blank'>View in <$=dive.user.nickname$>'s logbook</a></p>
+        <p><$=dive.notes$></p>
+        </div>
+      </div>
+      <div class='xp_pli_arrow'><span class="symbol">&gt;</span></div>
+    </li>
+  <$}$>
+  </ul>
+</div>
+
+
+<div id='xp_p2_divers_tab' class='xp_result_tab xp_result_list'>
+  <ul class='xp_panel_list'>
+  <$for (var i in zone.users){
+    var user = zone.users[i];
+    user.dive_nb = user.public_dive_ids.length;
+    $>
+    <li class='xp_panel_list_item xp_p2_user_item' data-xp_data='{"user_id": <$=user.id$>}'>
+      <$if (user.picture){$><div class='xp_pli_img'><img src='<$=user.picture$>' /></div><$}$>
+      <div class='xp_pli_txt'>
+        <h4 class='xp_pli_head'><$=user.nickname$></h4>
+        <div class='xp_pli_content'>
+          <$if (user.main_qualification){$><p><img src="/img/advanced_icon.png" alt="#" width="8px"><$=user.main_qualification.date$> : <$=user.main_qualification.org$> <$=user.main_qualification.title$></p><$}$>
+          <p><$=user.dive_nb$> dives on Diveboard</p>
+          <$if (user.tmp_dive_this_site){$><p><$= user.tmp_dive_this_site$> dives on this spot</p><$}$>
+          <p><a href='<$=user.permalink$>' target='_blank'>View <$=user.nickname$>'s logbook</a></p>
+        </div>
+      </div>
+      <$if (with_arrow){$><div class='xp_pli_arrow'><span class="symbol">&gt;</span></div><$}$>
+    </li>
+  <$ }$>
+  </ul>
+</div>
+
+
+<div id='xp_p2_pictures_tab' class='xp_result_tab xp_result_list'>
+  <$if (!zone.best_pics) {$>
+  <img src="/img/transparent_loader_2.gif" height='66px' width='66px' style="margin-left:165px; margin-top:50px" alt='#' />
+  <$} else {
+    for (var i in zone.best_pics) {
+      var pic = zone.best_pics[i];$>
+      <a href='<$=pic.permalink$>' target='_blank'><img src="<$=pic.thumbnail$>"/></a>
+    <$}
+  }$>
+</div>
+

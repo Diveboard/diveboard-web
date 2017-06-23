@@ -1,0 +1,38 @@
+<% if !@user.nil?%>
+  <div id="blog_main_pane" class="blog_header">
+      <h1><%= it("Ask a question, share your thoughts... the floor is yours!", scope: ['blog', 'new_blog_post']) %></h1>
+      <div class="article_details">
+      </div>
+  </div>
+  <div id="blog_left_column" class="blog_editor">
+    <h2><%= it("Title:", scope: ['blog', 'new_blog_post']) %></h2>
+    <input class="title" type="text" id="post_title" value="<%=@post.title(begin @user.id rescue nil end) rescue ""%>">
+    <h2><%= it("Category:", scope: ['blog', 'new_blog_post']) %></h2>
+     <select name="post_category" id="post_category">
+      <% (BlogCategory.all.reject{|u| u.blog_posts.count == 0}.sort{|x,y| y.blog_posts.count <=> x.blog_posts.count}).each do |c|%>
+      <option  value="<%=c.name%>" <%if !@post.nil? && @post.blog_category.id == c.id%> SELECTED<%end%>><%=c.name.titleize%></option>
+      <%end%>
+      <option value="" DISABLED>---</option>
+      <option value="-1" onclick="new_category(); return false;"><%= it("Create New Category", scope: ['blog', 'new_blog_post']) %></option>
+      </select>
+    <span style="margin-left: 10px;"/><h2 style="display:none;"><%= it("Comments style:", scope: ['blog', 'new_blog_post']) %></h2>
+    <select style="display:none;" name="post_comment_type" id="post_comment_type"<%if !@post.nil? && @post.has_comments?%>DISABLED<%end%>>
+      <option value="question"<%if !@post.nil? && @post.comments_question == 1%> SELECTED<%end%>><%= it("Question", scope: ['blog', 'new_blog_post']) %></option>
+      <option value="standard"<%if !@post.nil? && @post.comments_question == 0%> SELECTED<%end%>><%= it("Regular post/review", scope: ['blog', 'new_blog_post']) %></option>
+    </select>
+    <div id="blog_editor" postid="<%=@post.id rescue "" %>">
+      <%if !@wiki.nil?%>
+        <%=HtmlHelper.sanitize(@wiki.data.html_safe, {:wordpress_article=> @post.wordpress_article, :blog_article => true}).html_safe%>
+      <%elsif !@post.nil?%>
+        <%=HtmlHelper.sanitize(@post.wiki_html(@user.id).html_safe, {:wordpress_article=> @post.wordpress_article, :blog_article => true}).html_safe%>
+      <%end%>
+    </div>
+  </div>
+  <script>
+  $(document).ready(function(){
+    blog_post_editor();
+  });
+  </script>
+<%else%>
+    
+<%end%>

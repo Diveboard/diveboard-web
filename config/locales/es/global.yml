@@ -1,0 +1,125 @@
+---
+es:
+  globals:
+    shop:
+      qa:
+        questions:
+          deco_chambers: "Ubicación del más cercano Deco"
+          staff: Personal
+          boat: Barco
+          shore_dives: "Inmersiones de Costa"
+          deco_chamber: "Ubicación del más cercano Deco"
+          tanks: Tanques
+          gases: Gases
+          gear: "Engranaje alquilado"
+          services: "En servicios del sitio"
+          payment: "Medios de pago aceptado"
+          best_period: "Mejores meses para ir allí"
+          hotels: "Hoteles cercanos"
+          transfers: "Transporte a/desde hoteles"
+          parking: "Parking privado disponible"
+          other_activities: "Para que no bucea"
+          gear_sales: "Ventas de equipo"
+          gear_maintenance: "Mantenimiento de equipo"
+        hint:
+          deco_chambers: "¿A qué distancia está la cámara de descompresión más cercana?"
+          staff: "Por favor presente su personal, los monitores y sus especialidades"
+          boat: "¿Qué clase de barco tienes? ¿Cuántos Buzo Buzo no puede ser a bordo? ¿Qué equipo tienes (oxígeno, té,...)?"
+          shore_dives: "¿Hacer que la orilla inmersiones? ¿Está en el arrecife?"
+          deco_chamber: "¿A qué distancia está la cámara de descompresión más cercana?"
+          tanks: "¿Estás usando tanques de acero o aluminio? ¿De que capacidad?"
+          gases: "¿Ustedes proveen Nitrox o Trimix? ¿Cualquier mezcla estándar proporcionan?"
+          gear: "¿Qué equipo está disponible para alquiler (traje de neopreno, BCD, cámara, ordenador,...)? ¿Qué marcas?"
+          services: "¿Cuáles son los servicios que usted proporciona? armario, aulas, ducha, piscina, jacuzzi..."
+          payment: "¿Qué pago significa que aceptas en el sitio?"
+          best_period: "¿Es más específico periodo donde hay vida marina excepcional para ver?"
+          hotels: "Recomendaría a cual de los hoteles cercanos"
+          transfers: "¿Haces traslados desde y hacia Hoteles de la zona?"
+          parking: "¿Hay un aparcamiento dedicado para tus clientes?"
+          other_activities: "¿Organizar actividades para los no buceadores? ¿Cuáles son las grandes actividades en el área para los buceadores no?"
+          gear_sales: "¿Venden equipo in situ? ¿Qué tipo / ¿qué marcas? ¿Por qué debería comprar al cliente a través de ti? ¿Forma parte de la red de concesionarios de la marca?"
+          gear_maintenance: "¿Usted realizar el mantenimiento de equipo in situ? ¿Qué & qué marcas? ¿Tiene certificaciones de mantenimiento marca?"
+    divetype:
+      recreational: Recreo
+      training: Entrenamiento
+      ? "night dive"
+      : Nocturna
+      ? "deep dive"
+      : Profunda
+      drift: Deriva
+      wreck: Pecio
+      cave: Cueva
+      reef: Arrecife
+      photo: Foto
+      research: Investigación
+      ? "Photo Survey"
+      : "Encuesta fotográfica"
+      Shore: "De costa"
+      Twilight: Ocaso
+      Drift: Deriva
+      Tech: Técnica
+      ? "Ice Diving"
+      : "Buceo Ide"
+      ? "Boat Dive"
+      : Barco
+      Video: Vídeo
+      Sidemount: Sidemount
+      Recreational: Recreacional
+      Reef: Arrecife
+      Photo: Foto
+    watertype:
+      salt: Salada
+      fresh: Dulce
+    visibility:
+      bad: Mala
+      average: Media
+      good: Buena
+      excellent: Excelente
+    gear_categories:
+      BCD: BCD
+      Boots: Botas
+      Camera: Cámara
+      Compass: Brújula
+      Computer: Ordenador
+      Cylinder: Botella
+      ? "Dive skin"
+      : "Piel de buceo"
+      ? "Dry suit"
+      : "Traje seco"
+      Fins: Aletas
+      Gloves: Guantes
+      Hood: Capucha
+      Knife: Cuchillo
+      ? "Lift bag"
+      : "Boya elevadora"
+      Light: Foco
+      Mask: Mascara
+      Other: Otro
+      Rebreather: Reciclador
+      Regulator: Regulador
+      Scooter: Scooter
+      ? "Wet suit"
+      : "Traje humedo"
+    tank_material:
+      aluminium: Aluminio
+      steel: Acero
+      carbon: Carbono
+    current:
+      none: Ninguno
+      light: Suave
+      medium: Medio
+      strong: Fuerte
+      extrme: Extremo
+    long:
+      current:
+        light: "Ligera (hasta 1 nudo)"
+        mediume: "Media (hasta 2 nudos)"
+        strong: "Fuerte (hasta 3 nudos)"
+        extreme: "Extrema (más de 3 nudos)"
+        none: Ninguno
+  blog:
+    feed_rss:
+      ? "%{user}'s scuba dive in %{spot_name}"
+      : "%{user} buceó en %{spot_name}"
+      ? "Dive spot: %{country}, %{location}, %{spot} - Depth: %{dive_maxdepth}m, duration: %{dive_duration}mins - buddies: %{buddies} - species spotted : %{species} - Notes: %{notes}"
+      : "Lugar de la inmersión: %{country}, %{location}, %{spot} - Profundidad: %{dive_maxdepth}m, duración: %{dive_duration}mins - compañeros de buceo: %{buddies} - especies encontradas: %{species} - Notas: %{notes}"

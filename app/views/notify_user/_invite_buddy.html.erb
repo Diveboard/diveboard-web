@@ -1,0 +1,31 @@
+<html>
+<body>
+
+<div style='background-color: #222; color: #1D1D1D; max-width: 800px; padding: 20px; font-size: 12px; font-family: "Helvetica, Verdana, Arial, sans-serif"; text-shadow: white 0px 1px;'>
+
+  <div style='margin-top: 20px; margin-bottom: 30px;'>
+  <img src="http://www.diveboard.com/img/logo-alpha.png" alt="DiveBoard">
+  </div>
+
+
+  <div style='background-color: #f4f4f4; margin-top: 0; padding: 30px 10px 10px 10px;'>
+  <p style='margin: 5px 0 20px 0;'><%= it("Hi !", scope: ['notify_user', 'invite_buddy']) %></p>
+  <%= it("%{user} would like to invite you on %{link:Diveboard}.", scope: ['notify_user', 'invite_buddy'], user: @b_from.nickname, link: "http://www.diveboard.com") %>
+  <br/>
+  <%= it("Diveboard is the next generation online logbook, allowing you to log your dive experience along with dive profiles, pictures or videos.", scope: ['notify_user', 'invite_buddy']) %>
+  <br/>
+  <%= it("Diveboard will also help you plan your next holliday and look for dive centers that have been appreciated through reviews from fellow divers.", scope: ['notify_user', 'invite_buddy']) %>
+  <br/>
+  <br/>
+  <%= it("Check out soon %{log_link:%{user}'s logbook}, or have a %{gallery_link:look at the gallery of the best pictures}!", scope: ['notify_user', 'invite_buddy'], log_link: @b_from.fullpermalink(:canonical), user: @b_from.nickname, gallery_link: "http://www.diveboard.com/explore/gallery") %>
+  </p>
+
+
+  <p style='margin: 30px 0 5px 0;'><%= it("Happy Diving !", scope: ['notify_user', 'invite_buddy']) %></p>
+  <p style='margin: 5px 0 5px 0;'><%= it("The Diveboard team", scope: ['notify_user', 'invite_buddy']) %></p>
+  <p style='margin: 5px 0 0px 0;'><a href='http://www.diveboard.com'>http://www.diveboard.com</a></p>
+
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<%= javascript_include_tag 'editor'%>
+<script>
+var G_user_facebook_picture = "<%=@owner.fb_picture%>";
+var G_default_picture_url = "<%=@owner.picture%>";
+var G_user_proxy_api = <%= @owner.to_api(:private).to_json.html_safe %>;
+var G_changed_dives = false;
+var G_ad_pictures = <%= @owner.ad_album.pictures.to_api(:private).to_json.html_safe rescue [] %>;
+</script>
+
+
+<%
+default_tab = :overview
+show_overview = true
+##PREPARE_PLANS
+show_ads = !@real_user.nil? && @real_user.admin_rights >= 4
+
+if !@user.nil? && @user.can_edit?(@owner) then
+  show_overview = true
+elsif !@owner.shop_proxy.about_html.nil? || @owner.favorite_dives.count > 0 then
+  show_overview = true
+else
+  show_overview = false
+end
+
+if @owner.shop_proxy.address || @owner.shop_proxy.phone || @owner.shop_proxy.email || @owner.shop_proxy.openings || @owner.shop_proxy.web || @owner.shop_proxy.facebook || @owner.shop_proxy.twitter || @owner.shop_proxy.google_plus || (!@owner.shop_proxy.lat.nil? && !@owner.shop_proxy.lng.nil?) then
+  show_location = true
+else
+  show_location = false
+end
+
+
+if !@valid_claim.nil? then
+  default_tab = :validclaim
+elsif show_overview then
+  default_tab = :overview
+elsif @owner.shop_proxy.reviews.count > 0 || @owner.shop_proxy.dives.count > 0 then
+  default_tab = :reviews
+elsif show_location
+  default_tab = :location
+else
+  default_tab = :reviews
+end
+%>
+
+
+
+
+<ul class="main_inner_header_tabs">
+    <li id="tab_info_link" class="tab_link editable_tab <%=if !show_overview then 'tab_edit_only' end%> <%= "active" if default_tab == :overview%>" <%if !show_overview then%>style='display:none;'<%end%>><a href="#" >Overview</a></li>
+    <!--<li id="tab_events_link" class='tab_link editable_tab'><a href="#">Events</a></li>-->
+    <li id="tab_reviews_link" class='tab_link <%= "active" if default_tab == :reviews%>'><a href="#">Community &amp; feedback</a></li>
+    <li id="tab_location_link" class='tab_link editable_tab <%= "active" if default_tab == :location%>' <%if !show_location then%>style='display:none;'<%end%>><a href="#">Location</a></li>
+    <% if !@valid_claim.nil? then%>
+    <li id="tab_validclaim_link" class='tab_link editable_tab <%= "active" if default_tab == :validclaim%>'><a href="#">Claim</a></li>
+    <%end%>
+    <% if show_ads then%>
+    <li id="tab_ads_link" class='tab_link editable_tab'><a href="#">Ads</a></li>
+    <%end%>
+</ul>
+
+
+<div id="formedit_shop" class="rightbar">
+  <div id="tab_box">
+
+    <div class='tab_panel tab_info'>
+      <div class='main_content_box'>
+        <h2>Your activity</h2>
+        <p>What kind of structure is <%=shop.name%> ?</p><br/>
+        <div class='shop_edit_structure'>
+          <%Shop::ALLOWED_CATEGORIES.each do |cat|
+            next if cat.nil?%>
+            <div name='<%=cat%>' class='list_option <%= if shop.category == cat then 'active' end %>'><%=cat%></div>
+          <%end%>
+        </div>
+      </div>
+
+      <div class='main_content_box' id='logo_upload_ctl'>
+        <h2>Use your logo as profile picture</h2>
+        <p>This picture will be displayed on the top of the page along with your shop name. It's an easy way to make your brand more visible!</p>
+        <div class="shop_edit_profile_pictures">
+          <div class="shop_edit_profile_current_picture">
+          <span class="shop_edit_profile_image_label">Image to use as logo:</span>
+            <div style="width:120px;height:120px;overflow:hidden;margin-left:5px;">
+              <img id="preview" src="<%=@owner.picture%>" alt="profile_pic" width="120" />
+            </div>
+          </div>
+          <div class="shop_edit_profile_new_picture">
+            <% if !@owner.fb_id.nil?%>
+            <div class="shop_edit_profile_new_box" style="height: 70px; font-weight: bold; font-size: 12px;">
+            <span class="third_lvl_header">Your own Facebook Picture </span><br/>
+            <img src="<%=@owner.fb_picture_small%>" alt="sample_profile_small" width="42" height="42" /> <a href="#"  style="left: 70px; position: relative; top: -68px; width: 64px;" id="use_facebook" class="edit_save_btn" >Select</a>
+            </div>
+            <%end%>
+
+            <div class="shop_edit_profile_new_box" id="imageuploader">
+            <span class="third_lvl_header">Upload New Profile Image (2Mb max):</span>
+                <div id="settings_upload_btn">
+                          Import a picture.
+                </div>
+            </div>
+            <div class="shop_edit_profile_new_box" id="picture_table" style="display:none;">
+              <span class="third_lvl_header">Select a thumbnail:</span>
+                <div id="shop_picturepreview"></div>
+              <a href="#" class="yellow_button" id="image_confirm">Confirm <span style='font-size:8px; font-wieght: normal;'>(optional)</span></a>
+              <a href="#" class="yellow_button" id="image_cancel">Cancel</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class='main_content_box'>
+        <h2>Write a presentation about your dive shop</h2>
+        <p>We suggest to include a few words about you, your activity, and the services you provide along with a few images (we love pictures: it's easier to read than text!). And feel free to include any advices that will make a Diveboard user become your next customer !</p>
+        <div class='tab_panel_no_border'>
+          <div id='shop_edit_about'>
+            <%= (shop.about_html || h(user.about).gsub(/\n/, "<br/>") ).html_safe%>
+          </div>
+        </div>
+      </div>
+
+
+      <div class='main_content_box'>
+        <h2>Select a few dives that are typical of your activity</h2>
+        <p>People want to see where you go, what you can help them see. Show them a few iconic dives they might do with you !<p>
+        <ul>
+          <% user.full_dives.each do |dive| %>
+                  <li>
+                  <div class="fav_dive_body">
+                  <div class="fav_dive_edit_box">
+                  <input type=checkbox class='fav_dives_chk' <% if dive.privacy==1 then %>disabled<%end%> <%if !dive.favorite.nil? && dive.favorite then%>checked<%end%> name='favorite_<%=dive.id%>' />
+                  <%if dive.privacy==0 %>
+                  <img src="/img/lock_green.png" alt="Public" class="tooltiped-js" id='lock_<%=dive.id%>' title="">
+                  <%else%>
+                  <img src="/img/lock_red.png" alt="Private" class="tooltiped-js" id='lock_<%=dive.id%>' title="">
+                  <%end%>
+                  </div>
+                  <img src="<%=if dive.featured_picture.nil? then dive.static_map_url else dive.featured_picture.thumbnail end%>" class='thumb_fav_dive' alt="#" />
+                  <div class="fav_dive_body_inner">
+                    <span><a href="<%=dive.fullpermalink(:locale)%>" target="_blank"><%=dive.date %> <%=dive.spot.country.cname%> <%=dive.spot.location.name%></a></span>
+                    <p><%=dive.notes%></p>
+                  </div>
+                  </div>
+                  </li>
+          <%end%>
+        </ul>
+        <%if user.full_dives.count == 0%>
+          <br/>
+          <p>To do that, first <a target='_blank' href='/<%=user.vanity_url%>/new'>create some new dive</a>. They will then appear here and you'll be able to feature them on your page.</p>
+        <%end%>
+      </div>
+    </div>
+
+    <div class='tab_panel tab_events' style='display:none'>
+      <h2>Events</h2>
+    </div>
+
+    <div class='tab_panel tab_location' style='display:none'>
+      <h2>Contact information</h2>
+      <table class='shopedit_contact_table'>
+        <tr>
+          <td colspan=2>
+            <div id="shopedit_gmap"> </div>
+            <button class='yellow_button' id='shopedit_gmap_placepin'>Place pin on map</button>
+          </td>
+        </tr>
+        <tr><td><strong>Latitude - Longitude</strong></td>
+          <td><input id='shopedit_lat' value="<%=shop.lat%>" type='text' class='wizard_input_25 wizard_big_input'/> -
+          <input id='shopedit_lng' value="<%=shop.lng%>" type='text' class='wizard_input_25 wizard_big_input'/></td></tr>
+        <tr><td class='col1'><strong>Address</strong><br/>Address of your offices (where you expect your customers to come!). Include also the zip code and city</td>
+          <td><textarea id='shopedit_address' class='wizard_input_100 wizard_big_input'><%=shop.address%></textarea></td></tr>
+        <tr><td><strong>City</strong></td>
+          <td><input id='shopedit_city' value="<%=CGI.escapeHTML(shop.city || "")%>" type='text' class='wizard_input_100 wizard_big_input'/></td></tr>
+        <tr><td><strong>Country</strong></td>
+          <td><span class='autocomplete_country'><input id='shopedit_country' value="<%=CGI.escapeHTML(shop.country && shop.country.name || "")%>" type='text' shortname="<%=CGI.escapeHTML(shop.country_code || "")%>" class='wizard_input_100 wizard_big_input'/><img src='/img/flags/blank.gif'/></span></td></tr>
+        <tr><td><strong>Phone</strong><br/>Please use international format<br/>E.g. +33 1 234567890</td>
+          <td><input id='shopedit_phone' value="<%=CGI.escapeHTML(shop.phone || "")%>" type='text' class='wizard_input_100 wizard_big_input'/></td></tr>
+        <tr><td><strong>Email</strong></td>
+          <td><input id='shopedit_email' value="<%=CGI.escapeHTML(shop.email || "")%>" type='text' class='wizard_input_100 wizard_big_input'/></td></tr>
+        <tr><td><strong>Opening times</strong><br/>E.g.: <br/><i>1p.m. - 7p.m. tue-fri<br/>8a.m - 9p.m. sat-sun<br/>Closed on monday and bank holidays</i></td>
+          <td><textarea id='shopedit_openings' class='wizard_input_100 wizard_big_input'><%=shop.openings%></textarea></td></tr>
+        <tr><td><strong>Your official web page</strong></td>
+          <td><input id='shopedit_web' value="<%=CGI.escapeHTML(shop.web || "")%>" type='text' class='wizard_input_100 wizard_big_input'/></td></tr>
+        <tr><td><strong>Facebook fan page</strong></td>
+          <td><input id='shopedit_facebook' value="<%=CGI.escapeHTML(shop.facebook || "")%>" type='text' class='wizard_input_100 wizard_big_input'/></td></tr>
+        <tr><td><strong>Twitter account</strong></td>
+          <td><input id='shopedit_twitter' value="<%=CGI.escapeHTML(shop.twitter || "")%>" type='text' class='wizard_input_100 wizard_big_input'/></td></tr>
+        <tr><td><strong>Google plus page</strong></td>
+          <td><input id='shopedit_google_plus' value="<%=CGI.escapeHTML(shop.google_plus || "")%>" type='text' class='wizard_input_100 wizard_big_input'/></td></tr>
+      </table>
+
+      <h2>Closest hotels, commodities,... in the neighborhood</h2>
+      <div id='shop_edit_nearby'>
+        <%= shop.nearby && shop.nearby.html_safe %>
+      </div>
+
+    </div>
+
+
+    <div class='tab_panel tab_ads' style='display:none'>
+
+
+    </div>
+
+
+  </div>
+</div>
+
+
+
+<div id='dialog-edit-ad' title="<%= it("Edit ad content", scope: ['shop_pages', 'profile_edit']) %>" style="display:none;">
+  <p class="dialog-text-highlight">Define the content of your ad. You must assign a (square) picture, some title (25 chars. max) and some text (90 chars. max).
+    If you enter a specific URL for the redirection, please make sure the URL you enter is valid : we don't check whether the page exists or not.</p>
+
+  <div class='edit_ad_container'>
+  </div>
+  <div class='edit_ad_upload_container'>
+    <div class="imageuploader">
+      <span class="third_lvl_header">Upload New Image (2Mb max):</span>
+      <div class="select_file_btn">Import a picture</div>
+    </div>
+    <div class="picture_table" style="display:none;">
+      <div class="third_lvl_header">Select a thumbnail:</div>
+      <div class="picturepreview" style='display: inline-block'></div>
+      <button href="#" class="yellow_button image_confirm" style='margin: 0px 10px'>Confirm</button>
+      <button href="#" class="grey_button_v1 image_cancel" style='margin:10px;'>Cancel</button>
+    </div>
+    <div class="third_lvl_header">Or select a previously uploaded image.</div>
+    <div class='edit_ad_pictures_container'>
+    </div>
+  </div>
+
+</div>
+
+<div itemscope itemtype="http://data-vocabulary.org/Review-aggregate" >
+  <span itemprop="itemreviewed"><%=@owner.shop_proxy.name%></span>
+  <%if @owner.picture_large != User::NO_PICTURE then%>
+    <img itemprop="photo" src="<%=@owner.picture_large%>" style='height: 0px;'/>
+  <%end%>
+  <span itemprop="rating" itemscope itemtype="http://data-vocabulary.org/Rating">
+    <span itemprop="average"><%=@owner.shop_proxy.overall_rating%></span>
+    out of <span itemprop="best">5</span>
+  </span>
+  based on <span itemprop="votes"><%=@owner.shop_proxy.public_reviews.count%></span> ratings.
+  <%# TODO: include count of reviews with text <span itemprop="count">5</span> user reviews.%>
+</div>

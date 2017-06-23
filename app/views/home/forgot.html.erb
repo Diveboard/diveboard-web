@@ -1,0 +1,36 @@
+	<div id="container"> 	
+		<div id="header">
+		<a href="<%= @fb_connect_controller %>" class="header_facebook"><img src="/img/facebook.png" alt="#" /></a>
+		<ul>			
+			<li class="header_logo"><a href="#"><img src="/img/logo-alpha.png" alt="DiveBoard" /></a></li>
+			<li style="width:79px;"></li>
+			<li><a href="#" onclick="SnapABug.startLink();" class="header_sub_menu"><img src="/img/header_help_link.png" alt="help" /></a></li>
+			<li><a href="http://deck.diveboard.com/" class="header_sub_menu"><img src="/img/header_blog_link.png" alt="blog" /></a></li>
+			<li><form action="#">
+				<fieldset>
+				<input type="text" id="home_search" class="autoclear tooltiped" value="Search" title="search coming soon!"/>
+				<input type="image" id="home_search_btn" src="/img/home_search_btn.png" />
+				</fieldset>
+				</form>
+			</li>
+		</ul>
+		</div>
+
+	</div>
+	<div id="index_container">
+		
+
+		<br/>
+		<%if !@result.nil?%>
+		<%=@result%><br/>
+		<%end%>
+		Forgot your password :<br/>
+		<%= form_for(User.new, :url=>{:action=>'forgot', :controller=>"home"}) do |f|%>
+			Email: <%= f.text_field :email%><br/>			
+		<%= f.submit "Reset my Password"%>
+		<%end%>
+		
+	</div>
+
+
+<%= render :partial => 'layouts/footer'  %>

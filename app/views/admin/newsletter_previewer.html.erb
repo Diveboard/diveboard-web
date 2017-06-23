@@ -1,0 +1,77 @@
+<%= render :partial => 'admin_css'%>
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 11 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+
+<script>
+$(document).ready(function(){
+    $("#preview_user .user_choice_id").autocomplete({
+      source: function(request, response){
+        $.ajax({
+          url:"/api/search/user.json",
+          data:({
+            q: request.term
+          }),
+          dataType: "json",
+          success: function(data){
+            console.log ("plop");
+            if (parseInt(request.term) == request.term)
+              data.push({
+                label: "User with ID "+request.term,
+                db_id: request.term,
+                value: "User with ID "+request.term,
+                picture: null
+              });
+            response( $.map( data, function( item ) {
+              return {
+                label: ""+item.db_id+". "+item.label,
+                //label: item.label,
+                value: item.db_id,
+                db_id: item.db_id,
+                picture: item.picture
+              }
+            }));
+          },
+          error: function(data) { diveboard.alert("A technical error happened while searching for user. Is sphinx down ?"); }
+        });
+      },
+      minLength: 2,autoFocus: true,
+      select: function(event, ui){
+        $(this).val(ui.item.db_id);
+        $(this).closest('form').submit();
+      }
+    });
+});
+</script>
+
+
+  <h1>Preview Newsletter</h1>
+  <form id='preview_user'>
+    <input type='hidden' name='id' value='<%=letter.id%>'>
+    <input type='hidden' name='a' value='preview'>
+    <input type='hidden' name='authenticity_token' value='<%=form_authenticity_token%>'/>
+    Preview for user (leave blank for generic newsletter) :<input class='user_choice_id' name='user_id' value='<%=user.id rescue nil%>'>
+    <button class='yellow_button'>Preview for user</button>
+  </form>
+  <form>
+    <input type='hidden' name='id' value='<%=letter.id%>'>
+    <input type='hidden' name='a' value='send_preview'>
+    <input type='hidden' name='user_id' value='<%=user.id rescue nil%>'>
+    <input type='hidden' name='authenticity_token' value='<%=form_authenticity_token%>'/>
+    Send this newletter to email address:<input name='email' value='<%=user.contact_email || user.email rescue nil%>'>
+    <button class='yellow_button'>Send one mail</button>
+  </form>
+  <div>
+    Not satisfied ? <a class='yellow_button' href='/admin/newsletter?a=edit&id=<%=letter.id%>'>Edit content</a>
+  </div>
+  <h2> Title: <%=letter.subject%></h2>
+  <div id='newsletter_preview' style='width: 800px; border: solid 2px #555; position: relative;'>
+  <%= HtmlHelper::Tracker.new(HtmlHelper::Inliner.new((render :partial => 'notify_user/newsletter', :locals => {:user => user, :letter => letter}) , false, {}, ['public/styles/newsletter.css']).execute, false, "email", "newsletter", letter.id, begin user.shaken_id rescue "null" end).execute.html_safe
+  %>
+  </div> <!-- End of newsletter preview -->
+
+
+</div>

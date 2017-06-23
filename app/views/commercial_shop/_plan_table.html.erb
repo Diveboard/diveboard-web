@@ -1,0 +1,408 @@
+<% shop ||= nil %>
+<% restart_process ||= false %>
+<% current_plan_id = shop.subscribed_plan.name rescue nil%>
+<% current_plan_id = force_current_plan_id rescue current_plan_id%>
+
+<div style='position: relative'>
+<table class='plan_table'>
+  <tr class='head1'>
+    <td></td>
+    <td class='plancol'><div class='caption'><%= it("STARTER", scope: ['commercial_shop', 'plan_table']) %></div></td>
+    <td></td>
+    <td class='plancol highlighted'><div class='caption'><%= it("PREMIUM", scope: ['commercial_shop', 'plan_table']) %></div><!--<div class='reco'><div class='reco_l'></div><div class='reco_txt'>Recommended</div><div class='reco_r'></div></div>--></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr class='blank_row1'>
+    <td></td>
+  </tr>
+  <tr class='blank head_price'>
+    <td></td>
+    <td class='plancol'><%= it("free", scope: ['commercial_shop', 'plan_table']) %></td><td></td>
+    <td class='plancol highlighted'>
+    <%= it("%{size:As low as}%{br}%{normal:USD} $42%{normal:/month}", scope: ['commercial_shop', 'plan_table'], size: It.tag("span", style: "font-weight: normal; font-size: 13px"), br: It.tag("br"), normal: It.tag("span", style: "font-weight: normal;")) %>
+    </td><td></td>
+  </tr>
+  <tr class='blank head_choose'>
+    <td></td>
+    <%if current_plan_id == 'free'%>
+      <td class='plancol'><strong><%= it("Your current plan", scope: ['commercial_shop', 'plan_table']) %></strong></td><td></td>
+    <%else%>
+      <td class='plancol'><a class='black_button_small' href='/login/register_pro?plan=free<%="&start=1" if restart_process%>'><%if current_plan_id%><%= it("Change", scope: ['commercial_shop', 'plan_table']) %><%else%><%= it("SIGN UP", scope: ['commercial_shop', 'plan_table']) %><%end%></a></td><td></td>
+    <%end%>
+    <%if current_plan_id == 'premium'%>
+      <td class='plancol highlighted'><strong><%= it("Your current plan", scope: ['commercial_shop', 'plan_table']) %></strong></td><td></td>
+    <%else%>
+      <td class='plancol highlighted'><a class='black_button_small'  href='/login/register_pro?plan=premium<%="&start=1" if restart_process%>'><%if current_plan_id%><%= it("Change", scope: ['commercial_shop', 'plan_table']) %><%else%><%= it("SIGN UP", scope: ['commercial_shop', 'plan_table']) %><%end%></a></td>
+    <%end%>
+  </tr>
+
+  <tr class='blank_row2'>
+    <td></td>
+  </tr>
+
+
+  <tr class='features_start'>
+    <td></td><td></td><td></td><td></td>
+  </tr>
+
+  <tr class='category_start bloc_ecommerce'>
+    <td><h3><%= it("E-commerce", scope: ['commercial_shop', 'plan_table']) %></h3></td>
+    <td class='plancol'            ></td><td></td>
+    <td class='plancol highlighted'></td>
+  </tr>
+  <tr class='feature'>
+    <td><%= it("List your service prices", scope: ['commercial_shop', 'plan_table']) %></td>
+    <td class='plancol'            ><img src='/img/commercial_shop/plan_check.png' width='18px' height='15px'/></td><td></td>
+    <td class='plancol highlighted'><img src='/img/commercial_shop/plan_check.png' width='18px' height='15px'/></td>
+  </tr>
+  <tr class='feature'>
+    <td><%= it("Sell online using Paypal", scope: ['commercial_shop', 'plan_table']) %>
+      <span class='info'>?<div class='arrow'> </div><div class='details'><%= it("Your customers will be able to pay in advance for booked dives. You have the opportunity to confirm the booking before the money is transferred.%{br}Requires a Paypal Business Account.", scope: ['commercial_shop', 'plan_table'], br: It.tag("br"))%>
+      </div></span>
+    </td>
+    <td class='plancol'            ><img src='/img/commercial_shop/plan_check.png' width='18px' height='15px'/></td><td></td>
+    <td class='plancol highlighted'><img src='/img/commercial_shop/plan_check.png' width='18px' height='15px'/></td>
+  </tr>
+  <tr class='feature'>
+    <td><%= it("Manage your bookings", scope: ['commercial_shop', 'plan_table']) %>
+      <span class='info'>?<div class='arrow'> </div><div class='details'><%= it("Confirm, cancel or reschedule your customer bookings, manage your reservation and keep in touch with your customers%{br}Requires a Paypal Business Account.", scope: ['commercial_shop', 'plan_table'], br: It.tag("br")) %></div></span>
+    </td>
+    <td class='plancol'            ><img src='/img/commercial_shop/plan_check.png' width='18px' height='15px'/></td><td></td>
+    <td class='plancol highlighted'><img src='/img/commercial_shop/plan_check.png' width='18px' height='15px'/></td>
+  </tr>
+  <tr class='feature category_end bloc_ecommerce'>
+    <td><%= it("Transaction fee", scope: ['commercial_shop', 'plan_table']) %></td>
+    <td class='plancol'            ><%= it("5% of transaction%{br}12$ minimum per transaction%{br}%{small:(excluding Paypal fees)}", scope: ['commercial_shop', 'plan_table'], br: It.tag("br"), small: It.tag("small")) %></td><td></td>
+    <td class='plancol highlighted'><%= it("3% of transaction%{br}10$ minimum per transaction%{br}%{small:(excluding Paypal fees)}", scope: ['commercial_shop', 'plan_table'], br: It.tag("br"), small: It.tag("small")) %></td>
+  </tr>
+<!--
+  <tr class='feature'>
+    <td>Sell widget for your website</td>
+    <td class='plancol'            ></td><td></td>
+    <td class='plancol highlighted'><span class='symbol coming_soon'>.</span>*</td>
+  </tr>
+  <tr class='feature'>
+    <td>Statistics Dashboard</td>
+    <td class='plancol'            ></td><td></td>
+    <td class='plancol highlighted'><span class='symbol coming_soon'>.</span>*</td>
+  </tr>
+  <tr class='feature'>
+    <td>SMS notifications</td>
+    <td class='plancol'            ></td><td></td>
+    <td class='plancol highlighted'>option*</td>
+  </tr>
+-->
+
+
+  <tr class='blank_row3'>
+    <td></td>
+    <td class='plancol'            ></td><td></td>
+    <td class='plancol highlighted'></td>
+  </tr>
+
+
+
+
+  <tr class='category_start bloc_marketing'>
+    <td><h3><%= it("Marketing tool", scope: ['commercial_shop', 'plan_table']) %></h3></td>
+    <td class='plancol'></td><td></td>
+    <td class='plancol highlighted'></td>
+  </tr>
+
+  <tr class='feature'>
+    <td><%= it("Get listed on Diveboard", scope: ['commercial_shop', 'plan_table']) %></td>
+    <td class='plancol'            ><img src='/img/commercial_shop/plan_check.png' width='18px' height='15px'/></td><td></td>
+    <td class='plancol highlighted'><img src='/img/commercial_shop/plan_check.png' width='18px' height='15px'/></td>
+  </tr>
+  <tr class='feature'>
+    <td><%= it("Collect diver reviews", scope: ['commercial_shop', 'plan_table']) %></td>
+    <td class='plancol'            ><img src='/img/commercial_shop/plan_check.png' width='18px' height='15px'/></td><td></td>
+    <td class='plancol highlighted'><img src='/img/commercial_shop/plan_check.png' width='18px' height='15px'/></td>
+  </tr>
+  <tr class='feature'>
+    <td><%= it("Customize your page", scope: ['commercial_shop', 'plan_table']) %></td>
+    <td class='plancol'            ><img src='/img/commercial_shop/plan_check.png' width='18px' height='15px'/></td><td></td>
+    <td class='plancol highlighted'><img src='/img/commercial_shop/plan_check.png' width='18px' height='15px'/></td>
+  </tr>
+  <tr class='feature'>
+    <td><%= it("Customers auto-updates", scope: ['commercial_shop', 'plan_table']) %>
+    <span class='info'>?<div class='arrow'> </div><div class='details'><%= it("Keep your past customers' memories vivid and make sure they talk about you - for evey cool new dive logged past customers will be made aware of it and be able to remember and share this experience.", scope: ['commercial_shop', 'plan_table']) %></div></span>
+    </td>
+    <td class='plancol'            ><img src='/img/commercial_shop/plan_check.png' width='18px' height='15px'/></td><td></td>
+    <td class='plancol highlighted'><img src='/img/commercial_shop/plan_check.png' width='18px' height='15px'/></td>
+  </tr>
+<!--
+  <tr class='feature'>
+    <td>Embed your reviews on your website</td>
+    <td class='plancol'            ><span class='symbol coming_soon'>.</span>*</td><td></td>
+    <td class='plancol highlighted'><span class='symbol coming_soon'>.</span>*</td>
+  </tr>
+  <tr class='feature'>
+    <td>Custom newsletter</td>
+    <td class='plancol'            >1 every 6 months*</td><td></td>
+    <td class='plancol highlighted'>1 per month*</td>
+  </tr>
+-->
+  <tr class='feature'>
+    <td><%= it("Online community dashboard", scope: ['commercial_shop', 'plan_table']) %>
+      <span class='info'>?<div class='arrow'> </div><div class='details'><%= it("Keep track of all the divers on Diveboard who dived with you or left reviews.", scope: ['commercial_shop', 'plan_table']) %></div></span>
+    </td>
+    <td class='plancol'            ></td><td></td>
+    <td class='plancol highlighted'><img src='/img/commercial_shop/plan_check.png' width='18px' height='15px'/></td>
+  </tr>
+  <tr class='feature'>
+    <td><%= it("Engage with your customers on diveboard", scope: ['commercial_shop', 'plan_table']) %>
+      <span class='info'>?<div class='arrow'> </div><div class='details'><%= it("View all your customers who are on diveboard and get in touch with them through individual messages.", scope: ['commercial_shop', 'plan_table']) %></div></span>
+    </td>
+    <td class='plancol'            ></td><td></td>
+    <td class='plancol highlighted'><img src='/img/commercial_shop/plan_check.png' width='18px' height='15px'/></td>
+  </tr>
+  <tr class='feature'>
+    <td><%= it("Reply to reviews", scope: ['commercial_shop', 'plan_table']) %>
+    </td>
+    <td class='plancol'            ></td><td></td>
+    <td class='plancol highlighted'><img src='/img/commercial_shop/plan_check.png' width='18px' height='15px'/></td>
+  </tr>
+  <tr class='feature'>
+    <td><%= it("Advertise on Diveboard", scope: ['commercial_shop', 'plan_table']) %>
+      <span class='info'>?<div class='arrow'> </div><div class='details'><%= it("Display customized messages on Diveboard %{link:Explore page} when a diver is browsing over your area.", scope: ['commercial_shop', 'plan_table'], link: It.link("/explore", target: '_blank')) %></div></span>
+    </td>
+    <td class='plancol'            ><em><%= it("during beta only", scope: ['commercial_shop', 'plan_table']) %></em></td><td></td>
+    <td class='plancol highlighted'><img src='/img/commercial_shop/plan_check.png' width='18px' height='15px'/></td>
+  </tr>
+  <tr class='feature category_end bloc_marketing'>
+    <td><%= it("Get featured within Diveboard Newsletter", scope: ['commercial_shop', 'plan_table']) %></td>
+    <td class='plancol'            ></td><td></td>
+    <td class='plancol highlighted'><img src='/img/commercial_shop/plan_check.png' width='18px' height='15px'/></td>
+  </tr>
+<!--  <tr class='feature'>
+    <td>Import news from Facebook, Twitter, RSS</td>
+    <td class='plancol'            ></td><td></td>
+    <td class='plancol highlighted'><span class='symbol coming_soon'>.</span>*</td><td></td>
+  </tr>-->
+
+
+  <tr class='blank_row4'>
+    <td></td>
+  </tr>
+
+  <tr class='footer choose'>
+    <td></td>
+    <%if current_plan_id == 'free'%>
+      <td class='plancol'><strong><%= it("Your current plan", scope: ['commercial_shop', 'plan_table']) %></strong></td><td></td>
+    <%else%>
+      <td class='plancol'><a class='yellow_button' href='/login/register_pro?plan=free<%="&start=1" if restart_process%>'><%if current_plan_id%><%= it("Change", scope: ['commercial_shop', 'plan_table']) %><%else%><%= it("Sign up", scope: ['commercial_shop', 'plan_table']) %><%end%></a></td><td></td>
+    <%end%>
+    <%if current_plan_id == 'premium'%>
+      <td class='plancol highlighted'><strong><%= it("Your current plan", scope: ['commercial_shop', 'plan_table']) %></strong></td>
+    <%else%>
+      <td class='plancol highlighted'><a class='yellow_button'  href='/login/register_pro?plan=premium<%="&start=1" if restart_process%>'><%if current_plan_id%><%= it("Change", scope: ['commercial_shop', 'plan_table']) %><%else%><%= it("Sign up", scope: ['commercial_shop', 'plan_table']) %><%end%></a></td>
+    <%end%>
+  </tr>
+</table>
+</div>
+
+<!--<div class='plan_table_note'>* : feature not yet available. Contact us if you're particularly interested in a feature!</div>-->
+<script>
+
+designed_bg = function(){}
+
+designed_bg.isCanvasSupported = function(){
+  var elem = document.createElement('canvas');
+  return !!(elem.getContext && elem.getContext('2d'));
+}
+
+designed_bg.incrust = function (r1, g1, b1, r3, g3, b3, pos, col, opac){
+  var r2 = r1 + (r3-r1)*pos;
+  var g2 = g1 + (g3-g1)*pos;
+  var b2 = b1 + (b3-b1)*pos;
+
+  r2 =  parseInt(r2 + ((col/128)-1)*(255-r2)*opac);
+  g2 =  parseInt(g2 + ((col/128)-1)*(255-g2)*opac);
+  b2 =  parseInt(b2 + ((col/128)-1)*(255-b2)*opac);
+
+  return "rgb("+r2+","+g2+","+b2+")"
+}
+
+designed_bg.draw = function (width, height, r1, g1, b1, r3, g3, b3, opac) {
+  var start = 236;
+  var end = 247;
+  if (typeof opac == 'undefined') opac = 1
+
+  var canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  var ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = "rgb(255,255,255)";
+  ctx.fillRect (0, 0, canvas.width, canvas.height);
+
+  var i,j;
+  for (i=0; i < canvas.width; i+=8) {
+    for (j=0; j < canvas.height; j+=8)
+    {
+      var rgb1 = designed_bg.incrust(r1, g1, b1, r3, g3, b3, j/canvas.height, 255, opac);
+      var rgb2 = designed_bg.incrust(r1, g1, b1, r3, g3, b3, j/canvas.height,  85, opac);
+      var rgb3 = designed_bg.incrust(r1, g1, b1, r3, g3, b3, j/canvas.height, 204, opac);
+      var rgb4 = designed_bg.incrust(r1, g1, b1, r3, g3, b3, j/canvas.height,   0, opac);
+
+
+      ctx.fillStyle = rgb1;
+      ctx.fillRect (i,   j,   4, 2);
+      ctx.fillRect (i+4, j+4, 4, 2);
+      ctx.fillStyle = rgb2;
+      ctx.fillRect (i+4, j, 4, 2);
+      ctx.fillRect (i,   j+4, 4, 2);
+      ctx.fillStyle = rgb3;
+      ctx.fillRect (i,   j+2, 4, 2);
+      ctx.fillRect (i+4, j+6, 4, 2);
+      ctx.fillStyle = rgb4;
+      ctx.fillRect (i+4, j+2, 4, 2);
+      ctx.fillRect (i,   j+6, 4, 2);
+    }
+  }
+  return canvas;
+}
+
+designed_bg.background_row = function(table, col_num, r1, g1, b1, r3, g3, b3){
+  var height = table.height();
+  var head = table.find("tr:first-child td:nth-child("+col_num+")");
+  var foot = table.find("tr:last-child td:nth-child("+col_num+")");
+  var width = head.outerWidth();
+
+  var canvas = designed_bg.draw(width, height, r1, g1, b1, r3, g3, b3);
+  var img = $("<img/>").addClass('checkered_background').attr('src', canvas.toDataURL());
+  table.parent().append(img);
+  img.css({
+    position: 'absolute',
+    top: head.position().top,
+    left: head.position().left,
+    'z-index': 1
+  });
+
+  table.find("td:nth-child("+col_num+")").css({'background': 'transparent'});
+}
+
+designed_bg.add_border = function(canvas,r,g,b){
+  var ctx = canvas.getContext('2d');
+  ctx.fillStyle = "rgb("+r+","+g+","+b+")";
+  ctx.fillRect (0, 0, 1, canvas.height);
+  ctx.fillRect (0, 0, canvas.width, 1);
+  ctx.fillRect (0, canvas.height-1, canvas.width, 1);
+  ctx.fillRect (canvas.width-1, 0, 1, canvas.height);
+}
+
+designed_bg.checkered = function(div, x, y, width, height, r1, g1, b1, r3, g3, b3, opac){
+  var canvas = designed_bg.draw(width, height, r1, g1, b1, r3, g3, b3, opac);
+  designed_bg.add_border(canvas, 207, 207, 207);
+  var img = $("<img/>").addClass('checkered_background').attr('src', canvas.toDataURL());
+  div.append(img);
+  img.css({
+    position: 'absolute',
+    top: x,
+    left: y,
+    'z-index': 2
+  });
+}
+
+designed_bg.plain = function(parent, x, y, width, height, color){
+  var div = $("<div></div>").addClass('checkered_background');
+  div.css({
+    position: 'absolute',
+    top: x,
+    left: y,
+    width: width,
+    height: height,
+    background: color,
+    'z-index': 2
+  });
+  parent.append(div);
+}
+
+
+function plan_table_redraw(){
+  var left, width, top, height, elt, elt2, row, div;
+  var table = $(".plan_table");
+  $(".checkered_background, .un_checkered_background").detach();
+
+  //Block under price for plan 1
+  elt = $(".plan_table .head_price td:nth-child(2)");
+  elt2= $(".plan_table .head_choose td:nth-child(2)");
+  left = elt.position().left;
+  width = elt.outerWidth();
+  top = elt.position().top;
+  height = elt.outerHeight() + elt2.outerHeight();
+  if (designed_bg.isCanvasSupported())
+    designed_bg.checkered( table.parent(), top, left, width, height, 236, 236, 236, 247, 247, 247, 0.8);
+  else
+    designed_bg.plain( table.parent(), top, left, width, height, '#efefef');
+
+  //Block under price for plan 2
+  elt = $(".plan_table .head_price td:nth-child(4)");
+  elt2 = $(".plan_table .head_choose td:nth-child(2)");
+  left = elt.position().left;
+  width = elt.outerWidth();
+  top = elt.position().top;
+  height = elt.outerHeight() + elt2.outerHeight();
+  if (designed_bg.isCanvasSupported())
+    designed_bg.checkered( table.parent(), top, left, width, height, 253, 241, 200, 252, 243, 210, 0.5);
+  else
+    designed_bg.plain( table.parent(), top, left, width, height, '#fdf1c8');
+
+  //Block under features for plan 1
+  row = $(".plan_table .features_start").first();
+  elt = row.find("td:nth-child(2)");
+  left = elt.position().left;
+  width = elt.outerWidth();
+  top = elt.position().top;
+  height = table.height() - elt.position().top;
+  if (designed_bg.isCanvasSupported())
+    designed_bg.checkered( table.parent(), top, left, width, height, 236, 236, 236, 247, 247, 247, 0.8);
+  else
+    designed_bg.plain( table.parent(), top, left, width, height, '#efefef');
+
+  //Block under features for plan 2
+  row = $(".plan_table .features_start").first();
+  elt = row.find("td:nth-child(4)");
+  left = elt.position().left;
+  width = elt.outerWidth();
+  top = elt.position().top;
+  height = table.height() - elt.position().top;
+  if (designed_bg.isCanvasSupported())
+    designed_bg.checkered( table.parent(), top, left, width, height, 253, 241, 200, 252, 243, 210, 0.5);
+  else
+    designed_bg.plain( table.parent(), top, left, width, height, '#fdf1c8');
+
+  //blocs under sections
+
+  var sections_start = $(".plan_table .category_start");
+  var sections_end = $(".plan_table .category_end");
+
+  sections_start.each(function(i,e){
+    var start = $(sections_start[i]);
+    var end = $(sections_end[i]);
+    var bloc = $("<div/>").addClass('un_checkered_background');
+    bloc.css({
+      'background': '#ececec',
+      'position': 'absolute',
+      'top': start.position().top,
+      'left': start.position().left,
+      'width': table.find("td:nth-child(5)").position().left - start.position().left,
+      'height': end.position().top - start.position().top + end.outerHeight()
+    })
+    table.parent().append(bloc);
+  });
+
+
+  $(".plan_table").css({'position': 'relative', 'z-index': 5 });
+}
+
+
+$(document).ready(plan_table_redraw);
+$(window).load(plan_table_redraw);
+
+
+
+
+</script>

@@ -1,0 +1,15 @@
+<%= it("Dear %{user},", scope: ['password_reset', 'remind_login', 'text'], user: @user.nickname) %>
+
+<%= it("We just received a request to remind you with your Diveboard login.", scope: ['password_reset', 'remind_login', 'text']) %>
+<% if @user.email.nil?%>
+<%= it("You are using Facebook Connect to login to diveboard. To log in simply use the \"Sign-in with Facebook\" button on the login page: %{url} .", scope: ['password_reset', 'remind_login', 'text'], url: ROOT_URL + "login/register") %>
+<%else%>
+<%= it("Your login to Diveboard is : %{email} .", scope: ['password_reset', 'remind_login', 'text'], email: @user.email) %>
+<%end%>
+
+<%= it("If you didn't make this request, you can safely discard this email.", scope: ['password_reset', 'remind_login', 'text']) %>
+
+<%= it("Happy Diving !", scope: ['password_reset', 'remind_login', 'text']) %>
+--
+<%= it("The Diveboard team", scope: ['password_reset', 'remind_login', 'text']) %>
+http://www.diveboard.com

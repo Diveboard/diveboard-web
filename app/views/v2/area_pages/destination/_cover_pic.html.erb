@@ -1,0 +1,78 @@
+<% cover_pic = @cover_pictures.sample.large rescue "/img/areas/default_banner.jpg" %>
+
+<%= content_for :javascripts do%>
+  <script type="text/javascript">
+    $(document).ready(function()
+      {
+        $('.fb_share').click(function()
+          {
+            <%
+              fb_title = it("Scuba Dive Shop %{shop_name} in %{country}", scope: ['shop_pages', 'v2', 'cover_pic'], shop_name: @name, country: @country_name)
+            %>
+
+        });
+        
+        $('.twitter_share').click(function()
+          {
+            
+          });
+        $('.google_share').click(function()
+          {
+          });
+        $('.link_share').click(function()
+          {
+            $('.link_share').qtip({
+            content: {
+              text: ""
+            },
+            position: {
+                my: 'bottom center',
+                at: 'top center'
+            },
+            style: {
+              classes: 'qtip-diveboard qtip-divegreen qtip-wrappall'
+            },
+            show: {
+              ready: true
+            },
+            hide: {
+              event: 'unfocus',
+              inactive: 6000
+            },
+            events: {
+              hide: function(event, api) {
+                api.destroy();
+              }
+            }
+          });
+        });
+
+      });
+  </script>
+<%end%>
+
+<div id="route">
+      <h3><a href="/?redirect=">Home</a> > <%= @route.html_safe %></h3>
+</div>
+<div id="cover_pic" style="background-image: url('<%= if !@header.nil?  then @header.large else HtmlHelper.lbroot "/img/shop/shop_default_cover.jpg" end %>')">
+  <div class="container">
+
+    <div class="infos">
+      <h1><span itemprop="name"><%=@name%></span></h1>
+      <table class="rating">
+      <% if !@reviews.empty? %>
+        <tr>
+          <%= render "v2/shared/score_bullet", :score => @mark, :color => :blue %>
+          <td><p>(<%= it("%{count} reviews",
+                      scope: ['homepage', 'v2', 'featured_destinations'],
+                      count: @reviews.count) %>)</p></td>
+        </tr>
+      <%else%>
+        <tr><td><p><%= it("No reviews yet",
+                       scope: ['area_pages', 'v2', 'shops']) %></p></td></tr>
+      <%end%>
+      </table>
+    </div>
+ 
+  </div>
+</div>

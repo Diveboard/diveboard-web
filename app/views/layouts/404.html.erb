@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= it("Can't find it!(404)", scope: ['layouts', '404']) %></title>
+  <%= include_stylesheets :common, :media => :all %>
+	<script type="text/javascript" src="/js/jquery-1.5.2.min.js"></script>
+  <%= javascript_include_tag 'basic' %>
+  <%= javascript_include_tag 'common0' %>
+  <%= javascript_include_tag 'common1' %>
+
+  <link rel="icon" href="<%=ROOT_URL%>img/favicon/favicon.ico" type="image/x-icon" />
+
+  <style type="text/css">
+    body { font-family: Helvetica, Verdana, Arial, sans-serif; background-image: url(/img/main_bg.jpg); color: #1d1d1d; background-color: #222; text-align:justify;}
+    h1 { font-size: 26px; color: #3e3e3e; line-height: 1.5em; }
+	.no_content{background: url(/img/no_content_bg.jpg); color: #3e3e3e; font-size: 12px; height: 271px; width: 450px; padding: 55px 80px 40px 130px; margin-left: auto; margin-right: auto;}
+	.no_content img {margin-bottom: 5px; margin-left: auto; margin-right: auto;}
+  </style>
+
+
+
+<script type="text/javascript">
+$(document).ready(function () {
+	//load tooltips
+	$('.tooltiped').qtip({
+    style: {
+      tip: { corner: true },
+      classes: "ui-tooltip-diveboard"
+    },
+    position: {
+      at: "bottom center",
+      my: "top right"
+    }
+  });
+
+});
+</script>
+</head>
+
+<body>
+  <!-- This file lives in public/404.html -->
+	<div class="no_content">
+	<h1><%= it("Time to surface, diver! It's a 404!", scope: ['layouts', '404']) %></h1>
+	<p><%= it("Apparently the page you're looking for is not available anymore%{br}
+		Don't worry too much and go ahead and get back exploring cool dives!", scope: ['layouts', '404'], br: It.tag("br")) %><br/><br/> </p>
+	<h2><%= it("Head back to the %{link:home boat} where it's safe or check out some cool dives below:", scope: ['layouts', '404'], link: It.link("/")) %></h2>
+	
+		<div style="margin-top: 7px; left: -10px; position: relative;">
+			<div class="triple_box" style="padding-left:8px;">
+			    <strong><%= it("Latest Dives", scope: ['layouts', '404']) %></strong>
+			    <ul class="small_pic_row" style="line-height: 5px;">
+			        <% Dive.first.recent_dives(8).each do |recentdive| %>
+			        <li>
+			            <a href="<%= recentdive.fullpermalink(:locale) %>">
+			            <img src="<%= recentdive.user.picture_small%>" width="44px" height="44px" alt="#" class="triple_box_content tooltiped" title='<%="#{recentdive.user.nickname} in #{recentdive.spot.country.cname}"%>'/>
+			            </a>
+			        </li>
+			        <% end %>
+			    </ul>
+			</div>
+			<div style="width: 9px; height: 98px; float: left;"></div>
+			<div class="triple_box" style="padding-left:8px;">
+			    <strong><%= it("Latest pictures", scope: ['layouts', '404']) %></strong>
+			    <ul class="small_pic_row" style="line-height: 5px;">
+			        <% Dive.first.recent_pictures(8).each do |recentpicture| %>
+			        <li>
+			            <a href="<%= recentpicture.dive.fullpermalink(:locale) %>">
+			            <img src="<%= recentpicture.thumbnail%>" width="44px" height="44px" alt="#" class="triple_box_content  tooltiped" title='<%="#{recentpicture.dive.user.nickname} in #{recentpicture.dive.spot.country.cname}"%>'/>
+			            </a>
+			        </li>
+			        <% end %>
+			    </ul>
+			</div>
+		</div>
+	
+	
+	</div>
+  <% @ga_custom_analytics = false
+  @ga_custom_url = nil
+  @ga_page_category = "404" %>
+  <%= render :partial => 'layouts/trackers' %>
+</body>
+</html>

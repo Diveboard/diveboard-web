@@ -1,0 +1,40 @@
+<div class="login">
+  <div class="sign_in">
+    <div class="columns">
+      <div class="column large">
+        <p class="column-title"><%= it("Log in with social media", scope: ['modal', 'v2', 'sign_in_2']) %></p>
+        <button class="sign_button fb_sign_in" style="background: #4c65a4 no-repeat; background-image: url('<%= HtmlHelper.lbroot "/img/drawer/svg/facebook_icon.svg" %>');background-position: 110px 50%;;" ><%= it("Facebook", scope: ['modal', 'v2', 'sign_in_2']) %></button>
+      </div>
+      <div class="column center">
+        <div class="divider"></div>
+        <p class="column-title title-center"><%= it("OR", scope: ['modal', 'v2', 'sign_in_2']) %></p>
+      </div>
+      <div class="column large">
+        <p class="column-title"><%= it("Log in with email", scope: ['modal', 'v2', 'sign_in_2']) %></p>
+        <form name="sign_menu" action="#">
+          <input type="text" name="email" class="input_text" placeholder="<%= it("Email*", scope: ['modal', 'v2', 'sign_up_2']) %>" >
+          <p class="email_error error"></p>
+          <input type="password" name="pass" class="input_text" placeholder="<%= it("Password*", scope: ['modal', 'v2', 'sign_in_2']) %>">
+          <p class="pass_error error"></p>
+          <div style="margin: 0 auto; margin-top: 30px; width: 310px;">
+            <div class="column" style="width: 8%; float: left;"><input type="checkbox" name="remember" id="terms" class="input_checkbox"></div>
+            <div class="column" style="width: 89%; text-align: left; float: left;"><label class="remember" for="terms"><%= it("Remember me", scope: ['modal', 'v2', 'sign_in_2']) %></label></div>
+            <div class="clear"></div>
+          </div>
+          <input type="submit" class="sign_button" value="<%= it("Log in", scope: ['modal', 'v2', 'sign_in_2']) %>" style="margin-top: 30px;">
+        </form>
+        <div class="link">
+          <a href="javascript:void(0)"  modal_trigger="reset_pass"><%= it("Forgot your password?", scope: ['modal', 'v2', 'sign_in_2']) %></a></br>
+          <a href="javascript:void(0)" modal_trigger="sign_up"><%= it("Didn't receive confirmation instructions?", scope: ['modal', 'v2', 'sign_in_2']) %></a></br>
+          <a href="javascript:void(0)" modal_trigger="sign_up"><%= it("Didn't receive unlock instructions?", scope: ['modal', 'v2', 'sign_in_2']) %></a></br>
+        </div>
+      </div>
+    </div>
+    <div class="clear"></div>
+    <div class="bottom" style="margin-bottom: 30px;">
+      <p>
+        <%= it("Don't have an account yet? %{signup_link:Sign up}", scope: ['modal', 'v2', 'sign_in_2'], signup_link: It.link('javascript:void(0)', modal_trigger: 'sign_up')) %>
+      </p>
+    </div>
+  </div>
+</div>

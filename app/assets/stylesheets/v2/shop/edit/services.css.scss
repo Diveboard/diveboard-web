@@ -1,0 +1,280 @@
+@import 'variablesv2';
+
+.services
+{
+  max-width: $home-width;
+  margin: 0 auto;
+
+  .container
+  {
+    max-width: $home-width;
+    color: $dark-gray-db;
+
+    .currency_select_block
+    {
+      background-color: white;
+      border: 1px solid $light-gray-db;
+      padding: 8px;
+      padding-left: 12px;
+      .currency_select
+      {
+        display: inline-block;
+        height: 35px;
+      }
+    }
+
+    .category_title
+    {
+      font-weight: 600;
+      padding-top: 20px;
+      padding-bottom: 10px;
+    }
+
+    .description
+    {
+      font-size: 13px;
+      padding-left: 10px;
+    }
+
+    .link_paypal
+    {
+      width: 140px;
+      margin: 20px auto;
+    }
+
+    .button
+    {
+      padding: 5px;
+      padding-left: 12px;
+      padding-right: 12px;
+      background: $yellow-db;
+      color: black;
+      width: 80px;
+      cursor: pointer;
+      border-radius: 3px;
+      display: inline-block;
+      text-align: center;
+      margin-left: 15px;
+      &:hover, &:active
+      {
+        background: #3C4245;
+        color: #fdc90c;
+      }
+    }
+
+    .add
+    {
+      width: 160px;
+      display: inline-block;
+    }
+
+    .goods
+    {
+      width:100%;
+      $grid-height: 80px;
+      .good_title
+      {
+        font-size: 1rem;
+        margin-bottom: 10px;
+        background: $yellow-db !important;
+        text-align: center;
+        display: inline-block;
+        padding: 10px;
+      }
+      .services-stack
+      {
+        position: relative;        
+      }
+      .grid-stack-item
+      {
+        width: 100%;
+        height: 70px;
+        margin-bottom: 10px;
+        cursor: move;
+        .category
+        {
+          width:110px;
+          margin: 10px;
+          vertical-align: top;
+          font-size: 14px;
+
+          select
+          {
+            outline: none;
+            -webkit-appearance: none;
+            border: none;
+            border-bottom: 1px solid $light-gray-db;
+            cursor: pointer;
+          }
+        }
+        .title
+        {
+          width: 490px;
+          margin-left: 10px;
+          margin-top: 6px;
+          font-size: 14px;
+          input
+          {
+            font-weight: 600;
+            width: 100%;
+            height: 25px;
+            outline: none;
+            -webkit-appearance: none;
+            border: none;
+            border-bottom: 1px solid $light-gray-db;
+          }
+        }
+        .description
+        {
+          width:567px;
+          max-height: 400px;
+          display: block;
+          font-size: 14px;
+
+          .desc_preview
+          {
+            width: 520px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            font-style: italic;
+          }
+
+          a
+          {
+            position: absolute;
+            top: 40px;
+            font-size: 13px;
+            color: $dark-gray-db;
+          }
+
+          .toggle_description
+          {
+            left: 541px;
+          }
+
+          .toggle_description_close
+          {
+            left: 585px;
+            display: none;
+          }
+
+          .edit_description
+          {
+            display: none;
+
+            textarea
+            {
+              height: 90px;
+              resize: none;
+              border:1px solid $light-gray-db;
+              outline: none;
+            } 
+          }
+        }
+        .price
+        {
+          width:150px;
+          position: absolute;
+          top: 8px;
+          right: 200px;
+          p
+          {
+            display: inline-block;
+            margin-right: 10px;
+          }
+
+          input
+          {
+            width: 60px;
+            display: inline-block;
+            float: right;
+            text-align: right;
+            -webkit-appearance: none;
+            border: none;
+            border-bottom: 1px solid $light-gray-db;
+          }
+          .currency_symbol {
+            float: right;
+          }
+        }
+        .tax
+        {
+          width:130px;
+          position: absolute;
+          top: 8px;
+          right: 60px;
+          p
+          {
+            display: inline-block;
+            margin-right: 10px;
+          }
+
+          input
+          {
+            width: 78px;
+            display: inline-block;
+            float: right;
+            text-align: right;
+            -webkit-appearance: none;
+            border: none;
+            border-bottom: 1px solid $light-gray-db;
+          }
+          .currency_symbol {
+            float: right;
+          }
+        }
+        .total_price
+        {
+          width:190px;
+          position: absolute;
+          top: 40px;
+          right: 160px;
+          p
+          {
+            display: inline-block;
+            margin-right: 10px;
+          }
+        }
+        grid-stack-item-content:nth-child(odd)
+        {
+          background-color: $light-gray-db;
+        }
+        div
+        {
+          display: inline-block;
+        }
+        .grid-stack-item-content
+        {
+          left: 0;
+          right: 0;
+          border: solid 1px $light-gray-db;
+          background: white;
+          position: relative;
+          width: 100%;
+          height: 100%;
+        }
+      }
+      $i: 0;
+      @while $i < 50
+      {
+        .grid-stack-item[data-gs-y="#{$i}"]  { top: $grid-height * $i; }
+        $i: $i + 1;
+      }
+
+      .delete
+      {
+        cursor: pointer;
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        &::after
+        {
+          content: 'X';
+          font-weight: bold;
+          color: $red-db;
+        }
+      }
+    }
+  }
+}

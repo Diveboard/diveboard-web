@@ -1,0 +1,29 @@
+.rotate-270 {left: 5px !important; top: 56px !important;}
+#idx3_signup_1 .sub_button a:hover{color: #DDCD61;}
+#idx_3_mainframe .photo_credits{ left: 796px; width: auto;}
+.login_popup_homepage{top: 71px; left: 519px; z-index: 5000;}
+#idx3_explore ul li .label_divers{
+	background-image: url(/img/index_3/divers.png) !important;
+}
+#idx3_explore ul li .label_places{
+	background-image: url(/img/index_3/places.png) !important;
+}
+#idx3_explore ul li .label_species{
+	background-image: url(/img/index_3/species.png) !important;
+}
+.rotate-270{display: none !important;}
+
+/*#idx_3_top .button{height: 27px !important; position: relative; top: -5px; border: none; padding: 0;}
+#idx_3_top .button_full_link{height: 27px !important; padding: 0;}
+#idx_3_top  .signup_button tr{height: 27px !important; position: relative; top: -5px; padding: 0;}
+#idx_3_top  .signup_button{padding: 0;}*/
+#idx_3_top .button{border: none;}
+#idx_3_top .header_user{margin: none; padding: none;}
+#idx_3_top .header_user_profile{position: relative; top: -2px;}
+/*.main_inner_header_tabs .share_tab_link{top: 0px !important;}*/
+#wizard_editable_controls1 {/*top: -60px; */}
+
+.login_popup_homepage{top: 300px; left: 300px; z-index: 99000; position: absolute;}
+#sidebar_manager_container {background: #151517 !important; }
+
+#idx_3_top .useless_menu_container{height: 34px;}

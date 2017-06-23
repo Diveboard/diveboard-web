@@ -1,0 +1,208 @@
+<%content_for :after_container do%>
+<script>var G_config_translate_labels = <%=config_translate_labels().to_json.html_safe%>;</script>
+<%end%>
+
+<%if @basket then%>
+  <%=begin
+    render :partial => "shop_pages/basket_management/basket_#{@basket.status}", :locals => {:basket => @basket, :highlight => @message}
+  rescue ActionView::MissingTemplate => e
+    render :partial => "shop_pages/basket_management/basket_default", :locals => {:basket => @basket, :highlight => @message}
+  end%>
+<%elsif @message
+  if @message.to_id == @shop.user_proxy.id then customer = @message.from
+  else customer = @message.to
+  end%>
+  <%=render :partial => "shop_pages/care/customer_view", :locals => {:highlight => @message, :shop => @shop, :customer => customer}%>
+<%elsif @customer%>
+  <%=render :partial => "shop_pages/care/customer_view", :locals => {:customer => @customer, :shop => @shop}%>
+<%else%>
+  <div class='main_page_marker'></div>
+
+  <%if @shop.can_sell?%>
+  <h2><%= it("Orders", scope: ['shop_pages', 'shop_care_edit']) %></h2>
+
+  <%baskets = Basket.search_for_api({:filter => {:shop_id => @shop.id, :status => ["attention","paid","confirmed","hold"] }}, [:private,:detailed,:items], {:caller => @user})%>
+  <script>
+    G_baskets = <%=baskets.to_json.html_safe%>;
+    G_baskets_previous = [];
+  </script>
+
+  <div style='margin: 0px 0px 20px 9px'>
+    <div style='display: inline-block;'><%= it("Filter by status:", scope: ['shop_pages', 'shop_care_edit']) %> </div>
+    <div class='dropdown right white basket_shop_table_filter'>
+      <div class='options'>
+        <div class='option' data-value='{"shop_id":<%=@shop.id%>,"status":["attention","paid","confirmed","hold"]}'><%= it("Opened", scope: ['shop_pages', 'shop_care_edit']) %></div>
+        <div class='option' data-value='{"shop_id":<%=@shop.id%>,"status":"delivered"}'><%= it("Delivered", scope: ['shop_pages', 'shop_care_edit']) %></div>
+        <div class='option' data-value='{"shop_id":<%=@shop.id%>,"status":"cancelled"}'><%= it("Cancelled", scope: ['shop_pages', 'shop_care_edit']) %></div>
+        <div class='option' data-value='{"shop_id":<%=@shop.id%>,"status":"attention"}'><%= it("Attention required", scope: ['shop_pages', 'shop_care_edit']) %></div>
+      </div>
+    </div>
+  </div>
+
+  <div class='basket_shop_table'>
+    <script id='basket_shop_table_line' type="text/html">
+      <div class='basket_line cursor_pointer' data-basket_id='<$=reference$>'>
+        <div>
+          <div><$=new Date(paypal_order_date).strftime("%Y-%m-%d")$></div>
+          <div><$=new Date(paypal_order_date).strftime("%H:%M")$> <span class='timezone'><$=new Date(paypal_order_date).strftime("%Z")$></span></div>
+        </div>
+        <div><img src="<$=user_picture$>" class='user_picture'/></div>
+        <div>
+          <div class='user_name'><span class='em'><$=user_nickname$></span></div>
+          <div class='detail'>
+            <$for (var i in basket_items) { item = basket_items[i]$><$if (i>0){$> ; <$}$><$=item.quantity$>x <$=item.title$><$if (item.details.date_type=='one') {$> <span class='date_details'>(<$=item.details.date_at$>)</span><$}else if (item.details.date_type=='period') {$> <span class='date_details'>(<$=item.details.date_from$> - <$=item.details.date_to$>)</span><$}$><$}$>
+          </div>
+          <$if (paypal_attention){$><div class='warning'><a href="<%="#{Rails.application.config.paypal[:api_3t_url]}?cmd=_view-a-trans&id="%><$=paypal_capture_id||paypal_order_id$>"><%= it("Attention required on paypal", scope: ['shop_pages', 'shop_care_edit']) %></a></div><$}$>
+          <div class='detail2'>Ref: <$=reference$></div>
+        </div>
+        <div>
+          <div class='em'><$=total_formated$></div>
+          <div class='detail'><%= it("Status:", scope: ['shop_pages', 'shop_care_edit']) %> <$=diveboard.config_translate('basket_status',status)$></div>
+        </div>
+        <div><a href='#' class='fake_link'><%= it("View details", scope: ['shop_pages', 'shop_care_edit']) %></a></div>
+      </div>
+    </script>
+  </div>
+
+  <p class='basket_shop_table_void' <%if baskets[:count]>0%>style='display:none'<%end%>><%= it("No current orders.", scope: ['shop_pages', 'shop_care_edit']) %></p>
+  <p class='basket_shop_table_loading' style='display:none'><img src='/img/transparent_loader.gif' height='66px' width='66px'/></p>
+
+  <button class='basket_shop_table_previous' style='display:none'><%= it("Previous", scope: ['shop_pages', 'shop_care_edit']) %></button>
+  <button class='basket_shop_table_next' <%if baskets[:next_start_id].nil?%>style='display:none'<%end%>><%= it("Next", scope: ['shop_pages', 'shop_care_edit']) %></button>
+
+  <hr class='basket_shop_table_void'/>
+  <hr class='basket_shop_table_loading'/>
+
+  <%end%>
+
+  <h2><%= it("Pending Actions", scope: ['shop_pages', 'shop_care_edit']) %></h2>
+  <% todo_sign = (@shop.signatures.where("signed_date is NULL").where(:rejected => false).count >0) %>
+  <div class="sign-tasks <%="hidden" unless todo_sign%>">
+    <%if todo_sign %>
+    <span style="margin-left: 20px; margin-bottom: 10px; display: block;"><%= it("The following dives have been made by your customers with you and they requested you to validate them.", scope: ['shop_pages', 'shop_care_edit']) %></span>
+    <div style='margin-bottom: 10px; margin-left: 20px;'><a href="#" class="yellow_button sign_bulk_dive validate_sign_dive"><%= it("VALIDATE DIVES", scope: ['shop_pages', 'shop_care_edit']) %></a> <a href="#" class="grey_button sign_bulk_dive reject_sign_dive"><%= it("REJECT DIVES", scope: ['shop_pages', 'shop_care_edit']) %></a></div>
+    <span style="margin-left: 20px;"><a href="#" id="sign_select_all"><%= it("select all", scope: ['shop_pages', 'shop_care_edit']) %></a>/<a href="#" id="sign_unselect_all"><%= it("unselect all", scope: ['shop_pages', 'shop_care_edit']) %></a></span>
+    <ul class="signature_table">
+    <%@shop.signatures.where("signed_date is NULL").where(:rejected => false).joins(:dive).each do |s|%>
+      <li class="message_line" data-signature-id="<%=s.id%>">
+        <div><input type="CHECKBOX"/></div>
+        <div><img src="<%=s.dive.user.picture_small%>" class="user_picture"/></div>
+        <div>
+          <div class="user_name"><%= it("by: %{span:%{name} (%{fullname})} in: %{span:%{spot}} on: %{span:%{published_date}}", scope: ['shop_pages', 'shop_care_edit'], span: It.tag("span", class: "em"), name: s.dive.user.nickname, fullname: s.dive.user.full_name, spot: s.dive.spot.name, published_date: l(s.dive.time_in, format: :long)) %></div>
+          <div class="topic"><%=s.dive.duration%>mins <%=s.dive.maxdepth(0).round(1)%>m/<%=s.dive.maxdepth(1).round(0)%>ft <a href="<%=s.dive.fullpermalink(:locale)%>" target="_blank"><%= it("view dive", scope: ['shop_pages', 'shop_care_edit']) %></a></div>
+        </div>
+        <div class="user_name"> <% if !s.dive.guide.nil? %><%= it("Divemaster:", scope: ['shop_pages', 'shop_care_edit']) %> <span class="em"><%=s.dive.guide%></span><%end%> </div>
+        <div><%= it("request sign", scope: ['shop_pages', 'shop_care_edit']) %></div>
+        <div class="sign_actions">
+          <a href="#" class="validate_sign_dive sign_one_dive"><%= it("Validate", scope: ['shop_pages', 'shop_care_edit']) %></a>
+            <hr/>
+          <a href="#" class="reject_sign_dive sign_one_dive"><%= it("Reject", scope: ['shop_pages', 'shop_care_edit']) %></a>
+        </div>
+        <div class="sign_spinner">
+          <img src="/img/transparent_loader_2.gif" width=40/>
+        </div>
+      </li>
+    <%end%>
+    </ul>
+    <%end%>
+  </div>
+  <div class="sign-tasks-empty <%="hidden" if todo_sign%>">
+    <span style="margin-left: 20px; margin-bottom: 10px; display: block;"><%= it("%{b:No pending actions}%{br}Don't forget to ask your divers to leave a review and get their logbook signed.", scope: ['shop_pages', 'shop_care_edit'], b: It.tag("b"), br: It.tag("br")) %></span>
+  </div>
+
+
+  <h2><%= it("Messages", scope: ['shop_pages', 'shop_care_edit']) %></h2>
+
+  <%messages = InternalMessage.search_for_api({:filter => {:to_id => @shop.user_proxy.id, :status => 'new'}}, [:private,:detailed], {:caller => @user})%>
+  <script>
+    G_messages = <%=messages.to_json.html_safe%>;
+    G_messages_previous = [];
+  </script>
+
+  <div style='margin: 0px 0px 20px 9px'>
+    <div style='display: inline-block'><%= it("Filter by status:", scope: ['shop_pages', 'shop_care_edit']) %> </div>
+    <div class='dropdown right white message_shop_table_filter'>
+      <div class='options'>
+        <div class='option' data-value='{"to_id":<%=@shop.user_proxy.id%>,"status":"new"}'><%= it("New", scope: ['shop_pages', 'shop_care_edit']) %></div>
+        <div class='option' data-value='{"to_id":<%=@shop.user_proxy.id%>}'><%= it("Received", scope: ['shop_pages', 'shop_care_edit']) %></div>
+        <div class='option' data-value='{"from_group_id":<%=@shop.user_proxy.id%>}'><%= it("Sent", scope: ['shop_pages', 'shop_care_edit']) %></div>
+      </div>
+    </div>
+  </div>
+
+  <div class='message_shop_table'>
+  <script id='message_shop_table_line' type="text/html">
+    <div class='message_line cursor_pointer' data-message_id='<$=shaken_id$>'>
+      <div>
+        <div><$=new Date(created_at).strftime("%Y-%m-%d")$></div>
+        <div><$=new Date(created_at).strftime("%H:%M")$> <span class='timezone'><$=new Date(created_at).strftime("%Z")$></span></div>
+      </div>
+      <div><img src="<$=from_picture$>" class='user_picture'/></div>
+      <div>
+        <div class='user_name'>From: <span class='em'><$=from_nickname$></span><$if (from_group_nickname){$> as <$=from_group_nickname$><$}$></div>
+        <div class='topic'><$=topic$></div>
+      </div>
+      <div>
+        <div class='user_name'>To: <span class='em'><$=to_nickname$></span></div>
+      </div>
+
+      <div><img src="<$=to_picture$>" class='user_picture'/></div>
+      <div><a href='#' class='fake_link'><%= it("View message", scope: ['shop_pages', 'shop_care_edit']) %></a></div>
+    </div>
+  </script>
+  </div>
+
+  <p class='message_shop_table_void' <%if messages[:count]>0%>style='display:none'<%end%>><%= it("No messages for the current filter.", scope: ['shop_pages', 'shop_care_edit']) %></p>
+  <p class='message_shop_table_loading' style='text-align:center; display:none'><img src='/img/transparent_loader.gif' height='66px' width='66px'/></p>
+
+  <button class='message_shop_table_previous' style='display:none'><%= it("Previous", scope: ['shop_pages', 'shop_care_edit']) %></button>
+  <button class='message_shop_table_next' <%if messages[:next_start_id].nil?%>style='display:none'<%end%>><%= it("Next", scope: ['shop_pages', 'shop_care_edit']) %></button>
+
+
+  <hr class='message_shop_table_void'/>
+  <hr class='message_shop_table_loading'/>
+
+  <%if @shop.has_feature? :community_dashboard then%>
+  <h2><%= it("Customers", scope: ['shop_pages', 'shop_care_edit']) %></h2>
+
+  <%customers = ShopCustomer.search_for_api({:filter => {:shop_id => @shop.id}, :limit => 20}, [:public, :for_shop], {:caller => @user})%>
+  <script>
+    G_customers = <%=customers.to_json.html_safe%>;
+    G_customers_previous = [0];
+  </script>
+
+  <table class='customer_shop_table'>
+    <tr>
+      <th></th>
+      <th></th>
+      <th><%= it("Number%{br}of orders", scope: ['shop_pages', 'shop_care_edit'], br: It.tag("br")) %></th>
+      <th><%= it("Dives%{br}logged", scope: ['shop_pages', 'shop_care_edit'], br: It.tag("br")) %></th>
+      <th><%= it("Messages%{br}From / To", scope: ['shop_pages', 'shop_care_edit'], br: It.tag("br")) %></th>
+      <th><%= it("Review", scope: ['shop_pages', 'shop_care_edit'], br: It.tag("br")) %></th>
+    </tr>
+
+  </table>
+
+  <p class='customer_shop_table_void' <%if customers[:count]>0%>style='display:none'<%end%>><%= it("You have no customers on Diveboard yet. When your customers log dive on diveboard or buys stuff from you, you will see here their name and the list of the interactions you had with them on Diveboard.", scope: ['shop_pages', 'shop_care_edit']) %></p>
+  <p class='customer_shop_table_loading' style='text-align:center; display:none'><img src='/img/transparent_loader.gif' height='66px' width='66px'/></p>
+
+  <button class='customer_shop_table_previous' style='display:none'><%= it("Previous", scope: ['shop_pages', 'shop_care_edit']) %></button>
+  <button class='customer_shop_table_next' <%if customers[:next_start_id].nil?%>style='display:none'<%end%>><%= it("Next", scope: ['shop_pages', 'shop_care_edit']) %></button>
+
+  <script id='customer_shop_table_line' type="text/html">
+    <tr class='customer_line cursor_pointer' data-user_id='<$=user_shaken_id$>'>
+      <td><img src='<$=user.picture$>'/ class='user_picture'></td>
+      <td><$=user.nickname$></td>
+      <td><$=basket_count$></td>
+      <td><$=dive_count$></td>
+      <td><$=message_from_count$> / <$=message_to_count$></td>
+      <td><$if (review) {$><img src='/img/icons/<$if (review.recommend) {$>vote_positive.png<$} else {$>vote_negative.png<$}$>'> <$=review.title$><$}$></td>
+      <td><a href='#' class='fake_link'><%= it("View history", scope: ['shop_pages', 'shop_care_edit']) %></a></td>
+    </tr>
+  </script>
+
+  <%end%>
+
+
+
+<%end%>

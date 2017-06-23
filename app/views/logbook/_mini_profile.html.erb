@@ -1,0 +1,103 @@
+<div class="profile">
+
+  <div class="mini_profile_image">
+    <%if !custom_header%>
+    <div style="clip:rect(0px,99px,99px,0px); overflow:hidden; width:99px; height:99px;"><a href="/<%=owner.vanity_url%>"><img src="<%= owner.picture%>"  alt="#"/></a></div>
+      <% if begin !hide_follow rescue true end then %>
+      <% if !@user.nil? && owner.id != @user.id then
+      does_follow = @real_user.follow? :user_id => owner.id %>
+        <div class='mini_profile_follow'><a href="#" class="follow_link" data-db-follow-what='user_id' data-db-follow-id='<%=owner.id%>' >
+        <span class='text_follow tooltiped'   <%if does_follow then%>style='display:none'<%end%> title='<%= it("Be notified when %{owner_nickname} adds new stuff on Diveboard", scope: ['logbook', 'mini_profile'], owner_nickname: owner.nickname) %>'><%= it("FOLLOW", scope: ['logbook', 'mini_profile']) %> <span class="symbol">+</span></span>
+        <span class='text_unfollow' <%if !does_follow then%>style='display:none'<%end%>>
+          <span class='text_nohover' <%if !does_follow then%>style='display:none'<%end%>><%= it("FOLLOWING", scope: ['logbook', 'mini_profile']) %> <span class="symbol">.</span></span>
+          <span class='text_hover tooltiped'    <%if !does_follow then%>style='display:none'<%end%> title='<%= it("Stop being notified when %{owner_nickname} adds new stuff on Diveboard", scope: ['logbook', 'mini_profile'], owner_nickname: owner.nickname) %>'><%= it("UN-FOLLOW", scope: ['logbook', 'mini_profile']) %> <span class="symbol">×</span></span>
+        </span>
+        </a>
+      </div>
+      <%end%>
+      <%end%>
+
+      <%end%>
+  </div>
+
+    <% if clickable%>
+    <a href="<%=owner.fullpermalink(:locale)%>" style="color:#1D1D1D;">
+    <%end%>
+
+
+    <% if owner.shop_proxy.nil? then %>
+      <ul>
+        <li class='noshowhome' <%if begin @content == 'user_home' || @content == 'shop_home' rescue false end then %>style='display:none'<%end%> >
+            <span class="profile_user_name"><h1 class='unstyle'>
+			<% if owner.location != "blank"%>
+			<img src="/img/flags/<%=owner.location%>.gif" alt="<%=owner.location%>"/>
+			<%end%>
+			<%= owner.nickname%></h1></span>
+        </li>
+        <li style="margin-top: 7px;">
+            <img src="<%=HtmlHelper.lbroot "/img/advanced_icon.png"%>" width='12px' height='12px' alt="#" style="padding-bottom: 4px;"/>
+            <span class="profile_user_badge">
+			<%if owner.qualifications["featured"].nil? || owner.qualifications["featured"].empty?%>
+			<%= it("Scuba Diver", scope: ['logbook', 'mini_profile']) %>
+			<%else%>
+			<%=owner.qualifications["featured"].first["org"] unless ['Other', 'Self Assessed', 'Organization'].include?(owner.qualifications["featured"].first["org"])%> <%=owner.qualifications["featured"].first["title"]%>
+			<%end%>
+			</span>
+        </li>
+        <li class="profile_user_qualifications">
+            <p>
+			<%if !owner.qualifications["featured"].nil? && owner.qualifications["featured"].count > 1%>
+			     <h3 class='unstyle'><strong><%= it("Qualifications", scope: ['logbook', 'mini_profile']) %>:</strong></h3>
+					<% owner.qualifications["featured"].each do |qualif|%>
+						<%if qualif != owner.qualifications["featured"].first%>
+							<%if qualif["org"] == "Other" || qualif["org"] == "Self-assessed"%>
+							<%="#{qualif["title"]}"%><%if qualif != owner.qualifications["featured"].last%>, <%end%>
+							<%else%>
+							<%="#{qualif["org"]} #{qualif["title"]}"%><%if qualif != owner.qualifications["featured"].last%>, <%end%>
+							<%end%>
+						<%end%>
+					<%end%>
+			<%end%>
+            </p>
+        </li>
+        <li class="profile_user_destinations">
+            <p>
+                <strong><%= it("Dived in", scope: ['logbook', 'mini_profile']) %>:</strong> <%if owner.dived_location_list.nil? || owner.dived_location_list.length == 0 then%><%= it("No dives logged yet", scope: ['logbook', 'mini_profile']) %><%else%><%= owner.dived_location_list%><%end%>
+            </p>
+        </li>
+    </ul>
+
+
+  <%else #it's a shop %>
+      <ul>
+        <li class='noshowhome' <%if begin @content == 'user_home' || @content == 'shop_home' rescue false end then %>style='display:none'<%end%> >
+            <span class="profile_user_name"><h1 class='unstyle'>
+            <%= owner.nickname%></h1></span>
+        </li>
+        <li class='noshowhome' <%if begin @content == 'user_home' || @content == 'shop_home' rescue false end then %>style='display:none'<%end%>>
+          <% if owner.location != "blank"%>
+            <img src="/img/flags/<%=owner.location%>.gif" alt="<%=owner.location%>" style="top: 1px; left: 3px; display: inline-block; position: relative; margin-right: 5px;"/>
+          <%end%>
+          <%= owner.shop_proxy.category%><br/>
+          &nbsp;
+        </li>
+        <li class='miniprofile_review_head'><img src='/img/icons/speech.png' class='speech_icon'/><%= it("Reviews", scope: ['logbook', 'mini_profile']) %>:</li>
+        <li><img src='/img/icons/vote_positive.png' alt='+' class='vote_icon' /><%= owner.shop_proxy.positive_reviews %> positive review<%='s' unless owner.shop_proxy.positive_reviews == 1%></li>
+        <li><img src='/img/icons/vote_negative.png' alt='-' class='vote_icon' /><%= owner.shop_proxy.negative_reviews %> negative review<%='s' unless owner.shop_proxy.negative_reviews == 1%></li>
+        <li>&nbsp;</li>
+        <%if owner.shop_proxy.web then%> <li><%= it("Official website", scope: ['logbook', 'mini_profile']) %>: <a href='<%=owner.shop_proxy.web%>' target='_blank'><%=owner.shop_proxy.web%></a></li> <%end%>
+      </ul>
+
+  <%end%>
+  <% if clickable%></a><%end%>
+  <div class="see_profile">
+    <%if !owner.shop_proxy.nil?%>
+    <a class='link_with_arrow shop_see_reviews' href="/<%=owner.vanity_url%>#reviews"><%= it("See All Reviews", scope: ['logbook', 'mini_profile']) %></a>
+    <%end%>
+    <%if posts_link%>
+    <a  class='link_with_arrow shop_see_profile' <%if begin new_window rescue false end then%>target=_blank<%end%> href="/<%=owner.vanity_url%>/posts"><%= it("View Posts", scope: ['logbook', 'mini_profile']) %></a>
+    <%end%>
+    <a style="<%if hide_profile %>display: none;<%end%>" class='link_with_arrow shop_see_profile' <%if begin new_window rescue false end then%>target=_blank<%end%> href="/<%=owner.vanity_url%>"><%= it("View Profile", scope: ['logbook', 'mini_profile']) %></a>
+
+  </div>
+</div>

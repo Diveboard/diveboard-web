@@ -1,0 +1,65 @@
+<%
+  location_name = @area.geonames_core.name
+  unless @area.geonames_core.country.nil?
+    location_name += ", #{@area.geonames_core.country.cname}"
+  end
+%>
+
+<%= content_for :meta_tags do%>
+	<title>
+    <%= it("Scuba diving in %{location_name}: where to dive and when to go",
+        scope: ['area_pages', 'v2', 'index'],
+        location_name: location_name) %>
+  </title>
+  <meta property="fb:app_id" content="193803977296892" />
+  <meta property="og:type"   content="website" />
+  <meta property="article:publisher" content="https://www.facebook.com/Diveboard" />
+  <meta property="og:description" content="<%= it("Find out the best places to scuba dive in %{location_name} and the best period of the year", scope: ['area_pages', 'v2', 'index'], location_name: @area.geonames_core.name) %>" />
+  <meta property="og:url"    content="<%="#{@area.fullpermalink(:canonical)}"%>" />
+  <meta property="og:title"  content="<%= it("Diving in %{location_name}", scope: ['area_pages', 'v2', 'cover_pic'], location_name: location_name) %>" />
+  <meta property="og:image"  content="<%=begin @area.best_pictures.sample.large rescue ROOT_URL+"img/logo_50.png" end%>"/>
+<%end%>
+
+<%= content_for :stylesheets do%>
+  <%= stylesheet_link_tag 'area' %>
+<%end%>
+
+<%= content_for :javascripts do%>
+  <%= javascript_include_tag "areapage" %>
+<%end%>
+
+  <%= begin
+    render :partial => 'cover_pic'
+      rescue MissingTemplate
+    end
+     %>
+<% if !@avg_surf_temp.nil? || !@avg_bot_temp.nil? || !@avg_depth.nil? || @species.size != 0 %>
+  <%= begin
+    render :partial => 'dive_data'
+      rescue MissingTemplate
+    end %>
+<% end %>
+
+  <% if @best_pictures.size != 0 || @pictures.size != 0 %>
+    <%= begin
+      render :partial => 'spot_on'
+        rescue MissingTemplate
+      end 
+      %>
+  <% end %>
+  <%= begin
+    render :partial => 'shops'
+      rescue MissingTemplate
+    end 
+    %>
+  <% if @reviews.size != 0 %>
+    <%= begin
+      render :partial => 'reviews'
+        rescue MissingTemplate
+      end %>
+  <% end %>
+  <%= begin
+    render :partial => 'areas'
+      rescue MissingTemplate
+    end
+     %>

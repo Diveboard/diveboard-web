@@ -1,0 +1,113 @@
+<div id="shop_details">
+  <div class="overall_rating group col1" itemscope itemprop="aggregateRating" itemtype="http://schema.org/AggregateRating">
+    <%if !@reviews.empty? then%>
+    <table class="rating">
+      <tr>
+        <meta itemprop="ratingValue" content="<%= @shop.overall_rating.round(1) %>" />
+        <%= render "v2/shared/score_bullet", :score => @shop.overall_rating, :color => :blue %>
+      </tr>
+    </table>
+    <meta itemprop="reviewCount" content="<%= @reviews.count %>" />
+    <p>
+    <%= it("Based on %{link:%{count} reviews}",
+        scope: ['shop_pages', 'v2', 'shop_details'],
+        link: It.link('#shop_reviews'),
+        count: @reviews.count) %>
+    </p>
+    <%else%>
+    <p>
+      <%= it("No reviews yet",
+          scope: ['area_pages', 'v2', 'shops']) %>
+    </p>
+    <%end%>
+  </div><div class="sep_1" ></div><!-- 
+--><div class="detailed_ratings group col2">
+    <table >
+      <%if !@shop.mark_boat.nil? || !@shop.mark_rent.nil? %>
+        <% if !@shop.mark_boat.nil? then score = @shop.mark_boat[:mark] else score = 0.0 end %>
+        <% if !@shop.mark_rent.nil? then score = (score + @shop.mark_rent[:mark]) / 2 end %>
+      <tr>
+        <td>
+          <p>
+            <%= it("Boat and equipment:",
+                scope: ['shop_pages', 'v2', 'shop_details']) %>
+          </p>
+        </td>
+        <%= render "v2/shared/score_bullet", :score => score, :color => :blue %>
+      </tr>
+      <%end%>
+
+      <%if !@shop.mark_friend.nil? || !@shop.mark_secu.nil? %>
+        <% if !@shop.mark_friend.nil? then score = @shop.mark_friend[:mark] else score = 0.0 end %>
+        <% if !@shop.mark_secu.nil? then score = (score + @shop.mark_secu[:mark]) / 2 end %>
+      <tr>
+        <td>
+          <p>
+            <%= it("Guiding and safety:",
+                scope: ['shop_pages', 'v2', 'shop_details']) %>
+          </p>
+        </td>
+        <%= render "v2/shared/score_bullet", :score => score, :color => :blue %>
+      </tr>      
+      <%end%>
+
+      <%if !@shop.mark_orga.nil?%>
+      <tr>
+        <td>
+          <p>
+            <%= it("Service:",
+                scope: ['shop_pages', 'v2', 'shop_details']) %>
+          </p>
+        </td>
+        <%= render "v2/shared/score_bullet", :score => @shop.mark_orga[:mark], :color => :blue %>
+      </tr>
+      <%end%>
+    </table>
+    <div class="light-blue-button new_review"><%= !@user.nil? && !@user.review_for_shop(@shop.id).nil? ? it("Edit your review", scope: ['widgets', 'widget_review_view']) : it("Write a review", scope: ['shop_pages', 'v2', 'shop_details']) %>&nbsp;&nbsp;<img src="<%= HtmlHelper.lbroot "/img/shop/svg/icon_write_review.svg" %>" alt="" /></div>
+  </div>
+  
+  <div class="languages group col1">
+    <p>
+      <%= it("Languages:",
+          scope: ['shop_pages', 'v2', 'shop_details']) %>
+    </p>
+    <% @languages_selected.each do |l| %>
+      <p class="member"><%=  l.name %></p>
+    <% end %>
+  </div><div class="sep_1" ></div><!-- 
+
+  --><div class="affiliations group col1">
+    <%if !@shop.affiliated.nil? && @shop.affiliated.size != 0 %>
+      <p>
+        <%= it("Affiliations:",
+            scope: ['shop_pages', 'v2', 'shop_details']) %>
+      </p>
+      <div>
+        <% @shop.affiliated.each do |a| %>
+          <img class="affiliated" src="<%= HtmlHelper.lbroot "/img/shop/affiliation-HD/logo-#{a}.png" %>">
+        <% end %>
+      </div>
+    <%else%>
+      <p>
+        <%= it("This shop has no affiliations yet",
+            scope: ['shop_pages', 'v2', 'shop_details']) %>
+      </p>
+    <%end%>
+  </div><div class="sep_1" ></div><!-- 
+  --><div class="crew group col1">
+    <%if !@shop.owners.empty? %>
+    <p>
+      <%= it("Meet the team:",
+          scope: ['shop_pages', 'v2', 'shop_details']) %>
+    </p>
+    <% @shop.teams.each do |t|%>
+      <p class="member"><%=t%></p>
+    <%end%>
+    <%else%>
+      <p>
+        <%= it("No crew members updated yet",
+            scope: ['shop_pages', 'v2', 'shop_details']) %>
+      </p>
+    <%end%>
+  </div>
+</div>

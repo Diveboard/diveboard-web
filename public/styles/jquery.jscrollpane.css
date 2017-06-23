@@ -1,0 +1,142 @@
+/*
+ * CSS Styles that are needed by jScrollPane for it to operate correctly.
+ *
+ * Include this stylesheet in your site or copy and paste the styles below into your stylesheet - jScrollPane
+ * may not operate correctly without them.
+ */
+
+.jspContainer
+{
+	overflow: hidden;
+	position: relative;
+	background-image: url(../img/scroll_box_bg.png);
+	padding-top: 5px;
+	padding-bottom: 5px;
+	
+}
+
+.jspPane
+{
+	position: absolute;
+}
+
+.jspVerticalBar
+{
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 26px;
+	height: 100%;
+	margin-right: 10px;
+	
+}
+
+.jspHorizontalBar
+{
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 16px;
+	background: red;
+}
+
+.jspVerticalBar *,
+.jspHorizontalBar *
+{
+	margin: 0;
+	padding: 0;
+}
+
+.jspCap
+{
+	display: none;
+}
+
+.jspHorizontalBar .jspCap
+{
+	float: left;
+}
+
+.jspTrack
+{
+	
+	position: relative;
+}
+
+.jspDrag
+{
+	background-image: url(../img/scroll_bar.png);
+	opacity: 0.5;
+	background-position: center center;
+	background-repeat: repeat-y;
+	position: relative;
+	top: 0;
+	left: 0;
+	cursor: pointer;
+}
+
+.jspHorizontalBar .jspTrack,
+.jspHorizontalBar .jspDrag
+{
+	float: left;
+	height: 100%;
+}
+
+.jspArrow
+{
+	
+	text-indent: -20000px;
+	display: block;
+	cursor: pointer;
+}
+
+.jspArrow.jspDisabled
+{
+	cursor: default;
+	/* background: #80808d; */
+}
+
+.jspVerticalBar .jspArrow
+{
+	height: 26px;
+}
+
+.jspHorizontalBar .jspArrow
+{
+	width: 26px;
+	float: left;
+	height: 100%;
+}
+
+.jspVerticalBar .jspArrow:focus
+{
+	outline: none;
+}
+
+.jspCorner
+{
+	background: #eeeef4;
+	float: left;
+	height: 100%;
+}
+
+
+.jspArrowDown {background-image: url(../img/scroll_down_btn.png); opacity: 0.2;}
+.jspArrowUp {background-image: url(../img/scroll_up_btn.png); opacity: 0.2;}
+
+
+/* Yuk! CSS Hack for IE6 3 pixel bug :( */
+* html .jspCorner
+{
+	margin: 0 -3px 0 0;
+}
+
+#sidebar_manager_container .jspContainer { background-image: url(../img/scroll_box_bg.png); }
+.scroll-pane {outline: none}
+
+.divers_comments_text {outline: none}
+.divers_comments_text .jspContainer { background-image: none; }
+.divers_comments_text .jspCorner { background: #eee; }
+.divers_comments_text .jspVerticalBar { width: 5px; margin-right: 10px; border-style: none; background-color: #fff;margin-bottom: 5px;}
+

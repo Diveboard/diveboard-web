@@ -1,0 +1,63 @@
+<%= render :partial => 'admin_css'%>
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 11 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+
+
+<script>
+$(document).ready(function(){
+  $('.save_changes').live('click', function(){
+    $(this).closest('form').find('input[name="updated_html"]').val($('#letter_editor').elrte('val'));
+  });
+
+  initialize_editor();
+});
+
+function initialize_editor(){
+    //modal text editor used throughout diveboard to edit texts stored in the wiki database
+  elRTE.prototype.options.panels.diveboard_edit_panel1 = [
+    'formatblock', 'removeformat'
+  ];
+  elRTE.prototype.options.panels.diveboard_edit_panel2 = [
+    'bold', 'italic', 'underline', 'justifyleft', 'justifyright',
+    'justifycenter', 'justifyfull',
+     'insertorderedlist', 'insertunorderedlist',
+    'link', 'image', 'flash'//, 'stopfloat'
+  ];
+  elRTE.prototype.options.toolbars.diveboardtoolbar = ['diveboard_edit_panel1', 'undoredo', 'alignment', 'diveboard_edit_panel2'];
+
+  var opts = {
+          cssClass : 'el-rte',
+          lang     : I18n.locale,
+          height   : 400,
+          toolbar  : 'diveboardtoolbar',
+          cssfiles : ['/styles/newsletter.css','/mod/elrte/css/elrte-inner.css']
+        }
+
+  $('#letter_editor:visible').elrte(opts);
+}
+
+
+</script>
+
+  <div>
+    <h1>Edit Newsletter</h1>
+    <form action='/admin/newsletter' method='POST'>
+      <div>Title:  <input type='title' name='newsletter_title' value='<%= letter.subject %>' style="width: 463px;"/></div>
+      <div  style='width: 501px; float: left; margin: 10px;'>
+        <div id='letter_editor'><%= letter.html_content.html_safe %></div>
+      </div>
+      <input type='hidden' name='authenticity_token' value='<%=form_authenticity_token%>'/>
+      <input type='hidden' name='id' value='<%=letter.id%>'/>
+      <input type='hidden' name='a' value='edit'/>
+      <input type='hidden' name='updated_html' value=''/>
+      <button class='yellow_button save_changes'>Save changes</button>
+    </form>
+    <a class='yellow_button' href='/admin/newsletter?a=preview&id=<%=letter.id%>'>Preview</a>
+  </div>
+
+
+</div>

@@ -1,0 +1,88 @@
+<%= content_for :javascripts do%>
+  <script type="text/javascript">
+    $(document).ready(function()
+      {
+        var alert_modal = new LightModal('alert_modal');
+        alert_modal.trigger['call_report'] = function()
+        {
+          alert_modal.display('processing');
+          $.ajax({
+            url: '/api/report_review',
+            dataType: 'json',
+            data: {
+              id: alert_modal.context.alert_id,
+              'authenticity_token': $("meta[name='csrf-token']").attr("content")
+            },
+            type: "POST",
+            success: function(data){
+              alert_modal.display('success');
+            }
+          });
+        };
+
+        $('.alert_modal_open').click(function()
+        {
+          alert_modal.display('initial', {alert_id: $(this).attr('alert_id')});
+        });
+      });
+  </script>
+<% end %>
+
+<div id="alert_modal" class="alertModal modal">
+  <div class="modal_content">
+  </div>
+
+  <div class="modal_slides">
+    <div modal_id="initial" modal_class="modal_content_initial">
+      <a href="javascript:void(0)" class="close" modal_trigger="close"></a>
+      <div class="title">Report review as inappropriate</div>
+      <div class="modal_body">
+        <div class="highlight">
+          Diveboard aims (among many other things!) at helping divers choose their dive center when travelling abroad. Thus, reviews need to be relevant for your fellow divers from all over the world.<br>
+          If you think a review should be removed, report it to us and we'll decide what to do with the review based on the rules below.
+        </div>
+        <div class="description">
+          You may report a review if it breaks one or many of the following rules:
+          <ul>
+            <li>Must provide useful information for fellow divers</li>
+            <li>Must be based on first-hand experience (i.e. hearsay, rumors, ...)</li>
+            <li>Should be original (Same review submitted several times by different users are considered as spam)</li>
+            <li>Shop owners must not impersonate customers</li>
+            <li>Must not be racist, sexist, homophobic, sexually explicit, abusive or otherwise objectionable</li>
+            <li>Must not break the law or condone or encourage unlawful activity. This includes breach of copyright, defamation and contempt of court</li>
+            <li>Must not encourage activities which could endanger the safety or well-being of others</li>
+            <li>Must not advertise products or websites unrelated to the shop</li>
+          </ul>
+          Please note that Diveboard will never remove reviews because they are too good or not good enough.
+        </div>
+      </div>
+      <div class="modal_button">
+        <a href="javascript:void(0)" modal_trigger="call_report">Report as inappropriate</a>
+        <a href="javascript:void(0)" modal_trigger="close">Cancel</a>
+      </div>
+    </div>
+
+    <div modal_class="modal_content_processing" modal_id="processing">
+      <div class="title">Report review as inappropriate</div>
+      <div class="modal_body">
+        <div class="description">
+          <img src="<%= HtmlHelper.lbroot "/img/transparent_loader.gif" %>" alt="" /><br>
+          Processing please wait
+        </div>
+      </div>
+    </div>
+
+    <div modal_class="modal_content_success" modal_id="success">
+      <a href="javascript:void(0)" class="close" modal_trigger="close"></a>
+      <div class="title">Report review as inappropriate</div>
+      <div class="modal_body">
+        <div class="description">
+         The review has been marked as inappropriate and will be checked by Diveboard team. Thanks for your submission.
+        </div>
+      </div>
+      <div class="modal_button">
+        <a href="javascript:void(0)" modal_trigger="close">Close</a>
+      </div>
+    </div>
+  </div>
+</div>

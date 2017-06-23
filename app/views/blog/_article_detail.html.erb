@@ -1,0 +1,101 @@
+<script>
+var G_post_id = '<%=@post.shaken_id%>';
+</script>
+<div id="blog_main_pane" class="blog_header">
+    <h1><%if params[:content] == :preview_post%><%=@post.title(@user.id)%><%else%><%=@post.title%><%end%></h1>
+    <div class="article_details">
+    <p class="meta_info"><%= it("Shared by %{author_info} on %{published_date} in %{post_category}", scope: ['blog', 'article_detail'], author_info: link_to(@post.user.nickname, '#author_info'), post_category: link_to(@post.blog_category.name, @post.blog_category.fullpermalink(:locale)), published_date: begin l(@post.published_at.to_date, format: :long) rescue "---" end) %></p>
+    </div>
+      <div class="header_top_action">
+      <ul class="plain_links">
+        <li>&nbsp;</li>
+        <li><%if params[:content] != :preview_post%><a href="#" id="share_this_link"><%= it("SHARE", scope: ['blog', 'article_detail']) %> <span class="symbol">K</span></a><%end%></li>
+        <li>&nbsp;</li>
+        <% if !@user.nil? && @user.can_edit?(@post)%>
+        <li><a href="/community/edit/<%=@post.shaken_id%>" name="modal" id="dive_edit_button"><%= it("EDIT", scope: ['blog', 'article_detail']) %> <span class="symbol">S</span></a></li>
+        <%end%>
+      </ul>
+
+  </div>
+</div>
+<div id="blog_left_column">
+  <div id="blog_header" class="blog_full_article">
+  <%if @post.published || @post.published_at then%>
+    <div class="blog_full_like">
+      <fb:like href="<%=@post.fulltinypermalink%>" ref="dive-<%=@post.id%>" data-width="450" data-layout="box_count" data-action="like" data-show-faces="true" data-send="false"></fb:like>
+      <div class="g-plusone" data-size="tall" data-href="<%=@post.fullpermalink(:canonical)%>"></div>
+      <div style='position:relative; left:-2px;'><a href="//twitter.com/share" class="twitter-share-button" data-url="<%=@post.fulltinypermalink%>" data-text="<%="Check out this post: #{@post.title}"%>" data-count="vertical" data-via="diveboard">Tweet</a><script type="text/javascript" src="//platform.twitter.com/widgets.js" async ></script></div>
+      <%if @post.thumbnail?%>
+        <div  style="top: 10px; position: relative; margin-top: 40px">
+          <a href="//www.pinterest.com/pin/create/button/?url=<%=URI.escape(@post.fullpermalink(:canonical))%>&media=<%=URI.escape(@post.thumbnail)%>&description=<%=URI.escape(@post.title||'')%>" data-pin-do="buttonPin" data-pin-config="above" data-pin-height="28"><img src="//assets.pinterest.com/images/pidgets/pinit_fg_en_rect_gray_28.png" /></a>
+        </div>
+      <%end%>
+    </div>
+  <%end%>
+
+
+    <%if params[:content] == :preview_post%>
+    <%=HtmlHelper.sanitize(@post.wiki_html(@user.id).html_safe, {:wordpress_article=> @post.wordpress_article, :blog_article => true}).html_safe%>
+    <%else%>
+    <%=HtmlHelper.sanitize(@post.wiki_html.html_safe, {:wordpress_article=> @post.wordpress_article, :blog_article => true}).html_safe%>
+    <%end%>
+  </div>
+  <div id="author_info"> </div>
+  <div class="navigation">
+    <% if !(@post.author_previous.nil? && @post.author_next.nil? && @post.previous.nil? && @post.next.nil?)%>
+    <h2 style="margin-left: 10px;"><%= it("Other articles", scope: ['blog', 'article_detail'])%></h2>
+    <table>
+      <tr><td style="width: 50px;"><%= it("From the Community:", scope: ['blog', 'article_detail']) %></td>
+      <% if !@post.previous.nil?%>
+        <td style="width: 80px;"><a href="<%=@post.previous.fullpermalink(:locale)%>"><span style="color: #FF6200;">← <%= it("Previous", scope: ['blog', 'article_detail']) %></span></a></td>
+        <td class="previous"><a href="<%=@post.previous.fullpermalink(:locale)%>"><%=@post.previous.title%></a></td>
+      <%else%>
+        <td></td><td></td>
+      <%end%>
+      <td style="width: 5px;"></td>
+      <% if !@post.next.nil?%>
+        <td class="next"><a href="<%=@post.next.fullpermalink(:locale)%>"><%=@post.next.title%></a></td>
+        <td style="width: 60px; text-align: right;"><a href="<%=@post.next.fullpermalink(:locale)%>"><span style="color: #FF6200;"><%= it("Next:", scope: ['blog', 'article_detail']) %> →</span></a></td>
+      <%else%>
+      <td></td><td></td>
+      <%end%>
+    </tr>
+    <% if !@post.author_previous.nil? || !@post.author_next.nil?%>
+    <tr><td><%= it("From the Author:", scope: ['blog', 'article_detail']) %></td>
+      <% if !@post.author_previous.nil?%>
+        <td style="width: 80px;"><a href="<%=@post.author_previous.fullpermalink(:locale)%>"><span style="color: #FF6200;">← <%= it("Previous", scope: ['blog', 'article_detail']) %></span></a></td>
+        <td class="previous"><a href="<%=@post.author_previous.fullpermalink(:locale)%>"><%=@post.author_previous.title%></a></td>
+      <%else%>
+        <td></td><td></td>
+      <%end%>
+      <td style="width: 5px;"></td>
+      <% if !@post.author_next.nil?%>
+        <td class="next"><a href="<%=@post.author_next.fullpermalink(:locale)%>"><%=@post.author_next.title%></a></td>
+        <td style="width: 60px; text-align: right;"><a href="<%=@post.author_next.fullpermalink(:locale)%>"><span style="color: #FF6200;"><%= it("Next:", scope: ['blog', 'article_detail']) %> →</span></a></td>
+      <%else%>
+      <td></td><td></td>
+      <%end%>
+    </tr>
+    <%end%>
+  </table>
+  <%end%>
+  </div>
+  <% if !@post.user.nil?%>
+    <div id="blog_header" class="blog_author_profile" >
+      <h2><%= it("About the author:", scope: ['blog', 'article_detail']) %></h2>
+      <%= render :partial => 'logbook/mini_profile',  :locals => {:owner => @post.user, :clickable => false, :hide_profile => false, :posts_link => true, :custom_header => false}%>
+    </div>
+  <%end%>
+  <%if params[:content] != :preview_post%>
+
+  <div id='disquscomments'>
+  <div class="comments_box">
+  <%= render :partial => 'disqus/comments_box', :locals => {subject: @post}%>
+  </div>
+  </div>
+  
+  <%end%>
+</div>
+<%if params[:content] != :preview_post%>
+<%= render :partial => 'layouts/share_menu', :locals => {:full => @post.fullpermalink(:locale), :canonical => @post.fullpermalink(:canonical), :tiny=> @post.fulltinypermalink, :text => It.it("Check out this post:", scope: ['blog', 'article_detail'])+" "+@post.title}%>
+<%end%>

@@ -1,0 +1,27 @@
+<html>
+<body>
+
+<div class="main_info" align="left">
+  <div style='padding: 10px 10px 10px 10px;'>
+    <p style='margin: 10px 0 5px 0;'>This mail is sent to you because <%=@buyer.nickname %> has requested a booking from your <a href="<%= @shop.user_proxy.fullpermalink %>"> shop page </a>on Diveboard, for more details check his message below.</p>
+
+    <br>
+    <p style='margin: 20px 0px 30px 5px;'>Details :</p>
+    <p style='margin: 5px 0px 30px 30px;'>
+      <ul>
+        <% @basket.basket_items.each do |ba| %>
+        <li>
+          x<%= ba.quantity %> <%= ba.good_to_sell.title %> 
+          <br> &nbsp; From : <%= ba.details["date_at"] %> 
+          <% if ba.details["date_type"] =="period" %> <%= ba.details["date_from"] %> to : <%= ba.details["date_to"] %> <% end %>
+          <br> &nbsp; Comment : <%= ba.details["comment"] %> 
+        </li>
+        <% end %>
+      </ul>
+    </p>
+    <p style='margin: 5px 0 5px 0;'>You need to confirm the booking from your <a href="<%= @shop.user_proxy.fullpermalink %>/edit">shop's admin page</a> or by contacting <%=@buyer.nickname %> by replying to this email.</p>
+
+  </div>
+</div>
+</body>
+</html>

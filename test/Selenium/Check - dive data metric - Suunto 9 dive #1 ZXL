@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://stage.diveboard.com/" />
+<title>Check dive data - Suunto 9 dive #1 ZXL</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Check dive data - Suunto 9 dive #1 ZXL</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/squale.ro/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sb_draftdives']//li[1]/a</td>
+	<td>2010-07-31<br />Draft</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sb_draftdives']//li[2]/a</td>
+	<td>2010-07-31<br />Draft</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sb_draftdives']//li[3]/a</td>
+	<td>2010-07-30<br />Draft</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sb_draftdives']//li[4]/a</td>
+	<td>2010-07-30<br />Draft</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sb_draftdives']//li[5]/a</td>
+	<td>2010-07-29<br />Draft</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sb_draftdives']//li[6]/a</td>
+	<td>2010-07-29<br />Draft</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sb_draftdives']//li[7]/a</td>
+	<td>2010-07-28<br />Draft</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sb_draftdives']//li[8]/a</td>
+	<td>2010-07-28<br />Draft</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sb_draftdives']//li[9]/a</td>
+	<td>2010-07-28<br />Draft</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/ul/li[1]</td>
+	<td>exact:Date: 2010-07-31 - 14:34</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/ul/li[2]</td>
+	<td>regexp:Max Depth: 28.65?m Duration:66mins</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[2]/div[3]/ul/li[1]</td>
+	<td>exact:Temp: Surf 28°C Bottom 20°C</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[2]/div[3]/ul/li[2]</td>
+	<td>Species spotted: No species spotted</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[2]/div[2]/p</td>
+	<td>No pictures for this dive</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/div[2]/p</td>
+	<td>No notes for this dive!</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='tab_overview']/div[3]/div[1]/ul/li[1]/a/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='tab_overview']/div[3]/div[1]/ul/li[2]/a/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='tab_overview']/div[3]/div[2]/ul/li[1]/a/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='tab_overview']/div[3]/div[2]/ul/li[2]/a/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='sb_draftdives']//li[2]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>file_spinning</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/ul/li[1]</td>
+	<td>exact:Date: 2010-07-31 - 10:12</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/ul/li[2]</td>
+	<td>regexp:Max Depth: 38.1m Duration:4[01]mins</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[2]/div[3]/ul/li[1]</td>
+	<td>exact:Temp: Surf 28°C Bottom 19°C</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='sb_draftdives']//li[3]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>file_spinning</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/ul/li[1]</td>
+	<td>exact:Date: 2010-07-30 - 14:03</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/ul/li[2]</td>
+	<td>regexp:Max Depth: 23.[12]6?m Duration:5[56]mins</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[2]/div[3]/ul/li[1]</td>
+	<td>exact:Temp: Surf 25°C Bottom 20°C</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='sb_draftdives']//li[4]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>file_spinning</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/ul/li[1]</td>
+	<td>exact:Date: 2010-07-30 - 10:41</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/ul/li[2]</td>
+	<td>regexp:Max Depth: 27.74?m Duration:[45][09]mins</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[2]/div[3]/ul/li[1]</td>
+	<td>exact:Temp: Surf 24°C Bottom 22°C</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='sb_draftdives']//li[5]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>file_spinning</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/ul/li[1]</td>
+	<td>exact:Date: 2010-07-29 - 15:07</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/ul/li[2]</td>
+	<td>regexp:Max Depth: 27.43?m Duration:4[78]mins</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[2]/div[3]/ul/li[1]</td>
+	<td>exact:Temp: Surf 27°C Bottom 22°C</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='sb_draftdives']//li[6]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>file_spinning</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/ul/li[1]</td>
+	<td>exact:Date: 2010-07-29 - 10:05</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/ul/li[2]</td>
+	<td>regexp:Max Depth: 36.[89]8?m Duration:4[78]mins</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[2]/div[3]/ul/li[1]</td>
+	<td>exact:Temp: Surf 24°C Bottom 19°C</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='sb_draftdives']//li[7]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>file_spinning</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/ul/li[1]</td>
+	<td>exact:Date: 2010-07-28 - 21:18</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/ul/li[2]</td>
+	<td>regexp:Max Depth: 7.92?m Duration:77mins</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[2]/div[3]/ul/li[1]</td>
+	<td>exact:Temp: Surf 25°C Bottom 24°C</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='sb_draftdives']//li[8]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>file_spinning</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/ul/li[1]</td>
+	<td>exact:Date: 2010-07-28 - 14:30</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/ul/li[2]</td>
+	<td>regexp:Max Depth: 17.[67]8?m Duration:5[01]mins</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[2]/div[3]/ul/li[1]</td>
+	<td>exact:Temp: Surf 27°C Bottom 23°C</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='sb_draftdives']//li[9]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>file_spinning</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/ul/li[1]</td>
+	<td>exact:Date: 2010-07-28 - 10:46</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/ul/li[2]</td>
+	<td>Max Depth: 12.8m Duration:55mins</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[2]/div[3]/ul/li[1]</td>
+	<td>exact:Temp: Surf 28°C Bottom 23°C</td>
+</tr>
+</tbody></table>
+</body>
+</html>

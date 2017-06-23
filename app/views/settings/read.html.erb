@@ -1,0 +1,722 @@
+<!-- SETTINGS PAGE-->
+
+<script src="//maps.google.com/maps/api/js?sensor=false"></script>
+<%= javascript_include_tag 'divepage', defer: true %>
+<%= javascript_include_tag 'settings', defer: true %>
+<%content_for :css do%>
+<%= include_stylesheets :divepage, :settings %>
+<%end%>
+
+<style>
+#main_content_area {
+  height: auto;
+}
+
+.draggable_list {list-style-type: none; margin: 0; padding: 0;  margin-right: 10px; background: #ddd; padding: 5px; width: 614px;}
+
+</style>
+
+
+<script type="text/javascript">
+var G_user_fbtoken = "<%=@user.fbtoken || ""%>";
+var current_menu = <%=@menu_id%>;
+var auth_token = $("meta[name='csrf-token']").attr("content");
+var G_current_login_email = '<%=@user.email||""%>';
+var vanity_url_ok = true;
+
+<% if @fb_post_perms != true %>
+var user_fb_post_to_wall = false;
+<%else%>
+var user_fb_post_to_wall = true;
+<%end%>
+
+var settings = <%=@user.settings.html_safe%>;
+
+<%if @user.fbtoken.nil? %>
+var fbtoken = "";
+<%else%>
+var fbtoken = "<%=@user.fbtoken%>";
+<%end%>
+
+
+var FB_appID = "<%=FB_APP_ID%>";
+
+var wizard_marker;
+
+$(document).ready(function () {
+  $('.autoclear').autoclear();
+  String.prototype.strip = function( exp ){ return this.replace(exp?exp:/\s/g,""); };
+  var auth_token = $("meta[name='csrf-token']").attr("content");
+
+  //menu clicks
+
+  $("#menu_1").click(function(ev){ev.preventDefault(); set_menu(1); });
+  $("#menu_2").click(function(ev){ev.preventDefault(); set_menu(2); });
+  $("#fb_connect").click(function(e){
+    e.preventDefault();
+    diveboard.mask_file(true);
+    diveboard.check_or_add_fb_permission("email",
+      function(){
+        location.replace("/settings/2");
+      },
+      function(){
+        diveboard.unmask_file();
+      });
+  });
+
+  $("#save_form").click(save_menu);
+  $("#username_info").html(I18n.t(['js', 'settings', "Your url will be"])+" <%=ROOT_URL%>"+$("#username").val());
+  $("#username").keyup(check_vanity_url);
+  $("#login_email").keyup(check_login_email);
+  $("#pwd").keyup(new_pwd_check);
+  $("#pwd_chk").keyup(new_pwd_check);
+  $("#crnt_pwd").keyup(pwd_confirm_check);
+
+  $.ui.autocomplete.prototype._renderItem = function (ul, item) {
+    item.label = item.label.replace(new RegExp("(?![^&;]+;)(?!<[^<>]*)(" + $.ui.autocomplete.escapeRegex(this.term) + ")(?![^<>]*>)(?![^&;]+;)", "gi"), "<strong>$1</strong>");
+    return $("<li></li>")
+    .data("item.autocomplete", item)
+    .append("<a>" + item.label + "</a>")
+    .appendTo(ul);
+  };
+
+  <% if @user.preferred_units["distance"] == "m"%>
+    $("#pref_units").val(1);
+  <%else%>
+    $("#pref_units").val(2);
+  <%end%>
+
+  set_menu(<%=@menu_id%>);
+});
+
+function save_settings_list(){
+  if( diveboard.validateEmail($("#pref_email").val()) ){
+    $("#pref_email").removeClass("wizard_input_error");
+    //var settings_list = {};
+    settings.units = {};
+    if ($("#pref_units").val() == 1){
+        settings.units.distance = "m";
+        settings.units.weight = "kg";
+        settings.units.temperature = "C";
+        settings.units.pressure = "bar";
+      }else{
+        settings.units.distance = "ft";
+        settings.units.weight = "lbs";
+        settings.units.temperature = "F";
+        settings.units.pressure = "psi";
+      }
+
+    settings.auto_fb_share = $("#pref_auto_fb_share").attr("checked")=="checked";
+    settings.auto_public = $("#pref_auto_public").attr("checked")=="checked";
+    settings.sci_privacy = $('input[name=sci_privacy]:radio:checked').val();
+    settings.share_details_notes = $("#pref_share_details_notes").attr("checked")=="checked";
+    return true;
+  }else{
+    $("#pref_email").addClass("wizard_input_error");
+    return false;
+
+  }
+}
+
+function set_menu(num){
+  var items = $(".settings_sidebar").find("li");
+  $(".active_item").removeClass("active_item");
+  $(items[num-1]).addClass("active_item");
+  for(var i=0; i<items.length; i++){
+    if ((i+1) != num) $(("#"+$(items[i]).find("a").data("target"))).hide();
+  }
+  $(("#"+$(items[num-1]).find("a").data('target'))).show();
+  current_menu = num;
+}
+
+
+var xhr;
+var right_checker;
+function check_vanity_url(){
+  if(xhr) xhr.abort();
+
+  //$("#username").val($("#username").val().toLowerCase());
+  right_checker = this;
+  var username = $("#username").val().strip().toLowerCase();
+  if (username == "<%=@user.vanity_url%>"){
+    //same name - no need to check....
+    $("#username_info").html(I18n.t(['js', 'settings', "Your url will be"])+ " <%=ROOT_URL%>"+username);
+    $("#username_search").hide();
+    $("#username_ok").show();
+    $("#username_nok").hide();
+    vanity_url_ok =true;
+  }else{
+    username_match = username.match(/[A-Za-z\.0-9\-\_]*/);
+    if( username_match != null && username_match[0] == username && username.length > 3){
+      $("#username_ok").hide();
+      $("#username_nok").hide();
+      $("#username_search").show();
+      if(right_checker == this){
+        xhr = $.ajax({
+          url:"/api/check_vanity_url",
+          data:({
+              vanity: username,
+                'authenticity_token': auth_token
+            }),
+          type:"POST",
+          dataType:"json",
+          error: function(data) {
+            if (data.statusText == 'abort') return;
+            diveboard.alert('A technical error occured while checking the availability of the url. Please try again.');
+          },
+          success:function(data){
+            if (data.success) {
+              if (data.available){
+                $("#username_info").html(I18n.t(['js', 'settings', "Your url will be"])+" <%=ROOT_URL%>"+username);
+                $("#username_search").hide();
+                $("#username_ok").show();
+                $("#username_nok").hide();
+                vanity_url_ok =true;
+              }
+              else{
+                  $("#username_info").html("This username is unavailable, please try another one");
+                  $("#username_search").hide();
+                  $("#username_ok").hide();
+                  $("#username_nok").show();
+                  vanity_url_ok = false;
+              }
+            } else {
+              diveboard.alert('A technical error occured while checking the availability of the url. Please try again.');
+            }
+          }
+        });
+      }
+    }else{
+      $("#username_info").html("Address can be a-z, 0-9, '.-_' and must be 4 character long");
+      $("#username_search").hide();
+      $("#username_ok").hide();
+      $("#username_nok").show();
+      vanity_url_ok = false;
+    }
+
+  }
+
+}
+
+var xhr2;
+var right_checker2;
+function check_login_email(){
+  if(xhr2) xhr2.abort();
+
+  //$("#username").val($("#username").val().toLowerCase());
+  right_checker2 = this;
+  var email = $("#login_email").val().strip().toLowerCase();
+  if (email == "<%=@user.email%>"){
+    //same name - no need to check....
+    $("#email_search").hide();
+    $("#email_ok").show();
+    $("#email_nok").hide();
+    email_ok =true;
+  }else{
+    email_match = email.match(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/);
+    if( email_match != null && email_match[0] == email){
+      $("#email_ok").hide();
+      $("#email_nok").hide();
+      $("#email_search").show();
+      if(right_checker2 == this){
+
+        xhr2 = $.ajax({
+          url:"/api/check_email",
+          data:({
+              email: email,
+                'authenticity_token': auth_token
+            }),
+          type:"POST",
+          dataType:"json",
+          error: function(data) {
+            if (data.statusText == 'abort') return;
+            diveboard.alert('A technical error occured while checking the validity of the email. Please try again.');
+          },
+          success:function(data){
+            if (data.success) {
+              if (data.available){
+                $("#email_search").hide();
+                $("#email_ok").show();
+                $("#email_nok").hide();
+                email_ok =true;
+              }
+              else{
+                  $("#email_search").hide();
+                  $("#email_ok").hide();
+                  $("#email_nok").show();
+                  email_ok = false;
+              }
+            } else {
+              diveboard.alert('A technical error occured while checking the validity of the email. Please try again.');
+            }
+
+          }
+        });
+      }
+    }else{
+      $("#email_search").hide();
+      $("#email_ok").hide();
+      $("#email_nok").show();
+      email_ok = false;
+    }
+
+  }
+
+}
+var pwd_chk_ok = false
+function new_pwd_check(){
+
+  if ($("#pwd").val() =="") {
+    pwd_chk_ok = true;
+    $("#pwd_ok").hide();
+    $("#pwd_nok").hide();
+    $("#pwd_chk_nok").hide();
+    $("#pwd_chk_ok").hide();
+    return;
+  }
+
+
+  if ($("#pwd").val().length <5 || $("#pwd").val().length > 20){
+    $("#pwd_nok").show();
+    $("#pwd_ok").hide();
+    pwd_chk_ok = false;
+    return;
+  }else{
+    $("#pwd_ok").show();
+    $("#pwd_nok").hide();
+  }
+
+
+
+  if ($("#pwd").val() != $("#pwd_chk").val()) {
+    $("#pwd_chk_nok").show();
+    $("#pwd_chk_ok").hide();
+    pwd_chk_ok = false;
+    return;
+  }else{
+    $("#pwd_chk_ok").show();
+    $("#pwd_chk_nok").hide();
+    pwd_chk_ok = true;
+    return;
+  }
+
+
+}
+function pwd_confirm_check(){
+  if($("#crnt_pwd").val() == "" )
+    $("#crnt_pwd_nok").show();
+  else
+    $("#crnt_pwd_nok").hide();
+}
+
+
+function save_menu(ev){
+  ev.preventDefault();
+  if (current_menu == 1) save_menu_1();
+  if (current_menu == 2) save_menu_2();
+}
+
+
+var base_vanity_url = "<%= @user.vanity_url%>";
+var vanity_url_change_confirmation = false;
+
+
+function save_menu_2(){
+  if (vanity_url_ok && !vanity_url_change_confirmation && $("#username").val().strip().toLowerCase() != base_vanity_url){
+    // we are changing vanity URL... we need to ask for confirmation
+    $( "#dialog-confirm" ).dialog({
+      resizable: false,
+      height:200,
+      width: 500,
+      modal: true,
+      buttons: {
+        "Change URL": function() {
+          vanity_url_change_confirmation = true;
+          $( this ).dialog( "close" );
+          save_menu_2();
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+          $("#username").val(base_vanity_url);
+          vanity_url_change_confirmation = false;
+        }
+      }
+    });
+  }else{
+    new_pwd_check(); // checks pwds one last time
+    if ($("#crnt_pwd").val()=="" && ($("#pwd").val()!="" || $("#login_email").val() != G_current_login_email) ){
+      $("#crnt_pwd_nok").show();
+    }
+    vanity_url_change_confirmation = false;
+
+    if (email_ok && pwd_chk_ok && vanity_url_ok){
+      $("#save_search").show();
+      $.ajax({
+        url:"/settings/update",
+        data:({
+          current_menu: 2,
+          email: $("#login_email").val(),
+          new_pwd:  $("#pwd").val(),
+          old_pwd:$("#crnt_pwd").val(),
+          vanity: $("#username").val().strip().toLowerCase(),
+          'authenticity_token': auth_token
+          }),
+        type:"POST",
+        dataType:"json",
+        error: function (data) {
+          diveboard.alert('A technical error occured while updating your profile. Please try again.');
+          $("#save_search").hide();
+          $("#save_nok").show();
+          $("#save_nok").fadeOut(3000);
+          $("#imageuploader").show();
+          $("#picture_table").hide();
+        },
+        success:function(data){
+          if(!data.success){
+            $("#save_ok").hide();
+            $("#save_search").hide();
+            $("#save_nok").show();
+            $("#save_nok").fadeOut(3000);
+            if($("#login_email").val() != ""){
+              $("#confirm_pwd_form").show();
+            }
+            if(data.password == false)
+              $("#crnt_pwd_nok").show();
+            if(data.email == false){
+              $("#email_ok").hide();
+              $("#email_nok").show();
+            }
+            vanity_url_change_confirmation = false;
+            $("#username").val(base_vanity_url);
+            $("#username_info").html(I18n.t(['js', 'settings', "Your url will be"])+" <%=ROOT_URL%>"+base_vanity_url);
+            $("#username_search").hide();
+            $("#username_ok").show();
+            $("#username_nok").hide();
+            vanity_url_ok =true;
+          }else{
+            G_current_login_email = $("#login_email").val();
+            $("#user_logbook_url").attr("href","/"+$("#username").val().toLowerCase() );
+            $("#add_single_dive").attr("href","/"+$("#username").val().toLowerCase()+"/new" );
+            $("#add_batch_dive").attr("href","/"+$("#username").val().toLowerCase()+"/bulk?bulk=wizard" );
+            $("#computer_tray_icon").attr("href","/"+$("#username").val().toLowerCase()+"/bulk?bulk=computer" );
+            $("#header_container .header_user a").first().attr("href", "/"+$("#username").val().toLowerCase() );
+            $("#username").val($("#username").val().strip().toLowerCase());
+            base_vanity_url = $("#username").val().strip().toLowerCase();
+            vanity_url_change_confirmation = false;
+            $("#crnt_pwd_nok").hide();
+            $("#save_ok").show();
+            $("#save_search").hide();
+            $("#save_nok").hide();
+            $("#save_ok").fadeOut(3000);
+            $("#pwd").val("");
+            $("#pwd_chk").val("");
+            $("#crnt_pwd").val("");
+            if($("#login_email").val() != ""){
+              $("#confirm_pwd_form").show();
+            }
+            new_pwd_check();
+          }
+        }
+      });
+    }else{
+      $("#save_ok").hide();
+      $("#save_search").hide();
+      $("#save_nok").show();
+      $("#save_nok").fadeOut(3000);
+      vanity_url_change_confirmation = false;
+      $("#username").val(base_vanity_url);
+      $("#username_info").html(I18n.t(['js', 'settings', "Your url will be"])+" <%=ROOT_URL%>"+base_vanity_url);
+      $("#username_search").hide();
+      $("#username_ok").show();
+      $("#username_nok").hide();
+      vanity_url_ok =true;
+    }
+
+  }
+
+}
+
+function check_post_to_wall_perms(){
+  if (!user_fb_post_to_wall){
+    $("#fb_wall_search").show();
+    FB.login(function(response) {
+      if (response.perms != undefined && response.perms.match(/publish\_stream/)!=null) {
+      fbtoken = response.authResponse.accessToken;
+      $("#pref_auto_fb_share").attr("checked", "checked");
+      user_fb_post_to_wall = true;
+      } else {
+        // user cancelled login
+      $("#pref_auto_fb_share").removeAttr("checked");
+      }
+    }, {perms:'email,publish_stream'});
+
+    $("#fb_wall_search").hide();
+  }else{
+    $("#pref_auto_fb_share").attr("checked", "checked");
+
+  }
+}
+
+function save_menu_1(){
+  if (save_settings_list()) {//updates the settings var
+    $("#save_search").show();
+
+    var data_to_post = {
+      current_menu: 1,
+      settings: JSON.stringify(settings),
+      currency: $("#pref_currency").val(),
+      email: $("#pref_email").val(),
+      notif_preferences: notif_preferences,
+      fbtoken: fbtoken,
+      preferred_locale: $('#preferred_locale').val(),
+      'authenticity_token': auth_token
+    }
+
+    var notif_preferences = {}
+    $(".ntf_settings").each(function(i,e){
+      var input = $(e);
+      data_to_post[input.attr('name')] = input.attr('checked')=='checked';
+    });
+
+    $.ajax({
+      url:"/settings/update",
+      data:(data_to_post),
+      type:"POST",
+      dataType:"json",
+      error: function (data) {
+        diveboard.alert('A technical error occured while updating your profile. Please try again.');
+        $("#save_search").hide();
+        $("#save_nok").show();
+        $("#save_nok").fadeOut(3000);
+        $("#imageuploader").show();
+        $("#picture_table").hide();
+      },
+      success:function(data){
+        if(data.success){
+          $("#save_ok").show();
+          $("#save_search").hide();
+          $("#save_nok").hide();
+          $("#save_ok").fadeOut(3000);
+          $("#imageuploader").show();
+          $("#picture_table").hide();
+          //crop_pictname ="";
+        }
+        else{
+          diveboard.alert(data.message);
+          $("#save_ok").hide();
+          $("#save_search").hide();
+          $("#save_nok").show();
+          $("#save_nok").fadeOut(3000);
+          $("#imageuploader").show();
+          $("#picture_table").hide();
+          //crop_pictname ="";
+        }
+      }
+    });
+  }
+  else{
+    $("#save_ok").hide();
+    $("#save_search").hide();
+    $("#save_nok").show();
+    $("#save_nok").fadeOut(3000);
+  }
+}
+
+</script>
+
+<!-- The Sidebar starts here! -->
+<div id="sidebar" class='about_style'>
+  <div class="settings_sidebar">
+    <ul>
+      <li class="<%='active_item' if @user.is_group?%>"><a href="/settings/1" id="menu_1" data-target='Preferences'><%= it("Preferences", scope: ['settings', 'read']) %></a></li>
+      <li><a href="/settings/2" id="menu_2" data-target='LoginSettings'><%= it("Login Settings", scope: ['settings', 'read']) %></a></li>
+    </ul>
+    <p style="font-size: 10px; margin-top: 55px; text-transform: none;"><b><span class="symbol">W</span><%= it("HINT", scope: ['settings', 'read']) %></b>: <%= it("Wondering where the certifications, pictures and stuff have gone?%{br}Go to your logbook homepage and hit \"edit\".", scope: ['settings', 'read'], br: It.tag("br")) %></p>
+  </div>
+</div>
+<!-- The Sidebar Ends Here -->
+
+
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" class='about_style'>
+  <div id="dialog-confirm" title="<%= it("Vanity URL change warning", scope: ['settings', 'read']) %>" style="display:none;">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><%= it("Changing the vanity URL will permanently change the address of your logbook. %{br}Previous addresses won't work anymore. Are you sure?", scope: ['settings', 'read'], br: It.tag("br")) %></p>
+  </div>
+
+  <div id="Preferences" style="display:none;">
+
+    <div class="main_content_header main_padded_top">
+      <span class="header_title"><%= it("Settings", scope: ['settings', 'read']) %></span>
+      <div  class="header_top_action">
+      </div>
+    </div>
+
+    <div class="main_content_box">
+      <div class="settings_content">
+        <div class="second_lvl_header"><%= it("Preferences", scope: ['settings', 'read']) %></div>
+        <div class="settings_label_left"><label><%= it("Privacy:", scope: ['settings', 'read']) %></label></div>
+        <div class="settings_input_right"><label for="username" ><%= it("Make your dives public when complete:", scope: ['settings', 'read']) %> </label><input type="checkbox" style="width: 15px;" <%if @user.auto_public %>checked<%end%> id="pref_auto_public"><br/>
+          <!--<label for="username" >Enable post to FB wall by default : </label><input type="checkbox" style="width: 15px;" <%if @user.auto_fb_share && @fb_post_perms==true %>checked<%end%> id="pref_auto_fb_share"><img  id="fb_wall_search" style="display:none;" align="absmiddle" src="/img/indicator.gif"/><br/>
+-->
+          <label for="username" ><a href="#" onclick='$("#advanced_privacy").toggle(); return false;'><%= it("Advanced", scope: ['settings', 'read']) %></a></label>
+            <div id="advanced_privacy" style="display:none;">
+              <label for="username" ><%= it("Share your dive notes:", scope: ['settings', 'read']) %> </label><input type="checkbox" style="width: 15px;" <%if @user.share_details_notes %>checked<%end%> id="pref_share_details_notes"><br/>
+            <br/>
+            </div>
+          </div>
+        <div class="settings_label_left"><label><%= it("Scientific data:", scope: ['settings', 'read']) %></label></div>
+        <div class="settings_input_right"><label for="username" ><%= it("Diveboard shares under %{link:public domain license} the scientific data you collected (species and dive profiles) with scientific organizations such as %{obis:OBIS}, %{gbif:GBIF.org} and %{dan:DAN} (we don't get a single penny on that: your data helps scientists monitor the evolution of the ecosystem or make diving safer and we think we need to help)", scope: ['settings', 'read'], link: It.link("http://creativecommons.org/publicdomain/zero/1.0/", target: "_blank"), obis: It.link("//iobis.org/", target: "_blank"), gbif: It.link("//www.gbif.org", target: "_blank"), dan: It.link("//www.diversalertnetwork.org/", target: "_blank")) %>:<br/><br/>
+          <input style="width: 25px !important;" type="radio" name="sci_privacy" value="1" <%if @user.sci_privacy == 1 %>checked<%end%> ><%= it("I want to share my data and have my name be mentioned as author", scope: ['settings', 'read']) %><br/>
+          <input style="width: 25px !important;" type="radio" name="sci_privacy" value="2" <%if @user.sci_privacy == 2 %>checked<%end%> ><%= it("I want to share my data anonymously", scope: ['settings', 'read']) %><br/>
+          <input style="width: 25px !important;" type="radio" name="sci_privacy" value="3" <%if @user.sci_privacy == 3 %>checked<%end%> ><%= it("I don't want to share my data", scope: ['settings', 'read']) %>
+          </label></div>
+
+        <div class="settings_label_left"><label for="username"><%= it("Preferred language:", scope: ['settings', 'read']) %></label></div>
+        <div class="settings_input_right">
+          <select id="preferred_locale">
+            <%Rails.configuration.opened_locales.each do |lang|%>
+              <option  value="<%=lang%>" <%='selected' if @user.preferred_locale == lang%>><%=Rails.configuration.map_untranslated_locales[lang]%></option>
+            <%end%>
+          </select>
+        </div>
+
+        <div class="settings_label_left"><label for="username"><%= it("Unit system:", scope: ['settings', 'read']) %></label></div>
+        <div class="settings_input_right">
+          <select id="pref_units">
+            <option  value="1"><%= it("Metric System (m, ºC, bar, kg)", scope: ['settings', 'read']) %></option>
+            <option  value="2"><%= it("Imperial System (ft, ºF, psi, lbs)", scope: ['settings', 'read']) %></option>
+          </select>
+        </div>
+
+        <div class="settings_label_left"><label for="username"><%= it("Currency:", scope: ['settings', 'read']) %></label></div>
+        <div class="settings_input_right">
+          <select id="pref_currency">
+            <option value=''><%= it("Select your preferred currency", scope: ['settings', 'read']) %></option>
+            <% user_currency = nil
+              user_currency = @user.currency if @user.currency? %>
+            <%Money::Currency.available.reject do |currency| currency[:priority] > 10 end .sort do |a,b| a[:priority] <=> b[:priority] end .each do |currency|%>
+            <option value='<%=currency[:iso_code]%>'><%=currency[:name]%> (<%=currency[:symbol]%>)</option>
+            <%end%>
+            <option value=''>------------------</option>
+            <%Money::Currency.available.sort do |a,b| a[:name] <=> b[:name] end .each do |currency|%>
+            <option value='<%=currency[:iso_code]%>' <%= if user_currency == currency[:iso_code] then 'selected' end%>><%=currency[:name]%> (<%=currency[:symbol]%>)</option>
+            <%end%>
+          </select>
+        </div>
+
+        <br/>
+        <br/>
+
+        <div class="second_lvl_header"><%= it("Notifications", scope: ['settings', 'read']) %></div>
+
+        <%unless @user.email.nil? %>
+          <input type="hidden" value="<%=@user.email%>" id="pref_email"/>
+        <%end%>
+        <table class="settings_newsletter_box">
+          <%if @user.email.nil? %>
+            <tr>
+              <td><span class="newsletter_label"><%= it("Emails are sent to:", scope: ['settings', 'read']) %> </span></td>
+              <td><input type="text" value="<%=@user.contact_email%>" id="pref_email"/></td>
+            </tr>
+          <%else%>
+            <tr><td><input type="hidden" value="<%=@user.contact_email%>" id="pref_email"/></td></tr>
+          <%end%>
+          <tr>
+            <td><div class="settings_label_left"><label><%= it("Instant notifications:", scope: ['settings', 'read']) %></label></div></td>
+            <td><input type="checkbox" <%if @user.accept_instant_notif_email? %>checked<%end%> class='ntf_settings' name='instant_notif_email'/><label><%= it("Notify me each time someone likes, comments my activities on diveboard.", scope: ['settings', 'read']) %></label></td>
+          </tr>
+          <tr>
+            <td><div class="settings_label_left"><label><%= it("Bi-weekly notifications:", scope: ['settings', 'read']) %></label></div></td>
+            <td><input type="checkbox" <%if @user.accept_weekly_notif_email? %>checked<%end%> class='ntf_settings' name='weekly_notif_email'/><label><%= it("Sum up all notifications for the last two weeks. Likes, comments, feedback, everything is there!", scope: ['settings', 'read']) %></label></td>
+          </tr>
+          <tr>
+            <td><div class="settings_label_left"><label><%= it("Bi-weekly digest:", scope: ['settings', 'read']) %></label></div></td>
+            <td><input type="checkbox" <%if @user.accept_weekly_digest_email? %>checked<%end%> class='ntf_settings' name='weekly_digest_email'/><label><%= it("Send me digests every two weeks of what happened on Diveboard.", scope: ['settings', 'read']) %></label></td>
+          </tr>
+          <tr>
+            <td><div class="settings_label_left"><label><%= it("Newsletter:", scope: ['settings', 'read']) %></label></div></td>
+            <td><input type="checkbox" <%if @user.accept_newsletter_email? %>checked<%end%> class='ntf_settings' name='newsletter_email'/><label><%= it("Keep me in the loop for more great scuba news. The average periodicity of the newsletter is once every month.", scope: ['settings', 'read']) %></label></td>
+          </tr>
+        </table>
+
+      </div>
+    </div>
+  </div>
+
+
+    <!-- The Account Menu Begins here -->
+    <div id="LoginSettings"  style="display:none;">
+
+      <div class="main_content_header main_padded_top">
+        <span class="header_title"><%= it("Login settings", scope: ['settings', 'read']) %></span>
+        <div  class="header_top_action"> </div>
+      </div>
+
+      <div class="main_content_box">
+        <div class="settings_content">
+          <div class="settings_label_left" style="margin-top: 5px;"><label for="username"><%= it("Logbook address *:", scope: ['settings', 'read']) %></label></div>
+          <div class="settings_input_right"><label><%=ROOT_URL%></label><input id="username" name="username" value='<%=@user.vanity_url%>'/>
+          <img id="username_ok" src="/img/ok.png" align="absmiddle"/>
+          <img  id="username_nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/>
+          <img  id="username_search" style="display:none;" align="absmiddle" src="/img/indicator.gif"/>
+          <span id="username_info" class="settings_meta_text"></span>
+          <span class="settings_meta_text"><%= it("%{b:WARNING} If you change this, all links to your previous url will die.%{br}So try to avoid doing that.", scope: ['settings', 'read'], b: It.tag("b"), br: It.tag("br")) %></span>
+          </div>
+        </div>
+      </div>
+      <div class="main_content_box">
+        <div class="settings_content">
+
+          <span class="second_lvl_header"><%= it("Email/Password Login", scope: ['settings', 'read']) %></span><br/><br/>
+          <p><b>
+          <%if @user.email.nil? %>
+            <%= it("Login with Email/Password is currently disabled", scope: ['settings', 'read']) %>
+            <%else%>
+            <%= it("Login with Email/Password is currently enabled", scope: ['settings', 'read']) %>
+          <%end%>
+            </b></p><br/>
+          <%if @user.email.nil?%>
+          <p><%= it("Set an email and password to enable this login method", scope: ['settings', 'read']) %></p><br/>
+          <%end%>
+          <div class="settings_label_left"><label for="newsletter_label"><%= it("Login Email *:", scope: ['settings', 'read']) %></label></div>
+          <div class="settings_input_right"><input type="text" value="<%=@user.email%>" id="login_email"/>
+            <img id="email_ok" <%if @user.email.nil?%>style="display:none;"<%end%> src="/img/ok.png" align="absmiddle"/>
+            <img  id="email_nok"style="display:none;" align="absmiddle" src="/img/ok-not.png"/>
+            <img  id="email_search" style="display:none;" align="absmiddle" src="/img/indicator.gif"/>
+          </div>
+
+          <div class="settings_label_left"><label for="newsletter_label"><%= it("Password:", scope: ['settings', 'read']) %><br/><div style="font-size: 8px;  display: inline;"><%= it("(leave empty for no change)", scope: ['settings', 'read']) %></div></label></div>
+          <div class="settings_input_right"><input type="password" class="autoclear" value="" id="pwd"/>
+            <img id="pwd_ok" style="display:none;" src="/img/ok.png" align="absmiddle"/>
+            <img  id="pwd_nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/></div>
+          <div class="settings_label_left"><label for="newsletter_label"><%= it("Password check:", scope: ['settings', 'read']) %></label></div>
+          <div class="settings_input_right"><input type="password" class="autoclear" value="" id="pwd_chk"/>
+            <img id="pwd_chk_ok" style="display:none;" src="/img/ok.png" align="absmiddle"/>
+            <img  id="pwd_chk_nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/></div>
+        </div>
+        <div id="confirm_pwd_form" <%if @user.email.nil?%>style="display:none;"<%end%> >
+          <span class="second_lvl_header"><%= it("Confirm changes", scope: ['settings', 'read']) %></span><br/>
+          <div class="settings_content">
+            <div class="settings_label_left"><label for="newsletter_label"><%= it("Current Password *:", scope: ['settings', 'read']) %></label></div>
+            <div class="settings_input_right"><input type="password" class="autoclear" value="" id="crnt_pwd"/>
+              <img  id="crnt_pwd_nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/></div>
+          </div>
+        </div>
+
+        <span class="second_lvl_header"><%= it("Facebook Login", scope: ['settings', 'read']) %></span><br/>
+        <div style="margin-top: 10px;"><label>
+        <% if @user.fbtoken.nil? %>
+        <%= it("Your Facebook account is %{b:not connected}.", scope: ['settings', 'read'], b: It.tag("b")) %>
+        <% else %>
+        <%= it("Your Facebook account is %{b:connected}.", scope: ['settings', 'read'], b: It.tag("b")) %>
+        <% end %>
+        <%if !@user.fbtoken.nil?%> <%= it("Your Facebook ID is %{id}", scope: ['settings', 'read'], id: @user.fb_id) %> <%else%>:</label> <a href="#" id="fb_connect"><img src="/img/facebook.png" align="absmiddle"/></a><%end%></div>
+      </div>
+    </div>
+
+
+    <div class="settings_save_box">
+        <span class="edit_save_btn_hover"><a href="#" id="save_form" class="edit_save_btn"><%= it("Save This", scope: ['settings', 'read']) %><img  id="save_search" style="display:none;" align="absmiddle" src="/img/indicator.gif"/> <img id="save_ok"  style="display:none;" src="/img/ok.png" align="absmiddle"/><img id="save_nok"  style="display:none;" src="/img/ok-not.png" align="absmiddle"/></a></span>
+    </div>
+  </div>
+</div>

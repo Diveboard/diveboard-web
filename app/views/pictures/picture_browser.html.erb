@@ -1,0 +1,117 @@
+<style type="text/css">
+  #container{width:100% !important; text-align: center;}
+  #pic_masonry{display: inline-block; margin-bottom: 100px;}
+  .box {display: inline-block; margin: 10px; border: 1px solid #000; color: #cecece; background-color: rgba(0,0,0,0.3); width: 318px; text-align: right;}
+  .box img {margin: -1px -1px 2px -1px;}
+  .box p {margin: 0px 3px 5px 0px;}
+  #infscr-loading {position: absolute; bottom: -100px; text-align: center; width: 100%; color: #ccc;}
+  .xp_gallery_dynamic_like {position: absolute; top: 8px; left: 5px; transition: opacity 1s; opacity: 0; text-align: left; z-index: 10;}
+  .box.likable:hover .xp_gallery_dynamic_like {opacity: 0.6;}
+  .box.likable:hover .xp_gallery_dynamic_like:hover {opacity: 1; transition: opacity 0.1;}
+</style>
+
+
+<script>
+  function detach_from_masonry(source){
+    $(source).closest('.box').detach();
+    $.post( '/api/js_logs', {"location": window.location.href, "message": "Broken image "+source.src });
+  }
+
+  $(function(){
+    var container = $('#pic_masonry');
+
+    container.imagesLoaded(function(){
+      container.masonry({
+        itemSelector: '.box',
+        isAnimated: false,
+        isFitWidth: true,
+        columnWidth: 10
+      });
+    });
+
+    container.infinitescroll({
+      debug: false,
+      bufferPx: 900,
+      animate: false,
+      navSelector  : '#page-nav',    // selector for the paged navigation
+      nextSelector : '#page-nav a',  // selector for the NEXT link (to page 2)
+      itemSelector : '.box',     // selector for all items you'll retrieve
+      loading: {
+          finishedMsg: '<%= it("No more pages to load.", scope: ['pictures', 'picture_browser']) %>',
+          img: "/img/transparent_loader_3.gif",
+          speed: 0,
+          msgText: "<%= it("Loading some more pictures...", scope: ['pictures', 'picture_browser']) %>"
+        }
+      },
+      // trigger Masonry as a callback
+      function( newElements ) {
+        // hide new items while they are loading
+        var newElems = $( newElements ).css({ opacity: 0 });
+        // ensure that images load before adding to masonry layout
+        newElems.imagesLoaded(function(){
+          // show elems now they're ready
+          newElems.animate({ opacity: 1 });
+          container.masonry( 'appended', newElems, true );
+        });
+
+        ga('send', {
+          'hitType': 'event',          // Required.
+          'eventCategory': 'interaction',   // Required.
+          'eventAction': 'gallery_scroll',      // Required.
+          'nonInteraction': true
+        });
+      }
+    );
+
+
+    $(function() {
+        var timeout, self;
+
+        $(".box.unlikable").live({
+            mouseenter: function () {
+              var pinAPI = (function(x){ for (var n in x) if (n.indexOf('PIN_')==0 && typeof(x[n])=='object') return x[n]; return null; })(window).f.render;
+              var self = this;
+              timeout = setTimeout(function() {
+                $(self).removeClass('unlikable');
+                if (typeof FB !== 'undefined') FB.XFBML.parse(self);
+                diveboard.plusone_go();
+                if (typeof pin_build_api != 'undefined') pin_build_api(self);
+                else if (pinAPI && pinAPI.buttonPin) pinAPI.buttonPin($(self).find('.platform.pinterest a')[0] );
+                $(self).addClass('likable');
+              }, 500);
+            },
+            mouseleave: function () {
+              clearTimeout(timeout);
+            }
+        });
+    });
+
+  });
+</script>
+
+<div id='pic_masonry' style='width: 100%'>
+  <%pictures.each do |picture|%>
+  <div class='box unlikable'>
+    <span class='xp_gallery_dynamic_like'>
+      <div class='platform'>
+        <div class="g-plusone" data-size="medium" data-href="<%=picture.fullpermalink(nil, :canonical)%>"></div>
+      </div>
+      <div class='platform'>
+        <fb:like href="<%=picture.fullpermalink(nil, :canonical)%>" width="90" layout="button_count" show_faces="false" send="false"></fb:like>
+      </div>
+      <div class='platform pinterest'>
+        <%spot = picture.dive.spot%>
+        <!-- TODO: description -->
+        <a href="//www.pinterest.com/pin/create/button/?url=<%=URI.escape(picture.fullpermalink(nil, :canonical))%>&media=<%=URI.escape(picture.large)%>&description=<%=URI.escape("Taken during a scuba dive in #{spot.name.titleize}, #{spot.country.cname.titleize} by #{picture.user.nickname}")%>" data-pin-do="buttonPin" data-pin-config="beside"><img src="//assets.pinterest.com/images/pidgets/pin_it_button.png"/></a>
+      </div>
+      <div class='platform'></div>
+    </span>
+    <a href='<%=picture.fullpermalink(nil, :locale)%>' target='_blank'><img src='<%=picture.medium%>' style='width: 320px' onerror='detach_from_masonry(this);'/></a>
+    <p><%= it("By %{user} in %{country}", scope: ['pictures', 'picture_browser'], user: picture.user.nickname, country: picture.dive.spot.country.name) %></p>
+  </div>
+  <%end%>
+</div>
+
+<div id='page-nav' style="display: none; ">
+  <a href='/explore/gallery?no_layout=true&page=<%=page_nb+1%>'>next</a>
+</div>

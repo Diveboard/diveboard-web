@@ -1,0 +1,88 @@
+<%= render :partial => 'admin_css'%>
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 4 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+<h1>Dives overview</h1>
+
+  <br/>
+
+  <div>
+  <a style='font-size: 24pt' href='?<%=@search_params.merge({:start => [@start-@limit,0].max, :limit => @limit}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&") %>'>&lt;&lt;&lt; PREV</a>
+  <a style='font-size: 24pt; float: right;' href='?<%=@search_params.merge({:start => [@start+@limit,0].max, :limit => @limit}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&") %>'>NEXT &gt;&gt;&gt;</a>
+  </div>
+  <br/>
+
+  <% @all_dives.each { |dive|
+    @last_dive = dive.id%>
+
+    <div>
+      <% if dive.privacy.nil? || dive.privacy > 0 then%>
+        <img src='/img/lock_red.png' />
+      <%else%>
+        <img src='/img/lock_green.png' />
+      <%end%>
+      <% if dive.user.nil? then %>
+      <p><%=dive.id%> -- <strong>No user owns this dive !!!</strong></p>
+      <%else%>
+        <a href='/<%=dive.user.vanity_url%>/<%=dive.id%>' target='dives'><%=dive.id%></a> -- Owner : <a href='/admin/users/<%=dive.user.id%>'><%=dive.user.nickname%></a>
+        <% if dive.spot.nil? || dive.spot.id == 1 then %>
+        <p>No dive site entered !</p>
+        <%else%>
+        <%end%>
+        <div>Created : <%=dive.created_at%> - Updated : <%=dive.updated_at%></div>
+        <div>
+        <div style='display: inline-block;border: solid 1px;height: 340px; width:250px; float: left;'>
+          <p><strong>Dive profile</strong></p>
+          <p>Max depth : <%= dive.maxdepth %>m <br/> Duration : <%=dive.duration%> min</p>
+          <% if dive.profile_data_udcf.nil? then%>
+            <p>No profile for this dive</p>
+            <img src="/img/data_placeholder.png" style="margin-left: auto; margin-right: auto; display: block; margin-top: 19px;  "/>
+          <%else%>
+
+            <object data='/<%=dive.user.vanity_url%>/<%=dive.id%>/profile.svg?g=admin' height=250> </object>
+            <p>Source : <% if dive.uploaded_profile.nil? then%>Generated<%else%><a href='/api/uploaded_profile?id=<%=dive.uploaded_profile.id%>'><%=dive.uploaded_profile.source%></a> <%=dive.uploaded_profile.source_detail%><%end%></p>
+          <%end%>
+        </div>
+
+        <div style='display: inline-block;border: solid 1px; width:200px; height:340px'>
+          <p><strong>Spot</strong></p>
+          <% if dive.spot_id != 1 then %>
+            <p><%= dive.spot.name%>, <%=dive.spot.region.name unless dive.spot.region.nil?%>, <%=dive.spot.location.name unless dive.spot.location.nil?%>, <%=dive.spot.fullcname%></p>
+            <img src='<%=dive.thumbnail_image_url%>' width='150' alt='favpic'/>
+          <%else%>
+          <p>No spot entered</p>
+          <%end%>
+        </div>
+
+        <div style='display: inline-block;border: solid 1px;height: 340px; width:150px; float: left;'>
+          <p><strong>Species spotted:</strong>
+          <%if dive.eolcnames.empty? && dive.eolsnames.empty?%>No species spotted<%else%>
+            <% dive.eolcnames.each do |fish|%>
+              <%if fish != dive.eolcnames.first%>, <%end%><a href="http://www.eol.org/pages/<%=fish.eolsname.id%>" target="_blank" class="tooltiped-js" title='<%if fish.eolsname.picture >0 %><img src="<%=fish.eolsname.thumbnail_href%>"/><%end%><b><%=fish.eolsname.sname%></b><br/><em><%= it("Data provided by %{eol_link:EOL.org}", scope: ['admin', 'dives'], eol_link: It.tag("a", href: "http://www.eol.org", target: "_blank")) %></em>'><%=fish.cname%></a>
+            <%end%>
+            <% dive.eolsnames.each do |fish|%>
+              <%if !dive.eolcnames.empty? %>, <%end%><a href="http://www.eol.org/pages/<%=fish.id%>" target="_blank" class="tooltiped-js" title='<%if fish.picture >0 %><img src="<%=fish.thumbnail_href%>"/><%end%><b><%=fish.sname%></b><br/><em><%= it("Data provided by %{eol_link:EOL.org}", scope: ['admin', 'dives'], eol_link: It.tag("a", href: "http://www.eol.org", target: "_blank")) %></em>'><%if fish.preferred_cname!=""%><%=fish.preferred_cname%><%else%><%=fish.sname%><%end%></a>
+            <%end%>
+          <%end%>
+        </div>
+        </div>
+
+      <%end%>
+
+      <br/>
+      <hr/>
+      <br/>
+
+    </div>
+
+  <%}%>
+
+  <div>
+  <a style='font-size: 24pt' href='?<%=@search_params.merge({:start => [@start-@limit,0].max, :limit => @limit}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&") %>'>&lt;&lt;&lt; PREV</a>
+  <a style='font-size: 24pt; float: right;' href='?<%=@search_params.merge({:start => [@start+@limit,0].max, :limit => @limit}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&") %>'>NEXT &gt;&gt;&gt;</a>
+  </div>
+
+</div>

@@ -1,0 +1,240 @@
+<%= auto_discovery_link_tag(:rss, ROOT_URL+"community/feed/"+@owner.vanity_url) %>
+
+
+<%
+  diveboard_tagline = it("Diveboard : Track and share your scuba diving experiences - Explore new spots and destinations", scope: ['logbook', 'meta_tags'])
+  diveboard_short_tagline = it("Diveboard : Your online scuba logbook.", scope: ['logbook', 'meta_tags'])
+%>
+<% if params[:content] == :new_dive %>
+<!--Tags for the new dive-->
+<title><%= it("New Dive", scope: ['logbook', 'meta_tags']) %></title>
+<%elsif params[:content] == :bulk%>
+<!--Tags for the bulk-->
+<title><%= it("Bulk Editor", scope: ['logbook', 'meta_tags']) %></title>
+<%elsif params[:content] == :error404%>
+
+<title><%= it("404 - No such logbook or dive", scope: ['logbook', 'meta_tags']) %></title>
+
+<%elsif [:home, :valid_claim].include?(params[:content]) %>
+<!--Tags for the home logbook-->
+<%
+  if @owner.is_group? then
+    title = it("Dive with %{owner_shop_proxy_name} %{owner_shop_proxy_category}", scope: ['logbook', 'meta_tags'], owner_shop_proxy_name: @owner.shop_proxy.name.titleize, owner_shop_proxy_category: @owner.shop_proxy.category)
+    if @owner.shop_proxy.country? then
+      description = it("Check out %{owner_nickname}'s dive log in %{owner_shop_proxy_country_cname} and its reviews.", scope: ['logbook', 'meta_tags'], owner_nickname: @owner.nickname, owner_shop_proxy_country_cname: @owner.shop_proxy.country.cname)
+    else
+      description = it("Check out %{owner_nickname}'s dive log and its reviews.", scope: ['logbook', 'meta_tags'], owner_nickname: @owner.nickname)
+    end
+  else
+    title = it("%{owner_nickname}'s scuba diving logbook on Diveboard", scope: ['logbook', 'meta_tags'], owner_nickname: @owner.nickname)
+    description = it("Check out %{owner_nickname}'s scuba diving logbook on Diveboard. Spots dived include : %{dived_location}", scope: ['logbook', 'meta_tags'], owner_nickname: @owner.nickname, dived_location: @dived_location)
+  end
+%>
+  <title><%=title%> - <%= it("Diveboard: your online scuba logbook", scope: ['logbook', 'meta_tags']) %></title>
+  <META NAME="Title" CONTENT="<%=title%> - <%= it("Diveboard: your online scuba logbook", scope: ['logbook', 'meta_tags']) %>" />
+  <meta name="description" content="<%=description%>"/>
+  <meta property="fb:app_id"             content="<%=FB_APP_ID%>" />
+  <meta property="og:title" content="<%=title%>" />
+  <meta property="og:type" content="article" />
+  <%Rails.logger.debug "Pushing og:type = article"%>
+  <meta property="og:url" content="<%=@owner.fullpermalink(:canonical)%>" />
+  <meta property="og:updated_time" content="<%=@owner.updated_at.iso8601%>" />
+  <meta property="og:image" content="<%=@owner.picture%>" />
+  <meta property="og:description" content="<%=description%>" />
+  <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+  <%I18n.available_locales.each do |locale|%>
+    <link rel='alternate' href='<%=@owner.fullpermalink(locale)%>' hreflang="<%=locale%>" />
+    <%if locale != I18n.locale then%>
+      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+    <%end%>
+  <%end%>
+  <meta property="og:site_name" content="<%=diveboard_tagline%>" />
+  <%@owner.dives.includes(:user).each do |d|%>
+    <%if d.privacy == 0%><meta property="diveboard:dive" content="<%=d.fullpermalink(:canonical)%>" /><%end%>
+  <%end%>
+  <%@owner.blog_posts.includes(:user).each do |d|%>
+    <%if !d.published_at.nil?%><meta property="diveboard:article" content="<%=d.fulltinypermalink%>" /><%end%>
+  <%end%>
+  <%@owner.public_shops.each do |d|%>
+    <% shop = d.fullpermalink(:canonical) rescue "" %>
+    <% if !shop.blank? %>
+    <meta property="diveboard:dived_with"    content="<%=shop%>" />
+    <%end%>
+  <%end%>
+
+
+  <meta property="fb:app_id" content="<%=FB_APP_ID%>" />
+  <%if !@owner.fb_id.nil?%><meta property="fb:admins" content="<%=@owner.fb_id%>" /><%end%>
+
+<%elsif params[:content] == :picture%>
+<!-- Tags for the pictures case -->
+  <%
+
+  species = ""
+  @picture.eolcnames.map{|s| species+= s.cname+", "}
+  @picture.eolsnames.map{|s| species+= s.sname+", "}
+  species = species.chop.chop
+
+  if @picture.notes.blank?
+    title= it("Picture Taken during a scuba dive in %{dive_spot_name}, %{dive_spot_location_name}, %{picture_dive_spot_country_cname} by %{owner_nickname}", scope: ['logbook', 'meta_tags'], dive_spot_name: @dive.spot.name.titleize, dive_spot_location_name: @dive.spot.location.name.titleize, picture_dive_spot_country_cname: @picture.dive.spot.country.cname.titleize, owner_nickname: @owner.nickname)
+  else
+    title= it("'%{picture_notes}' - Taken during a scuba dive in %{dive_spot_name}, %{dive_spot_location_name}, %{picture_dive_spot_country_cname} by %{owner_nickname}", scope: ['logbook', 'meta_tags'], picture_notes: @picture.notes.html_safe.gsub(/[\r|\t|\n]/," "), dive_spot_name: @dive.spot.name.titleize, dive_spot_location_name: @dive.spot.location.name.titleize, picture_dive_spot_country_cname: @picture.dive.spot.country.cname.titleize, owner_nickname: @owner.nickname)
+  end
+
+  begin
+    notes = @picture.notes.html_safe.gsub(/[\r|\t|\n]/," ")
+  rescue
+    notes = ""
+  end
+
+  %>
+  <!-- Tags for the Regular logbook case -->
+  <title><%=title%> - <%= it("Diveboard: your online scuba logbook", scope: ['logbook', 'meta_tags']) %></title>
+  <META NAME="Title" CONTENT="<%=title%> - <%= it("Diveboard: your online scuba logbook", scope: ['logbook', 'meta_tags']) %>" />
+  <meta property="og:title" content="<%=title%>" />
+  <meta property="fb:app_id"             content="<%=FB_APP_ID%>" />
+  <meta property="og:type"               content="diveboard:picture" />
+  <%Rails.logger.debug "Pushing og:type = diveboard:picture"%>
+  <meta property="og:updated_time" content="<%=@picture.updated_at.iso8601%>" />
+  <meta property="og:url" content="<%=@picture.fullpermalink(@dive.user, :canonical)%>" />
+  <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+  <%I18n.available_locales.each do |locale|%>
+    <link rel='alternate' href='<%=@picture.fullpermalink(@dive.user, locale)%>' hreflang="<%=locale%>" />
+    <%if locale != I18n.locale then%>
+      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+    <%end%>
+  <%end%>
+  <%=@picture.og_tag.html_safe%>
+  <meta property="og:description" content="<%= it("Picture from %{dive_user_nickname}'s scuba dive in %{dive_spot_country_cname}, %{dive_spot_location_name}: %{dive_spot_name} - species spotted : %{species} - Title: %{notes}", scope: ['logbook', 'meta_tags'], dive_user_nickname: @dive.user.nickname, dive_spot_country_cname: @dive.spot.country.cname.titleize, dive_spot_location_name: @dive.spot.location.name.titleize, dive_spot_name: @dive.spot.name.titleize, species: species, notes: notes) %>" />
+  <meta property="diveboard:spot"        content="<%=ROOT_URL%><%=@dive.spot.fullpermalink(:canonical)%>" />
+  <meta property="diveboard:date"        content="<%=@dive.time_in.iso8601%>" />
+  <meta property="diveboard:dive"    content="<%=@picture.dive.fullpermalink(:canonical)%>" />
+  <% shop = @picture.dive.shop.fullpermalink(:canonical) rescue "" %>
+  <% if !shop.blank? %>
+  <meta property="diveboard:dived_with"    content="<%=shop%>" />
+  <%end%>
+  <meta property="diveboard:species_spotted"    content="<%=species%>" />
+  <meta name="description" content="<%= it("%{title} - species spotted : %{species}", scope: ['logbook', 'meta_tags'], title: title, species: species) %>"/>
+  <meta property="og:site_name" content="<%=diveboard_short_tagline%>" />
+  <%if !@dive.user.fb_id.nil?%><meta property="fb:admins" content="<%=@dive.user.fb_id%>" /><%end%>
+  <!-- END Tags -->
+
+<%elsif [:trip].include?(params[:content]) %>
+<!--Tags for the trip pages-->
+<%
+  title = it("%{owner_nickname}'s scuba diving logbook on Diveboard", scope: ['logbook', 'meta_tags'], owner_nickname: @owner.nickname)
+  description = it("Check out %{owner_nickname}'s trip %{trip_name}.", scope: ['logbook', 'meta_tags'], owner_nickname: @owner.nickname, trip_name: @trip.name.titleize)
+%>
+  <title><%=title%> - <%= it("Diveboard: your online scuba logbook", scope: ['logbook', 'meta_tags']) %></title>
+  <META NAME="Title" CONTENT="<%=title%> - <%= it("Diveboard: your online scuba logbook", scope: ['logbook', 'meta_tags']) %>" />
+  <meta name="description" content="<%=description%>"/>
+  <meta property="og:title" content="<%=title%>" />
+  <meta property="og:type" content="article" />
+  <%Rails.logger.debug "Pushing og:type = article"%>
+  <meta property="og:url" content="<%=@trip.fullpermalink(:canonical)%>" />
+  <meta property="og:updated_time" content="<%=@owner.updated_at.iso8601%>" />
+  <meta property="og:image" content="<%=@owner.picture%>" />
+  <meta property="og:description" content="<%=description%>" />
+  <meta property="og:site_name" content="<%=diveboard_tagline%>" />
+  <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+  <%I18n.available_locales.each do |locale|%>
+    <link rel='alternate' href='<%=@trip.fullpermalink(locale)%>' hreflang="<%=locale%>" />
+    <%if locale != I18n.locale then%>
+      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+    <%end%>
+  <%end%>
+  <meta property="fb:app_id" content="<%=FB_APP_ID%>" />
+  <%if !@owner.fb_id.nil?%><meta property="fb:admins" content="<%=@owner.fb_id%>" /><%end%>
+  <%@trip.dives.each do |d| %>
+  <meta property="diveboard:dive"    content="<%=d.fullpermalink(:canonical)%>" />
+  <%end%>
+  <%@trip.dives.map{|e| e.shop rescue nil} .uniq.map{|e| e.fullpermalink(:canonical) rescue nil} .reject{|e| e.nil?} .each do |e| %>
+  <% if !e.blank? %>
+  <meta property="diveboard:dived_with"    content="<%=e%>" />
+  <%end%>
+  <%end%>
+<%else%>
+  <%
+  buddies = []+@dive.buddies.map(&:nickname)
+  buddies.push @dive.guide unless @dive.guide.blank?
+  buddies = buddies.join(", ")
+  species = ""
+  @dive.eolcnames.map{|s| species+= s.cname+", "}
+  @dive.eolsnames.map{|s| species+= s.sname+", "}
+  species = species.chop.chop
+  begin
+    if @dive.user.share_details_notes
+      notes = @dive.notes.html_safe.gsub(/[\r|\t|\n]/," ")
+    else
+      notes = ""
+    end
+  rescue
+    notes = ""
+  end
+  %>
+  <!-- Tags for the Regular logbook case -->
+  <%
+    dive_spot_country_cname = nil
+    dive_spot_location_name = nil
+    dive_spot_name = nil
+    if @dive.spot.nil? || @dive.spot_id == 1 then
+      translation_key = 0
+    elsif @dive.spot.country.nil? || @dive.spot.country.id == 1 then
+      translation_key         = 1
+      dive_spot_name          = @dive.spot.name.titleize
+    elsif @dive.spot.location.nil? || @dive.spot.location.id == 1 then
+      translation_key         = 2
+      dive_spot_name          = @dive.spot.name.titleize
+      dive_spot_country_cname = @dive.spot.country.cname.titleize
+    else
+      translation_key         = 3
+      dive_spot_name          = @dive.spot.name.titleize
+      dive_spot_country_cname = @dive.spot.country.cname.titleize
+      dive_spot_location_name = @dive.spot.location.name.titleize
+    end
+
+    page_title = it("divepage_title#{translation_key}", scope: ['logbook', 'meta_tags'], dive_spot_country_cname: dive_spot_country_cname, dive_spot_location_name: dive_spot_location_name, dive_spot_name: dive_spot_name, owner_nickname: @owner.nickname)
+  %>
+  <title><%=page_title%> - Diveboard</title>
+  <META NAME="Title" CONTENT="<%= page_title %> - Diveboard" />
+  <link rel="canonical" href="<%=@dive.fullpermalink(:canonical)%>" />
+  <meta property="og:title" content="<%= page_title %>" />
+  <meta property="fb:app_id"             content="<%=FB_APP_ID%>" />
+  <meta property="og:type"               content="diveboard:dive" />
+  <%Rails.logger.debug "Pushing og:type = diveboard:dive"%>
+  <meta property="og:url" content="<%=@dive.fullpermalink(:canonical)%>" />
+  <meta property="og:updated_time" content="<%=@dive.updated_at.iso8601%>" />
+  <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+  <%I18n.available_locales.each do |locale|%>
+    <link rel='alternate' href='<%=@dive.fullpermalink(locale)%>' hreflang="<%=locale%>" />
+    <%if locale != I18n.locale then%>
+      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+    <%end%>
+  <%end%>
+  <!-- og:image tag-->
+  <%=@dive.generate_image_tag.html_safe%>
+  <!-- end of og:image tag-->
+  <meta property="og:description" content="<%= it("Scuba diver: %{dive_user_nickname} - Dive spot: %{dive_spot_country_cname}, %{dive_spot_location_name}, %{dive_spot_name} - Species spotted : %{species} - Notes: %{notes}", scope: ['logbook', 'meta_tags'], dive_user_nickname: @dive.user.nickname, dive_spot_country_cname: @dive.spot.country.cname.titleize, dive_spot_location_name: @dive.spot.location.name.titleize, dive_spot_name: @dive.spot.name.titleize, species: species, notes: notes) %>" />
+  <meta property="diveboard:spot"        content="<%=@dive.spot.fullpermalink(:canonical)%>" />
+  <meta property="diveboard:date"        content="<%=@dive.time_in.iso8601%>" />
+  <meta property="diveboard:duration"    content="<%=@dive.duration%>" />
+  <meta property="diveboard:max_depth_m" content="<%=@dive.maxdepth(0).round(1)%>" />
+  <meta property="diveboard:max_depth_ft" content="<%=@dive.maxdepth(1).round(0)%>" />
+  <meta property="diveboard:buddies"    content="<%=buddies%>" />
+  <meta property="diveboard:notes"    content="<%=notes%>" />
+  <meta property="diveboard:species_spotted"    content="<%=species%>" />
+  <% shop = @dive.shop.fullpermalink(:canonical) rescue "" %>
+  <% if !shop.blank? %>
+  <meta property="diveboard:dived_with"    content="<%=shop%>" />
+  <%end%>
+  <%@dive.pictures.each do |p|%>
+  <meta property="diveboard:pictures"    content="<%=p.fullpermalink(@dive.user, :canonical)%>" />
+  <%end%>
+  <meta name="description" content="<%= it("%{dive_user_nickname}'s scuba dive in %{dive_spot_country_cname}, %{dive_spot_location_name}: %{dive_spot_name} - Species spotted : %{species} - Notes: %{notes}", scope: ['logbook', 'meta_tags'], dive_user_nickname: @dive.user.nickname, dive_spot_country_cname: @dive.spot.country.cname.titleize, dive_spot_location_name: @dive.spot.location.name.titleize, dive_spot_name: @dive.spot.name.titleize, species: species, notes: notes) %>"/>
+  <meta property="og:site_name" content="<%=diveboard_short_tagline%>" />
+  <%if !@dive.user.fb_id.nil?%><meta property="fb:admins" content="<%=@dive.user.fb_id%>" /><%end%>
+  <!-- END Tags -->
+<%end%>
+
+
+

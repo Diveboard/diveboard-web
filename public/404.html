@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Can't find the spot !(404)</title>
+  <style type="text/css">
+    body { font-family: Helvetica, Verdana, Arial, sans-serif; background-image: url(/img/main_bg.jpg); color: #1d1d1d; background-color: #222; text-align:justify;}
+    h1 { font-size: 26px; color: #3e3e3e; line-height: 1.5em; }
+	.no_content{background: url(/img/no_content_bg.jpg); color: #3e3e3e; font-size: 12px; height: 271px; width: 450px; padding: 55px 80px 40px 130px; margin-left: auto; margin-right: auto;}
+	.no_content img {margin-bottom: 5px; margin-left: auto; margin-right: auto;}
+  </style>
+</head>
+
+<body>
+  <!-- This file lives in public/404.html -->
+	<div class="no_content"> 
+	<h1>Time to surface, diver ! It's a 404!</h1>
+	<p>Man... something went wrong here... Apparently the page you're looking for is not available anymore!<br/>
+		Don't worry too much and go ahead and get back exploring cool dives !<br/></p>
+		
+	<h2>Head back to the <a href="/">home boat</a> where it's safe.</h2>
+	
+	</div>
+	<script type="text/javascript">
+	document.write(unescape("%3Cscript src='" + ((document.location.protocol=="https:")?"https://snapabug.appspot.com":"http://www.snapengage.com") + "/snapabug.js' type='text/javascript'%3E%3C/script%3E"));</script><script type="text/javascript">
+	SnapABug.setButton("http://www.diveboard.com/img/panic.png");
+	SnapABug.addButton("b2c04773-f709-44e0-a302-5eda7a791867","0","55%");
+	</script>
+	<script type="text/javascript">
+
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', '<%=GOOGLE_ANALYTICS%>']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+
+	</script>
+</body>
+</html>

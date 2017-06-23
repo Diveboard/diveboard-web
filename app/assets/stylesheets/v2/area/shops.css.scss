@@ -1,0 +1,235 @@
+@import 'variablesv2';
+
+#shops, #shopsModal
+{
+  .container
+  {
+    max-width: $home-width;
+    margin: 0 auto;
+    height: 100%;
+    @media (max-width: 1110px)
+    {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+    @media (max-width: 720px)
+    {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    .shop
+    {
+      height: 120px;
+      width: calc(50% - 12px);
+      margin-bottom: 20px;
+      float: left;
+      background-color: white;
+      border: 1px solid $light-gray-db;
+      @media (max-width: 850px)
+      {
+        width: 100%;
+      }
+      @media (max-width: 550px)
+      {
+        height: 80px;
+      }
+
+      .picture
+      {
+        background-size: cover;
+        background-color: #3c4245;
+        width: 120px;
+        height: 120px;
+        float: left;
+        @media (max-width: 550px)
+        {
+          width: 80px;
+          height: 80px;
+        }
+      }
+
+      .shop_info
+      {
+        float: left;
+        padding-top: 15px;
+        padding-left: 20px;
+        width: calc(100% - 140px);
+        height: calc(100% - 15px);
+        position: relative;
+        @media (max-width: 550px)
+        {
+          padding-top: 5px;
+          padding-left: 10px;
+          width: calc(100% - 90px);
+        }
+
+        .shop_name
+        {
+          text-decoration: none;
+          color: #3c4245;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .rating
+        {
+          margin-top: 5px;
+
+          td
+          {
+            padding-right: 10px;
+            @media (max-width: 550px)
+            {
+              padding-right: 5px;
+            }
+
+            p
+            {
+              font-size: 13px;
+              color: #8a8e8f;
+              white-space: nowrap;
+            }
+          }
+        }
+      }
+
+      .price
+      {
+        font-size: 14px;
+        color: #3c4245;
+        margin-top: 15px;
+
+        @media (max-width: 550px)
+        {
+          margin-top: 0px;
+        }
+
+        td
+        {
+          padding-right: 15px;
+        }
+
+        img
+        {
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      .book
+      {
+        bottom: 10px;
+        right: 10px;
+        @media (max-width: 850px)
+        {
+          bottom: 40px;
+        }
+        @media (max-width: 550px)
+        {
+          display: none;
+        }
+      }
+
+      &:hover
+      {
+        border-color: $yellow-db;
+      }
+    }
+
+    .second
+    {
+      float: right;
+      @media (max-width: 850px)
+      {
+        float: left;
+      }
+    }
+  }
+
+  #map
+  {
+    width: 100%;
+    height: 240px;
+    background-color: #3c4245;
+    @media (max-width: 768px)
+    {
+      display: none;
+    }
+  }
+}
+
+#shopsModal .modal_content
+{
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  position: absolute;
+  margin-left: 0;
+  margin-top: 0;
+  left: 0;
+  top: 0;
+
+  .container
+  {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow: auto;
+    #category_title
+    {
+      padding-top: 10px;
+      
+      h2
+      {
+        float: none;
+        text-align: center;
+      }
+    } 
+
+    .see_all_button
+    {
+      display: none;
+    }
+
+    .shop
+    {
+      height: auto !important;
+      width: 90% !important;
+      margin: 10px auto !important;
+      float: none !important;
+      .picture
+      {
+        width: 75px !important;
+        height: 75px !important;
+      }
+    }
+  }
+
+  .close
+  {
+   z-index: 2;
+  }
+
+  #infscr-loading
+  {
+    text-align: center;
+    img{
+      height: 60px;
+      width: 60px;
+      margin: 0px auto;
+    }
+  }
+
+  .load_more_button
+  {
+    display: block;
+    width: 170px;
+    height: 40px;
+    line-height: 40px;
+    margin: 0 auto;
+  }
+  
+}

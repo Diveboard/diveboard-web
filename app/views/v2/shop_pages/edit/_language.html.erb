@@ -1,0 +1,29 @@
+<%= content_for :javascripts do%>
+  <script type="text/javascript">
+    function language_name_from_code(code){
+      for (var i=0; i < language.length ; i++){
+        if (language[i].name.toLowerCase() == code.toLowerCase()){
+          //alert("found country "+ code);
+          return language[i].value;
+          break;
+        }
+      }
+      return "";
+    }
+
+    function language_code_from_name(name){
+      for (var i=0; i < language.length ; i++){
+        if (language[i].value.toLowerCase() == name.toLowerCase()){
+          //alert("found country "+ code);
+          return language[i].name;
+          break;
+        }
+      }
+      return "";
+    }
+
+
+
+    var language = <%= raw @languages.to_json(root: false, only: [:code3, :name]).gsub!("name", "value").gsub!("code3", "name") %>
+  </script>
+<%end%>

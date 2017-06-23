@@ -1,0 +1,105 @@
+    <div class="main_content_box">
+
+      <input id="spot-id" type="hidden" value="<%= @dive.spot.id%>"/>
+      <input id="profile-updated" type="hidden" value=""/>
+      <input id="profile-fileid" type="hidden" value=""/>
+      <input id="profile-diveid" type="hidden" value=""/>
+
+      <div id=wzgmapcontainer style="display: none">
+        <button class='yellow_button' id='wizardgmaps_placepin'><%= it("Place pin on map", scope: ['diveinfo', 'location_editor']) %></button>
+        <button class='grey_button' id='wizardgmaps_removepin'><%= it("Remove pin from map", scope: ['diveinfo', 'location_editor']) %></button>
+        <div id="wizardgmaps"> </div>
+      </div>
+      <div id="wizard_search_spot">
+        <p><%= it("Check by entering the spot name or region or country (or best : all of them!) if you can find the place where you have dived!", scope: ['diveinfo', 'location_editor']) %> </p>
+        <input id="spotsearch" class='wizard_big_input' size="85" style='text-align:center'/>
+        <div id="enter_spot_data">
+          <p><%= it("If you don't find the spot in the database, you can create your own spot entry.", scope: ['diveinfo', 'location_editor']) %></p>
+        </div>
+      </div>
+      <div id="wizard_spot_details">
+        <p>
+          <button class='yellow_button' id='wizard_spot_modspot'><%= it("Modify spot details", scope: ['diveinfo', 'location_editor']) %></button>
+          <button class='yellow_button' id='wizard_spot_remove'><%= it("Search another spot", scope: ['diveinfo', 'location_editor']) %></button>
+          <button class='yellow_button' id='wizard_spot_creaspot'><%= it("Create new spot", scope: ['diveinfo', 'location_editor']) %></button>
+          <button class='yellow_button' id='wizard_spot_reset'><%= it("Reset to initial spot", scope: ['diveinfo', 'location_editor']) %></button>
+
+          <button class='yellow_button' id='wizard_spot_confirm'><%= it("Confirm", scope: ['diveinfo', 'location_editor']) %></button>
+          <button class='yellow_button' id='wizard_spot_cancel'><%= it("Cancel", scope: ['diveinfo', 'location_editor']) %></button>
+        </p>
+        <table id="set_spot_details" class='<%if @dive.spot.id != 1%>spot_table_readonly'<%end%>' <%if @dive.spot.id == 1%>style='display:none;'<%end%>>
+        <tbody>
+          <tr>
+          <td class="wizard_input_label">
+          <label>
+          <%= it("Country:", scope: ['diveinfo', 'location_editor']) %> *
+          </label>
+          <img id='wizard-spot-flag' src="<%=@dive.spot.country.path_to_flag %>"/>
+          </td>
+          <td>
+          <input id="spot-country" type="text" class="wizard_input_50 wizard_big_input" style="font-style: normal;" value="<%=@dive.spot.country.cname%>" shortname='<%=@dive.spot.country.ccode unless @dive.spot.country.nil? || @dive.spot.country.id == 1%>' />
+          </td>
+          </tr>
+		  <tr>
+          <td class="wizard_input_label">
+          <label>
+          <%= it("Location:", scope: ['diveinfo', 'location_editor']) %>
+          </label>
+          </td>
+          <td>
+          <input id="spot-location" type="text" class="wizard_input_100 wizard_big_input" value="<%= @dive.spot.location.name%>"/>
+          </td>
+          </tr>
+		  <tr>
+          <td class="wizard_input_label">
+          <label>
+          <%= it("Spot Name:", scope: ['diveinfo', 'location_editor']) %>
+          </label>
+          </td>
+          <td>
+          <input id="spot-name" type="text" class="wizard_input_100 wizard_big_input" value="<%= @dive.spot.name%>"/>
+          </td>
+          </tr>
+          <tr>
+          <td class="wizard_input_label">
+          <label>
+          <%= it("Sea / Lake Name:", scope: ['diveinfo', 'location_editor']) %>
+          </label>
+          </td>
+          <td>
+          <input id="spot-region" type="text" class="wizard_input_100 wizard_big_input" value="<%= if !@dive.spot.nil? && ! @dive.spot.region.nil? then @dive.spot.region.name end%>"/>
+          </td>
+          </tr>
+          <tr>
+          <td class="wizard_input_label">
+          <label>
+          <%= it("Spot Lat/Long :", scope: ['diveinfo', 'location_editor']) %> *
+          </label>
+          </td>
+          <td>
+          <input id="spot-lat" type="text" value="<%= @dive.spot.lat%>" class="wizard_input_25"/>
+          <input id="spot-long" type="text" value="<%= @dive.spot.long%>" class="wizard_input_25"/>
+          <input id="spot-zoom" type="hidden" value="<%= @dive.spot.zoom%>"/>
+          </td>
+          </tr>
+
+        </tbody>
+        </table>
+      </div>
+    </div>
+
+
+<div id="dialog-spotchanged" title="<%= it("Spot details changed", scope: ['diveinfo', 'location_editor']) %>" style="display:none;">
+  <p><%= it("Keeping Diveboard database clean enough requires a lot of moderation. But you can help by making sure that new spots are not entered as updates!", scope: ['diveinfo', 'location_editor']) %></p>
+  <br/>
+  <p class='dialog-text-highlight'><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><%= it("Do you confirm that the details you updated refer to the same initial dive spot?", scope: ['diveinfo', 'location_editor']) %></p>
+  <table id=spotchanged-table >
+  <tr class='row1'><td></td><th><%= it("Initial spot data", scope: ['diveinfo', 'location_editor']) %></th><th><%= it("Your changes", scope: ['diveinfo', 'location_editor']) %></th></tr>
+  <tr><td class=col1><%= it("Country", scope: ['diveinfo', 'location_editor']) %></td><td id=country-old ></td><td id=country-new ></td></tr>
+  <tr><td class=col1><%= it("Location", scope: ['diveinfo', 'location_editor']) %></td><td id=location-old ></td><td id=location-new ></td></tr>
+  <tr><td class=col1><%= it("Name", scope: ['diveinfo', 'location_editor']) %></td><td id=name-old ></td><td id=name-new ></td></tr>
+  <tr><td class=col1><%= it("Sea / Lake Name", scope: ['diveinfo', 'location_editor']) %></td><td id=region-old ></td><td id=region-new ></td></tr>
+  <tr><td class=col1><%= it("Latitude", scope: ['diveinfo', 'location_editor']) %></td><td id=lat-old ></td><td id=lat-new ></td></tr>
+  <tr><td class=col1><%= it("Longitude", scope: ['diveinfo', 'location_editor']) %></td><td id=long-old ></td><td id=long-new ></td></tr>
+  </table>
+</div>

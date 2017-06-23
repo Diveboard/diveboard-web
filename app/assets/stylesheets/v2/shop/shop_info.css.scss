@@ -1,0 +1,55 @@
+@import 'variablesv2';
+
+#shop_info
+{
+  max-width: $home-width;
+  margin: 0 auto;
+  padding-top: 20px;
+  padding-bottom: 30px;
+  background-color: white;
+  margin-top: 10px;
+  border: 1px solid #dfdfdf;
+
+  .presentation
+  {
+    color: $dark-gray-db;
+    width: calc(50% - 40px);
+    padding-left: 20px;
+    padding-right: 20px;
+    float: left;
+
+    @media (max-width: 790px)
+    {
+      width: auto;
+    }
+  }
+
+  .package
+  {
+    width: calc(50% - 20px);
+    float: right;
+    margin-right: 20px;
+
+    .title
+    {
+      color: $navy-blue-db;
+      font-weight: 700;
+      padding-bottom: 10px;
+    }
+  }
+
+  .tags
+  {
+    width: calc(100% - 40px);
+    margin: 0 auto;
+    padding-top: 10px;
+  }
+
+  @media (max-width: 790px)
+  {
+    .package, .product_list
+    {
+      display: none;
+    }
+  }
+}

@@ -1,0 +1,144 @@
+<%
+  follow_ids = []
+
+  if !@user.nil?
+    follows = @user.activity_following
+    follows.each do |follow|
+      if !follow.user_id.nil?
+        follow_ids.push(follow.user_id)
+      end
+    end
+  end
+%>
+
+<script type="text/javascript">
+  follow_ids = <%= follow_ids.to_json %>;
+</script>
+
+<%= content_for :javascripts do%>
+  <script type="text/javascript">
+    $(document).ready(function()
+      {
+        $('.fb_share_lf').click(function()
+          {
+            var pic_url = LightFrame.pictureList[LightFrame.swipe.activeIndex].fullpermalink;
+            window.open("http://www.facebook.com/share.php?u="+encodeURI(pic_url)+"&title='"+encodeURI('Awesome picture taken in '+LightFrame.pictureList[LightFrame.swipe.activeIndex].location), "",  'width=600, height=400');
+        });
+        $('.pinterest_share_lf').click(function()
+          {
+            var pic_url = LightFrame.pictureList[LightFrame.swipe.activeIndex].fullpermalink;
+            window.open('//www.pinterest.com/pin/create/button/?url=' + encodeURI(pic_url) + "&media="+encodeURI(LightFrame.pictureList[LightFrame.swipe.activeIndex].large)+"&description="+encodeURI('Awesome picture taken in '+LightFrame.pictureList[LightFrame.swipe.activeIndex].location)+'&data-pin-do="buttonPin"&data-pin-config="above"&data-pin-height="28"', "", "width=600, height=400");
+          });
+        $('.twitter_share_lf').click(function()
+          {
+            var pic_url = LightFrame.pictureList[LightFrame.swipe.activeIndex].fullpermalink;
+            window.open('http://twitter.com/home?status=Awesome picture taken in '+LightFrame.pictureList[LightFrame.swipe.activeIndex].location+'+'+pic_url, "", "width=600, height=400");
+          });
+        $('.google_share_lf').click(function()
+          {
+            var pic_url = LightFrame.pictureList[LightFrame.swipe.activeIndex].fullpermalink;
+            window.open('https://plus.google.com/share?url='+pic_url, "", "width=600, height=400");
+          });
+        $('.link').click(function()
+          {
+            link = LightFrame.pictureList[LightFrame.swipe.activeIndex].fullpermalink;
+            if (link == '#')
+              link = window.location.href.replace('#', '');
+            $('.link').qtip({
+              content: {
+                text: link
+              },
+              position: {
+                  my: 'bottom right',
+                  at: 'top left'
+              },
+              style: {
+                classes: 'qtip-diveboard qtip-wrappall'
+              },
+              show: {
+                ready: true
+              },
+              hide: {
+                event: 'unfocus',
+                inactive: 6000
+              },
+              events: {
+                hide: function(event, api) {
+                  api.destroy();
+                }
+              }
+            });
+          });
+      });
+  </script>
+<%end%>
+
+<div id="light_frame">
+  <div class="close_button"><img src="<%= HtmlHelper.lbroot "/img/drawer/svg/close_menu_light_grey.svg" %>" alt="Close" /></div>
+  <div class="picture_container">
+    <div class="swiper-wrapper">
+    </div>
+  </div>
+  <div class="info">
+    <div class="title_bar">
+      <p class="name" id="title"></p>
+      <div class="exif">
+        <div class="icon"><img src="<%= HtmlHelper.lbroot "/img/gallery/tag_icon.png" %>" alt="" /></div>
+        <div class="exif_data">
+          <p id="location"></p>
+          <p id="date_camera"></p>
+        </div>
+      </div>
+      <table class="social">
+        <tr>
+          <td><a href="#"><div class="fb_share_lf soc_button"><img src="<%= HtmlHelper.lbroot "/img/global/social/facebook_white_icon.svg" %>" alt="Facebook" /></div></a></td>
+          <td><a href="#"><div class="pinterest_share_lf soc_button"><img src="<%= HtmlHelper.lbroot "/img/global/social/pinterest_white_icon.svg" %>" alt="Pinterest" /></div></a></td>
+          <td><a href="#"><div class="twitter_share_lf soc_button"><img src="<%= HtmlHelper.lbroot "/img/global/social/twitter_white_icon.svg" %>" alt="Twitter" /></div></a></td>
+          <td><a href="#"><div class="google_share_lf soc_button"><img src="<%= HtmlHelper.lbroot "/img/global/social/google_plus_white_icon.svg" %>" alt="Google+" /></div></a></td>
+          <td><a href="#"><div class="lightframe_share_email_button email soc_button"><img src="<%= HtmlHelper.lbroot "/img/gallery/mail_icon.png" %>" alt="Email" /></div></a></td>
+          <td><a href="#"><div class="link soc_button"><img src="<%= HtmlHelper.lbroot "/img/gallery/link_icon.png" %>" alt="Link" /></div></a></td>
+        </tr>
+      </table>
+      <div class="clear"></div>
+    </div>
+    <div class="sep_bar"></div>
+    <div class="user_mini_profile">
+      <img class="user_pic" id="user_pic" src="" alt="" />
+      <div class="user_info">
+        <p><a id="user_name"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<% if !@user.nil? %><span id="follow_link"></span><% end %></p>
+        <p id="qualification"></p>
+        <p id="former_loc"></p>
+      </div>
+      <table class="pic_button">
+        <tr>
+          <td><a id="fish_button" class="button" href="javascript:void(0)"><img class="icon" src="<%= HtmlHelper.lbroot "/img/gallery/fish_icon.png" %>" alt="Species" /><p class="species_number" id="species_count">(...)</p><img class="add" src="<%= HtmlHelper.lbroot "/img/gallery/add_icon.png" %>" alt="Add" /></a></td>
+          <td><a id="dq_comments" class="button" href="javascript:void(0)"><img class="icon" src="<%= HtmlHelper.lbroot "/img/gallery/chat_icon.png" %>" alt="Comments" /><p id="comment_count" class="comment_number">(...)</p><img class="add" src="<%= HtmlHelper.lbroot "/img/gallery/add_icon.png" %>" alt="Add" /></a></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="info_small">
+    <div class="info_toggle">
+      <!-- TODO add behavior with this to show information -->
+      <!--<img src="<%= HtmlHelper.lbroot "/img/gallery/info_arrow_up.png" %>" alt="" />-->
+    </div>
+  </div>
+
+  <div class="light_loading">
+    <img src="<%= HtmlHelper.lbroot "/img/transparent_loader_2.gif" %>" alt="Loading" />
+    <p>Loading...</p>
+  </div>
+
+  <div id="overlay"></div>
+
+  <div class="comments">
+    <%= render :partial => 'disqus/comments_box'%>
+    <div class="indicator_triangle"></div>
+  </div>
+
+  <div class="fish">
+    <div class="container"></div>
+    <div class="indicator_triangle"></div>
+  </div>
+</div>
+

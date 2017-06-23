@@ -1,0 +1,104 @@
+<%= content_for :javascripts do%>
+<script type="text/javascript">
+  $(document).ready(function()
+  {
+    checkout_modal = new LightModal('checkout_modal');
+    DiveboardCheckoutModal.initUI();
+  });
+</script>
+<% end %>
+
+<div id="checkout_modal" class="checkoutModal modal">
+  <div class="modal_content">
+  </div>
+
+  <div class="modal_slides">
+
+    <div modal_class="modal_content_checkout" modal_id="checkout">
+      <div class="modal_body">
+        <div class="title">
+          <img src="<%= HtmlHelper.lbroot "/img/global/icon_basket_navigation.svg" %>">
+          <span><%= it("My shopping cart", scope: ['templates', 'template_buy_dive']) %></span>
+        </div>
+        <div class="title_separator"></div>
+        <div class="body">
+          <div class="item">
+            <div class="product">
+              <p class="primary shop_title">Dive Shack USA - Catalina Island</p>
+              <p class="shop_product">Introductory Scuba Dive</p>
+            </div>
+            <div class="number_div">
+              <input type="number" name="howmuch" min="1" value="1">
+            </div>
+            <div class="price">
+              <div class="embedded">
+                <span class="one">$49.00</span>
+                <span> -> </span>
+                <span class="total">$98.00</span>
+              </div>
+            </div>
+          </div>  
+          <div class="date">
+            <div class='form_date_choice'>
+            <span class='large_click'><input class='radio' type=radio name='date_type' value='one' checked /><%= it("Just on one day", scope: ['templates', 'template_buy_dive']) %></span>
+              <span class='large_click'><input class='radio' type=radio name='date_type' value='period'/><%= it("Over several days", scope: ['templates', 'template_buy_dive']) %></span>
+            </div>
+            <div class='form_date_type_one form_date_type'>
+              <%=it("On:", scope: ['templates', 'template_buy_dive'])%> <input type='text' class='date_picker date_at' value='' readonly>
+            </div>
+            <div class='form_date_type_period form_date_type'>
+              <%= it("From:", scope: ['templates', 'template_buy_dive']) %> <input type='text' class='date_picker date_from' value='' readonly>
+              <%= it("Until:", scope: ['templates', 'template_buy_dive']) %> <input type='text' class='date_picker date_to' value='' readonly>
+            </div>
+          </div>        
+          <div class="comment">
+            <textarea placeholder="<%= it("Add a comment (level, experience, special attention, ...)", scope: ['templates', 'template_buy_dive'])%>"></textarea>
+          </div>
+          <div class="discount">
+            <div class="description">
+              <p class="primary"><%= it("Discount code or voucher", scope: ['templates', 'template_buy_dive']) %></p>
+              <p><%= it("Enter your discount code or voucher to receive a discount to your total order. Multiple vouchers cannot be applied.", scope: ['templates', 'template_buy_dive'])%></p>
+            </div>
+            <div class="code">
+              <input type="text" placeholder="AZEY23-ERT7" />
+            </div>
+            <div class="redeem">
+              <div class="yellow_button"><%= it("Redeem", scope: ['templates', 'template_buy_dive'])%></div>
+            </div>
+          </div>
+          <div class="total_checkout">
+            <div class="count">
+              <table class="price">
+                <tbody>
+                  <tr>
+                    <td><%= it("Sub" , scope: ['templates', 'template_buy_dive'])%></td>
+                    <td class="sub">$98.00</td>
+                  </tr>
+                  <tr>
+                    <td><%= it("Discount", scope: ['templates', 'template_buy_dive'])%></td>
+                    <td class="discount_amount">$10.00</td>
+                  </tr>
+                  <tr>
+                    <td colspan="2"><div class="separator"></div></td>
+                  </tr>
+                  <tr>
+                    <td class="primary">Total</td>
+                    <td class="primary total">$88.00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="link">
+              <div>
+                <a class="red-button checkout-now" href="/pro/checkout"><%= it("Checkout now", scope: ['templates', 'template_buy_dive'])%></a>
+                <div class="transparent_dark_gray_button continue-shopping" modal_trigger="close"><%= it("Continue Shopping", scope: ['templates', 'template_buy_dive'])%></div>
+              </div>
+              <a href="" class="remove-item"><%= it("Remove this item", scope: ['templates', 'template_buy_dive'])%></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

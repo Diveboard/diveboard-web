@@ -1,0 +1,708 @@
+<%= render :partial => 'admin_css'%>
+
+<script src="http://maps.google.com/maps/api/js?sensor=false&amp;key=<%= @gmapskey%>" type="text/javascript"></script>
+<%= javascript_include_tag 'divepage', defer: true %>
+
+<script type="text/javascript">
+
+/*
+  to apply template id=if_from on div with id=id_to with data :
+  $("#id_to").html(tmpl("id_from", data))
+  */
+var G_current_user = <%=@user.id%>;
+
+  $(document).ready( function () {
+    try{
+    $("#master_spot li").addClass("selected");
+    G_spot_lat = Number($("#spot_lat").val());
+    G_spot_long = Number($("#spot_long").val());
+    G_spot_zoom = Number($("#spot_zoom").val());
+
+    gmaps_initialize("mapholder", true);
+    $("#spot_lat").keyup(update_map);
+    $("#spot_long").keyup(update_map);
+    $("#spot_zoom").keyup(update_map);
+
+    google.maps.event.addListener(marker, 'mouseup', function() {
+      //infowindow.open(map,marker);
+      map.setCenter(marker.position);
+      var lat = marker.position.lat();
+      var lng = marker.position.lng();
+      $("#spot_lat").val(diveboard.round(lat,5));
+      $("#spot_long").val(diveboard.round(lng,5));
+      wizard_correct_dive = true;
+      wizard_marker_moved = true;
+    });
+
+
+
+    google.maps.event.addListener(map, 'zoom_changed', function() {
+      //set new zoom - only relevant if marker isdraggable
+      $("#spot_zoom").val(map.getZoom());
+      wizard_correct_dive = true;
+
+    });
+
+    google.maps.event.addListener(map, 'click', function(event  ) {
+      marker.setPosition(event.latLng);
+      map.setCenter(marker.position);
+    });
+
+    }catch(e){
+      console.log("Could not initiate gmaps error: "+e.message);
+    }
+
+    try{
+    $("#location").autocomplete({
+      source: function(request, response){
+        $.ajax({
+          url:"/api/search/location.json",
+          data:({
+            q: request.term,
+            ccode: $("#country_code").val().toUpperCase()
+          }),
+          dataType: "json",
+          open: function(event, ui){
+            if(!$("#location").is(":selected")){
+              $("#location").autocomplete( "close" );
+            }
+          },
+          success: function(data){
+            response( $.map( data, function( item ) {
+              return {
+                label: item.name+" - id:"+item.id,
+                value: item.name,
+                id: item.id
+              }
+            }));
+          },
+          error: function(data) { diveboard.alert("A technical error happened while trying to connect to Facebook."); }
+        });
+      },
+      minLength: 2,
+      select: function(event, ui) {
+        $("#printed_location_id").html(ui.item.id);
+        $("#location_id").val(ui.item.id);
+        set_master_spot_data(get_master_spot_data());
+        $("#location").attr("country", $("#country_code").val().toUpperCase());
+        //$("#location").autocomplete( "close" )
+        unvalidate_spot();
+      }
+    });
+
+    $("#region").autocomplete({
+      source: function(request, response){
+        $.ajax({
+          url:"/api/search/region.json",
+          data:({
+            q: request.term
+          }),
+          dataType: "json",
+          open: function(event, ui){
+            if(!$("#region").is(":selected")){
+              $("#region").autocomplete( "close" );
+            }
+          },
+          success: function(data){
+            response( $.map( data, function( item ) {
+              return {
+                label: item.name+" - id:"+item.id,
+                value: item.name,
+                id: item.id
+              }
+            }));
+          },
+          error: function(data) { diveboard.alert("A technical error happened while trying to connect to Facebook."); }
+        });
+      },
+      minLength: 2,
+      select: function(event, ui){
+        $("#printed_region_id").html(ui.item.id);
+        $("#region_id").val(ui.item.id);
+        set_master_spot_data(get_master_spot_data());
+        //$("#region").autocomplete( "close" )
+        unvalidate_spot();
+      }
+    });
+
+
+
+    check_country();
+    $("#country_code").keyup(check_country);
+    $("#country_code").change(check_location_country);
+    $("#master_spot").click(show_master_spot_edit);
+    $(".spots_to_moderate .show_spot").click(show_spot_details);
+    $("#copy_slave_to_master").click(copy_slave_to_master);
+    $("#master_spot_validated").live("click", sign_master_spot);
+    $("#edit_master_spot input").keyup(unvalidate_spot);
+    $("#edit_master_spot input").change(unvalidate_spot);
+    $(".copy_slave_to_master").live("click", copy_slave_to_master);
+    $("#location").keypress(function(e){
+      //erase id for manually inputed locations
+        $("#location_id").val("");
+        $(".printed_location_id").html("");
+        $("#master_spot .location").html("");
+    });
+    $("#region").keypress(function(e){
+        //erase id for manually inputed locations
+        $("#region_id").val("");
+        $("#printed_region_id").html("");
+        $("#master_spot .region").html("");
+    });
+    $("#reset_master").click(reset_master);
+    $("#merge").click(do_merge);
+    $("#merge_private").click(do_merge_private);
+    $("#merge_destroy").click(do_merge_delete);
+    }catch(e){
+      console.log("Could not initiate the page "+e.message);
+    }
+
+    $("input").change(function(e){
+        set_master_spot_data(get_master_spot_data());
+      });
+
+    //navigation
+    $("#jump_to_spot").click(do_jump);
+    $("#jump_spot_from_list").change(function(){
+      $("#jump_spot_from_id").val($("#jump_spot_from_list").val());
+    })
+    $("#jump_spot_from_id").keyup(function(){
+      $("#jump_spot_from_list").val($("#jump_spot_from_id").val());
+    })
+
+
+
+    <% if !@errors.blank? %>
+
+      diveboard.notify("Error logs", "<%=@errors.to_s.html_safe.gsub('"',"'")%>");
+
+    <%end%>
+  });
+
+
+
+function update_map(){
+  marker.setPosition(
+    new google.maps.LatLng(
+      Number($("#spot_lat").val()),
+      Number($("#spot_long").val())
+      )
+    );
+  map.setCenter(marker.position);
+  map.setZoom(Number($("#spot_zoom").val()));
+
+
+}
+function clear_region(e){
+  if(e)
+    e.preventDefault();
+  $("#printed_region_id").html("");
+  $("#region_id").val("");
+  $("#region").val("");
+  set_master_spot_data(get_master_spot_data());
+  unvalidate_spot();
+  return false;
+}
+
+function check_country(e){
+
+  var name = country_name_from_code($("#country_code").val())
+  if (name != ""){
+    $("#country").text(name);
+    $("#country").css("color", "black");
+
+  }else{
+    $("#country").text("ERROR");
+    $("#country").css("color", "red");
+  }
+}
+
+function check_location_country(e){
+  if ($("#location").attr("country") != $("#country_code").val()){
+    console.log("Country has changed");
+    $("#location").val(null);
+    $("#location_id").val(null);
+    $(".printed_location_id").html("");
+    $("#master_spot .location").html("");
+  }
+}
+
+
+function show_spot_details(e){
+  e.preventDefault();
+  $("li.selected").removeClass("selected");
+  $("#edit_master_spot").hide();
+
+
+  spot_data = spot_data_similar[$(e.target).closest("li").attr("name")];
+  $(e.target).closest("li").addClass("selected");
+  $("#view_spot_details").html(tmpl("spot_view_template", spot_data ));
+}
+
+function show_master_spot_edit(e){
+  e.preventDefault();
+
+  $("li.selected").removeClass("selected");
+  $("#master_spot li").addClass("selected");
+  $("#view_spot_details").empty();
+  $("#edit_master_spot").show();
+  update_map();
+}
+
+function sign_master_spot(e){
+  e.preventDefault();
+  if($("#spot_zoom").val()<6 || $("#spot_zoom").val()>12){
+    diveboard.notify("Wrong value", "Zoom must be between 6 and 12");
+    return
+  }
+  diveboard.propose("Sign this spot",
+                   "<b>WARNING :</b> Do not sign this spot unless you really actually checked the data. If you are confident about the data, hit OK",
+                   {"OK":sign_master_confirm, "Cancel": function(){}});
+
+}
+
+function sign_master_confirm(userid){
+  console.log("signed");
+  //$(".verified_spot").hide();
+  if(userid == null)
+    userid = G_current_user;
+  $(".new_verified_spot").show();
+  $(".not_verified_spot").hide();
+  $(".master_spot_validator_name").html(userid);
+  $("#master_spot .verified .default").hide();
+  $("#master_spot .verified .updated").show();
+  //set_master_spot_data(get_master_spot_data());
+  $("#master_spot .verified .updated").html('<span class="symbol green">/</span>');
+  $("#verified_user_id").val(userid);
+}
+
+function unvalidate_spot(e){
+  if(e)
+    e.preventDefault();
+  $(".new_verified_spot").hide();
+  //$(".verified_spot").hide();
+  $(".not_verified_spot").show();
+  $("#master_spot .verified .default").hide();
+  $("#master_spot .verified .updated").show();
+  //set_master_spot_data(get_master_spot_data());
+  $("#master_spot .verified .updated").html('<span class="symbol red">×</span>');
+  $("#verified_user_id").val("");
+}
+
+function copy_slave_to_master(e){
+  e.preventDefault();
+  //coco = e;
+  var spot_name = $(e.target).attr("name");
+  var spot_data = spot_data_similar[$(e.target).attr("name")];
+
+  set_master_spot_data(spot_data);
+  diveboard.notify("Success", "Copy of slave data to master spot done<br/>Please recheck data in master")
+}
+
+function set_master_spot_data(spot_data){
+  //ccode
+  $("#country_code").val(spot_data.country_code);
+  $("#master_spot .ccode").html(spot_data.country_code);
+  check_country();
+
+  //name
+  $("#spot_name").val(spot_data.name);
+  $("#master_spot .spot_name").html(spot_data.name);
+
+  //location
+  if(spot_data.location_id == null || spot_data.location_id == "")
+    $("#location_id").val("");
+  else
+    $("#location_id").val(spot_data.location_id);
+  $("#location").val(spot_data.location_name);
+  $(".printed_location_id").html(spot_data.location_id);
+  $("#master_spot .location").html(spot_data.location_id);
+
+  //region
+  if(spot_data.region_id == null || spot_data.region_id == "")
+    $("#region_id").val("");
+  else
+    $("#region_id").val(spot_data.region_id);
+  $("#region").val(spot_data.region_name);
+  $("#printed_region_id").html(spot_data.region_id);
+  $("#master_spot .region").html(spot_data.region_id);
+
+  //latitude
+  $("#spot_lat").val(spot_data.lat);
+  $("#master_spot .lat").html(diveboard.round(spot_data.lat,3));
+
+  //longitude
+  $("#spot_long").val(spot_data.lng);
+  $("#master_spot .long").html(diveboard.round(spot_data.lng,3));
+
+  //zoom
+  $("#spot_zoom").val(spot_data.zoom);
+  $("#master_spot .zoom").html(spot_data.zoom);
+
+  //comments
+  $("#description").val(spot_data.description);
+
+  //Verified user
+  if(spot_data.verified_user_id == null || spot_data.verified_user_id == ""){
+    unvalidate_spot()
+  }else{
+    sign_master_confirm(spot_data.verified_user_id)
+  }
+
+}
+
+function get_master_spot_data(){
+  var spot_data = new Object;
+  spot_data["country_code"] = $("#country_code").val();
+  spot_data["name"] = $("#spot_name").val();
+  spot_data["location_id"] = $("#location_id").val();
+  spot_data["location_name"] = $("#location").val();
+  spot_data["region_id"] = $("#region_id").val();
+  spot_data["region_name"] = $("#region").val();
+  spot_data["lat"] = $("#spot_lat").val();
+  spot_data["lng"] = $("#spot_long").val();
+  spot_data["zoom"] = $("#spot_zoom").val();
+  spot_data["description"] = $("#description").val();
+  spot_data["verified_user_id"] = $("#verified_user_id").val();
+  return spot_data;
+}
+
+function reset_master(e){
+  e.preventDefault();
+
+  set_master_spot_data(spot_data_similar[$("#master_spot li").attr("name")]);
+  $("#master_spot .verified .default").show();
+  $("#master_spot .verified .updated").hide();
+  //$(".verified_spot").show();
+  $(".master_spot_validator_name").html($(".master_spot_validator_name").attr("data"));
+  if( $(".master_spot_validator_name").attr("data") == ""){
+    $(".new_verified_spot").hide();
+    $(".not_verified_spot").show();
+  }else{
+    $(".new_verified_spot").show();
+    $(".not_verified_spot").hide();
+  }
+}
+
+function do_merge(e){
+    e.preventDefault();
+  if($("#verified_user_id").val() == ""){
+    diveboard.notify("Spot not signed",
+      "You need to <b>sign the spot</b> before submitting it. Check the data and hit the 'sign data' button of the master spot.");
+    return;
+  }
+  var spots_to_merge = $.map( $(".spots_to_moderate li"),
+                              function(val, i){
+                                if( $(val).find("input").is(":checked") )
+                                {
+                                  return Number($(val).attr("name"));
+                                }
+                              });
+
+  diveboard.propose("Confirm action", "We will be merging the following spots into the master spot and make it PUBLIC<br/>"+spots_to_merge.toString(), {"Cancel": null, "OK": do_merge_v});
+}
+
+function do_merge_v(){
+
+
+  //will trigger the spot merger on eht new selected spot
+  //step 1 : get the spot data
+  //var spot_data = get_master_spot_data();
+  var spots_to_merge = $.map( $(".spots_to_moderate li"),
+                              function(val, i){
+                                if( $(val).find("input").is(":checked") )
+                                {
+                                  return Number($(val).attr("name"));
+                                }
+                              });
+
+  $("#spots_to_merge").val(JSON.stringify(spots_to_merge));
+
+  //Step 2 : POST
+  $("input[value=submit_merge_public]").click();
+
+
+}
+
+function do_merge_private(e){
+  e.preventDefault();
+  var spots_to_merge = $.map( $(".spots_to_moderate li"),
+                            function(val, i){
+                              if( $(val).find("input").is(":checked") )
+                              {
+                                return Number($(val).attr("name"));
+                              }
+                            });
+  diveboard.propose("Confirm action", "We will be merging the following spots into the master spot and make it PRIVATE<br/>"+spots_to_merge.toString(), {"Cancel": null, "OK": do_merge_private_v});
+}
+
+
+function do_merge_private_v(){
+  var spots_to_merge = $.map( $(".spots_to_moderate li"),
+                            function(val, i){
+                              if( $(val).find("input").is(":checked") )
+                              {
+                                return Number($(val).attr("name"));
+                              }
+                            });
+  $("#spots_to_merge").val(JSON.stringify(spots_to_merge));
+
+  //Step 2 : POST
+  $("input[value=submit_merge_private]").click();
+
+}
+
+function do_merge_delete(e){
+  e.preventDefault();
+  var spots_to_merge = $.map( $(".spots_to_moderate li"),
+                            function(val, i){
+                              if( $(val).find("input").is(":checked") )
+                              {
+                                return Number($(val).attr("name"));
+                              }
+                            });
+  diveboard.propose("Confirm action", "We will be deleting the MASTER spot and ALL selected spot:<br/>"+spots_to_merge.toString(), {"Cancel": null, "OK": do_merge_delete_v});
+}
+
+function do_merge_delete_v(){
+  var spots_to_merge = $.map( $(".spots_to_moderate li"),
+                            function(val, i){
+                              if( $(val).find("input").is(":checked") )
+                              {
+                                return Number($(val).attr("name"));
+                              }
+                            });
+  $("#spots_to_merge").val(JSON.stringify(spots_to_merge));
+
+  //Step 2 : POST
+  $("input[value=submit_merge_delete]").click();
+}
+
+
+function do_jump(e){
+  if($("#jump_spot_from_list").val() == "" && $("#jump_spot_from_id").val() == ""){
+    diveboard.notify("Error", "You can't load a spot if you dont't select one...");
+    return
+  }
+
+  $("input[value=submit_jump]").click();
+}
+
+
+function check_merge_private_ok(){
+  //ensure we merge in private spots only wiht no dives or dives belonging to one single user
+
+}
+
+var spot_data_similar = new Object();
+
+</script>
+
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 3 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;" class="spot_moderation">
+  <%= render :partial => 'spot_menu' %>
+  <div class="flash"><%=flash[:notice]%></div>
+  <h1>Spot Moderation</h1>
+  <%= form_tag("/admin/mod_spot") do%>
+  <input type="hidden" id="moderation_list" name="moderation_list" value="<%=@moderation_list.to_json%>"/>
+  Select spot to moderate : <select name="jump_spot_from_list" id="jump_spot_from_list">
+  <option value=''></option>
+  <%@moderation_list.each do |s|%>
+  <option value='<%=s%>'><%= Spot.find(s).name+" - " + s.to_s%></option>
+  <%end%>
+  </select>
+  or from id <input type="number" name="jump_spot_from_id" id="jump_spot_from_id"/>
+  <div class="yellow_button" id="jump_to_spot" style="display: inline-block;">Jump to spot</div>
+  <div style="display:none;"><%= submit_tag 'submit_jump' %></div>
+  <%end%>
+
+  <%=form_tag("/admin/mod_spot") do%>
+  <% if !@user_spot.nil?%>
+  <div class="merge_header">
+    <div class="merge_header_button">
+      <div id="merge" class="yellow_button">Merge + make public</div>
+      <div id="merge_private" class="yellow_button">Merge + make private</div>
+      <!--<div id="merge_destroy" class="yellow_button">Merge + destroy</div>-->
+    </div>
+    <div class="merge_warning">
+      <b>WARNING</b>:<br/>
+      <ul style="font-size: 10px;" class='warning'>
+        <li>Spots checked will be merged into master</li>
+        <li>If not checked, spots will stay in moderation queue</li>
+        <li>If a spot cannot be identified "make private"</li>
+        <li>A private spot with no dives will be <b>deactivated permanently</b></li>
+      </ul>
+    </div>
+  </div>
+  <div id="spot_moderation_left_pane">
+    <h2>Spot to moderate (master)</h2>
+    <ul id="master_spot">
+      <%= render :partial => "spot_admin_list", :locals =>{:s => @user_spot} %>
+    </ul>
+
+    <h2> Spots selection</h2>
+    <h3>Mods from master:</h3>
+    <ul class="spots_to_moderate">
+      <%@spot_moderation_chain.each do |s|%>
+      <%= render :partial => "spot_admin_list", :locals =>{:s => s} %>
+      <%end%>
+    </ul>
+    <%if @spot_moderation_chain.blank?%>
+    None
+    <%end%>
+    <h3>Similar spots to consider:</h3>
+    <ul class="spots_to_moderate">
+      <%@spot_similar_chain.each do |s|%>
+      <%
+        ##ensure the spot is still valid
+        ##Spot.find(s.id) rescue next
+        next if !s.flag_moderate_private_to_public.nil? && s.private_user_id.nil?
+      %>
+      <%= render :partial => "spot_admin_list", :locals =>{:s => s} %>
+      <%end%>
+    </ul>
+  </div>
+
+  <div id="spot_moderation_right_pane">
+    <h2> Spots Details</h2>
+    <div id="view_spot_details"></div>
+    <div id="edit_master_spot">
+      <div class="master_spot_validation varline_large"><b>Status: </b>
+        <div class="new_verified_spot" <%if @user_spot.verified_user_id.nil?%>style="display: none"<%end%>>
+          <span class="symbol green">/</span> Validated by <span class="master_spot_validator_name" data='<%=@user_spot.verified_user_id || ""%>'><%= @user_spot.verified_user_id ||  ""%></span></span>
+        </div>
+        <div class="not_verified_spot" <%if !@user_spot.verified_user_id.nil?%>style="display: none"<%end%>>
+          <span class="symbol red">×</span> NOT Validated : <div class="yellow_button" id="master_spot_validated">SIGN Data</div></span>
+        </div>
+        <div class="yellow_button" id="reset_master">Reset to initial values</div>
+      </div>
+
+
+      <input type="hidden" id="id" name="id" value="<%=@user_spot.id%>"/>
+      <input type="hidden" id="verified_user_id" name="verified_user_id" value="<%=@user_spot.verified_user_id || ""%>"/>
+      <input type="hidden" id="moderation_list" name="moderation_list" value="<%=@moderation_list.to_json%>"/>
+      <input type="hidden" id="spots_to_merge" name="spots_to_merge" value="<%=[].to_json%>"/>
+      <div class="varline_large"><div class="tag"><b>ID :</b></div><div class="field"><%= @user_spot.id or "NA"%></div></div>
+      <div class="varline_large"><div class="tag"><b>Name :</b></div><div class="field">
+      <input type="text" id="spot_name" name="spot_name" value="<%=@user_spot.name%>"/>
+    </div></div>
+    <%if @user_spot.location.nil?%>
+    <input type="hidden" id="location_id" name="location_id" value=""/>
+    <div class="varline_large"><div class="tag"><b>Location :</b></div><div class="field"><input type="text" id="location" name="location" /></div></div>
+    <%else%>
+    <input type="hidden" id="location_id" name="location_id" value="<%=@user_spot.location_id%>" country="<%=@user_spot.location.country.ccode.upcase%>"/>
+    <div class="varline_large"><div class="tag"><b>Location :</b></div><div class="field"><input type="text" id="location" name="location" value="<%=@user_spot.location.name%>"/> (<span class="printed_location_id"><%=@user_spot.location.id%> - country: <%=@user_spot.location.country.ccode%></span>)</div></div>
+    <%end%>
+    <%if @user_spot.region.nil?%>
+    <input type="hidden" id="region_id" name="region_id" value=""/>
+    <div class="varline_large"><div class="tag"><b>Body of Water :</b></div><div class="field"><input type="text" id="region" name="region"/> (<span id="printed_region_id"></span>)</div><a href="#" onclick="clear_region(); return false;">clear</a></div>
+    <%else%>
+    <input type="hidden" id="region_id" name="region_id" value="<%=@user_spot.region_id%>"/>
+    <div class="varline_large"><div class="tag"><b>Body of Water :</b></div><div class="field"><input type="text" id="region" name="region" value="<%=@user_spot.region.name%>"/> (<span id="printed_region_id"><%=@user_spot.region.id%></span>)</div><a href="#" onclick="clear_region(); return false;">clear</a></div>
+    <%end%>
+    <%if @user_spot.country.nil?%>
+    <div class="varline_large"><div class="tag"><b>Country code :</b></div><div class="field"><input type="text" id="country_code" name="country_code"/></div></div>
+    <%else%>
+    <div class="varline_large"><div class="tag"><b>Country code :</b></div><div class="field"><input type="text" id="country_code" name="country_code" value="<%=@user_spot.country.ccode%>"/></div></div>
+    <%end%>
+    <div class="varline_large"><div class="tag"><b>Code checked :</b></div><div class="field" id="country"></div></div>
+    <div class="varline_large"><div class="tag"><b>latitude :</b></div><div class="field">
+    <input id="spot_lat" name="spot_lat" value="<%=@user_spot.lat%>"/>
+  </div></div>
+  <div class="varline_large"><div class="tag"><b>longitude :</b></div><div class="field">
+  <input id="spot_long" name="spot_long" value="<%=@user_spot.long%>"/>
+</div></div>
+<div class="varline_large"><div class="tag"><b>zoom :</b></div><div class="field">
+<input type="number" step="1"  min="6" max="12" id="spot_zoom" name="spot_zoom" value="<%=@user_spot.zoom%>"/>
+</div></div>
+<div class="varline_large"><div class="tag"><b>description :</b></div>
+<textarea rows="2" cols="30" style="margin-left: -4px;" id="description"><%if !@user_spot.description.blank?%><%=@user_spot.description.html_safe%><%end%></textarea>
+</div>
+<div id="mapholder" style=" width:400px; height: 400px; margin-top: 10px;"></div>
+
+
+<div style="display:none;"><%= submit_tag 'submit_merge_public' %></div>
+<div style="display:none;"><%= submit_tag 'submit_merge_private' %></div>
+<div style="display:none;"><%= submit_tag 'submit_merge_delete' %></div>
+
+<h3>Dives on this spot : <%=@user_spot.dives.count%> </h3>
+<ul>
+  <%@user_spot.dives.each do |dive|%>
+  <li><%=dive.user.nickname%> - <%=dive.date%> - <a href="<%=dive.fullpermalink(:locale)%>" target="_blank"><%=dive.id%></a></li>
+  <%end%>
+</ul>
+</div></div></div>
+<%elsif !@moderation_list.blank?%>
+  <h2>Select a spot to moderate</h2>
+<%else%>
+  <h2> GOOD JOB! Moderation is complete !!!! </h2>
+  <h2>Check out those spots if you think they may be duplicates</h2>
+  <ul>
+    <li class="spot"> plop
+    </li>
+  </ul>
+<%end%>
+<%end%>
+</div>
+
+<!-- Template for Spot viewing -->
+<script type="text/html" id="spot_view_template">
+  <div class="varline_large">
+    <div class="tag"><b>ID :</b></div>
+    <div class="field"><$=id$></div>
+  </div>
+  <div class="varline_large">
+    <div class="tag"><b>Name :</b></div>
+    <div class="field"><$=name$></div>
+  </div>
+  <div class="varline_large">
+    <div class="tag"><b>Country :</b></div>
+    <div class="field"><img src="<$=country_flag_small$>"/><$=country_name$> (<$=country_id$>)</div>
+  </div>
+  <div class="varline_large">
+    <div class="tag"><b>Location :</b></div>
+    <div class="field"><$=location_name$> (<$=location_id$>)</div>
+  </div>
+  <div class="varline_large">
+    <div class="tag"><b>Body of Water :</b></div>
+    <$if(region_id == null){$>
+    <div class="field">null (null)</div>
+    <$}else{$>
+    <div class="field"><$=region_name$> (<$=region_id$>)</div>
+    <$}$>
+  </div>
+  <div class="varline_large">
+    <div class="tag"><b>Description :</b></div>
+    <div class="field"><$=description$></div>
+  </div>
+  <div class="varline_large">
+    <div class="tag"><b>Lat :</b></div>
+    <div class="field"><$=lat$></div>
+  </div>
+  <div class="varline_large">
+    <div class="tag"><b>Long :</b></div>
+    <div class="field"><$=lng$></div>
+  </div>
+  <div class="varline_large">
+    <div class="tag"><b>Zoom :</b></div>
+    <div class="field"><$=zoom$></div>
+  </div>
+  <div class="varline_large">
+    <div class="tag"><b>Stats :</b></div>
+    <div class="field"><$=dive_count$> dives, <$=picture_count$> pictures, created:<$=created_at$>, updated: <$=updated_at$></div>
+  </div>
+  <div class="varline_large">
+    <div class="tag"><b>Privacy :</b></div>
+    <$if(private_user_id == null){$>
+    <div class="field">Public</div>
+    <$}else{$>
+    <div class="field">Owner: <$=private_user_id$></div>
+    <$}$>
+  </div>
+  <img src="<$=staticmap$>"/>
+  <div class="yellow_button copy_slave_to_master" name="<$=id$>">Copy all data to Master spot</div>
+</script>

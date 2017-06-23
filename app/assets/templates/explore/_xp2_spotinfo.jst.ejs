@@ -1,0 +1,145 @@
+<$
+//default value
+try {if(!with_arrow) var a=1;} catch(e){with_arrow = false}
+
+function sort_dive_by_score(divelist) {
+  function dive_score(dive) {
+    var score = 0;
+    if (dive.featured_picture_medium) score += 15;
+    if (dive.favorite) score += 6;
+    if (dive.notes) score += 5;
+    if (dive.diveshop) score += 3;
+    if (dive.db_buddies) score += 3;
+    if (!dive.spot || dive.spot.name == "") score -= 5;
+    if (dive.max_depth == 0) score -= 2;
+    return(score);
+  };
+
+  return divelist.sort(function(a,b){
+    var sa=dive_score(a);
+    var sb=dive_score(b);
+    if (sa==sb && a.date == b.date) return 0;
+    if (sa==sb) return a.date < b.date?1:-1;
+    return sa<sb?1:-1;
+  });
+}
+
+function valuesOfHash(h)
+{
+  var vals = [];
+  for (var i in h)
+    vals.push(h[i]);
+  return(vals);
+}
+
+
+
+var diver_count = 0;
+for (diver_id in spot.users) {
+  diver_count++;
+  var user = spot.users[diver_id];
+  if (user.qualifications && user.qualifications.featured && user.qualifications.featured[0])
+    user.main_qualification = user.qualifications.featured[0];
+  user.tmp_dive_this_site = 0;
+  for (var i in user.dives)
+    if (user.dives[i].spot.id == spot.id)
+      user.tmp_dive_this_site++;
+}
+
+var list_dives = sort_dive_by_score(valuesOfHash(spot.dives));
+var list_divers = valuesOfHash(spot.users);
+
+$>
+
+<div id='xp_p2_info_tab' class='xp_result_tab xp_result_list'>
+  <h3><img src="/img/dived_spots_icon.png" alt="#">Stats</h3>
+  <ul class='textlist'>
+    <$if (spot.average_depth) {$><li>Average depth: <$=spot.average_depth$>m</li><$}$>
+    <$if (spot.average_visibility) {$><li>Average visibility: <$=spot.average_visibility$></li><$}$>
+    <$if (spot.average_current) {$><li>Average current: <$=spot.average_current$></li><$}$>
+    <$if (spot.average_temp_surface) {$><li>Average temperature on surface: <$=spot.average_temp_surface$>&deg;C</li><$}$>
+    <$if (spot.average_temp_bottom) {$><li>Average temperature on bottom: <$=spot.average_temp_bottom$>&deg;C</li><$}$>
+    <li>Dives logged: <$=spot.dive_count$></li>
+    <li>Divers: <$=spot.user_count$></li>
+  </ul>
+  <h3><img src="/img/dived_spots_icon.png" alt="#">Location</h3>
+  <ul class='textlist'>
+    <li>Country: <img src='<$=spot.country_flag_small$>' alt='Flag'/><$=spot.country_name$></li>
+    <li>Region: <$=spot.region_name$><li>
+    <li>Location: <$=spot.location_name$><li>
+    <li>Coordinates: <$=spot.lat$>&deg; ; <$=spot.lng$>&deg;</li>
+  </ul>
+  <$if (spot.featured_picture_dive) {$>
+  <h3><img src="/img/fav_pics_icon.png" alt-'#'>Featured picture</h3>
+  <p>The picture above was taken by <a href='#' onclick='false' class='xp_p2_user_item' data-xp_data='{"user_id":<$=spot.featured_picture_dive.user.id$>}'><$=spot.featured_picture_dive.user.nickname$></a>&nbsp;during <a href='#' onclick='false' class='xp_p2_dive_item' data-xp_data='{"dive_id":<$=spot.featured_picture_dive.id$>}'>his dive on <$=spot.featured_picture_dive.dive.date$> at <$=spot.featured_picture_dive.dive.time$></a></p>
+  <$}$>
+  <h3><img src="/img/dived_spots_icon.png" alt="#">Share</h3>
+  <ul class='textlist'>
+    <li>Link to this spot: <input type="text" value="<$=spot.permalink$>" disabled size=50></li>
+  </ul>
+  <h3><img src="/img/dived_spots_icon.png" alt-'#'>Dive centers</h3>
+  <$ if(!spot.shops) {$>No dive center has been identified as diving here<$}$>
+  <ul class='textlist'>
+    <$if (spot.shops) {$>
+      <$for (var i in spot.shops){ var shop = spot.shops[i]; $>
+        <li><a href='<$=shop.permalink$>' class='xp_p2_shop_item' data-xp_data='{"shop_id":<$=shop.id$>}' target='_blank'><$=shop.name$></a></li>
+      <$}$>
+    <$}$>
+  </ul>
+</div>
+
+
+<div id='xp_p2_dives_tab' class='xp_result_tab xp_result_list'>
+  <ul class='xp_panel_list'>
+  <$ if(!spot.dives) {$>
+    <li>No dives have been recorded on this spot</li>
+  <$}$>
+  <$for (var i in spot.dives) { var dive = spot.dives[i];$>
+    <li class='xp_panel_list_item xp_p2_dive_item' data-xp_data='{"dive_id":<$=dive.id$>,"spot_id":<$=dive.spot_id$>}' >
+      <$if (dive.featured_picture_thumbnail) {$><div class='xp_pli_img'><img src='<$=dive.featured_picture_thumbnail$>' /></div><$}$>
+      <$ if(!dive.featured_picture_thumbnail) {$><div class='xp_pli_img'><img src='/<$if (dive.user) {$><$=dive.user.vanity_url$><$}$>/<$=dive.id$>/profile.png?g=xxsmall_blue' /></div><$}$>
+      <div class='xp_pli_txt'>
+        <h4 class='xp_pli_head'><$=dive.date$> - <$if (user) {$><$=dive.user.nickname$><$}$></h4>
+        <div class='xp_pli_content'>
+          <p><$=dive.duration$> min - <$=Math.round(dive.maxdepth)$> m</p>
+          <p><a href='<$=dive.user.permalink$>' target='_blank'>View in <$=dive.user.nickname$>'s logbook</a></p>
+        <p><$=dive.notes$></p>
+        </div>
+      </div>
+      <div class='xp_pli_arrow'><span class="symbol">&gt;</span></div>
+    </li>
+  <$}$>
+  </ul>
+</div>
+
+<div id='xp_p2_divers_tab' class='xp_result_tab xp_result_list'>
+  <ul class='xp_panel_list'>
+  <$ if(!spot.users) {$>
+    <li>No divers have recorded dives on this spot</li>
+  <$}$>
+  <$ for (var i in spot.users){ var user = spot.users[i];$>
+    <li class='xp_panel_list_item xp_p2_user_item' data-xp_data='{"user_id":<$=user.id$>}'>
+      <$if (user.picture) {$><div class='xp_pli_img'><img src='<$=user.picture$>' /></div><$}$>
+      <div class='xp_pli_txt'>
+        <h4 class='xp_pli_head'><$=user.nickname$></h4>
+        <div class='xp_pli_content'>
+          <$if (user.main_qualification) {$><p><img src="/img/advanced_icon.png" alt="#" width="8px"><$=user.main_qualification.date$> : <$=user.main_qualification.org$> <$=user.main_qualification.title$></p><$}$>
+          <p><$=user.public_nb_dives$> dives on Diveboard (total: <$=user.total_nb_dives$>)</p>
+          <$if (user.tmp_dive_this_site) {$><p><$=user.tmp_dive_this_site$> dives on this spot</p><$}$>
+          <p><a href='<$=user.permalink$>' target='_blank'>View <$=user.nickname$>'s logbook</a></p>
+        </div>
+      </div>
+      <$if (with_arrow) {$><div class='xp_pli_arrow'><span class="symbol">&gt;</span></div><$}$>
+    </li>
+  <$}$>
+  </ul>
+</div>
+
+<div id='xp_p2_pictures_tab' class='xp_result_tab xp_result_list'>
+  <$ if(!spot.pictures) {$>
+  <img src="/img/transparent_loader_2.gif" height='66px' width='66px' style="margin-left:165px; margin-top:50px" alt='#' />
+  <$}$>
+  <$for (var i in spot.pictures) { var pic = spot.pictures[i];$>
+    <a href='<$=pic.permalink$>' target='_blank'><img src="<$=pic.thumbnail$>"/></a>
+  <$}$>
+</div>

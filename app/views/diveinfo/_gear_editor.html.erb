@@ -1,0 +1,63 @@
+<%
+#Setting up the list of gear. Beware the featured flag !
+user_gears = @owner.user_gears
+featured_gears = @dive.featured_gears
+used_gears = @dive.gears
+if @dive.new_record? then
+  user_gears.each do |gear|
+    gear.featured = true if gear.auto_feature == 'featured'
+    gear.featured = false if gear.auto_feature == 'other'
+    featured_gears.push gear if gear.auto_feature == 'featured'
+    used_gears.push gear if gear.auto_feature != 'never'
+  end
+end
+unused_gears = user_gears - used_gears
+all_gears = used_gears + unused_gears
+all_gears.sort! do |a,b|
+  [a.pref_order || 0, a.category, a.manufacturer, a.model, begin a.acquisition || Date.new rescue Date.new end, a.id] <=> [b.pref_order || 0, b.category, b.manufacturer, b.model, begin b.acquisition || Date.new rescue Date.new end, b.id]
+end
+%>
+<div class='main_content_box' >
+  <p class='wizard-expl-text'><%= it("Track the gear that you used.", scope: ['diveinfo', 'gear_editor']) %></p>
+  <p>&nbsp;</p>
+
+  <table class='gear_wizard_table' <%if all_gears.count == 0%>style='display: none;'<%end%>>
+    <tr>
+      <td colspan=3 style='width: 380px'></td>
+      <td style='padding: 0px 5px'><%= it("Featured", scope: ['diveinfo', 'gear_editor']) %></td>
+      <td style='padding: 0px 5px'><%= it("Private", scope: ['diveinfo', 'gear_editor']) %></td>
+      <td style='padding: 0px 5px'><%= it("Not used", scope: ['diveinfo', 'gear_editor']) %></td>
+      <td></td>
+    </tr>
+
+    <% all_gears.each do |gear| %>
+    <% gear_data = gear.as_json.first[1]
+       gear_data['class'] = gear.class.to_s %>
+      <tr class='data_gear gear_wizard_line' data-diveboard_gear_wizard="<%=CGI.escapeHTML(gear_data.to_json).html_safe%>" >
+        <td><%=it(gear.category, scope:['globals', 'gear_categories'])%></td>
+        <td><%=gear.manufacturer%></td>
+        <td><%=gear.model%></td>
+        <td><input type=radio name='gear_featured_<%=gear.id%>' <% if gear.featured == true%>checked<%end%> value='featured' class='featured'/></td>
+        <td><input type=radio name='gear_featured_<%=gear.id%>' <% if gear.featured == false%>checked<%end%> value='not_featured' class='not_featured'/></td>
+        <td><input type=radio name='gear_featured_<%=gear.id%>' <% if gear.featured.nil?%>checked<%end%> value='absent' class='absent'/></td>
+        <%if gear.class == DiveGear then%>
+          <td><a href='#' class='add_own_gear'><%= it("I own it", scope: ['diveinfo', 'gear_editor']) %></a></td>
+        <%end%>
+      </tr>
+    <%end%>
+  </table>
+
+  <div><p><strong><%= it("Add a new gear:", scope: ['diveinfo', 'gear_editor']) %></strong>
+    <span style='white-space: nowrap;'>
+      <select id='add_gear_category' class='editable_input'>
+        <option value=''><%= it("Type of gear", scope: ['diveinfo', 'gear_editor']) %></option>
+      <% DiveGear.categories.each do |cat| %>
+        <option value='<%=cat%>'><%=it(cat, scope:['globals', 'gear_categories'])%></option>
+      <%end%>
+      </select>
+      <input id='add_gear_manufacturer'  class='editable_input'/>
+      <input id='add_gear_model' class='editable_input' />
+      <a id='add_gear_button' class='yellow_button' href='#'><%= it("Add", scope: ['diveinfo', 'gear_editor']) %></a>
+    </span>
+  </p></div>
+</div>

@@ -1,0 +1,131 @@
+<%= render :partial => 'admin_css'%>
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 8 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+<h1>Pictures overview</h1>
+  <%
+    if User.find(30).updated_at < 1.hour.ago
+      User.find(30).update_fb_permissions_without_delay
+      User.find(30).touch
+    end
+  %>
+  <%if !User.find(30).fb_permissions_granted("publish_stream,manage_pages")%>
+  <p><span style="color:red;">WARNING : </span>when publishing a post, it will be also pushed to the timeline thanks to the "publish_stream" and "manage_pages" permission of Alex's account.</p>
+  <p> Apparently the permission is missing, please spank Alex ASAP, ask him to click on this link:<br/>
+    <a href="<%=ROOT_URL+"login/fb_login/publish_stream%2Cmanage_pages"%>"><%=ROOT_URL+"login/fb_login/publish_stream%2Cmanage_pages"%></a>
+  </p>
+  <%end%>
+  <br/>
+
+  <p><a href='/admin/pictures?search_great_pic=nil'>View new pictures</a> - <a href='/admin/pictures?search_great_pic=true'>View great pictures</a></p>
+
+  <%if !@all_pictures.blank?%>
+  <div>
+  <a style='font-size: 24pt; float: right;' href='?<%=@search_params.merge({:start_id => begin @all_pictures.all.last.id rescue 0 end, :limit => @limit}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&") %>'>NEXT &gt;&gt;&gt;</a>
+  </div>
+  <%end%>
+  <br style='clear: both;'/>
+  <% if @all_pictures.blank?%>
+  <h1> Nothing to see here</h1>
+  <%end%>
+  <%@all_pictures.each { |pic|%>
+    <div class='pic_adm_item' style='border: 1px solid #000; margin: 10px;'>
+      <div style='display: inline-block'>
+        <a href='<%=pic.large%>' target='_blank'><img src='<%=pic.medium%>' style='max-width: 300px;'/></a>
+      </div>
+      <div style='display: inline-block; vertical-align: top'>
+        <p>Picture ID: <%=pic.id%> -- <%=pic.width%>x<%=pic.height%> -- <a href="<%=pic.original%>" target="_blank">original</a?</p>
+        <p>Taken by <a href='/admin/users/<%=pic.user.id%>'><%=pic.user.nickname%></a>, uploaded at<%=pic.created_at%></p>
+        <%if !pic.href.blank?%><p>Grabbed on the net from : <a href='<%=pic.href%>' target='_blank'><%=pic.href[0..59]%><%='...' if pic.href.length>60%></a></p>
+        <%else%><p>Directly uploaded on diveboard</p><%end%>
+        <p>Picture permalink :
+          <a href='<%=pic.fullpermalink(:locale)%>'><%=pic.fullpermalink(:locale)%></a>
+          <%if !pic.dive.nil?%>
+          <img src='/img/<%if pic.dive.privacy != 1 then%>lock_green.png<%else%>lock_red.png<%end%>'/>
+          <%elsif !pic.blogpost.nil?%>
+          <img src='/img/<%if !pic.blogpost.published_at.nil? then%>lock_green.png<%else%>lock_red.png<%end%>'/>
+          <%end%>
+        </p>
+
+        <img class='spinning' src="/img/transparent_loader_3.gif" height="66px" width="66px" style="margin-left:50%; margin-top:25%; display: none;" alt="#">
+        <p class='great_pic_elt' style='color: green; font-size: 24px; <%if pic.great_pic!=true then%>display: none;<%end%>'>GREAT PICTURE</p>
+        <p class='std_pic_elt' style='color: red; font-size: 24px; <%if pic.great_pic!=false then%>display: none;<%end%>'>STANDARD PICTURE</p>
+
+        <button class='mark_great_button yellow_button' data-db-pic_id='[<%=pic.id%>]' data-db-pic-action='true' data-db-force='true'>Mark as great pic</button>
+        <button class='mark_great_button grey_button' data-db-pic_id='[<%=pic.id%>]' data-db-pic-action='false' data-db-force='true'>Mark as standard pic</button>
+      </div>
+    </div>
+  <%}%>
+  <%if !@all_pictures.blank?%>
+  <div class='pic_adm_item'>
+    <div class='spinning' style='display: none; position: fixed; top: 0; left:0; right: 0; bottom: 0; background-color: #333; opacity: 0.5;'>
+      <img src="/img/transparent_loader_3.gif" height="66px" width="66px" style="margin-left:50%; margin-top:25%;" alt="#">
+    </div>
+    <button class='mark_great_button yellow_button' data-db-pic_id='[<%=@all_pictures.map(&:id).join(",")%>]' data-db-pic-action='false' data-db-force='false' data-db-reload='true'>Mark all unflagged pictures listed as not great</button>
+
+    <a style='font-size: 24pt; float: right;' href='?<%=@search_params.merge({:start_id => begin @all_pictures.all.last.id rescue 0 end, :limit => @limit}).map do |a,b| "#{CGI::escape(a.to_s)}=#{CGI::escape(b.to_s)}" end.join("&") %>'>NEXT &gt;&gt;&gt;</a>
+  </div>
+  <%end%>
+  <br style='clear: both;'/>
+</div>
+
+<script>
+function mark_great_pictures()
+{
+  var button = $(this);
+  var item = button.closest('.pic_adm_item');
+  var reload = button.attr('data-db-reload') || false;
+  var ids = button.attr('data-db-pic_id');
+  var flag = button.attr('data-db-pic-action');
+  var force = button.attr('data-db-force');
+
+  item.find(".spinning").show();
+
+  $.ajax({
+    url: '/admin/pictures/mark_great',
+    dataType: 'json',
+    data:  {
+        'ids': ids,
+        'force': force,
+        'great_pic': flag
+      },
+    type: "POST",
+    success: function(data){
+      if (!reload)
+        item.find(".spinning").hide();
+      if (data.success){
+        for (var id in data.ret){
+          if (data.ret[id] === "") {
+            item.find('.great_pic_elt').hide();
+            item.find('.std_pic_elt').hide();
+          } else if (data.ret[id] === true) {
+            item.find('.great_pic_elt').show();
+            item.find('.std_pic_elt').hide();
+          } else {
+            item.find('.great_pic_elt').hide();
+            item.find('.std_pic_elt').show();
+          }
+        }
+        if (reload){
+          window.location.reload();
+        }
+      } else {
+        console.log(data);
+        alert(data.errors.join(" --- "));
+      }
+    },
+    error: function(data) {
+      alert(data.statusText);
+      item.find(".spinning").hide();
+      console.log(data);
+    }
+  });
+}
+
+$(function(){
+  $('.mark_great_button').live('click', mark_great_pictures);
+});
+</script>

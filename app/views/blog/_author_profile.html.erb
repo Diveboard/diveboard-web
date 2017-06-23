@@ -1,0 +1,11 @@
+<div class="blog_link_section author_profile">
+  <h2><%= it("My Author Profile", scope: ['blog', 'author_profile']) %></h2>
+  <a href="/<%=blog_profile_user.vanity_url%>/posts"><img src="<%=blog_profile_user.picture_small%>" width="50" height="50"/></a>
+  <ul>
+    <li><a href="/<%=blog_profile_user.vanity_url%>/posts"><%= it("Published posts:", scope: ['blog', 'author_profile']) %> <%=blog_profile_user.blog_posts.where("published_at is NOT NULL").count%></a></li>
+    <li><a href="/<%=blog_profile_user.vanity_url%>/posts/published"><%= it("Selected posts:", scope: ['blog', 'author_profile']) %> <%=blog_profile_user.blog_posts.where(:published => true).count%></a></li>
+    <li><a href="/<%=blog_profile_user.vanity_url%>/posts/drafts"><%= it("Draft posts:", scope: ['blog', 'author_profile']) %> <%=blog_profile_user.blog_posts.where("published_at is NULL").count%></a></li>
+    <li><a href="/<%=blog_profile_user.vanity_url%>/posts/rejected"><%= it("Unselected posts:", scope: ['blog', 'author_profile']) %> <%=blog_profile_user.blog_posts.where("published is false and published_at is not null").count%></a></li>
+    <!--<li><%= it("Comments:", scope: ['blog', 'author_profile']) %> ---</li>-->
+  </ul>
+</div>

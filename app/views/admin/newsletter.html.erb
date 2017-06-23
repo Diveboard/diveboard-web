@@ -1,0 +1,86 @@
+<%= render :partial => 'admin_css'%>
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 11 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+
+
+<script>
+$(document).ready(function(){
+  $(".distribute_button").click(function(e){
+    e.preventDefault();
+    diveboard.propose("Sending a newsletter", "WATCH OUT !!! <br/> This will actually send a massive amount of emails to all the users, are you sure you really wanna do that !? Seriously?<br/>Did you spell check?<br/>Did you check when you emailed your users last time?<br> <br/> We'll distribute to <b>User.where('shop_proxy_id is null')</b>",
+      {
+        "Cancel": function() {
+          $( "#dialog-global-notify" ).dialog( "close" );
+        },
+        "I'm really doing this": function(){
+          $( "#dialog-global-notify" ).dialog( "close" );
+          diveboard.mask_file(true);
+          do_distribute($(e.target).attr("data-newsletter"));
+        }
+      });
+  });
+})
+function do_distribute(id){
+  console.log("Distributing newsletter "+id);
+  $.ajax({
+    url: '/admin/newsletter_send',
+    dataType: 'json',
+    data: {
+      id: id,
+      'authenticity_token': auth_token
+    },
+    type: "POST",
+    success: function(data){
+      if (data.success) {
+        diveboard.notify("Success", "All good!", function(){
+          diveboard.unmask_file();
+        });
+
+      } else {
+        //detail the alert
+        diveboard.alert("A technical error occured.", data, function(){
+          diveboard.unmask_file();
+        });
+      }
+    },
+    error: function(data) {
+      diveboard.alert("A technical error occured while saving the dive. Please make sure your internet connection is up and try again.", null, function() {
+        diveboard.unmask_file();
+      });
+    }
+  });
+
+}
+
+</script>
+
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+  <h1>Previous Newletters</h1>
+  <table>
+    <tr><th>ID</th><th>Created at</th><th></th><th>Distributed at</th><th></th><th></th></tr>
+    <%Newsletter.all.reverse.each do |letter|%>
+      <tr>
+        <td><a href="<%=letter.fullpermalink(:locale)%>"><%=letter.id%></a></td>
+        <td><%=letter.created_at%></td>
+        <td><a class='yellow_button_small' href='/admin/newsletter?a=preview&id=<%=letter.id%>'>Preview</a></td>
+        <td><%if letter.distributed_at then%><%=letter.distributed_at%><%else%><a class='grey_button_small' href='/admin/newsletter?a=delete&id=<%=letter.id%>'>Delete</a><%end%></td>
+        <td><a class='<%if letter.distributed_at.nil?%>yellow<%else%>grey<%end%>_button_small' href='/admin/newsletter?a=edit&id=<%=letter.id%>'>Edit</a></td>
+        <td><a class='<%if letter.distributed_at.nil?%>yellow<%else%>grey<%end%>_button_small distribute_button' data-newsletter="<%=letter.id%>">DISTRIBUTE NOW!</a></td>
+      </tr>
+    <%end%>
+  </table>
+
+  <a href='/admin/newsletter?a=build' class='yellow_button'>Create a new newsletter</a>
+
+
+  <h2>User base statistics</h2>
+
+  <p>Total user base :<%=User.where(:shop_proxy_id => nil).count%><p>
+  <p>Users with contact email: <%=User.where('shop_proxy_id is null and contact_email is not null').count%><p>
+  <p>Users reachable (with contact email or email login): <%=User.where('shop_proxy_id is null and contact_email is not null or email is not null').count%><p>
+  <p>Users reachable with opt in : TODO <%=User.where('shop_proxy_id is null and contact_email is not null or email is not null').count%><p>
+
+</div>

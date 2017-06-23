@@ -1,0 +1,83 @@
+<div id="links">
+  <div class="first">
+    <div class="newsletter">
+      <h4><%= it("Tips for your next dive", scope: ['footer', 'v2', 'links']) %></h4>
+      <p><%= it("Subscribe to our weekly newsletter!", scope: ['footer', 'v2', 'links']) %></p>
+      <div class="subscribe">
+        <form onsubmit="return false;">
+          <input id="newsletter_email" type="text" placeholder="<%= it("Your e-mail", scope: ['footer', 'v2', 'links']) %>" />
+          <button id="newsletter_subsribe"><%= it("Submit", scope: ['footer', 'v2', 'links']) %></button>
+        </form>
+      </div>
+    </div>
+    <div class="about">
+      <h4><%= it("About", scope: ['footer', 'v2', 'links']) %></h4>
+      <img src="<%= HtmlHelper.lbroot "/img/drawer/svg/logo_topbar_mobile.svg" %>" alt="Diveboard" />
+      <p>
+        <%= it("The #1 place for everything scuba.%{br}
+        Discover destinations through divers' eyes & book your dives.%{br}
+        Mobile ready and fully featured with the best online logbook to share your explorations and feedbacks.", scope: ['footer', 'v2', 'links'], br: It.tag('br')) %>
+      </p>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="second">
+    <div class="link_title">
+      <h4><%= it("Quick Links", scope: ['footer', 'v2', 'links']) %></h4>
+      <% if true %>
+      <!-- TODO Wire Language change -->
+      <table class="language">
+        <tr>
+          <td><p><%= it("Change language:", scope: ['footer', 'v2', 'links']) %></p></td>
+          <td>
+            <div class="languages_select">
+              <select class="languages">
+                <%Rails.configuration.opened_locales.each do |lang|%>
+                  <option data-href-hostname='<%=HtmlHelper.find_hostname_for lang%>' <%='selected' if lang == I18n.locale%>><%=Rails.configuration.map_untranslated_locales[lang]%></option>
+                <%end%>
+              </select>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div class="clear"></div>
+      <% end %>
+    </div>
+    <table class="link_table">
+      <tr>
+        <td>
+          <div class="card">
+            <p class="strong"><%= it("Product and services", scope: ['layouts', 'footer']) %></p>
+            <p>
+              <a href="/about/tour"><%= it("Online Logbook", scope: ['layouts', 'footer']) %></a><br />
+              <a href="/about/import/1"><%= it("Supported dive computers", scope: ['layouts', 'footer']) %></a><br />
+              <a href="/about/import/2"><%= it("Supported import files", scope: ['layouts', 'footer']) %></a><br />
+              <a href="/pro"><%= it("Diveboard for professionals", scope: ['layouts', 'footer']) %></a>
+            </p>
+          </div>
+        </td>
+        <td>
+          <div class="card">
+            <p class="strong"><%= it("Community and help", scope: ['layouts', 'footer']) %></p>
+            <p>
+              <a href="javascript:void(0)" class="help_button"><%= it("Feedback / Suggestions", scope: ['layouts', 'footer']) %></a><br />
+              <a href="/about/tos"><%= it("Terms of Service", scope: ['layouts', 'footer']) %></a> / <a href="/about/privacy"><%= it("Privacy", scope: ['layouts', 'footer']) %></a>
+            </p>
+          </div>
+        </td>
+        <td>
+          <div class="card">
+            <p class="strong"><%= it("About Diveboard", scope: ['layouts', 'footer']) %></p>
+            <p>
+              <a href="/about/1"><%= it("Meet the crew", scope: ['layouts', 'footer']) %></a><br />
+              <a href="/about/2"><%= it("Diveboard's inception", scope: ['layouts', 'footer']) %></a><br />
+              <a href="/about/3"><%= it("Partners", scope: ['layouts', 'footer']) %></a><br />
+              <a href="/about/4"><%= it("Contact us", scope: ['layouts', 'footer']) %></a>
+            </p>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="clear"></div>
+</div>

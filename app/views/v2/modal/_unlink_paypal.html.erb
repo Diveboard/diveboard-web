@@ -1,0 +1,28 @@
+<div id="unlink_paypal_modal" class="alertModal modal">
+  <div class="modal_content">
+  </div>
+
+  <div class="modal_slides">
+    <div modal_id="initial" modal_class="modal_content_initial">
+      <a href="javascript:void(0)" class="close" modal_trigger="close"></a>
+      <div class="title">Unlink PayPal Account</div>
+      <div class="modal_body">
+        <p>Unlinking your paypal account will disable all Paypal sells. Are you sure ?</p>
+      </div>
+      <div class="modal_button">
+        <a href="javascript:void(0)" modal_trigger="unlink">Unlink</a>
+        <a href="javascript:void(0)" modal_trigger="close">Cancel</a>
+      </div>
+    </div>
+
+    <div modal_class="modal_content_processing" modal_id="processing">
+      <div class="title">Unlink PayPal Account</div>
+      <div class="modal_body">
+        <div class="description">
+          <img src="<%= HtmlHelper.lbroot "/img/transparent_loader.gif" %>" alt="" /><br>
+          Processing please wait
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

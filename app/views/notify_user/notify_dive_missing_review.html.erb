@@ -1,0 +1,7 @@
+<div class="main_info" align="left">
+  <p><%= it("How were your dives with %{shop} ?", scope: ['notify_user', 'notify_dive_missing_review'], shop: @shop.name) %></p>
+  <br/>
+  <p><%= it("Help other diver looking for a good dive center by %{link:leaving a short review}.", scope: ['notify_user', 'notify_dive_missing_review'], link: @shop.fullpermalink(:locale) + "/review") %></p>
+
+  <p><center style='margin: 20px;'><%= it("%{link:Leave a review}", scope: ['notify_user', 'notify_dive_missing_review'], link: It.link(@shop.fullpermalink(:locale) + "/review", class: "yellow_button", style: "margin-top: 5px;")) %></center></p>
+</div>

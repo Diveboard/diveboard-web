@@ -1,0 +1,198 @@
+<%
+## Template will be initialized for the @recipient user with title @title
+user = @recipient
+##
+
+last_newsletter = 1.month.ago
+notification_max_count = 3
+missing_reviews_max_count = 3
+dive_center_max_reviews = 4
+
+total_element_max = 12
+
+date ||= Date.today
+
+notifications = user.notifications.reject do |n| !n.should_notify? rescue false end rescue []
+notifications_count = notifications.count
+notifications = notifications.slice(0,notification_max_count)
+
+
+posted_reviews = user.reviews.map(&:shop_id).uniq rescue []
+visited_shops = user.dives.map(&:shop_id).reject(&:nil?).uniq rescue []
+missing_reviews = visited_shops - posted_reviews
+missing_reviews.map! do |id| begin Shop.find(id) rescue nil end end
+missing_reviews.reject! &:nil?
+missing_reviews.reject! do |shop| shop.user_proxy.nil? end
+missing_reviews.shuffle!
+missing_reviews_count = missing_reviews.count
+missing_reviews=missing_reviews.slice(0, missing_reviews_max_count)
+
+
+buddies_news = []
+buddies_news_count = 0
+
+user_id = user.id rescue -1
+dive_center_new_reviews = Review.where("user_id <> :user_id and title is not null and title NOT REGEXP '^ *$' and recommend = 1 and created_at > :last_newsletter", {:user_id => user_id, :last_newsletter => last_newsletter}).order('created_at DESC').to_ary
+user_dive_centers = user.dives.map(&:shop_id).reject(&:nil?) rescue []
+interesting_reviews = dive_center_new_reviews.reject do |review| !user_dive_centers.include?(review.shop_id) end
+other_reviews = dive_center_new_reviews.reject do |review| user_dive_centers.include?(review.shop_id) end
+dive_center_new_reviews = interesting_reviews.slice(0,dive_center_max_reviews)
+dive_center_new_reviews += other_reviews.slice(0, dive_center_max_reviews - dive_center_new_reviews.count)
+
+
+
+great_dives ||= Dive.unscoped.where("privacy = 0 and created_at > :last_newsletter", :last_newsletter => last_newsletter).order("score DESC").limit(3*total_element_max)
+user_great_dives = {}
+filtered_great_dives = great_dives.reject! do |dive|
+  if !user_great_dives[dive.user_id] then
+    user_great_dives[dive.user_id] = true
+    false
+  else
+    true
+  end
+end
+great_dives = filtered_great_dives if filtered_great_dives.count >= total_element_max
+display_great_dives = total_element_max - notifications.count - missing_reviews.count - buddies_news.count - dive_center_new_reviews.count
+display_great_dives = 0 if display_great_dives < 0
+display_great_dives = 3 if display_great_dives > 0 && display_great_dives < 3
+great_dives = great_dives.slice(0,display_great_dives)
+
+%>
+<html>
+<body>
+<div id='background'>
+<div id='diveboard_newsletter'>
+  <a href="<%=ROOT_URL%>" class='header'>
+    <img src="<%=ROOT_URL%>img/newsletter/newsletter_banner.png"/>
+  </a>
+  <div class='date backgradient'>
+    <table>
+      <tr>
+        <td style='width: 477px; height: 25px; vertical-align: middle; padding-left: 28px;'><%=I18n.l(date, format: :long)%></td>
+        <td style='width: 80px'><a href='http://www.facebook.com/Diveboard'><div class='like_button'><img src="<%=ROOT_URL%>img/newsletter/newsletter_facebook.png"/><span><%= it("Like", scope: ['notify_user', 'email_layout']) %></span></div></a></td>
+        <td><a href='http://twitter.com/diveboard'><div class='follow_button'><img src="<%=ROOT_URL%>img/newsletter/newsletter_twitter.png"/><span><%= it("Follow", scope: ['notify_user', 'email_layout']) %></span></div></a></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class='main_content'>
+    <div class='main_content_left'>
+      <div class='news_content'>
+        <%= yield %>
+      </div>
+    </div><!-- no space until contetn_right
+
+
+
+    --><div class='main_content_right'>
+
+      <% if notifications_count > 0 then %>
+        <div class='box'>
+          <div class='head backgradient'><%= it("Notifications", scope: ['notify_user', 'email_layout']) %></div>
+          <div class='content notifications'>
+            <ul>
+              <%notifications.each do |notif|%>
+                <%= begin
+                   render :partial => "feeds/notif_#{notif.kind}", :locals => {:notification => notif}
+                rescue
+                  Rails.logger.error $!.message
+                  Rails.logger.debug $!.backtrace.join("\n")
+                  nil
+                end %>
+              <%end%>
+              <%if notifications_count > notification_max_count  then%>
+                <li class='feed_item'><div class='more'><a href='<%=ROOT_URL%>'><%= it("See all...", scope: ['notify_user', 'email_layout']) %></a></div></li>
+              <%end%>
+            </ul>
+          </div>
+        </div>
+      <%end%>
+
+
+      <% if missing_reviews.count > 0 %>
+      <div class='box'>
+        <div class='head backgradient'><%= it("Don't forget", scope: ['notify_user', 'email_layout']) %></div>
+        <div class='content'>
+          <ul>
+            <%missing_reviews.each do |shop|%>
+            <li class='feed_item'>
+              <%=shop.user_proxy.nickname%><br/>
+              <div style='text-align: right'><a href='<%=shop.user_proxy.fullpermalink(:locale)%>'><%= it("Leave a review", scope: ['notify_user', 'email_layout']) %></a></div>
+            </li>
+            <%end%>
+          </ul>
+        </div>
+      </div>
+      <%end%>
+
+
+      <% if buddies_news.count > 0 %>
+      <div class='box'>
+        <div class='head backgradient'><%= it("Buddies", scope: ['notify_user', 'email_layout']) %></div>
+        <div class='content'>
+          <%= it("some content for box 1", scope: ['notify_user', 'email_layout']) %>
+        </div>
+      </div>
+      <%end%>
+
+      <% if dive_center_new_reviews.count > 0%>
+      <div class='box'>
+        <div class='head backgradient'><%= it("Community reviews", scope: ['notify_user', 'email_layout']) %></div>
+        <div class='content'>
+          <ul>
+            <%dive_center_new_reviews.each do |review|%>
+            <li class='feed_item'>
+              <%if !review.shop.country_code.nil? && review.shop.country_code != 'BLANK'%>
+                <img src='<%=review.shop.country.flag_small%>'/>
+              <%end%>
+              <a href='<%=review.shop.user_proxy.fullpermalink(:locale)%>'><%=review.shop.user_proxy.nickname%></a>:<br/>
+              <img src='<%=ROOT_URL%>img/icons/<%if review.recommend%>vote_positive.png<%else%>vote_negative.png<%end%>'> <%=review.title%>
+            </li>
+            <%end%>
+          </ul>
+        </div>
+      </div>
+      <%end%>
+
+
+      <% if great_dives.count > 0 %>
+      <div class='box'>
+        <div class='head backgradient'><%= it("New dives", scope: ['notify_user', 'email_layout']) %></div>
+        <div class='content'>
+          <ul>
+            <%great_dives.each do |dive|%>
+            <li class='feed_item'>
+              <div class="feed_abstract_img">
+                <img src='<%=dive.thumbnail_image_url%>'>
+              </div>
+              <%= it("%{user} dived in %{dive} (%{maxdepth} - %{duration})", scope: ['notify_user', 'email_layout'], user: dive.user.nickname, dive: dive.label, maxdepth: it("meter", scope: ['units'], count: dive.maxdepth.round), duration: it("min", scope: ['units'], count: dive.duration)) %><br/>
+              <div style='text-align: right'><a href='<%=dive.fullpermalink(:locale)%>'><%= it("See in logbook", scope: ['notify_user', 'email_layout']) %></a></div>
+            </li>
+            <%end%>
+          </ul>
+        </div>
+      </div>
+      <%end%>
+
+
+
+
+    </div>
+
+  </div> <!-- end of main_content-->
+
+  <div class='footer'>
+    <img src="<%=ROOT_URL%>img/newsletter/newsletter_footer_split.png">
+    <div style="display: block;">
+      <center><a href="<%=ROOT_URL%>"><div style="background-image: url('<%=ROOT_URL%>img/newsletter/newsletter_footer_logo.png'); width: 170px; height: 23px; display: inline-block; background-repeat: no-repeat;"></div></a></center>
+    </div>
+    <p style="margin-top: 20px;"><%= it("You received this newsletter either because you're a Diveboard user or because you've been tagged as a buddy in a user's dive. Click here to %{link:unsuscribe}.", scope: ['notify_user', 'email_layout'], link: ROOT_URL + "community/newsletter/unsuscribe?scope=newsletter") %></p>
+    <p><b><%= it("All rights reserved by Diveboard", scope: ['notify_user', 'email_layout']) %></b></p>
+  </div>
+
+
+</div> <!-- End of diveboard_newletter -->
+</div>
+
+</body>
+</html>

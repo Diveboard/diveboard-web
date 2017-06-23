@@ -1,0 +1,15 @@
+  <div class="main_info" align="left">
+    <% if @type == "dive" || @type == "picture"%>
+    <p ><img src="<%=ROOT_URL%>img/email_marketing/Facebook_like_thumb.png" class="left" width=40/><%= it("Awesome ! Your %{type} on %{link:%{spot} in %{country}} just got a new like!", scope: ['notify_user', 'notify_like'], type: @type, link: It.link(@dive.fullpermalink(:locale), style: "text-decoration: none; color: #FF6200;"), spot: @dive.spot.name, country: @dive.spot.country.cname) %></p>
+    <%elsif @type == "blogpost"%>
+    <p><img src="<%=ROOT_URL%>img/email_marketing/Facebook_like_thumb.png" class="left" width=40/><%= it("Wowsers ! Your blog post '%{link:%{title}}' just got a new like!", scope: ['notify_user', 'notify_like'], link: It.link(@post.fullpermalink(:locale), style: "text-decoration: none; color: #FF6200;"), title: @post.title) %></p>
+    <%end%>
+    <% if !@like_count.nil? && @like_count > 0 then%><p><%= it("Your %{type} now has %{strong:%{like}} !", scope: ['notify_user', 'notify_like'], type: @type, strong: It.tag("b"), like: it("like", scope: ['units'], count: @like_count)) %></p><%end%>
+    <div style="clear:both;"></div>
+    <p style='margin: 5px 0 5px 0; clear: both; text-align: center;'><%= it("Check it out on your %{type} page and keep on sharing !%{br}
+    %{link:View %{type}}", scope: ['notify_user', 'notify_like'], type: @type, br: It.tag("br"), link: It.link(@page.fullpermalink(:locale), class: "yellow_button", style: "margin-top: 20px;")) %></p>
+
+    <%if @type == "picture"%>
+      <p style='margin: 5px 0 5px 0; clear: both;'><center><a href='<%= @page.fullpermalink(:locale) %>' ><img src='<%=@page.medium%>' style="width: 80%;"/></a></center></p>
+    <%end%>
+  </div>

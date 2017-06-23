@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  url: MyString
+  name: MyString
+  service: 1
+  dive_id: 1
+
+two:
+  url: MyString
+  name: MyString
+  service: 1
+  dive_id: 1

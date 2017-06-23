@@ -1,0 +1,5 @@
+[  
+    {   
+        "keys": ["ctrl+alt+x"], "command": "rails_i18n_helper"   
+    }  
+]  

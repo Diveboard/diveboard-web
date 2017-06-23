@@ -1,0 +1,192 @@
+<% content_for :css do%>
+  <%= stylesheet_link_tag 'responsive_shop' %>
+  <%= stylesheet_link_tag 'mods/elrte/css/elrte-inner' %>
+  <!-- <%= stylesheet_link_tag 'elrte.full' %> -->
+  <!-- <%= stylesheet_link_tag 'elrte.min' %> -->
+<%end%>
+
+<% content_for :scripts do%>
+  <script>
+    require(['jquery'])
+    require(['common'])
+    // require(['elrte/js/elrte.full'])
+    // require(['elrte/js/i18n/elrte.es'])
+    // require(['lib/text_editor'])
+
+    require(['pages_responsive/shop_page'])
+  </script>
+<%end%>
+
+<%content_for :page_links do%>
+  <li><a class="about" href="http://dev.diveboard.com/testnewshop#">ABOUT</a></li>
+  <li><a class="dives" href="http://dev.diveboard.com/testnewshop#past_dives">DIVES</a></li>
+  <li><a class="photos" href="http://dev.diveboard.com/testnewshop#photostream">PHOTOSTREAM</a></li>
+  <li><a class="reviews" href="http://dev.diveboard.com/testnewshop#shop_reviews">SHOP REVIEWS</a></li>
+  <li><a class="services" href="http://dev.diveboard.com/testnewshop#services_offered">SERVICES</a></li>
+<%end%>
+
+<div class="blur"></div>
+
+<div class="aqualung_logo">
+  <img src="/img/aqua-lung-white_logo.png">  
+</div>
+  
+
+  
+<div class="header_degrad"></div>
+<div class="shop_content">
+
+  <div class="shop_title">
+      <div class="shop_logo"><img src="<%=@shop.picture%>"></div>
+      <h3><%=@shop.name%><span><%=@shop.lat%>&deg, <%=@shop.lng%>&deg</span></h3>
+  </div>
+
+  <div class="content_box">
+    <ul class="shortcuts_header">
+    <div class="indicator"></div>
+      <%= yield :page_links if content_for? :page_links%>
+    </ul>
+
+    <div class="intro" id="intro">
+      <h2>SNORKLERS FOR LIFE</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    </div>
+    <div class="shop_location"> 
+      <img src="/img/map_google.png">
+      <div class="map_tag">
+        <h3><%=@shop.address%></br><%=@shop.city%></br></h3>
+        <h4>Monday - Saturday: 9:00am - 6:00pm</br>Sundays &amp; Holidays: Closed</h4>
+      </div>
+    </div>
+    <div class="past_dives" id="past_dives">
+      <h2>DIVES WITH THIS SHOP</h2>
+      <div class='columns'>
+        <%if @shop.dives.length > 0 then %>
+          <%@shop.dives.each do |dive| %>
+            <div class='column' >
+              <a href="<%=dive.fullpermalink(:locale)%>" class="col_pic">
+                <img src="<%=if dive.featured_picture.nil? then dive.static_map_url else dive.featured_picture.thumbnail end%>"/>
+                <%if !dive.user.nickname.nil?%>
+                <h4><%=dive.user.nickname%></h4>
+                <%end%>
+              </a>   
+              <div class='text_box' >
+                <%if !dive.trip.nil?%>
+                <h3><%=dive.trip.name%></h3>
+                <%end%>
+                <%if !dive.notes.nil?%>
+                <p><%=dive.notes%></p>
+                <%end%>
+              </div>
+            </div>
+          <%end%>
+        <%else%>
+          <p>There are still no dives registered with this shop</p>
+        <%end%>
+      </div>
+    </div>
+    <div class="photostream" id="photostream">
+    <h2>PHOTOSTREAM</h2>
+      <div class="gallery cf">
+        <div class="imagen"><img src="/images/pier1.jpg"></div>
+        <div class="imagen"><img src="/images/63.jpg"></div>
+        <div class="imagen"><img src="/images/19.jpg"></div>
+        <div class="imagen"><img src="/images/manta.jpg"></div>
+        <div class="imagen"><img src="/images/manta.jpg"></div>
+        <div class="imagen"><img src="/images/manta.jpg"></div>
+      </div>
+    </div>
+    <div class="shop_reviews" id="shop_reviews">
+      <h2>SHOP REVIEWS</h2>
+      <%if !@shop.reviews.empty? %>
+
+        <div class="ratings">
+          <%if !@shop.marks[:mark_orga].nil?%><div class="rating"><h3><%=@shop.marks[:mark_orga][:mark]%> / 5.0</h3><h4>ORGANIZATION</h4></div><%end%>
+          <%if !@shop.marks[:mark_rent].nil?%><div class="rating"><h3><%=@shop.marks[:mark_rent][:mark]%> / 5.0</h3><h4>EQUIPMENT RENTAL</h4></div><%end%>
+          <%if !@shop.marks[:mark_boat].nil?%><div class="rating"><h3><%=@shop.marks[:mark_boat][:mark]%> / 5.0</h3><h4>WATER ACCESS</h4></div><%end%>
+          <%if !@shop.marks[:mark_secu].nil?%><div class="rating"><h3><%=@shop.marks[:mark_secu][:mark]%> / 5.0</h3><h4>SECURITY</h4></div><%end%>
+          <%if !@shop.marks[:mark_friend].nil?%><div class="rating"><h3><%=@shop.marks[:mark_friend][:mark]%> / 5.0</h3><h4>FRIENDLINESS</h4></div><%end%>
+        </div>
+        <div class='columns'>
+        <%@shop.reviews.each do |review| %>
+          <div class='column' >
+            <div class="col_pic">
+              <img src="<%=if !review.anonymous then review.user.picture else '/img/no_picture.png' end%>"/>
+              <%if !review.anonymous%>
+                <h4><%=review.user.nickname%></h4>
+              <%end%>
+            </div>   
+            <div class='text_box' >
+              <%if !review.title.nil? %>
+                <h3><%=review.title%></h3>
+              <%end%>
+              <div class="user_rating">
+                <div class="rating"><h5>ORGANIZATION</h5><div class="nb_stars"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"></div></div>
+                <div class="rating"><h5>EQUIPMENT RENTAL</h5><div class="nb_stars"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"></div></div>
+                <div class="rating"><h5>WATER ACCESS</h5><div class="nb_stars"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"></div></div>
+                <div class="rating"><h5>SECURITY</h5><div class="nb_stars"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"></div></div>
+                <div class="rating"><h5>FRIENDLINESS</h5><div class="nb_stars"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"><img src="/img/favorite_dives_icon.png"></div></div>
+              </div>
+              <%if !review.comment.nil?%><p><%=review.comment%></p><%end%>
+            </div>
+          </div>
+          <%end%>
+        </div>
+      <%else%>
+      <p>No reviews have been left yet</p>
+      <%end%>
+    </div>
+  </div>
+  <div class="services_offered" id="services_offered">
+    <h2>SERVICES OFFERED</h2>
+    <div class="container_box prices">
+      <div class='dive_price_list_detailed'>
+      <%color=0%>
+        <%@shop.all_dive_goods.group_by(&:cat1).each do |cat,g|%>
+            <%color = 0%>
+            <div class="category">
+            <div class='category_head'><h3><%=cat%></h3></div>
+            <table>
+            <%g.each do|good| %>
+            
+            <tr class='color_<%=color%> title'>
+              <td class="good_title"><%=good.title%></td>
+              <td><%if !good.description.blank?%><a href='#' class='show_detail'><%= it("View details", scope: ['shop_pages', 'shop_dive_view']) %></a><a href='#' class='hide_detail'><%= it("Hide details", scope: ['shop_pages', 'shop_dive_view']) %></a><%end%></td>
+              <%if params[:vat] == 'exc'
+                price = good.price_before_tax
+              else
+                price = good.price_after_tax
+              end%>
+              <%if @shop.can_sell?(:dive) && good.can_be_sold? then%>
+                <td><button class='yellow_button_small buy_button' ><%= it("Book now", scope: ['shop_pages', 'shop_dive_view']) %></button></td>
+              <%else%>
+                <td></td>
+              <%end%>
+            </tr>
+            <%if !good.description.blank?%>
+              <tr class='good_detail color_<%=color%>'>
+                <td></td>
+                <td colspan=5><div class='good_detail_html color_<%=(color+1)%2%>'><%=good.description.html_safe%></div></td>
+              </tr>
+            <%end%>
+            <%color = (color+1)%2%>
+          <%end%>
+          </table>
+             
+          <div class="expander"><p></p></div> 
+        </div>
+        <%end%>
+      </div>
+    </div>
+  </div>
+  <div class="page_count">
+    <img src="/img/new_index_left.png">
+    <h5>3/21</h5>
+    <img src="/img/new_index_right.png">            
+  </div>
+  <div id="text_editor"></div>
+  <div class="footer">
+    <img src="/img/aqua-lung-blue_logo.png">
+  </div>
+</div>

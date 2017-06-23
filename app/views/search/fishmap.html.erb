@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+  <Style id="density0">
+    <LineStyle>
+      <color>FFFFFFFF</color>
+      <width>0</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>FFFFFFFF</color>
+    </PolyStyle>
+  </Style>
+  <Style id="density1">
+    <LineStyle>
+      <color>00000000</color>
+      <width>0</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>B000FFFF</color>
+    </PolyStyle>
+  </Style>
+  <Style id="density2">
+    <LineStyle>
+      <color>00000000</color>
+      <width>0</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>B000A5FF</color>
+    </PolyStyle>
+  </Style>
+  <Style id="density3">
+    <LineStyle>
+      <color>00000000</color>
+      <width>0</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>B00000FF</color>
+    </PolyStyle>
+  </Style>
+<%
+@map.each{ |freq|
+
+%>
+  <Placemark>
+    <styleUrl>#<%=if freq.count > 100 then "density3" elsif freq.count > 10 then "density2" elsif freq.count > 0 then "density1" else "density0" end%></styleUrl>
+    <Polygon>
+      <altitudeMode>relativeToGround</altitudeMode>
+      <outerBoundaryIs>
+        <LinearRing>
+          <coordinates>
+            <%=freq.lng  %>,<%=freq.lat  %>,30
+            <%=freq.lng+2%>,<%=freq.lat  %>,30
+            <%=freq.lng+2%>,<%=freq.lat+2%>,30
+            <%=freq.lng  %>,<%=freq.lat+2%>,30
+            <%=freq.lng  %>,<%=freq.lat  %>,30
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+<%
+}
+%>
+</Document>
+</kml>

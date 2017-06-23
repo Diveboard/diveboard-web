@@ -1,0 +1,51 @@
+<%= render :partial => 'admin_css'%>
+
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 9} %>
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+  <h1>Shop Admin Dashboard</h1>
+  <H2>Create a new Shop</h2>
+    <a href="/admin/shops/new" class="yellow_button">New Shop</a>
+  <h2>Sanity check shop - proxy user</h2>
+  <p>Format: [shopid,shopname, [user_id, can_be_deleted?, vanity]...]</p><br/>
+  <ul><%((ActiveRecord::Base.connection.execute("SELECT shop_proxy_id, GROUP_CONCAT(id) FROM users where shop_proxy_id is not NULL GROUP BY shop_proxy_id").to_a.reject{|u| u[1].split(",").count ==1}).map{|e| [e[0], Shop.find(e[0].to_i).name, e[1].split(",").map{|u| [u.to_i, User.find(u.to_i).group_memberships.blank?, User.find(u.to_i).vanity_url]}]}).each do |l|%>
+    <li><%=l.to_s%></li>
+    <%end%>
+  </ul>
+  <h2>Shops to moderate</h2>
+  <table>
+  <%Shop.where(:flag_moderate_private_to_public  => true).where("private_user_id is not null").each do |s|%>
+  <tr>
+  <td><%=s.id%></td>
+  <td><%=s.name%></td>
+  <td><%if !s.web.blank?%><a href='<%=ensure_url s.web%>' target='_blank'><%=s.web[0..30]%></a><%end%></td>
+  <td><a href="/admin/shops/<%=s.id%>">EDIT</a></td>
+  </tr>
+  <%end%>
+  </table>
+  <h2>Search Shop</h2>
+  <%= form_tag("/admin/shops_edit", :as => :post, :method => :post) do%>
+  <%= label_tag(:text, "Search shop by text") %>
+  <%= text_field_tag(:text) %>
+  <%= label_tag(:id, "Search shop by id") %>
+  <%= text_field_tag(:id) %>
+  <%= submit_tag("SEARCH", :class => "yellow_button") %>
+  <%end%>
+  <%if !@search_spot_result.nil?%>
+  <ul>
+  <% @search_spot_result.each do |s|%>
+    <li><%= s.id%>, <%= s.name %> <a href="/admin/shops/<%=s.id%>">EDIT</a></li>
+  <%end%>
+  </ul>
+  <%end%>
+  <h2>Merge shops</h2>
+  <%= form_tag("/admin/shops_edit", :as => :post, :method => :post) do%>
+  <%= label_tag(:from, "Merge shop with id:") %>
+  <%= text_field_tag(:from) %>
+  <%= label_tag(:to, "Into shop with id:") %>
+  <%= text_field_tag(:to) %>
+  <p><b>WARNING</b>: shop "from" will be deactivated and all dives with this shop will be moved to shop "to"</p>
+  <%= submit_tag("MERGE", :class => "yellow_button") %>
+  <% end %>
+</div>

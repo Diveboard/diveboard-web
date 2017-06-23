@@ -1,0 +1,13 @@
+<%= it("Dear %{user},", scope: ['password_reset', 'pass_reset', 'text'], user: @user.nickname) %>
+
+<%= it("We just received a request to reset your password.
+If you made this request please follow this link to set a new password : %{url}", scope: ['password_reset', 'pass_reset', 'text'], url: @reset_url) %>
+
+
+<%= it("If you didn't make this request, you can safely discard this email.", scope: ['password_reset', 'pass_reset', 'text']) %>
+
+<%= it("Happy Diving !", scope: ['password_reset', 'pass_reset', 'text']) %>
+--
+<%= it("The Diveboard team", scope: ['password_reset', 'pass_reset', 'text']) %>
+http://www.diveboard.com
+

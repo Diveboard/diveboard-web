@@ -1,0 +1,124 @@
+<%
+highlight ||= nil
+interactive = true if interactive.nil?
+in_reply_to ||= nil
+#history = ShopCustomerHistory.search_for_api({:filter => {:shop_id => @shop.id, :user_id => customer.id}}, [:private,:detailed], {:caller => @user})
+history = shop.history_with_customer(customer, in_reply_to)
+if !params[:filter_history].blank? then
+  history.reject! do |stuff| stuff.class.name != params[:filter_history] end
+end
+
+#Groups items by their topic (in_reply_to)
+pointers = {}
+sorted_history = []
+history.each do |stuff|
+  stuff_pointer_id = "#{stuff.class.name}!#{stuff.id}"
+  if stuff.respond_to?(:in_reply_to) && !stuff.in_reply_to.nil? then
+    root = stuff.in_reply_to
+    root_pointer_id = "#{root.class.name}!#{root.id}"
+    if pointers[root_pointer_id] then
+      pointers[root_pointer_id].push stuff
+      pointers[stuff_pointer_id] = pointers[root_pointer_id]
+    else
+      lst = [stuff]
+      pointers[stuff_pointer_id] = lst
+      sorted_history.push lst
+    end
+  else
+    lst = [stuff]
+    pointers[stuff_pointer_id] = lst
+    sorted_history.push lst
+  end
+end
+%>
+
+<h2>Past exchanges with <%=customer.nickname%></h2>
+
+<div class='message_history_controls'>
+  <%unless in_reply_to%>
+    <div style='display: inline-block'><%= it("Show:", scope: ['care', 'shop_pages', 'customer_history']) %> </div>
+
+    <select class="shop_customer_history_filter">
+      <option class='option' data-value='' <%if params[:filter_history] == ''%> selected<%end %>><%= it("Everything", scope: ['care', 'shop_pages', 'customer_history']) %></option>
+      <option class='option' data-value='Basket' <%if params[:filter_history] == 'Basket'%> selected<%end %>><%= it("Orders", scope: ['care', 'shop_pages', 'customer_history']) %></option>
+      <option class='option' data-value='InternalMessage' <%if params[:filter_history] == 'InternalMessage'%> selected<%end %>><%= it("Messages", scope: ['care', 'shop_pages', 'customer_history']) %></option>
+      <option class='option' data-value='Review' <%if params[:filter_history] == 'Review'%> selected<%end %>><%= it("Reviews", scope: ['care', 'shop_pages', 'customer_history']) %></option>
+      <option class='option' data-value='Dive' <%if params[:filter_history] == 'Dive'%> selected<%end %>><%= it("Dives", scope: ['care', 'shop_pages', 'customer_history']) %></option>
+    </select>
+
+
+  <%end%>
+  <%if interactive && in_reply_to%><button href='#' title='<%= it("Reply", scope: ['care', 'shop_pages', 'customer_history']) %>' class='yellow_button reply_to' data-reply_to_id='<%=in_reply_to.id%>' data-reply_to_type='<%=in_reply_to.class.name%>'><%= it("Send new message to %{customer}", scope: ['care', 'shop_pages', 'customer_history'], customer: customer.nickname) %></button><%end%>
+  <%if interactive && in_reply_to.nil?%><button href='#' title='<%= it("Reply", scope: ['care', 'shop_pages', 'customer_history']) %>' class='yellow_button reply_to'><%= it("Send new message to %{customer}", scope: ['care', 'shop_pages', 'customer_history'], customer: customer.nickname) %></button><%end%>
+  <%if interactive%><button class='grey_button mark_all_read'><%= it("Mark all as read", scope: ['care', 'shop_pages', 'customer_history']) %></button><%end%>
+  <div style='clear:both'></div>
+</div>
+
+
+<div class='message_history'>
+  <div class="dialog-global-notify" title="<%= it("SUCCESS", scope: ['layouts', 'main_layout']) %>" style="display:none;">
+    <p><span class='ui-dialog-title'></span></p>
+    <p><span class='dge-text'></span></p>
+  </div>
+  <%if interactive%>
+  <div class='reply_message' style='display: none'>
+    <%= render :partial => 'v2/shop_pages/edit/message_form', :locals => {:shop => shop, :customer => customer, :with_cancel => true}%>
+  </div>
+  <%end%>
+  <%if history.count == 0 then%>
+    <%if in_reply_to%>
+      <p><%= it("No messages in this conversation", scope: ['care', 'shop_pages', 'customer_history']) %></p>
+    <%elsif !params[:filter_history].blank? %>
+      <p><%= it("Nothing found for this filter.", scope: ['care', 'shop_pages', 'customer_history']) %></p>
+    <%else%>
+      <p><%= it("No past exchanges with %{customer}.", scope: ['care', 'shop_pages', 'customer_history'], customer: customer.nickname) %></p>
+    <%end%>
+  <%end%>
+  <%sorted_history.reverse.each_with_index do |history, sh_idx|%>
+    <%if history.length > 1 then%><div class='group'><%end%>
+    <%history.reverse.each do |stuff|%>
+      <%if stuff.is_a?(InternalMessage) && stuff.to_id == customer.id then%>
+      <div class='history_item message_sent <%if stuff==highlight%>highlighted<%end%>' id="<%=stuff.shaken_id%>">
+        <p class='topic'><%=stuff.topic%></p>
+        <p class='content'><%=stuff.message%></p>
+        <p class='timestamp local_timezone'><%=stuff.created_at%></p>
+        <p class='note'>Sent by <%=stuff.from_nickname%><img class='user_image' src="<%=stuff.from_picture%>"/></p>
+      </div>
+      <%elsif stuff.is_a?(InternalMessage) && stuff.from_id == customer.id then%>
+      <div class='history_item message_received <%if stuff.status == 'new'%>unread<%else%>read<%end%> <%if stuff==highlight%>highlighted<%end%>' id="<%=stuff.shaken_id%>">
+        <p class='topic'><%=stuff.topic%></p>
+        <p class='content'><%=stuff.message%></p>
+        <p class='timestamp local_timezone'><%=stuff.created_at%></p>
+        <p class='note'>Sent by <%=stuff.from_nickname%><img class='user_image' src="<%=stuff.from_picture%>"/></p>
+        <%if interactive%><p class='action'>
+          <img src='/img/transparent_loader_2.gif' class='tmp_load'/>
+          <button class='mark_as_read grey_button_small' data-msgid='<%=stuff.id%>'><%= it("Mark as read", scope: ['care', 'shop_pages', 'customer_history']) %></button>
+          <button class='mark_as_unread grey_button_small' data-msgid='<%=stuff.id%>' ><%= it("Mark as unread", scope: ['care', 'shop_pages', 'customer_history']) %></button>
+        </p><%end%>
+      </div>
+      <%elsif stuff.is_a?(Basket) then%>
+        <div class='history_item history_basket <%if stuff==highlight%>highlighted<%end%>' id="<%=stuff.shaken_id%>">
+          <p class='topic'><%= it("Order", scope: ['care', 'shop_pages', 'customer_history']) %> <a href='<%=stuff.shop_fullpermalink%>' onclick='diveboard.mask_file(true)'><%=stuff.reference%></a> : <%=stuff.basket_items.count%> item<%if stuff.basket_items.count != 1%>s<%end%> - <%=stuff.total.format%>
+          <p class='content'><%stuff.basket_items.each_with_index do |item, idx|%><%if idx>0%><br/><%end%><%=item.quantity%>x <%=item.title%><%end%></p>
+          <p class='timestamp'><span class='local_timezone'><%=stuff.created_at%></span> <%=stuff.status%></p>
+        </div>
+      <%elsif stuff.is_a?(Review) then%>
+        <div class='history_item history_review <%if stuff==highlight%>highlighted<%end%>' id="<%=stuff.shaken_id%>">
+          <p class='topic'><img class='user_image' src="<%=customer.picture%>"/><%=customer.nickname%> left a review</p>
+          <p class='content'><img src='/img/icons/<%if stuff.recommend%>vote_positive.png<%else%>vote_negative.png<%end%>'>
+          <%=if stuff.title.blank? then '<i style="color:#aaa;">No title</i>'.html_safe else stuff.title.titleize end%></p>
+          <p class='timestamp local_timezone'><%=stuff.created_at%></p>
+        </div>
+      <%elsif stuff.is_a?(Dive) then%>
+        <div class='history_item history_dive <%if stuff.uploaded_profile_id%>with_profile<%end%> <%if !stuff.public_notes.blank?%>with_content<%end%> <%if stuff==highlight%>highlighted<%end%>' id="<%=stuff.shaken_id%>">
+          <p class='topic'><a href='<%=stuff.fullpermalink(:locale)%>'><img class='user_image' src="<%=stuff.thumbnail_image_url%>"/><%= it("%{customer} dived on %{spot_name}", scope: ['care', 'shop_pages', 'customer_history'], customer: customer.nickname, spot_name: stuff.spot.name) %></a></p>
+          <%if stuff.public_notes.blank?%><p class='content'><%=unit_distance(stuff.maxdepth, true, 1)%> - <%=stuff.duration%>min</p>
+          <%else%><p class='content'><%=unit_distance(stuff.maxdepth, true, 1)%> - <%=stuff.duration%>min - <%=stuff.public_notes%></p><%end%>
+          <%if stuff.uploaded_profile_id%><embed class='history_profile' type="image/svg+xml" src="<%=stuff.profile_svg_url 'xsmall_blue', (if @user.nil? || @user.preferred_units["distance"] == "m" then 'm' else 'i' end)  %>" ></embed><%end%>
+          <p class='timestamp'>Time in: <%=stuff.time_in.strftime("%Y-%m-%d %H:%M")%></p>
+        </div>
+      <%end%>
+    <%end%>
+    <%if history.length > 1 then%></div><%end%>
+  <%end%>
+</div>

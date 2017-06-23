@@ -1,0 +1,31 @@
+<%= it("Hi %{recipient},", scope: ['notify_shop', 'notify_daily_action', 'text'], recipient: @recipient.nickname) %>
+
+<%= it("Time to take a break from the ocean and gove some love to your customers.
+New actions are waiting in your shop's inbox:", scope: ['notify_shop', 'notify_daily_action', 'text']) %>
+
+<%@global_inbox.each do |section|%>
+  <%= section[:count].map do |what, nb|
+    if nb > 0 && what == :messages then "\t* " + t("new message to read", scope: ['notify_shop', 'notify_daily_action'], count: nb)
+    elsif nb > 0 && what == :baskets then "\t* " + t("new order", scope: ['notify_shop', 'notify_daily_action'], count: nb)
+    elsif what == :signature then "\t* " + t("new dive to confirm", scope: ['notify_shop', 'notify_daily_action'], count: nb)
+    end
+  end .join("\n").html_safe%>
+<%end%>
+
+<% if @shop.is_claimed? %>
+  <%= it("Head to your inbox to answer them : %{txt_url}", scope: ['notify_shop', 'notify_daily_action', 'text'], txt_url: @shop.fullpermalink(:locale) + "/edit/care?ensure_login=true") %>
+<%else%>
+<%= it("To answer those messages you first need to claim your shop's page on diveboard!
+Your page is located here : %{shop}
+You can register and claim it here : %{register}", scope: ['notify_shop', 'notify_daily_action', 'text'], shop: @shop.fullpermalink(:locale), register: ROOT_URL + "login/register_pro/user") %>
+<%end%>
+
+<%= it("Happy Diving !", scope: ['notify_shop', 'notify_daily_action', 'text']) %>
+--
+<%= it("The Diveboard team", scope: ['notify_shop', 'notify_daily_action', 'text']) %>
+http://www.diveboard.com
+
+
+
+<%= it("This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
+If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings", scope: ['notify_shop', 'notify_daily_action', 'text']) %>

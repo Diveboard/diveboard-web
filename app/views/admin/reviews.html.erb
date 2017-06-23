@@ -1,0 +1,98 @@
+<%= render :partial => 'admin_css'%>
+<script src='/js/jquery.rating.3.14.js' ></script>
+
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 7 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+
+  <h1>List of all reviews</h1>
+
+  <div style='margin: 20px 40px;'>
+    <a href='/admin/reviews?what=default'>Reviews to moderate</a> |
+    <a href='/admin/reviews?what=spam'>All spam</a> |
+    <a href='/admin/reviews?what=not_spam'>Not spam</a> |
+    <a href='/admin/reviews?what=all'>All</a>
+  </div>
+
+
+  <% @list_reviews.each_with_index do |review, idx|%>
+    <div class='admin_review'>
+      <div class='eval_date'><%=review.created_at.to_date%></div>
+      <h2>
+        <img src='/img/icons/<%if review.recommend%>vote_positive.png<%else%>vote_negative.png<%end%>'>
+        <%=if review.title.blank? then '<i style="color:#aaa;">No title</i>'.html_safe else review.title.titleize end%>
+      </h2>
+      <table class='review_info'>
+        <tr>
+          <td>Review by</td>
+          <td>Shop</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>
+            <img src='<%=review.user.picture%>' class='review_image_user'/>
+            <% if review.anonymous then%> --Anonymous-- <br/><%end%>
+            <a href='/admin/users/<%=review.user.id%>'><%=review.user.nickname%></a>
+            <img src="<%=review.user.country.flag_small%>" title="<%=review.user.country.name%>" alt="<%=review.user.country.name%>" style="top: -2px; position: relative; margin-left: 3px;" width='16px' height='11px'/>
+          </td>
+          <td>
+            <img src='<%=review.shop.user_proxy.picture%>' class='review_image_user'/>
+            <a href='/admin/users/<%=review.shop.user_proxy.id%>'><%=review.shop.name.titleize%></a>
+            <img src="<%=review.shop.country.flag_small%>" title="<%=review.shop.country.name%>" alt="<%=review.shop.country.name%>" style="top: -2px; position: relative; margin-left: 3px;" width='16px' height='11px'/>
+          </td>
+          <td>
+            <%if review.reported_spam then%><span style='color: #F90;font-size: 20px'>REPORTED AS SPAM</span><br/><%end%>
+            <%if review.spam then%><span style='color: #F00;font-size: 20px'>FLAGGED AS SPAM</span><br/><%end%>
+            <a class='yellow_button' href='/admin/reviews?id=<%=review.id%>&mark_spam=false&what=<%=params[:what]%>'>Not spam</a>
+            <a class='grey_button' href='/admin/reviews?id=<%=review.id%>&mark_spam=true&what=<%=params[:what]%>'>Mark as spam</a>
+          </td>
+        </tr>
+      </table>
+      <div style='clear:both;'> </div>
+      <% if !review.comment.blank?%>
+        <p class='review_comment'><%=review.comment%></p>
+      <%end%>
+      <div class='review_detail clear'>
+        <table class='review_marks'>
+        <% [[:mark_orga, 'Organisation'],
+            [:mark_friend, 'Friendliness'],
+            [:mark_secu, 'Security'],
+            [:mark_boat, 'Ease of access to water'],
+            [:mark_rent, 'Equipment rental'] ].each do |mark|
+              this_mark = review.send(mark[0])
+              next if this_mark.nil?
+        %>
+          <tr>
+            <td><%=mark[1]%></td>
+            <td>
+              <% previous_level = [0,nil]
+              this_title = nil
+              this_idx = nil
+              grades = [ [0.5,'Really Terrible'], [1,'Terrible'], [1.5,'Terrible'], [2,'Poor'], [2.5,'Lower than average'], [3,'Average'], [3.5,'Good'], [4,'Very good'], [4.5,'Very very good'], [5,'Excellent'] ]
+              #Let's find the correct grade to display
+              grades.each_with_index do |level, gridx|
+                if this_mark > previous_level[0] && this_mark <= level[0] then
+                  this_title = level[1]
+                  this_idx = gridx
+                end
+                previous_level = level
+              end
+              grades.each_with_index do |level, gridx| %>
+                <% next if level[0].round != level[0]%>
+                <input type='radio' name='star_<%=mark[0]%>_<%=idx%>' title='<%=this_title%>'  disabled='disabled' class='star {split:2}' <%=if gridx == this_idx then 'checked' end%>/>
+              <%end%>
+            </td>
+          </tr>
+        <%end%>
+        </table>
+      </div>
+      <div style='clear:both;'> </div>
+    </div>
+  <%end%>
+
+  <a href='/admin/reviews?what=default&valid_all=moderate' class='yellow_button'>Validate reviews to moderate as not spam</a>
+  <p>(Does not change the reviews reported as spam)</p>
+</div>

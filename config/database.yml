@@ -1,0 +1,130 @@
+# SQLite version 3.x
+#   gem install sqlite3-ruby (not necessary on OS X Leopard)
+
+development:
+    adapter: mysql2
+    encoding: utf8
+    database: diveboard
+    pool: 5
+    username: dbuser
+    password: diveboard
+    socket: /var/run/mysqld/mysqld.sock
+    blog_database: diveboard_blog
+    blog_username: dbuser
+    blog_password: diveboard
+
+
+development_suiko:
+    adapter: mysql2
+    encoding: utf8
+    database: diveboard
+    pool: 5
+    username: devuser
+    password: diveboard
+    socket: /var/run/mysqld/mysqld.sock
+    blog_database: diveboard_blog
+    blog_username: devuser
+    blog_password: diveboard
+
+development_jean:
+    adapter: mysql2
+    encoding: utf8
+    database: diveboard
+    pool: 5
+    username: devuser
+    password: diveboard
+    socket: /var/run/mysqld/mysqld.sock
+    blog_database: diveboard_blog
+    blog_username: devuser
+    blog_password: diveboard
+
+development_alex:
+    adapter: mysql2
+    encoding: utf8
+    database: diveboard
+    pool: 5
+    username: root
+    password: diveboard
+    #socket: /var/run/mysqld/mysqld.sock 
+    host: localhost
+    blog_database: diveboard_blog
+    blog_username: root
+    blog_password: diveboard  
+
+development_abruneau:
+    adapter: mysql2
+    encoding: utf8
+    database: diveboard
+    pool: 5
+    username: root
+    password: diveboard
+    #socket: /var/run/mysqld/mysqld.sock 
+    host: localhost
+    blog_database: diveboard_blog
+    blog_username: root
+    blog_password: diveboard  
+
+development_vm:
+    adapter: mysql2
+    encoding: utf8
+    database: diveboard
+    pool: 5
+    username: devuser
+    password: diveboard
+    #socket: /var/run/mysqld/mysqld.sock 
+    host: localhost
+    blog_database: diveboard_blog
+    blog_username: devuser
+    blog_password: diveboard
+
+development_squale:
+    adapter: mysql2
+    encoding: utf8
+    database: alexdev
+    pool: 5
+    username: alexdevuser
+    password: z19Dps5j73T
+    socket: /var/run/mysqld/mysqld.sock
+    blog_database: diveboard_blog
+    blog_username: db_blog
+    blog_password: ioq32kjh343DEFD3
+
+development_local_squale:
+    adapter: mysql2
+    encoding: utf8
+    database: sqdev
+    pool: 5
+    username: sqdevuser
+    password: 3d4ljwT186b
+    socket: /tmp/mysql.sock
+    blog_database: diveboard_blog
+    blog_username: db_blog
+    blog_password: <%= 'ioq32kjh343DEFD3' if true %>
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+staging:
+    adapter: mysql2
+    encoding: utf8
+    database: diveboard
+    pool: 5
+    username: dbusertest
+    password: <%= "TkVvfuqxkxc97FzGjrPPokpYUu" if `/usr/bin/whoami`.chomp == 'diveboard' %>
+    socket: /var/run/mysqld/mysqld.sock
+    blog_database: diveboard_blog
+    blog_username: db_blog
+    blog_password: 0Q4o8V27k
+
+production:
+    adapter: mysql2
+    encoding: utf8
+    database: diveboard
+    pool: 5
+    username: dbuser
+    password: <%= ENV["PROD_DB"] if `/usr/bin/whoami`.chomp == 'diveboard' %>
+    socket: /var/run/mysqld/mysqld.sock
+    blog_database: diveboard_blog
+    blog_username: db_blog
+    blog_password: 0Q4o8V27k
+#    host: optional.external.mysqlserver.hostname.com

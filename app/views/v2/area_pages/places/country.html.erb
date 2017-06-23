@@ -1,0 +1,38 @@
+<%= content_for :stylesheets do%>
+  <%= stylesheet_link_tag 'area' %>
+<%end%>
+
+<%= content_for :javascripts do%>
+  <%= javascript_include_tag "areapage" %>
+<%end%>
+
+
+<%
+  location_name = @geonames_country.name
+  location_name += ", #{@geonames_country.name}"
+%>
+  <%= begin
+    render :partial => 'v2/area_pages/places/places_country_cover_pic'
+    end
+     %>
+
+     <%= begin
+    render :partial => 'v2/area_pages/places/places_country_dive_data'
+    end %>
+
+<div id="best_areas">
+	<h2><%= @geonames_country.name %></h2>
+	<% count= 0 %>
+	<%@geonames_cores.each do |g| %>
+		<div class="best_area<%= if count % 2 == 1 then " second" end %>">
+			Area : <%= g.name %><br \> 
+			Number of dives : <%= g.localDives.count %><br \>
+			Depth Average : <%= g.avgDepth.round(2) %><br \>
+			Number of shops : <%= g.localShops.count %><br \>
+			Number of spots : <%= g.localSpots.count %><br \>
+			<%= g.localAvg %>
+			<a href="<%= @geonames_country.ISO%>\?where=<%=g.name %>">Show more Infos</a>
+		</div>
+		<% count +=1 %>
+	<% end %>
+</div>

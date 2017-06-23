@@ -1,0 +1,170 @@
+<%= render :partial => 'admin_css'%>
+
+
+<script src="http://maps.google.com/maps/api/js?sensor=false&amp;key=<%= @gmapskey%>" type="text/javascript"></script>
+<%= javascript_include_tag 'divepage', defer: true %>
+
+<script type="text/javascript">
+
+$(document).ready( function () {
+	G_spot_lat = $("#spot_lat").val();
+	G_spot_long = $("#spot_long").val();
+	G_spot_zoom = $("#spot_zoom").val()-2;
+	
+	gmaps_initialize("mapholder", true);
+	$("#spot_lat").change(update_map);
+	$("#spot_long").change(update_map);
+	$("#spot_zoom").change(update_map);
+	
+	google.maps.event.addListener(marker, 'mouseup', function() {
+	  	//infowindow.open(map,marker);
+	  	map.setCenter(marker.position);
+	  	var lat = marker.position.lat();
+	  	var lng = marker.position.lng();
+	  	$("#spot_lat").val(lat);
+	  	$("#spot_long").val(lng);
+	  	wizard_correct_dive = true;
+	  	wizard_marker_moved = true;
+
+	  });
+	
+	  google.maps.event.addListener(map, 'zoom_changed', function() {
+	  	//set new zoom - only relevant if marker isdraggable
+	  	$("#spot_zoom").val(map.getZoom()+2);
+	  	wizard_correct_dive = true;
+
+	  });
+	
+	google.maps.event.addListener(map, 'click', function(event	) {
+		marker.setPosition(event.latLng);
+		map.setCenter(marker.position);
+	});
+	
+	check_country();	
+	$("#country_code").change(check_country);
+	
+	$("#original").click(set_original);
+	$("#modified").click(set_modified);
+	
+	
+});
+
+function set_original(){
+	$("#spot_name").val($("#oname").text());
+	$("#location").val($("#olocation").text());
+	$("#region").val($("#oregion").text());
+	$("#country_code").val($("#occode").text());
+	$("#spot_lat").val($("#olat").text());
+	$("#spot_long").val($("#olong").text());
+	$("#spot_zoom").val($("#ozoom").text());
+	update_map();
+	check_country();	
+	
+}
+
+function set_modified(){
+	$("#spot_name").val($("#mname").text());
+	$("#location").val($("#mlocation").text());
+	$("#region").val($("#mregion").text());
+	$("#country_code").val($("#mccode").text());
+	$("#spot_lat").val($("#mlat").text());
+	$("#spot_long").val($("#mlong").text());
+	$("#spot_zoom").val($("#mzoom").text());
+	update_map();
+	check_country();	
+	
+	
+}
+
+
+function update_map(){
+	marker.setPosition(new google.maps.LatLng($("#spot_lat").val(),$("#spot_long").val() ) );
+	map.setCenter(marker.position);
+	map.setZoom($("#spot_zoom").val()-2);
+	
+	
+}	
+
+function check_country(){
+	var name = country_name_from_code($("#country_code").val())
+	if (name != ""){
+		$("#country").text(name);
+		$("#country").css("color", "black");
+		
+	}else{
+		$("#country").text("ERROR");
+		$("#country").css("color", "red");
+	}	
+}
+	
+	
+</script>
+
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 3 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+	<h1>Spot Moderate</h1>
+		
+		<% if @original_spot.id.nil?%>
+		<br/><br/>
+		<h2>Good job, you're done with moderating spots !</h2>
+		<%else%>
+		
+		<div class="about_profile_new_box" style="display:inline-block;width:300px;">
+			<div class="varline"><div class="tag"><b>ID :</b></div><div class="field"><%=@original_spot.id%></div> <a href="/admin/spot-edit/<%=@original_spot.id%>">EDIT</a></div>
+			<div class="varline"><div class="tag"><b>Name :</b></div><div class="field" id="oname"><%= @original_spot.name%></div></div>
+			<div class="varline"><div class="tag"><b>Localization :</b></div><div class="field" id="olocation"><%= @original_spot.location.name%></div></div>
+			<%if @original_spot.region_id.nil?%>
+			<div class="varline"><div class="tag"><b>Sea :</b></div><div class="field" id="oregion"></div></div>
+			<%else%>
+			<div class="varline"><div class="tag"><b>Sea :</b></div><div class="field" id="oregion"><%= @original_spot.region.name unless @original_spot.region.nil?%></div></div>
+			<%end%>
+			<div class="varline"><div class="tag"><b>Country code :</b></div><div class="field" id="occode"><%= @original_spot.country.ccode%></div></div>
+			<div class="varline"><div class="tag"><b>latitude :</b></div><div class="field" id="olat"><%= @original_spot.lat%></div></div>
+			<div class="varline"><div class="tag"><b>longitude :</b></div><div class="field" id="olong"><%= @original_spot.long%></div></div>
+			<div class="varline"><div class="tag"><b>zoom :</b></div><div class="field" id="ozoom"><%= @original_spot.zoom%></div></div>
+			<div class="varline"><div class="tag"><b>Used in :</b></div><div class="field"><a href='/admin/dives?search_spot_id=<%=@original_spot.id%>' target='_blank'><%=@original_spot.dives.count%> dives</a></div></div>
+		<center><button id="original">SELECT ORIGINAL</button></center>
+	</div>
+	<div class="about_profile_new_box" style="display:inline-block;width:300px;">
+
+			<div class="varline"><div class="tag"><b>ID :</b></div><div class="field"><%=@user_spot.id%></div> <a href="/admin/spot-edit/<%=@user_spot.id%>">EDIT</a></div>
+			<div class="varline"><div class="tag"><b>Name :</b></div><div class="field" id="mname" ><%=@user_spot.name%></div></div>
+			<div class="varline"><div class="tag"><b>Localization :</b></div><div class="field" id="mlocation"><%= @user_spot.location.name%></div></div>
+			<%if @user_spot.region_id.nil?%>
+			<div class="varline"><div class="tag"><b>Sea :</b></div><div class="field" id="mregion"><%= @user_spot.region.name unless @user_spot.region.nil?%></div></div>
+			<%else%>
+			<div class="varline"><div class="tag"><b>Sea :</b></div><div class="field" id="mregion"><%= @user_spot.region.name unless @user_spot.region.nil?%></div></div>
+			<%end%>
+			<div class="varline"><div class="tag"><b>Country code :</b></div><div class="field" id="mccode"><%= @user_spot.country.ccode%></div></div>
+			<div class="varline"><div class="tag"><b>latitude :</b></div><div class="field" id="mlat"><%= @user_spot.lat%></div></div>
+			<div class="varline"><div class="tag"><b>longitude :</b></div><div class="field" id="mlong"><%= @user_spot.long%></div></div>
+			<div class="varline"><div class="tag"><b>zoom :</b></div><div class="field" id="mzoom"><%= @user_spot.zoom%></div></div>
+			<div class="varline"><div class="tag"><b>Used in :</b></div><div class="field"><a href='/admin/dives?search_spot_id=<%=@user_spot.id%>' target='_blank'><%=@user_spot.dives.count%> dives</a></div></div>
+		<center><button id="modified">SELECT USER VERSION</button></center>
+	</div>
+	
+	<div class="about_profile_new_box" style="display:inline-block;width:600px;">
+		<%= form_for(@original_spot, :url=>{:action=>'save_spot_moderate'}) do |f|%>
+			<%= f.hidden_field(:id)%>
+			<input type="hidden" name="moderate_id" value=<%=@user_spot.id%> id="moderate_id"/>
+			<div class="varline"><div class="tag"><b>ID :</b></div><div class="field"><%=@original_spot.id%></div></div>
+			<div class="varline"><div class="tag"><b>Name :</b></div><div class="field"><%=f.text_field :name%></div></div>
+			<div class="varline"><div class="tag"><b>Localization :</b></div><div class="field"><input type="text" id="location" name="location"/></div></div>
+			<div class="varline"><div class="tag"><b>Sea :</b></div><div class="field"><input type="text" id="region" name="region"/></div></div>
+			<div class="varline"><div class="tag"><b>Country code :</b></div><div class="field"><input type="text" id="country_code" name="country_code"/></div></div>
+			<div class="varline"><div class="tag"><b>Code checked :</b></div><div class="field" id="country"></div></div>
+			<div class="varline"><div class="tag"><b>latitude :</b></div><div class="field"><%= f.text_field :lat%></div></div>
+			<div class="varline"><div class="tag"><b>longitude :</b></div><div class="field"><%= f.text_field :long%></div></div>
+			<div class="varline"><div class="tag"><b>zoom :</b></div><div class="field"><%= f.number_field :zoom%></div></div>
+			<div style="left: 50px; position: relative;"><%= f.submit "SAVE - MODERATE - GET NEXT"%></div>
+			<div style="left: 50px; position: relative;"><%= f.submit "KEEP AS 2 DISTINCTS SPOTS - GET NEXT"%></div>
+			<div id="mapholder" style=" position: absolute; left: 340px; top: 260px;width:250px; height: 230px;"></div>
+		<%end%>		
+	</div>
+	<%end%>
+</div>
+

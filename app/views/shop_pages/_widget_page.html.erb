@@ -1,0 +1,44 @@
+<div class='widget_page'>
+  <%if params[:content] == :edit && shop.can_manage_widgets? then%>
+    <div class='edit_controls stay_on_scroll'>
+      <button class='yellow_button save_link'><%= it("Save", scope: ['shop_pages', 'widget_page']) %></button>
+      <button class='add_widget_ask yellow_button'><%= it("Add element", scope: ['shop_pages', 'widget_page']) %></button>
+      <button class='make_realm_public yellow_button' <%if shop.view_realms.include? realm_name then%>style='display:none'<%end%>><%= it("Make content public", scope: ['shop_pages', 'widget_page']) %></button>
+      <button class='make_realm_private grey_button' <%if !shop.view_realms.include? realm_name then%>style='display:none'<%end%>><%= it("Make content private", scope: ['shop_pages', 'widget_page']) %></button>
+    </div>
+  <%end%>
+  <%if !widgets.nil? then%>
+    <%current_column = nil%>
+    <%widgets.each_with_index do |shop_widget, idx| %>
+      <%widget = shop_widget.widget%>
+      <%if shop_widget.column!=current_column then%>
+        <%if idx>0%></div><%end%>
+        <%if shop_widget.column == 2 && (current_column.nil? || current_column == 0)%><div class='widgets_col1' data-colnum='1'>&nbsp;</div><%end%>
+        <div class='widgets_col<%=shop_widget.column%>'  data-colnum='<%=shop_widget.column%>'>
+        <%current_column = shop_widget.column%>
+      <%end%>
+          <div id='widget_<%=widget.class.name.underscore%>_<%=widget.id%>' class='widget_holder widget_<%=widget.class.name.underscore%> <%= "first_widget" if idx==0%> mode_<%=params[:content]%>' data-widget_class='<%=widget.class.name%>' data-widget_id='<%=widget.id%>' data-mode='<%=params[:content]%>'>
+            <%if params[:content] == :edit && shop.can_manage_widgets? then%>
+              <div class='widget_controls'>
+                <%= it("Disposition:", scope: ['shop_pages', 'widget_page']) %>
+                <select class='column_select'>
+                  <option value='0' <%='selected' if current_column == 0%>><%= it("Wide", scope: ['shop_pages', 'widget_page']) %></option>
+                  <option value='1' <%='selected' if current_column == 1%>><%= it("Left", scope: ['shop_pages', 'widget_page']) %></option>
+                  <option value='2' <%='selected' if current_column == 2%>><%= it("Right", scope: ['shop_pages', 'widget_page']) %></option>
+                </select>
+                <button class='grey_button_small move_up'><%= it("Move up", scope: ['shop_pages', 'widget_page']) %></button>
+                <button class='grey_button_small move_down'><%= it("Move down", scope: ['shop_pages', 'widget_page']) %></button>
+                <button class='grey_button_small widget_delete'><%= it("Delete", scope: ['shop_pages', 'widget_page']) %></button>
+              </div>
+            <%end%>
+            <%=begin
+              render :partial => "widgets/#{widget.class.name.underscore}_#{params[:content]}", :locals=> {:widget => widget, :shop => shop}
+              rescue MissingTemplate
+                Rails.logger.warn $!.message
+                nil
+              end %>
+          </div>
+    <%end%>
+    <%unless current_column.nil?%></div><%end%>
+  <%end%>
+</div>

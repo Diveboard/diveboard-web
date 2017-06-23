@@ -1,0 +1,24 @@
+  <div class="main_info" align="left">
+    <div>
+      <%= it("Congratulations !%{br}%{br}
+      Someone on Diveboard has logged dives they did with you !%{br}%{br}
+      Here's the data we have on your business, please confirm it. %{br}
+      Being listed is 100% free and will bring you increased visibility and new customers.%{br}%{br}", scope: ['onboarding', 'shop_check_info'], br: It.tag("br")) %>
+      <center><table class="shop_info">
+        <tr><td class="label"><%= it("Name", scope: ['onboarding', 'shop_check_info']) %></td><td><%=@shop.name%></td></tr>
+        <tr><td class="label"><%= it("Address", scope: ['onboarding', 'shop_check_info']) %></td><td><%=@shop.address%></td></tr>
+        <tr><td class="label"><%= it("City", scope: ['onboarding', 'shop_check_info']) %></td><td><%=@shop.city%></td></tr>
+        <tr><td class="label"><%= it("Country", scope: ['onboarding', 'shop_check_info']) %></td><td><%=@shop.country.name rescue "n/a" %></td></tr>
+        <tr><td class="label"><%= it("Type", scope: ['onboarding', 'shop_check_info']) %></td><td><%=@shop.category%></td></tr>
+        <tr><td class="label"><%= it("Contact Email", scope: ['onboarding', 'shop_check_info']) %></td><td><%=@shop.email%></td></tr>
+        <tr><td class="label"><%= it("Web site", scope: ['onboarding', 'shop_check_info']) %></td><td><%=@shop.web%></td></tr>
+        <tr><td class="label"><%= it("Phone", scope: ['onboarding', 'shop_check_info']) %></td><td><%=@shop.phone%></td></tr>
+      </table></center>
+      <br/>
+    </div>
+
+    <div>
+      <center><a href="<%=@claim%>" class="yellow_button"><%= it("CONFIRM or UPDATE", scope: ['onboarding', 'shop_check_info']) %></a></center>
+    </div>
+    <br/>
+  </div>

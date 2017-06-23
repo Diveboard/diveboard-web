@@ -1,0 +1,84 @@
+<div class="widget_profile">
+  <div class='stay_on_scroll save_buttons'>
+    <button class='yellow_button save'><%= it("save", scope: ['widgets', 'widget_profile_edit']) %></button>
+  </div>
+  <div class="main_content_box">
+    <h2><%= it("Profile image", scope: ['widgets', 'widget_profile_edit']) %></h2>
+    <p class="dialog-text-highlight"><%= it("Create or update your profile picture by uploading a picture using the button below. You will be able to crop the uploaded file.", scope: ['widgets', 'widget_profile_edit']) %></p>
+
+    <div class='upload_container'>
+      <div class="current_image">
+        <img src="<%=widget.user_proxy.picture%>" width=200 height=200 />
+      </div>
+      <div class="imageuploader">
+        <span class="third_lvl_header"><%= it("Upload New Image (2Mb max):", scope: ['widgets', 'widget_profile_edit']) %></span>
+        <div class="select_file_btn"><%= it("Import a picture", scope: ['widgets', 'widget_profile_edit']) %></div>
+      </div>
+      <div class="picture_table" style="display:none; width: 455px;">
+        <div class="third_lvl_header"><%= it("Select a thumbnail:", scope: ['widgets', 'widget_profile_edit']) %></div>
+        <div style="float: right; width: 45px;">
+          <button href="#" class="yellow_button image_confirm" style='margin-left: 10px; margin-top: 15px;'><%= it("SELECT", scope: ['widgets', 'widget_profile_edit']) %></button>
+          <button href="#" class="grey_button_v1 image_cancel" style='margin:10px;'><%= it("Cancel", scope: ['widgets', 'widget_profile_edit']) %></button>
+        </div>
+        <div class="picturepreview" style='display: inline-block'></div>
+
+      </div>
+    </div>
+  </div>
+  <div class="main_content_box">
+    <h2><%= it("Business details", scope: ['widgets', 'widget_profile_edit']) %></h2>
+    <div class="business_details">
+      <table class='shopedit_contact_table'>
+        <tr><td><strong><%= it("Business Type", scope: ['widgets', 'widget_profile_edit']) %></strong></td>
+          <td>
+            <select  id="shop_type" name="shopedit_type" class='wizard_input_50 wizard_big_input'>
+          <%Shop::ALLOWED_CATEGORIES.each do |cat|
+            next if cat.nil?%>
+            <option value="<%=cat%>" <%= if widget.shop.category == cat then 'SELECTED' end %>><%=cat.titleize%></option>
+          <%end%>
+        </select>
+          </td></tr>
+        <tr><td><strong><%= it("Business Name", scope: ['widgets', 'widget_profile_edit']) %></strong></td>
+          <td><input id='shopedit_name' value="<%=CGI.escapeHTML(shop.name.titleize || "")%>" type='text' class='wizard_input_100 wizard_big_input'/></td></tr>
+        <tr><td class='col1'><strong><%= it("Address", scope: ['widgets', 'widget_profile_edit']) %></strong><br/><%= it("Address of your offices (where you expect your customers to come!). Include also the zip code and city", scope: ['widgets', 'widget_profile_edit']) %></td>
+          <td><textarea id='shopedit_address' class='wizard_input_100 wizard_big_input'><%=shop.address%></textarea></td></tr>
+        <tr><td><strong><%= it("City", scope: ['widgets', 'widget_profile_edit']) %></strong></td>
+          <td><input id='shopedit_city' value="<%=CGI.escapeHTML(shop.city || "")%>" type='text' class='wizard_input_100 wizard_big_input'/></td></tr>
+        <tr><td><strong><%= it("Country", scope: ['widgets', 'widget_profile_edit']) %></strong></td>
+          <td><span class='autocomplete_country'><input id='shopedit_country' value="<%=CGI.escapeHTML(shop.country && shop.country.name || "")%>" type='text' shortname="<%=CGI.escapeHTML(shop.country_code || "")%>" class='wizard_input_100 wizard_big_input'/><img src='/img/flags/<%=if shop.country_code.blank? then "blank" else shop.country_code.downcase end%>.gif'/></span></td></tr>
+        <tr>
+          <td colspan=2>
+            <div id="shopedit_gmap"> </div>
+            <button class='yellow_button' id='shopedit_gmap_placepin'><%= it("Place pin on map", scope: ['widgets', 'widget_profile_edit']) %></button>
+          </td>
+        </tr>
+        <tr><td><strong><%= it("Latitude - Longitude", scope: ['widgets', 'widget_profile_edit']) %></strong></td>
+          <td><input id='shopedit_lat' value="<%=shop.lat%>" type='text' class='wizard_input_25 wizard_big_input'/> -
+          <input id='shopedit_lng' value="<%=shop.lng%>" type='text' class='wizard_input_25 wizard_big_input'/></td></tr>
+        <tr><td><strong><%= it("Phone", scope: ['widgets', 'widget_profile_edit']) %></strong><br/><%= it("Please use international format%{br}E.g. +33 1 234567890", scope: ['widgets', 'widget_profile_edit'], br: It.tag("br")) %></td>
+          <td><input id='shopedit_phone' value="<%=CGI.escapeHTML(shop.phone || "")%>" type='text' class='wizard_input_100 wizard_big_input'/></td></tr>
+        <tr><td><strong><%= it("Email", scope: ['widgets', 'widget_profile_edit']) %></strong></td>
+          <td><input id='shopedit_email' value="<%=CGI.escapeHTML(shop.email || "")%>" type='text' class='wizard_input_100 wizard_big_input'/></td></tr>
+        <tr><td><strong><%= it("Opening times", scope: ['widgets', 'widget_profile_edit']) %></strong><br/><%= it("E.g.: %{br}%{iopen}1p.m. - 7p.m. tue-fri%{br}8a.m - 9p.m. sat-sun%{br}Closed on monday and bank holidays%{iclose}", scope: ['widgets', 'widget_profile_edit'], br: It.tag("br"), iopen: "<i>".html_safe, iclose: "</i>".html_safe) %></td>
+          <td><textarea id='shopedit_openings' class='wizard_input_100 wizard_big_input'><%=shop.openings%></textarea></td></tr>
+        <tr><td><strong><%= it("Your official web page", scope: ['widgets', 'widget_profile_edit']) %></strong></td>
+          <td><input id='shopedit_web' value="<%=CGI.escapeHTML(shop.web || "")%>" type='text' class='wizard_input_100 wizard_big_input'/></td></tr>
+        <tr><td><strong><%= it("Facebook fan page", scope: ['widgets', 'widget_profile_edit']) %></strong></td>
+          <td><input id='shopedit_facebook' value="<%=CGI.escapeHTML(shop.facebook || "")%>" type='text' class='wizard_input_100 wizard_big_input'/></td></tr>
+        <tr><td><strong><%= it("Twitter account", scope: ['widgets', 'widget_profile_edit']) %></strong></td>
+          <td><input id='shopedit_twitter' value="<%=CGI.escapeHTML(shop.twitter || "")%>" type='text' class='wizard_input_100 wizard_big_input'/></td></tr>
+        <tr><td><strong><%= it("Google plus page", scope: ['widgets', 'widget_profile_edit']) %></strong></td>
+          <td><input id='shopedit_google_plus' value="<%=CGI.escapeHTML(shop.google_plus || "")%>" type='text' class='wizard_input_100 wizard_big_input'/></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="main_content_box">
+    <h2><%= it("Closest hotels, commodities,... in the neighborhood", scope: ['widgets', 'widget_profile_edit']) %></h2>
+    <div id='shop_edit_nearby'>
+      <%= shop.nearby && shop.nearby.html_safe %>
+    </div>
+
+  </div>
+</div>
+

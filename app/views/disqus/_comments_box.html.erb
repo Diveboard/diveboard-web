@@ -1,0 +1,92 @@
+  <!-- Comments box -->
+      <% if defined? subject then thread_identifier = "#{subject.class.name}/#{subject.shaken_id}" end %>
+      <% with_seo = true if local_assigns[:with_seo].nil? %>
+
+      <div id="disqus_thread" class='disqus_thread'>
+      <% if defined? subject%>
+        <div class='preloaded_disqus_thread' style="display:none">
+          <h3>Comments:</h3>
+          <!-- Display manually all the disqus comments previously stored locally in our db -->
+          <% DisqusComments.where(source_type: subject.class.name, source_id: subject.id).find_each do |c|%>
+              <div>
+                <h5><%=c.author_name%></h5>
+                <p><%=c.created_at.to_time%></p>
+                <p><%=c.body%></p>
+              </div>
+          <% end if with_seo %>
+        </div>
+      <%end%>
+      </div>
+      <script type="text/javascript">
+      <% if !@user.nil? && !@user.contact_email.nil? then %> 
+        <% 
+          data =  {
+          'id' => @user.id,
+          'username' => @user.nickname,
+          'email' => @user.contact_email,
+          'avatar' => @user.picture,
+          'url' => @user.fullpermalink(:canonical)
+          }.to_json
+    
+          # encode the data to base64
+          disqus_message  = Base64.encode64(data).gsub("\n", "")  
+          # generate a timestamp for signing the message
+          disqus_timestamp = Time.now.to_i
+          # generate our hmac signature
+          disqus_sig = OpenSSL::HMAC.hexdigest('sha1', DISQUS_SECRET_KEY, "#{disqus_message} #{disqus_timestamp}")
+          Rails.logger.debug "disqus parameters : #{DISQUS_SECRET_KEY} -- #{disqus_message} #{disqus_sig} #{disqus_timestamp}"       
+        %>
+      <%end%>
+          var most_recent_comment;
+          var disqus_config = function () {
+          /* * * DISQUS SSO CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * * * * * * * * * * */
+          /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */  
+            <% if !@user.nil? then %>                                                                     /* * * */
+            this.page.remote_auth_s3 = '<%=disqus_message%> <%=disqus_sig%> <%=disqus_timestamp%>';       /* * * */
+            this.page.api_key = '<%=DISQUS_PUBLIC_KEY%>';                                                 /* * * */      
+            <%end%>                                                                                       /* * * */
+            this.language = '<%=Rails.configuration.map_disqus_locales[I18n.locale]%>' ;                  /* * * */
+          /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */ 
+          /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+            this.callbacks.onNewComment = [function(comment) { 
+              // alert(comment.id);
+              most_recent_comment = comment;
+              console.log ("\"" + comment.text + "\" ---- comment id: " + comment.id);
+              notify_disqus_event('disqus_comment.create', most_recent_comment);
+            }];
+          }
+          var disqus_shortname = '<%=DISQUS_PREFIX%>';
+          <% if defined? subject %>
+          var disqus_identifier = '<%=thread_identifier%>';
+          <%end%>
+          var disqus_public_key = '<%=DISQUS_PUBLIC_KEY%>';
+          
+          var count_script;
+          /* * * DON'T EDIT BELOW THIS LINE * * */
+          (function() {
+              var s = document.createElement('script'); s.async = true;
+              s.type = 'text/javascript';
+              s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+              (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+
+              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+
+                 /* * * Disqus Reset Function * * */
+          var reset_dsq = function (newIdentifier, newUrl, newTitle, newLanguage) {
+              DISQUS.reset({
+                  reload: true,
+                  config: function () {
+                      this.page.identifier = newIdentifier;
+                      this.page.url = newUrl;
+                      this.page.title = newTitle;
+                      this.language = newLanguage;
+                  }
+              });
+          };  
+      </script>
+      <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+  

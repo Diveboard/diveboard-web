@@ -1,0 +1,63 @@
+
+<div id="footer_container">
+    <div class="footer_one">
+      <div style='text-align:left; margin-left: 26px; font-size: 0.87em;'><strong><%= it("Follow us", scope: ['layouts', 'footer']) %></strong></div>
+
+      <div class='footer_follow_media'>
+        <div class='icon'><img src='<%=HtmlHelper.lbroot "/img/brands/facebook_square.png"%>'/></div>
+        <div style='margin-top: -2px'><fb:follow href="http://www.facebook.com/Diveboard" colorscheme="dark" layout="button" show_faces="false"></fb:follow></div>
+      </div>
+
+      <div class='footer_follow_media'>
+        <div class='icon'><img src='<%=HtmlHelper.lbroot "/img/brands/gplus_square.png"%>'/></div>
+        <div class="g-follow" data-annotation="none" data-height="20" data-href="https://plus.google.com/116225854981085548287" data-rel="publisher"></div>
+      </div>
+
+      <div class='footer_follow_media'>
+        <div class='icon'><img src='<%=HtmlHelper.lbroot "/img/brands/twitter_square.png"%>'/></div>
+        <a href="https://twitter.com/diveboard" class="twitter-follow-button" data-show-count="false"><%= it("Follow @diveboard", scope: ['layouts', 'footer']) %></a>
+      </div>
+
+      <div class='footer_follow_media'>
+        <div class='icon'><img src='<%=HtmlHelper.lbroot "/img/brands/pinterest_square.png"%>'/></div>
+        <div style='margin-top: -1px'><a data-pin-do="buttonFollow" href="http://www.pinterest.com/diveboard/">Diveboard</a></div>
+      </div>
+
+
+      <%content_for :scripts do %>
+      <script type="text/javascript">
+        diveboard.require('plusone', function(){
+          gapi.follow.go();
+        })
+      </script>
+      <%end%>
+
+    </div>
+
+    <div class="footer_three">
+      <ul>
+        <li><strong><%= it("Product and services", scope: ['layouts', 'footer']) %></strong></li>
+        <li><a href="/about/tour"><%= it("Online Logbook", scope: ['layouts', 'footer']) %></a></li>
+        <li><a href="/about/import/1"><%= it("Supported dive computers", scope: ['layouts', 'footer']) %></a></li>
+        <li><a href="/about/import/2"><%= it("Supported import files", scope: ['layouts', 'footer']) %></a></li>
+        <li><a href="/pro"><%= it("Diveboard for professionals", scope: ['layouts', 'footer']) %></a></li>
+      </ul>
+    </div>
+    <div class="footer_four">
+      <ul>
+        <li><strong><%= it("Community and help", scope: ['layouts', 'footer']) %></strong></li>
+        <li><a href="#" onclick="showClassicWidget();"><%= it("Feedback / Suggestions", scope: ['layouts', 'footer']) %></a></li>
+        <li><a href="/about/tos"><%= it("Terms of Service", scope: ['layouts', 'footer']) %></a> / <a href="/about/privacy"><%= it("Privacy", scope: ['layouts', 'footer']) %></a></li>
+      </ul>
+    </div>
+
+    <div class="footer_five">
+      <ul>
+        <li><strong><%= it("About Diveboard", scope: ['layouts', 'footer']) %></strong></li>
+        <li><a href="/about/1"><%= it("Meet the crew", scope: ['layouts', 'footer']) %></a></li>
+        <li><a href="/about/2"><%= it("Diveboard's inception", scope: ['layouts', 'footer']) %></a></li>
+        <li><a href="/about/3"><%= it("Partners", scope: ['layouts', 'footer']) %></a></li>
+        <li><a href="/about/4"><%= it("Contact us", scope: ['layouts', 'footer']) %></a></li>
+      </ul>
+    </div>
+</div>

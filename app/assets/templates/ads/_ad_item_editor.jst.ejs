@@ -1,0 +1,30 @@
+    <form class='ad_item_editor'>
+      <input type='hidden' class='ad_item_id_input' value="<$=id$>"/>
+      <input type='hidden' class='ad_item_thumbnail_input' value="<$=thumbnail$>"/>
+      <input type='hidden' class='ad_item_pictid_input' value="<$=picture_id$>"/>
+
+      <div class="third_lvl_header">Preview:</div>
+      <div class='ad_item_preview' style='margin-top: 15px'></div>
+
+      <div style='margin-top: 30px'>
+        <div class="third_lvl_header" style='margin-bottom:10px'>Customize the content of the ad:</div>
+        <table class='ad_item_table_content'>
+          <tr>
+            <td>Title:</td>
+            <td><input class='ad_item_title_input' value="<$=title$>"></td>
+          </tr>
+          <tr>
+            <td>Content:</td>
+            <td><textarea class='ad_item_content_input'><$=text$></textarea></td>
+          </tr>
+        </table>
+      </div>
+
+      <div style='margin-top: 30px'>
+        <div class="third_lvl_header" style='margin-bottom:10px'>Customize the page that will be opened when customers click on the ad:</div>
+        <input class='ad_item_external_url_unselected' name='url_<$=id$>' type='radio' <$ if (!external_url) {$>checked='checked'<$}$> value='0'><a href='<$=G_shop_api.permalink$>' target='_blank' ><$=G_shop_api.fullpermalink$></a><br/>
+        <input class='ad_item_external_url_selected' name='url_<$=id$>' type='radio' <$ if (external_url){$>checked='checked'<$}$> value='1'>Other: <input class='ad_item_external_url' value='<$=external_url$>'>
+      </div>
+
+      <div style='margin-top: 50px'><button class='yellow_button ad_item_submit'>Submit changes</button> <button class='grey_button ad_item_reset'>Reset</button> <button class='grey_button ad_item_cancel'>Cancel</button></div>
+    </form>

@@ -1,0 +1,122 @@
+@font-face {
+  font-family: 'icomoon';
+  src:url('/img/fonts/icomoon.eot?-mj1u5i');
+  src:url('/img/fonts/icomoon.eot?#iefix-mj1u5i') format('embedded-opentype'),
+    url('/img/fonts/icomoon.woff?-mj1u5i') format('woff'),
+    url('/img/fonts/icomoon.ttf?-mj1u5i') format('truetype'),
+    url('/img/fonts/icomoon.svg?-mj1u5i#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.icon_font{
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: icomoon !important;
+}
+
+
+@font-face {
+  font-family: 'FuturaMedium';
+  src: url('/img/fonts/futura-webfont.eot');
+  src: url('/img/fonts/futura-webfont.eot?#iefix') format('embedded-opentype'),
+  url('/img/fonts/embed/futura-webfont.woff') format('woff'),
+  url('/img/fonts/futura-webfont.ttf') format('truetype'),
+  url('/img/fonts/futura-webfont.svg#FuturaMedium') format('svg'); font-weight: normal; font-style: normal;
+}
+
+@font-face {
+  font-family: 'FuturaBold';
+  src: url('/img/fonts/futura-bold-webfont.eot');
+  src: url('/img/fonts/futura-bold-webfont.eot?#iefix') format('embedded-opentype'),
+  url('/img/fonts/embed/futura-bold-webfont.woff') format('woff'),
+  url('/img/fonts/futura-bold-webfont.ttf') format('truetype'),
+  url('/img/fonts/futura-bold-webfont.svg#FuturaBold') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'FuturaLight';
+  src: url('/img/fonts/futura-light-webfont.eot');
+  src: url('/img/fonts/futura-light-webfont.eot?#iefix') format('embedded-opentype'),
+  url('/img/fonts/embed/futura-light-webfont.woff') format('woff'),
+  url('/img/fonts/futura-light-webfont.ttf') format('truetype'),
+  url('/img/fonts/futura-light-webfont.svg#FuturaLight') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face{
+  font-family: 'WebSymbolsRegular';
+  src: url('/img/fonts/websymbols-regular-webfont.eot');
+  src: url('/img/fonts/websymbols-regular-webfont.eot?#iefix') format('embedded-opentype'),
+  url('/img/fonts/embed/websymbols-regular-webfont.woff') format('woff'),
+  url('/img/fonts/websymbols-regular-webfont.ttf') format('truetype'),
+  url('/img/fonts/websymbols-regular-webfont.svg#WebSymbolsRegular') format('svg');
+}
+
+@font-face {
+  font-family: 'Quicksand';
+  src: url('/img/fonts/quicksand-bold-webfont.eot');
+  src: url('/img/fonts/quicksand-bold-webfont.eot?#iefix') format('embedded-opentype'),
+  url('/img/fonts/embed/quicksand-bold-webfont.woff') format('woff'),
+  url('/img/fonts/quicksand-bold-webfont.ttf') format('truetype'),
+  url('/img/fonts/quicksand-bold-webfont.svg#quicksandbold') format('svg');
+  font-weight: normal;
+  font-style: bold;
+
+}
+
+@font-face {
+  font-family: 'Quicksand';
+  src: url('/img/fonts/quicksand-regular-webfont.eot');
+  src: url('/img/fonts/quicksand-regular-webfont.eot?#iefix') format('embedded-opentype'),
+  url('/img/fonts/embed/quicksand-regular-webfont.woff') format('woff'),
+  url('/img/fonts/quicksand-regular-webfont.ttf') format('truetype'),
+  url('/img/fonts/quicksand-regular-webfont.svg#quicksandregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family:SourceSansPro;
+  font-weight:700;
+  font-style:normal;
+  src:url(/img/fonts/sourcesanspro-bold-webfont.eot?#iefix) format(embedded-opentype), url(/img/fonts/embed/sourcesanspro-bold-webfont.woff) format(woff), url(/img/fonts/sourcesanspro-bold-webfont.ttf) format(truetype), url(/img/fonts/sourcesanspro-bold-webfont.svg#source_sans_problack) format(svg);
+}
+
+@font-face {
+  font-family:SourceSansPro;
+  font-weight:700;
+  font-style:italic;
+  src:url(/img/fonts/sourcesanspro-boldit-webfont.eot?#iefix) format(embedded-opentype), url(/img/fonts/sourcesanspro-boldit-webfont.woff) format(woff), url(/img/fonts/sourcesanspro-boldit-webfont.ttf) format(truetype), url(/img/fonts/sourcesanspro-boldit-webfont.svg#source_sans_problack) format(svg);
+}
+
+@font-face {
+  font-family:SourceSansPro;
+  font-weight:600;
+  font-style:normal;
+  src:url(/img/fonts/embed/sourcesanspro-semibold-webfont.eot?#iefix) format(embedded-opentype), url(/img/fonts/embed/sourcesanspro-semibold-webfont.woff) format(woff), url(/img/fonts/sourcesanspro-semibold-webfont.ttf) format(truetype), url(/img/fonts/sourcesanspro-semibold-webfont.svg#source_sans_problack) format(svg);
+}
+
+@font-face {
+  font-family:SourceSansPro;
+  font-weight:400;
+  font-style:normal;
+  src:url(/img/fonts/sourcesanspro-regular-webfont.eot?#iefix) format(embedded-opentype), url(/img/fonts/embed/sourcesanspro-regular-webfont.woff) format(woff), url(/img/fonts/sourcesanspro-regular-webfont.ttf) format(truetype), url(/img/fonts/sourcesanspro-regular-webfont.svg#source_sans_problack) format(svg);
+}
+
+@font-face {
+  font-family:SourceSansPro;
+  font-weight:400;
+  font-style:italic;
+  src:url(/img/fonts/sourcesanspro-it-webfont.eot?#iefix) format(embedded-opentype), url(/img/fonts/sourcesanspro-it-webfont.woff) format(woff), url(/img/fonts/sourcesanspro-it-webfont.ttf) format(truetype), url(/img/fonts/sourcesanspro-it-webfont.svg#source_sans_problack) format(svg);
+}
+
+@font-face {
+  font-family:SourceSansPro;
+  font-weight:300;
+  font-style:normal;
+  src:url(/img/fonts/sourcesanspro-light-webfont.eot?#iefix) format(embedded-opentype), url(/img/fonts/embed/sourcesanspro-light-webfont.woff) format(woff), url(/img/fonts/sourcesanspro-light-webfont.ttf) format(truetype), url(/img/fonts/sourcesanspro-light-webfont.svg#source_sans_problack) format(svg);
+}

@@ -1,0 +1,151 @@
+<div id="blog_right_column">
+  <%if params["content"] != :edit %>
+    <div class="blog_link_section categories_full write_post">
+      <table>
+      <tr><td><span class="blog_edit_bubble"></span></td></tr>
+      <tr><td><a href="/community/new"> <input type="text" value="  <%= it("Write a note or ask a question", scope: ['blog', 'right_column']) %>" DISABLED/></a></td></tr>
+      <tr><td><p><span class="thingy"></span><%= it("Share your experiences, thoughts, or ask a question", scope: ['blog', 'right_column']) %>
+      </p></td></tr>
+      <tr><td><a href="/community/new" class="yellow_button"><%= it("WRITE A POST", scope: ['blog', 'right_column']) %></a></td></tr>
+      </table>
+    </div>
+    <%if !@questions.blank?%>
+    <div class="blog_link_section latest_posts">
+      <% if params["content"] == :user %>
+        <h2><%=it("Latest Questions by %{author}", scope: ['blog', 'right_column'], author: @author.nickname)%></h2>
+      <% else %>
+        <h2><%= it("Latest Questions", scope: ['blog', 'right_column']) %></h2>
+      <% end %>
+      <ul>
+        <%@questions.each do |p|%>
+        <li><a href="<%=p.fullpermalink(:locale)%>"><%=p.title.titleize rescue nil%><br/><span><% if params["content"] != :user %>
+          <%=it("by %{user} on %{date}", scope: ['blog', 'right_column'], user: begin p.user.nickname rescue nil end, date: begin l(@post.published_at.to_date, format: :long) rescue "---" end)%>
+        <% else %>
+          <%=it("on %{date}", scope: ['blog', 'right_column'], date: begin l(@post.published_at.to_date, format: :long) rescue "---" end)%>
+        <% end %></span></a></li>
+        <%end%>
+      </ul>
+    </div>
+    <%end%>
+    <% if @user.nil?%>
+      <div class="blog_link_section categories_full join_diveboard">
+        <h2><%= it("Join Diveboard", scope: ['blog', 'right_column']) %></h2>
+        <span class="sign_in" id="blogpostsignin" style="float: right; "></span>
+        <a href="#" style="display: inline-block; margin-left: 10px;" onclick="ask_register();"><img src="/img/160px_animated.gif" class="aligncenter" width="160" height="160"/></a>
+      </div>
+    <%else%>
+      <%= render :partial => 'blog/author_profile', :locals => {:blog_profile_user => @user} %>
+    <%end%>
+    </a>
+
+    <%if !@categories.empty?%>
+    <div class="blog_link_section categories_full">
+      <h2><% if params["content"] == :user %>
+        <%= it("%{author}'s Categories", scope: ['blog', 'right_column'], author: @author.nickname) %>
+      <% else %>
+        <%= it("Categories", scope: ['blog', 'right_column'])%>
+      <% end %>
+      </h2>
+      <ul class="categories">
+        <%@categories.each do |c|%>
+        <li class="w<%=((c[:weight]*10)/@max_weight).round%>"><a href="<%=c[:link]%>"><%=c[:text]%></a></li>
+        <%end%>
+      </ul>
+    </div>
+    <%end%>
+
+    <%if !@latest_posts.empty?%>
+    <div class="blog_link_section latest_posts">
+      <h2>
+        <% if params["content"] == :user %>
+          <%= it("Latest Posts by %{author}", scope: ['blog', 'right_column'], author: @author.nickname) %>
+        <% else %>
+          <%= it("Latest Posts", scope: ['blog', 'right_column']) %>
+        <% end %>
+      </h2>
+      <ul>
+        <%@latest_posts.each do |p|%>
+        <li><a href="<%=p.fullpermalink(:locale)%>"><img src="<%=p.wiki.pictures.first.thumb rescue "/img/logo_50.png"%>"><%=p.title.titleize%><br/><span><%=it("by %{user} on %{date}", scope: ['blog', 'right_column'], user: begin p.user.nickname rescue nil end, date: begin l(p.published_at.to_date, format: :long) rescue "---" end)%></span></a></li>
+        <%end%>
+      </ul>
+    </div>
+    <%end%>
+
+    <%if !@post_history.keys.empty? %>
+    <div class="blog_link_section latest_posts">
+      <h2><% if params["content"] == :user %>
+        <%= it("Older Posts by %{author}", scope: ['blog', 'right_column'], author: @author.nickname) %>
+      <%else%>
+        <%= it("Older Posts", scope: ['blog', 'right_column'])%>
+      <%end%></h2>
+      <ul>
+      <%@post_history.keys.each do |k|%>
+        <li><a href="/community/<%="#{k[0]}/#{k[1]}"%>"><%= I18n.l(Date.new(k[0], k[1]), format: "%B %Y") %> (<%=@post_history[k].count%>)</a></li>
+      <%end%>
+      </ul>
+    </div>
+    <%end%>
+
+  <%elsif !@user.nil?%>
+
+
+  <div class="blog_link_section categories_full blog_edit_actions">
+    <%= render :partial => 'blog/author_profile', :locals => {:blog_profile_user => @user} %>
+    <br/>
+    <a href="" class="yellow_button" id="save_draft"><%= it("Save", scope: ['blog', 'right_column']) %></a> <%if @post.nil? || @post.published_at.nil?%><a href="" class="yellow_button" id="publish"><%= it("Save & Publish", scope: ['blog', 'right_column']) %></a><%end%>
+    <% if !@post.nil?%>
+    <br/><br/>
+    <%if @post.status == :published%>
+
+      <span><a href="<%=@post.fullpermalink(:locale)%>" class="grey_button"><%= it("VIEW PUBLISHED POST", scope: ['blog', 'right_column']) %></a></span>
+      <br/><br/>
+    <%else%>
+    <a class="grey_button" href="<%="/#{@user.vanity_url}/posts/preview/#{@post.shaken_id}"%>" target="_blank"><%= it("PREVIEW LAST VERSION", scope: ['blog', 'right_column']) %></a>
+    <%end%>
+    <!--<button class="grey_button" id="flag" post_id="<%=@post.shaken_id%>">Flag</button>-->
+    <button class="grey_button" <% if @post.has_comments?%> id="nodelete" <%else%>id="delete"<%end%> post_id="<%=@post.shaken_id%>"><%= it("DELETE", scope: ['blog', 'right_column']) %></button>
+    <%end%>
+  </div>
+  <div class="blog_link_section categories_full blog_edit_history">
+    <h2><%= it("Edit history", scope: ['blog', 'right_column']) %></h2>
+    <%if @post.nil?%>
+    <ul><li><%= it("NONE", scope: ['blog', 'right_column']) %></li></ul>
+    <%else%>
+    <p><%= it("Current status:", scope: ['blog', 'right_column']) %>
+      <%if @post.nil?%>
+        <span class="red"><b><%= it("Unsaved", scope: ['blog', 'right_column']) %></b></span>
+      <%elsif !@post.nil?%>
+        <span><b><%=It.it @post.status.to_s, scope: ['model', 'blog_post', 'status']%></b></span>
+      <%end%>
+    </p>
+    <ul>
+      <%@post.wikis.each do |w|%>
+        <li><table>
+          <tr>
+            <td style="width:185px;"><%= it("Date: %{date}", scope: ['blog', 'right_column'], date: begin I18n.l(w.updated_at, format: :medium) rescue "" end) %> </td>
+            <td rowspan="2"><a href="/community/edit/<%=@post.shaken_id%>/<%=w.shaken_id%>" class="grey_button_small"><%= it("edit", scope: ['blog', 'right_column']) %></a></td>
+          </tr>
+          <tr>
+            <td><%= it("Status:", scope: ['blog', 'right_column']) %> <%if @post.published && (@post.wiki.id == w.id)%><%= it("Current version", scope: ['blog', 'right_column']) %>
+                                            <% elsif @post.published && (@post.wiki.updated_at > w.updated_at) %> <%= it("Old Post", scope: ['blog', 'right_column']) %>
+                                            <% elsif @post.published && (@post.wiki.updated_at < w.updated_at) && @post.flag_moderate_private_to_public%> <%= it("Pending review", scope: ['blog', 'right_column']) %>
+                                            <% elsif @post.published && (@post.wiki.updated_at < w.updated_at) && @post.flag_moderate_private_to_public == false%> <%= it("Rejected", scope: ['blog', 'right_column']) %>
+                                            <% elsif @post.published && (@post.wiki.updated_at < w.updated_at) && @post.flag_moderate_private_to_public.nil?%> <%= it("Draft", scope: ['blog', 'right_column']) %>
+                                            <% elsif !@post.published %> Drafts<%end%>
+            </td>
+            <td></td>
+        </tr></table></li>
+      <%end%>
+    </ul>
+    <%end%>
+  </div>
+  <%end%>
+  <% if params["content"] != :user %>
+  <div class="blog_link_section" >
+    <h2><span class="symbol" style="position: relative;top: -1px;margin-right: 5px;">B</span><%= it("Community Feed", scope: ['blog', 'right_column']) %></h2>
+    <p style="pagging-left: 9px; margin-top: 10px;">
+      <%= it("Community blog posts", scope: ['blog', 'right_column']) %> <a href="<%="/community/feed"%>" target="_blank" class="grey_button_small"><span class="symbol" style="margin-right: 4px;">r</span><%= it("RSS feed", scope: ['blog', 'right_column']) %></a>
+    </p>
+  </div>
+  <%end%>
+</div>

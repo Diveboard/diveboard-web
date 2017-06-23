@@ -1,0 +1,19 @@
+  <div class="main_info" align="left">
+    <p><a href='<%=@basket.shop_fullpermalink%>'><img src="<%=@shop.user_proxy.picture_small%>" class="left" width=50/></a>
+      <%if @basket.status == 'paid' then%>
+        <%= it("The order %{order} for %{user} awaits your confirmation. Please confirm on Diveboard your availablity as soon as possible (and absolutely within 29 days).", scope: ['notify_shop', 'notify_basket_status'], order: link_to(@basket.reference, @basket.shop_fullpermalink), user: @user.nickname) %>
+      <%elsif @basket.status == 'cancelled' then%>
+        <%= it("The order %{order} for %{user} has been cancelled.", scope: ['notify_shop', 'notify_basket_status'], order: link_to(@basket.reference, @basket.shop_fullpermalink), user: @user.nickname) %>
+      <%else%>
+        <%= it("The order %{order} for %{user} has changed status to : %{status}", scope: ['notify_shop', 'notify_basket_status'], order: link_to(@basket.reference, @basket.shop_fullpermalink), user: @user.nickname, status: config_translate(:basket_status, @basket.status) %>
+      <%end%></p>
+
+    <p><center style='margin:20px'><a href="<%=@basket.shop_fullpermalink%>" class="yellow_button" style="margin-top: 5px;"><%= it("View on Diveboard", scope: ['notify_shop', 'notify_basket_status']) %></a></center></p>
+
+    <table class='basket_for_email'>
+      <tr><td>
+      <%= render :partial => 'basket/shop_view.html', :locals => {:baskets => {@basket.shop_id => @basket}, :interactive => false}%>
+      </td></tr>
+    </table>
+
+  </div>

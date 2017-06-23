@@ -1,0 +1,14 @@
+<%video_url = picture.video_url%>
+<video class="diveboard-video-user" width="100%" height="100%" controls="controls" preload="auto" poster="<%=video_url[:thumb_medium]%>" onclick='if (this.ended || this.paused)  this.play(); else this.pause(); return(false);' >
+  <source src="<%=video_url[:mp4]%>" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+  <source src="<%=video_url[:webm]%>" type='video/webm; codecs="vp8, vorbis"' />
+  <!--<source src="video.ogv" type='video/ogg; codecs="theora, vorbis"' />-->
+  <!-- Flash Fallback. Use any flash video player here. Make sure to keep the vjs-flash-fallback class. -->
+  <object id="flash_fallback_1" class="vjs-flash-fallback" width="640" height="264" type="application/x-shockwave-flash" data="http://releases.flowplayer.org/swf/flowplayer-3.2.1.swf">
+    <param name="movie" value="http://releases.flowplayer.org/swf/flowplayer-3.2.1.swf" />
+    <param name="allowfullscreen" value="true" />
+    <param name="flashvars" value='config={"playlist":["<%=video_url[:thumb_medium]%>", {"url": "<%=video_url[:mp4]%>","autoPlay":false,"autoBuffering":true}]}' />
+    <!-- Image Fallback. Typically the same as the poster image. -->
+    <img src="<%=video_url[:thumb_medium]%>" width="640" height="264" alt="<%= it("Poster Image", scope: ['pictures', 'read_video']) %>" title="<%= it("No video playback capabilities.", scope: ['pictures', 'read_video']) %>" />
+  </object>
+</video>

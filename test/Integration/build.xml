@@ -1,0 +1,96 @@
+ <project name="Diveboard" basedir="." default="test">
+
+ <!--прописываем путь к исходникам тестов-->
+ <property name="test-java-dir" value="${basedir}/src" />
+ <!--здесь будут лежать скомпилированные классы-->
+ <property name="build-dir" value="${basedir}/build" />
+ <!--папка для логов-->
+ <property name="log-dir" value="${basedir}/logs" />
+ 	<property name="screen-dir" value="${basedir}/screenshot" />
+ 	
+ <!--
+  Create a classpath container which can be later used in the ant task
+ -->
+ <path id="build.classpath">
+  <fileset dir="${basedir}/includes">
+   <include name="junit.jar" />
+   <include name="selenium-server-standalone-2.7.0.jar" />
+  </fileset>
+ </path>
+
+ <!--удаляем папку, где лежит уже собранный проект-->
+ <target name="clean">
+ <delete dir="${build-dir}" />
+ <delete dir="${log-dir}" />
+ <delete dir="${screen-dir}" />	
+ </target>
+
+ <!--создаем папку, где будет лежать скомпилированные классы-->
+ <target name="init" depends="clean">
+ <mkdir dir="${build-dir}" />
+ <mkdir dir="${screen-dir}" />
+ <mkdir dir="${log-dir}" />	
+ </target>
+
+ <!--компилируем исходники и кладем их в папку, путь к которой
+ прописан в build-dir-->
+ <target name="test-compile" depends="init">
+ 	<javac srcdir="${test-java-dir}" destdir="${build-dir}" classpathref="build.classpath"  includeantruntime="false"/>
+ </target>
+
+ <!--исходники из предыдущий таска запускаем с помощью JUnit-->
+ <target name="test" depends="test-compile">
+ 	<junit printsummary="yes" haltonfailure="yes" showoutput = "yes"
+ 		tempdir = "${log-dir}">
+
+ 		
+ 		<!--указываеv, где нужно искать скомпилированные тесты,
+если у вас тесты находятся в разных папках,
+ то прописываем несколько элементов pathelement-->
+ <classpath>
+ <path id="build.classpath">
+  <fileset dir="${basedir}/includes">
+   <include name="junit.jar" />
+   <include name="selenium-server-standalone-2.7.0.jar" />
+  </fileset>
+ </path>
+ <pathelement location="${build-dir}" />
+ </classpath>
+ 	
+ <!--результаты отобразятся в виде текстового файла -->
+ <formatter type="plain" />
+ 	 	 	
+ <!--прописываем пути к каждому файлу тестов -->
+ 
+ 		<test name="DiveEdit" /> 	
+ 		<test name="CreateFullNewDive" />
+ 	<test name="OtherPrivateDive" /> 
+ 	<test name="CreateSimpleNewDive" />  
+ 	<test name="MyPrivateDive" />
+ 	<test name="Blog" />
+ 	<test name="Social" />
+ 	<test name="SitemapCheck" />
+ 	<test name="SignInTest" /> 
+ 		<test name="Explore" />
+ 		<test name="BulkUploadComp" />
+ 		<test name="SettingsTest" />
+ 	 	
+ 	</junit>
+ 	
+ 	
+ 	 <junitreport todir="${log-dir}">
+ 	      <fileset dir="${log-dir}">
+ 	        <include name="TEST-*.xml"/>
+ 	      </fileset>
+ 	      <report format="frames" todir="${log-dir}"/>
+ 	    </junitreport>
+ 	
+    <pathconvert dirsep="/" property="reportUrl">
+      <path>
+        <pathelement location="${dir.log}/index.html"/>
+      </path>
+    </pathconvert>
+
+ 	
+ </target>
+ </project>

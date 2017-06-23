@@ -1,0 +1,322 @@
+
+<script>
+var G_wizard_save = {};
+function gear_manager_initialize()
+{
+  // Stores the initial state
+  $('#gearlist').data('wizard_gear_list', $('#gearlist').html());
+  $('#gearlist').data('wizard_gear_list_clone', $('#gear_manager_model').clone(false));
+
+  $('[data-db-wizard_gear_list]').each(function(idx,elt){
+      $(elt).data('wizard_gear_list', JSON.parse($(elt).attr('data-db-wizard_gear_list')));
+    });
+
+  $(".gear_view_usage_mng").hide();
+
+  //Bindings
+  $("#tab_gear_link").click(function(ev){if (ev) ev.preventDefault(); show_tab("gear"); if(window.history.pushState) window.history.pushState("","","/<%=@owner.vanity_url%>/bulk?bulk=gear");   });
+  $(".gear_save").click(gear_manager_save);
+  $(".gear_reset").click(gear_manager_reset);
+  $('#add_gear_submit_mng').click(gear_manager_new);
+
+  $(".gear_trash_mng").live('click', gear_manager_trash);
+  $(".gear_manager_move_up").live('click', gear_manager_move_up);
+  $(".gear_manager_move_down").live('click', gear_manager_move_down);
+  $(".gear_manager_expand_all").live('click', gear_manager_expand_all);
+  $(".gear_manager_collapse_all").live('click', gear_manager_collapse_all);
+
+  $('.gear_manager_line .gear_manager_switch').live('click', function(ev) {
+    var line = $(this).closest(".gear_manager_line");
+    if (line.hasClass('gear_manager_item_folded')) {
+      line.css('height', '');
+      line.removeClass('gear_manager_item_folded', 500);
+      line.find('.gear_manager_switch img').attr('src', '/img/folding_down.png');
+    } else {
+      line.css('height', '');
+      line.addClass('gear_manager_item_folded', 500);
+      line.find('.gear_manager_switch img').attr('src', '/img/folding_left.png');
+    }
+  });
+  $('.gear_manager_line a, .gear_manager_line input').live('click', function(ev){ev.stopPropagation();});
+
+
+  //Autocomplete for gear
+  try {
+    $("#add_gear_manufacturer_mng").example("Manufacturer");
+    $("#add_gear_model_mng").example("Model");
+    $("#add_gear_manufacturer_mng").autocomplete({source:list_of_manufacturers});
+    $(".edit_gear_manufacturer_mng").autocomplete({source:list_of_manufacturers});
+  } catch(e) {
+    if (console && console.log)
+      console.log(e);
+  }
+
+
+  //date pickers
+  try {
+    $(".edit_gear_acquisition, .edit_gear_revision, #add_gear_acquisition_mng, #add_gear_revision_mng").datepicker({
+      'dateFormat': 'yy-mm-dd',
+      'changeMonth': true,
+      'changeYear': true,
+      'yearRange': '-100:+1',
+      'onClose': function(dateText, inst) {
+        if (!dateText.match(/[0-9]{4}-[0-9]{2}-[0-9]{2}/)){
+          $(inst.input[0]).val("");
+          }
+        }
+      });
+    $.datepicker.setDefaults($.datepicker.regional[$("html").attr("lang") || 'en']);
+
+
+$("html").attr("lang")
+
+
+  } catch(e){ //causes errors on local environment without net
+  }
+}
+
+function gear_manager_reset(ev)
+{
+  if (ev)
+    ev.preventDefault();
+  $('#gearlist').html($('#gearlist').data('wizard_gear_list'));
+  gear_manager_initialize();
+}
+
+
+function gear_manager_new(ev)
+{
+  if (ev) ev.preventDefault();
+
+  //Check validity of new gear parameters
+  if ($('#add_gear_category_mng').val() == '')
+  {
+    alert("<%= it("You must select a type for this piece of gear", scope: ['diveinfo', 'gear_manager']) %>");
+    return;
+  }
+
+  //Empty the examples
+  $('.example').val('');
+
+  //Add the new gear
+  var data = {
+      'class': 'UserGear',
+      'category': $('#add_gear_category_mng').val(),
+      'category_name': $('#add_gear_category_mng option:checked').text(),
+      'manufacturer': $('#add_gear_manufacturer_mng').val(),
+      'model': $('#add_gear_model_mng').val(),
+      'last_revision': null,
+      'acquisition': null,
+      'reference': null
+    };
+
+  var item = gear_manager_add(data);
+  $('#wizard_gear_list').append(item);
+
+
+  try {
+    $(".edit_gear_manufacturer").autocomplete({source:list_of_manufacturers});
+    $(".edit_gear_acquisition, .edit_gear_revision").datepicker({
+      'dateFormat': 'yy-mm-dd',
+      'changeMonth': true,
+      'changeYear': true,
+      'yearRange': '-100:+1',
+      'onClose': function(dateText, inst) {
+        if (!dateText.match(/[0-9]{4}-[0-9]{2}-[0-9]{2}/)){
+          $(inst.input[0]).val("");
+          }
+        }
+      });
+    $.datepicker.setDefaults($.datepicker.regional[$("html").attr("lang") || 'en']);
+  } catch(e) {
+    if (console && console.log)
+      console.log(e);
+  }
+
+  //reset the fields
+  $('#add_gear_category_mng, #add_gear_manufacturer_mng, #add_gear_model_mng, #add_gear_acquisition_mng, #add_gear_revision_mng, #add_gear_reference_mng').val('').blur();
+  $('.example').blur();
+}
+
+function gear_manager_add(data)
+{
+  var item = $('#gearlist').data('wizard_gear_list_clone').clone(false);
+  item.attr('id', '');
+  item.removeClass('hidden');
+  item.find('.edit_gear_category').val(data.category);
+  item.find('.edit_gear_manufacturer').val(data.manufacturer);
+  item.find('.edit_gear_model').val(data.model);
+  item.find('.edit_gear_revision').val(data.revision);
+  item.find('.edit_gear_acquisition').val(data.acquisition);
+  item.find('.edit_gear_reference').val(data.reference);
+  item.find('.edit_gear_auto_feature').val(data.auto_feature);
+  item.data('wizard_gear_list', data);
+
+  return item;
+}
+
+function gear_manager_trash(ev)
+{
+  if (ev) ev.preventDefault();
+  $(this).closest('.gear_manager_line').detach();
+}
+
+function gear_manager_move_up(ev)
+{
+  if (ev) ev.preventDefault();
+  var line = $(this).closest('.gear_manager_line');
+  if (line.prev().length > 0 )
+    line.insertBefore(line.prev());
+}
+
+function gear_manager_move_down(ev)
+{
+  if (ev) ev.preventDefault();
+  var line = $(this).closest('.gear_manager_line');
+  if (line.next().length > 0 )
+    line.insertAfter(line.next());
+}
+
+function gear_manager_expand_all(ev)
+{
+  if (ev) ev.preventDefault();
+  $(".gear_manager_item_folded").each(function(i,e){
+    var line = $(e);
+    line.css('height', '');
+    line.removeClass('gear_manager_item_folded', 500);
+    line.find('.gear_manager_switch img').attr('src', '/img/folding_down.png');
+  });
+}
+
+function gear_manager_collapse_all(ev)
+{
+  if (ev) ev.preventDefault();
+  $(".gear_manager_line").each(function(i,e){
+    var line = $(e);
+    line.css('height', '');
+    line.addClass('gear_manager_item_folded', 500);
+    line.find('.gear_manager_switch img').attr('src', '/img/folding_left.png');
+  });
+}
+
+
+function gear_manager_save(ev)
+{
+  if (ev) ev.preventDefault();
+
+  diveboard.mask_file(true);
+
+  //builds the array of gear
+  var send_data = [];
+  $("#wizard_gear_list .gear_manager_line:visible").each(function(idx, elt){
+      var stored = $(elt).data('wizard_gear_list');
+      if (!stored) stored = {};
+      var data = {
+          'class': 'UserGear',
+          'id': stored['id'],
+          'category': $(elt).find('.edit_gear_category').val(),
+          'manufacturer': $(elt).find('.edit_gear_manufacturer').val(),
+          'model': $(elt).find('.edit_gear_model').val(),
+          'last_revision': $(elt).find('.edit_gear_revision').val() || null,
+          'acquisition': $(elt).find('.edit_gear_acquisition').val() || null,
+          'auto_feature': $(elt).find('.edit_gear_auto_feature').val() || null,
+          'reference': $(elt).find('.edit_gear_reference').val() || null,
+          'pref_order': idx
+        };
+      send_data.push(data);
+    });
+
+
+  $.ajax({
+    url: '/api/user/gear',
+    dataType: 'json',
+    data: {
+            gear: JSON.stringify(send_data)
+          },
+    type: "POST",
+    success: function(answer){
+      if (answer['success']) {
+        window.location.reload();
+      }
+      else {
+        diveboard.alert('<%= it("A technical error occured while saving your gear, please try again.", scope: ['diveinfo', 'gear_manager']) %>', data);
+        diveboard.unmask_file();
+      }
+    },
+    error: function(answer) {
+      diveboard.alert('<%= it("A technical error occured while saving your gear, please try again.", scope: ['diveinfo', 'gear_manager']) %>');
+      diveboard.unmask_file();
+    }
+  });
+}
+</script>
+
+  <div class="editable_form" style="display: block; float: right;">
+    <a href="#" class="yellow_button gear_save"><%= it("Save", scope: ['diveinfo', 'gear_manager']) %></a>  <a class="gear_reset yellow_button" href="#"><%= it("Reset", scope: ['diveinfo', 'gear_manager']) %></a>
+  </div>
+  <label><%= it("This tool help you track the usage of your gear throughout your dives.", scope: ['diveinfo', 'gear_manager']) %></label>
+  <p style='font-size: 11px; margin: 15px 0px 3px 5px;'><a href='#' class='gear_manager_expand_all'><%= it("Expand all", scope: ['diveinfo', 'gear_manager']) %></a> / <a href='#' class='gear_manager_collapse_all'><%= it("Collapse all", scope: ['diveinfo', 'gear_manager']) %></a></p>
+
+  <div id=wizard_gear_list >
+    <% @owner.user_gears.each { |gear|
+      gear_data = gear.as_json.first[1]
+      gear_data['class'] = gear.class.to_s
+    %>
+    <div class='gear_manager_line gear_manager_item_folded' data-db-wizard_gear_list="<%= CGI.escapeHTML(gear_data.to_json).html_safe %>">
+      <div class='gear_manager_category'>
+        <select class='edit_gear_category'>
+          <% DiveGear.categories.each do |cat| %>
+          <option <%='selected' if cat == gear.category%> value='<%=cat%>'><%=it(cat, scope: ['globals', 'gear_categories'])%></option>
+          <%end%>
+        </select>
+      </div>
+      <div class='gear_manager_manufacturer'><%= it("Manufacturer:", scope: ['diveinfo', 'gear_manager']) %> <input class='wizard_input_50 edit_gear_manufacturer' value="<%=gear.manufacturer%>"/></div>
+      <div class='gear_manager_model'><%= it("Model:", scope: ['diveinfo', 'gear_manager']) %> <input class='wizard_input_50 edit_gear_model' value="<%=gear.model%>"/></div>
+      <div class='gear_manager_acquisition'><%= it("Date of aquisition", scope: ['diveinfo', 'gear_manager']) %> <input class='wizard_input_35 edit_gear_acquisition' value="<%=gear.acquisition%>"/></div>
+      <div class='gear_manager_revision'><%= it("Date of last revision", scope: ['diveinfo', 'gear_manager']) %> <input class='wizard_input_35 edit_gear_revision' value="<%=gear.last_revision%>" /></div>
+      <div class='gear_manager_reference'><%= it("Reference number:", scope: ['diveinfo', 'gear_manager']) %> <input class='wizard_input_50 edit_gear_reference' value="<%=gear.reference%>" /></div>
+      <div class='gear_manager_total_usage'><%= it("# uses logged on diveboard:", scope: ['diveinfo', 'gear_manager']) %> <%=gear.total_usage%></div>
+      <div class='gear_manager_revised_usage'><%= it("# uses since last revision:", scope: ['diveinfo', 'gear_manager']) %> <%=gear.revised_usage%></div>
+      <div class='gear_manager_default'><%= it("Add this item to all new dives:", scope: ['diveinfo', 'gear_manager']) %> <select class='edit_gear_auto_feature' ><option value='never' <%if gear.auto_feature == 'never' then%>selected<%end%> >Never</option><option value='featured' <%if gear.auto_feature == 'featured' then%>selected<%end%> ><%= it("Always as featured", scope: ['diveinfo', 'gear_manager']) %></option><option value='other' <%if gear.auto_feature == 'other' then%>selected<%end%> ><%= it("Always as not featured", scope: ['diveinfo', 'gear_manager']) %></option></select></div>
+      <div class='gear_manager_move_controls'><button class='grey_button_small gear_manager_move_up'><%= it("Move up", scope: ['diveinfo', 'gear_manager']) %></button> <button class='grey_button_small gear_manager_move_down'><%= it("Move down", scope: ['diveinfo', 'gear_manager']) %></button></div>
+      <div class='gear_manager_trash'><a href=# class=gear_trash_mng ><%= it("Trash", scope: ['diveinfo', 'gear_manager']) %></a></div>
+      <div class="gear_manager_switch"><img src="/img/folding_left.png" alt="V"></div>
+    </div>
+    <% } %>
+  </div>
+
+  <table style="padding-top: 6px;">
+    <tr>
+      <td>
+        <select id='add_gear_category_mng'>
+          <option value=''><%= it("Type of gear", scope: ['diveinfo', 'gear_manager']) %></option>
+          <% DiveGear.categories.each do |cat| %>
+          <option value='<%=cat%>'><%=it(cat, scope: ['globals', 'gear_categories'])%></option>
+          <%end%>
+        </select>
+      </td>
+      <td><input id='add_gear_manufacturer_mng' class='wizard_input_35'/></td>
+      <td><input id='add_gear_model_mng' class='wizard_input_50'/></td>
+      <td><a href=# class='yellow_button' id='add_gear_submit_mng' ><%= it("Add", scope: ['diveinfo', 'gear_manager']) %></a></td>
+    </tr>
+  </table>
+  <div class='hidden gear_manager_line' id=gear_manager_model>
+    <div class='gear_manager_category'>
+      <select class='edit_gear_category'>
+        <% DiveGear.categories.each do |cat| %>
+        <option value='<%=cat%>'><%=it(cat, scope: ['globals', 'gear_categories'])%></option>
+        <%end%>
+      </select>
+    </div>
+    <div class='gear_manager_manufacturer'><%= it("Manufacturer:", scope: ['diveinfo', 'gear_manager']) %> <input class='wizard_input_50 edit_gear_manufacturer' value=""/></div>
+    <div class='gear_manager_model'><%= it("Model:", scope: ['diveinfo', 'gear_manager']) %> <input class='wizard_input_50 edit_gear_model' value=""/></div>
+    <div class='gear_manager_acquisition'><%= it("Date of aquisition", scope: ['diveinfo', 'gear_manager']) %> <input class='wizard_input_35 edit_gear_acquisition' value=""/></div>
+    <div class='gear_manager_revision'><%= it("Date of last revision", scope: ['diveinfo', 'gear_manager']) %> <input class='wizard_input_35 edit_gear_revision' value="" /></div>
+    <div class='gear_manager_reference'><%= it("Reference number:", scope: ['diveinfo', 'gear_manager']) %> <input class='wizard_input_50 edit_gear_reference' value="" /></div>
+    <div class='gear_manager_total_usage'><%= it("# uses logged on diveboard:", scope: ['diveinfo', 'gear_manager']) %> 0</div>
+    <div class='gear_manager_revised_usage'><%= it("# uses since last revision:", scope: ['diveinfo', 'gear_manager']) %> 0</div>
+    <div class='gear_manager_default'><%= it("Add this item to all new dives:", scope: ['diveinfo', 'gear_manager']) %> <select class='edit_gear_auto_feature'><option value='never'><%= it("Never", scope: ['diveinfo', 'gear_manager']) %></option><option value='featured'><%= it("Always as featured", scope: ['diveinfo', 'gear_manager']) %></option><option value='other'><%= it("Always as not featured", scope: ['diveinfo', 'gear_manager']) %></option></select></div>
+    <div class='gear_manager_move_controls'><button class='grey_button_small gear_manager_move_up'><%= it("Move up", scope: ['diveinfo', 'gear_manager']) %></button> <button class='grey_button_small gear_manager_move_down'><%= it("Move down", scope: ['diveinfo', 'gear_manager']) %></button></div>
+    <div class='gear_manager_trash'><a href=# class=gear_trash_mng ><%= it("Trash", scope: ['diveinfo', 'gear_manager']) %></a></div>
+    <div class="gear_manager_switch"><img src="/img/folding_down.png" alt="V"></div>
+  </div>

@@ -1,0 +1,35 @@
+<html>
+<body>
+
+<div style='background-color: #222; color: #1D1D1D; max-width: 800px; padding: 20px; font-size: 12px; font-family: "Helvetica, Verdana, Arial, sans-serif"; text-shadow: white 0px 1px;'>
+
+  <div style='margin-top: 20px; margin-bottom: 30px;'>
+  <img src="http://www.diveboard.com/img/logo-alpha.png" alt="DiveBoard">
+  </div>
+
+  <div style=' background-color: #f9c03d; margin-bottom: 0; padding: 10px; font-size: 24px; font-weight: bolder; text-shadow: #FAF183 0px 1px;'><%= it("%{buyer} went a dive", scope: ['notify_shop', 'notify_buy'], buyer: @buyer.nickname) %></div>
+
+  <div style='background-color: #f4f4f4; margin-top: 0; padding: 15px 10px 10px 10px;'>
+  <p style='margin: 10px 0 5px 0;'><%= it("This mail is sent to you because %{buyer} want to buy a dive on a shop %{shop_link:\"%{shop_name}\" page on Diveboard}, for more details check is message below.", scope: ['notify_shop', 'notify_buy'], buyer: @buyer.nickname, shop_link: @shop.user_proxy.fullpermalink(:preferred), shop_name: @shop.name.titleize) %></p>
+
+  <br>
+  <p style='margin: 20px 0px 30px 30px;'>Message from the buyer</p>
+  <br>
+  <p style='margin: 20px 0px 30px 30px;'><%=@message%></p>
+
+  <p style='margin: 5px 0 5px 0;'><%= it("Diveboard aims at answering simple questions for recreational divers : where do I want to dive next ? which shop or club can take me there to dive ?", scope: ['notify_shop', 'notify_buy']) %></p>
+  <p style='margin: 5px 0 5px 0;'><%= it("Therefore, shops and clubs have dedicated pages to advertise their activities. Up to date and compelling information on these pages can help transform internet users into your next customer !", scope: ['notify_shop', 'notify_buy']) %></p>
+
+
+  <p style='margin: 30px 0 5px 0;'><%= it("Happy Diving !", scope: ['notify_shop', 'notify_buy']) %></p>
+  <p style='margin: 5px 0 5px 0;'><%= it("The Diveboard team", scope: ['notify_shop', 'notify_buy']) %></p>
+  <p style='margin: 5px 0 0px 0;'><a href='http://www.diveboard.com'>http://www.diveboard.com</a></p>
+
+  </div>
+
+  <p style='font-size: 10px;; color: #fff; text-shadow: none;'><%= it("This mail has been sent to you by diveboard because you are registered as a dive shop on Diveboard.", scope: ['notify_shop', 'notify_buy']) %></p>
+  <p style='font-size: 10px; color: #fff; text-shadow: none;'><%= it("If you don't want to receive these mails anymore, please send a mail to %{support_mail:support@diveboard.com}", scope: ['notify_shop', 'notify_buy'], support_mail: It.link("mailto://support@diveboard.com")) %></p>
+
+</div>
+</body>
+</html>

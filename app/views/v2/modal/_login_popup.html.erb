@@ -1,0 +1,134 @@
+<%= content_for :javascripts do%>
+  <script type="text/javascript">
+    var login_modal;
+    var signup_popup_status_max = <%= @signup_popup_status_max || "null"%>;
+    $(document).ready(function()
+      {
+
+
+        login_modal = new LightModal('login_modal');
+
+        login_modal.trigger['close'] = function(elem)
+        {
+          $.cookie("signup_click_count", 0, { expires : 1 });
+          $.cookie("signup_delay", 0, { expires : 1 });
+          $('#' + elem).removeClass('active_modal');
+          $("body").css('overflow', 'auto');
+        };
+
+        login_modal.trigger['sign_in'] = function()
+        {
+          login_modal.display('modal_content_sign_in');
+        };
+        login_modal.trigger['sign_up'] = function()
+        {
+          login_modal.display('initial');
+        };
+        login_modal.trigger['reset_pass'] = function()
+        {
+          login_modal.display('modal_content_reset');
+        };
+          $('.not-logged').click(function()
+          {
+            login_modal.display('initial');
+          });
+        <% if @page == :home %>
+          $('.signup').click(function()
+          {
+            login_modal.display('initial');
+          });
+        <% elsif @page == :shop && @user.nil? %>
+          $('.email_share').click(function()
+          {
+            login_modal.display('initial');
+          });
+          $('.button_follow').click(function()
+          {
+            login_modal.display('initial');
+          });
+          /*$('.new_review').tclick(function()
+          {
+            login_modal.display('initial');
+          });*/
+          $('.lightframe_share_email_button').click(function()
+          {
+            login_modal.display('initial');
+          });
+        <% end %>
+        <% if @user.nil? %>
+        $('.lightframe_share_email_button').click(function()
+          {
+            login_modal.display('initial');
+          });
+        <% if @signup_popup_status == :force_count %>
+        $(document).click(function(e){
+          /* var count = $.cookie("signup_click_count") || 0 ;
+          count++;
+          $.cookie("signup_click_count", count, { expires : 1 });
+          if (signup_popup_status_max != null && count > signup_popup_status_max){
+            e.preventDefault();
+            $.cookie("signup_click_count", 0, { expires : 1 });
+            login_modal.display('initial');
+          }
+          */
+          if(!$(e.target).closest('#login_modal').length) {
+            diveboard_ask_join(true, {
+              show_popup: function(){
+                if(!$('#login_modal').hasClass("active_modal"))
+                  login_modal.display('initial');
+                }, 
+              nb_calls: signup_popup_status_max
+            });
+          }
+        });
+        
+        diveboard_ask_join(false, {
+          show_popup: function(){
+            if(!$('#login_modal').hasClass("active_modal"))
+              login_modal.display('initial');
+            }, 
+          nb_calls: signup_popup_status_max
+        });
+        <%elsif @signup_popup_status == :force_signup %>
+          login_modal.display('initial');
+          $("#"+login_modal.elemId).find(".close").hide();
+          $("#"+login_modal.elemId).find(".login").prepend("<h1><%= it("You must be logged in to complete your order.", scope: ['basket', 'total']) %></h1>");
+        <% end %>
+
+
+        <% end %>
+      });
+  </script>
+<% end %>
+
+<div id="login_modal" class="loginModal modal">
+  <div class="modal_content">
+  </div>
+
+  <div class="modal_slides">
+    <div modal_id="initial" modal_class="modal_content_initial">
+      <a href="javascript:void(0)" class="close" modal_trigger="close" <%if @signup_popup_status == :force_signup %> style="display:none" <%end%>></a>
+      <%= render "v2/modal/sign_up_2"%>
+    </div>
+
+    <div modal_class="modal_content_processing" modal_id="processing">
+      <div class="title">Contact shop owner</div>
+      <div class="modal_body">
+        <div class="description">
+          <img src="<%= HtmlHelper.lbroot "/img/transparent_loader.gif" %>" alt="" /><br>
+          Processing please wait
+        </div>
+      </div>
+    </div>
+
+    <div modal_class="modal_content_initial" modal_id="modal_content_sign_in">
+      <a href="javascript:void(0)" class="close" modal_trigger="close"></a>
+      <%= render "v2/modal/sign_in_2"%>
+    </div>
+    <div modal_class="modal_content_initial" modal_id="modal_content_reset"> 
+      <a href="javascript:void(0)" class="close" modal_trigger="close"></a>
+      <%= render "v2/modal/sign_reset_pass_2"%>
+    </div>
+  </div>
+  </div>
+</div>

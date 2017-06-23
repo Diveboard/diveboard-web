@@ -1,0 +1,14 @@
+<div id="dialog-login-join" title="<%= it("Join Diveboard for great content on scuba", scope: ['login', 'ask_register']) %>" style="display:none;">
+
+  <p class='headline'><%= it("Diveboard is the first community-powered website to log your dives and get first-hand feedback about your next destination from fellow divers.", scope: ['login', 'ask_register']) %></p>
+
+  <p class='headline'><%= it("Register today to get access to extremely valuable information from other divers.", scope: ['login', 'ask_register']) %></p>
+
+
+  <%= render :partial => 'login/register_included_popup', :locals => {:id => 'login', :style => 'login_included', :hidden => false}%>
+
+  <div class='diveboard_popup_buttons'>
+    <!--<a href='#' class='grey_button login_cancel'>Cancel</a>-->
+  </div>
+
+</div>

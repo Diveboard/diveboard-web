@@ -1,0 +1,11 @@
+<html>
+  <body>
+    <p><%= it("Additional info:", scope: ['log_mailer', 'report_exception']) %> <%=@additional_message%>
+    </p>
+    <p>
+      <% @exc.backtrace.each do |l| %>
+      <%=l%><br/>
+      <%end%>
+    </p>
+  </body>
+</html>

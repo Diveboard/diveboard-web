@@ -1,0 +1,23 @@
+<%= content_for :javascripts do%>
+  <script type="text/javascript">
+    $(document).ready(function()
+      {
+        shop_message_modal = new LightModal('shop_message_modal');
+      });
+  </script>
+<% end %>
+
+<div id="shop_message_modal" class="shopMessageModal modal">
+
+  <div class="modal_content">
+  </div>
+
+  <div class="modal_slides">
+    <div modal_class="modal_content_message" modal_id="message">
+      <a href="javascript:void(0)" class="close" modal_trigger="close"></a>
+      <div class="modal_body">
+
+      </div>
+    </div>
+  </div>
+</div>

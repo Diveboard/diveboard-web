@@ -1,0 +1,176 @@
+<script type="text/javascript">
+
+var current_menu = 1;
+
+$(document).ready(function () {
+	String.prototype.strip = function( exp ){ return this.replace(exp?exp:/\s/g,""); };
+
+	if(window.history.pushState) window.history.pushState("","","/about");
+	set_menu(<%=@menu%>);
+	//menu clicks
+
+	$("#menu_1").click(function(ev){ev.preventDefault(); set_menu(1); });
+	$("#menu_2").click(function(ev){ev.preventDefault(); set_menu(2); });
+	$("#menu_3").click(function(ev){ev.preventDefault(); set_menu(3); });
+	$("#menu_4").click(function(ev){ev.preventDefault(); set_menu(4); });
+	$("#menu_5").click(function(ev){ev.preventDefault(); set_menu(5); });
+});
+
+
+function set_menu(num){
+	var items = $(".settings_sidebar").find("li");
+	$(".active_item").removeClass("active_item");
+	$(items[num-1]).addClass("active_item");
+	for(var i=0; i<items.length; i++){
+		if ((i+1) != num) $(("#"+$(items[i]).text().split('\'').join('').split(' ').join(''))).hide();
+	}
+	$(("#"+$(items[num-1]).text().split('\'').join('').split(' ').join(''))).show();
+	current_menu = num;
+	
+}
+
+</script>
+
+
+<!-- The Sidebar starts here! -->
+<div id="sidebar" class='about_style'>
+	<div class="settings_sidebar">
+		<ul>
+			<li class="active_item" id="menu_1"><a href="#"><%= it("Meet the crew", scope: ['staticpages', 'about']) %></a></li>
+			<li><a href="#" id="menu_2"><%= it("Diveboard's inception", scope: ['staticpages', 'about']) %></a></li>
+			<li><a href="#" id="menu_3"><%= it("Partners", scope: ['staticpages', 'about']) %></a></li>
+			<li><a href="#" id="menu_4"><%= it("Contact us", scope: ['staticpages', 'about']) %></a></li>
+		</ul> 	
+	</div>
+</div>
+<!-- The Sidebar Ends Here -->
+
+
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" class='about_style' style="height:auto !important;">
+	
+	<!-- The about:crew Menu Begins here -->
+	<div id="Meetthecrew">
+		<div class="main_content_header main_padded_top">
+			<span class="header_title"><%= it("Meet the crew", scope: ['staticpages', 'about']) %></span>
+			<div  class="header_top_action"> </div>
+		</div>
+		<div class="main_about_box">
+			<p>
+				<%= it("We're from all over the world, with a passion for scuba diving we were daring to share.%{br}
+				We're no professional divers, just enthusiasts willing to share their passions for the ocean and make the best of vacation time to discover new amazing places! %{br}So we spend our free time building Diveboard - hope you like it!", scope: ['staticpages', 'about'], br: It.tag("br")) %>
+			</p>
+			<div class="about_profile_new_box">
+				<span class="second_lvl_header">Alexander Casassovici</span><br/>
+				<img src="/img/ksso_pict.jpg"/>
+				<p><%= it("Alex is a serial entrepreneur, occasional code monkey (especially since the start of Diveboard). %{br}He got hooked to diving while passing his PADI openwater on the French Riviera. He's now a %{b:CMAS 2*} As a computer geek he loves the metrics and the gadgets - he got his hands early on a %{b:Mares M2} dive computer and a underwater housing for his %{b:Olympus µ} camera. Probably time to upgrade both of those!%{br}Alex focuses on the Web and cuddles the servers.", scope: ['blog', 'excerpts_list'], br: It.tag("br"), b: It.tag("b")) %>
+				</p>
+			</div>
+			<div class="about_profile_new_box">
+				<span class="second_lvl_header">Pascal Manchon</span><br/>
+				<p><%= it("Pascal has been spending a lot of time doing IT Project/Program Management for big corporations, especially for Telco operators.%{br} DiveBoard has been the highly inspiring occasion of reconnecting with first loves: coding C++ and HTML/Javascript.%{br}%{br}
+        He discovered scuba diving a few years ago and really got addicted when diving on especially beautiful sites like the %{b:Great Barrier Reef} in Australia. Now he's always looking for places where to go next!", scope: ['staticpages', 'about'], br: It.tag("br"), b: It.tag("b")) %></p>
+			</div>
+			<div class="about_profile_new_box">			
+				<span class="second_lvl_header">Richard Magness</span><br/>
+				<p><%= it("Richard is the design wiz. He is the mastermind behind the \"WOW\" effect of Diveboard.", scope: ['staticpages', 'about']) %></p>
+				<p>
+					
+				</p>
+			</div>	
+			<div class="about_profile_new_box">			
+				<span class="second_lvl_header"><%= it("And the fans!", scope: ['staticpages', 'about']) %></span><br/>
+				<p><%= it("Special thanks to all of you who helped us debug, test, think out Diveboard and who responded to our enthusiasm or .", scope: ['staticpages', 'about']) %> <br/>
+					Stéphanie, Steve, Bruno, Sara, Jean-Michel, Arthur, Franck, Alexis, Luke, Calou, Bertrand, Sam, Christopher, Dick, Brook, Edward, Kyle...</p>
+					<br/>
+				<p><%= it("Special thanks to Christopher, creator of %{scubamap: Scubamap}, who was kind enough to share with us its database of about 1000 dive spots mostly located in both north and south America. We appreciate your support!", scope: ['staticpages', 'about'], scubamap: It.link("http://www.scubamap.net/", target: "_blank")) %></p>
+        <br/>
+				<p><%= it("Also many thanks to David, http://www.davidrosswebdesign.com/, who gave a hand for porting the plugin code to Linux.", scope: ['staticpages', 'about']) %></p>
+			</div>	
+		</div>
+	</div>
+	
+	<!-- The about:inception Menu Begins here -->
+	<div id='Diveboardsinception' style="display:none;">
+		<div class="main_content_header main_padded_top">
+			<span class="header_title"><%= it("Diveboard's inception", scope: ['staticpages', 'about']) %></span>
+			<div  class="header_top_action"> </div>
+		</div>
+		<div class="main_about_box">
+			<div class="about_profile_new_box">
+				<span class="second_lvl_header"><%= it("How it all began", scope: ['staticpages', 'about']) %></span><br/>
+				<p><%= it("It all began with a frustrated computer geek.", scope: ['staticpages', 'about']) %><br/>
+					<%= it("Alex had a Mares M2 dive computer and a (cheap) Digital Camera with an underwater housing. Nothing uncommon yet. But It was incredibly painful to do anything useful with the dive profiles on his computer.  They were ending up as printed pdfs in a long-forgotten folder and were too ugly to post on Flickr. The pictures were a mess too. And Alex's handwriting was so poor that he really had trouble reading what was written down in his paper logbook.%{br}
+          From all this frustration shared with Pascal and Richard we got to building Diveboard. We started it as a side project which grew pretty much to become Alex's main occupation about 18hrs a day (yes he gets easily obsessed).%{br}
+          Diveboard's objective is fairly straightforward: become the place for scuba divers to keep and share their diving memories. Also we want Diveboard to be a place to help scuba divers discover new places, species and fellow divers to make their diving experience even more enjoyable.%{br}
+          While still under the radar - Diveboard opened silently the gates on April 8th after a few months of preparation.", scope: ['staticpages', 'about'], br: It.tag("br")) %>
+					</p>
+			</div>
+			<div class="about_profile_new_box">
+				<span class="second_lvl_header"><%= it("Key features", scope: ['staticpages', 'about']) %></span><br/>
+				<p><%= it("The core features of Diveboard are:", scope: ['staticpages', 'about']) %>
+					<ul>
+						<li><%= it("A computer plugin (PC/Mac) to connect directly your dive computer to Diveboard and upload your dive profile - Currently about 60 models are supported", scope: ['staticpages', 'about']) %></li>
+						<li><%= it("Support of UDCF files for dive profiles upload", scope: ['staticpages', 'about']) %></li>
+						<li><%= it("Access to an incredible database of over 2 Million species along with their geographical population density through %{gbif:GBIF}", scope: ['staticpages', 'about'], gbif: It.link("http://data.gbif.org", target: "_blank")) %></li>
+						<li><%= it("Access to a database of over 2000 dive spots all over the world", scope: ['staticpages', 'about']) %></li>
+						<li><%= it("Integration with Facebook and Twitter's share features", scope: ['staticpages', 'about']) %></li>
+						<li><%= it("Integration with Flickr and Facebook photo sharing features", scope: ['staticpages', 'about']) %></li>
+						<li><%= it("Full HTML5 enabling support for any kind of device (PC/Tablet/Mobile)", scope: ['staticpages', 'about']) %></li>
+						<li><%= it("Export of species spotted to %{gbif:GBIF}, %{worms:WoRMS} and %{iobis:IOBIS}", scope: ['staticpages', 'about'], gbif: It.link("http://www.gbif.org/", target: "_blank"), worms: It.link("http://www.marinespecies.org/", target: "_blank"), iobis: It.link("http://iobis.org/", target: "_blank")) %>
+					</ul>				
+				</p>
+			</div>
+
+		</div>
+	</div>
+	<!-- The about:Partners Menu Begins here -->
+	<div id="Partners">
+		<div class="main_content_header main_padded_top">
+			<span class="header_title"><%= it("Partners", scope: ['staticpages', 'about']) %></span>
+			<div  class="header_top_action"> </div>
+		</div>
+		<div class="main_about_box">
+			<p>
+				<%= it("Since Diveboard started, we understood that each and every scuba diver is a scientist. %{br}
+        Our observations are valuable data that can help better understand our environment or how body functions under pressure.%{br}As a consequence, we support those organizations, sharing anonymized raw data with them and trying to make the world a better place.", scope: ['staticpages', 'about'], br: It.tag("br")) %>
+			</p>
+			<div class="about_profile_new_box">
+				<span class="second_lvl_header"><%= it("DAN - Diver's Alert Network", scope: ['staticpages', 'about']) %></span><br/>
+				<img src="/img/DAN.jpg" width="100"/>
+				<p><%= it("%{dan:DAN} is a not-for-profit worldwide organization that provides emergency medical advice and assistance for underwater diving injuries, and underwrites a wide range of research, education and training programs that promote safe diving.", scope: ['staticpages', 'about'], dan: It.link("http://www.dan.org", target: "_blank")) %>
+				</p>
+			</div>
+			<div class="about_profile_new_box">
+				<span class="second_lvl_header"><%= it("IOBIS / WoRMS / GBIF", scope: ['staticpages', 'about']) %></span><br/>
+				<img src="/img/ioworms.png"/>
+				 <p><%= it("%{gbif:GBIF}, %{worms:WoRMS} and %{iobis:IOBIS} agregate and share biodiversity data and enable users to search species datasets from all of the world.", scope: ['staticpages', 'about'], gbif: It.link("http://www.gbif.org/", target: "_blank"), worms: It.link("http://www.marinespecies.org/", target: "_blank"), iobis: It.link("http://iobis.org/", target: "_blank")) %>
+					</p>
+			</div>	
+		</div>
+	</div>
+	
+	<!-- The about:inception Menu Begins here -->
+	<div id='Contactus' style="display:none;">
+		<div class="main_content_header main_padded_top">
+			<span class="header_title"><%= it("Contact Us", scope: ['staticpages', 'about']) %></span>
+			<div  class="header_top_action"> </div>
+		</div>
+		<div class="main_about_box">
+			<div class="about_profile_new_box">
+				<span class="second_lvl_header"><%= it("Shoot out!", scope: ['staticpages', 'about']) %></span><br/>
+				<p><%= it("Wanna report a bug, have an idea for a super-cool feature? Wanna help out moderate the site? Wanna write on the blog? Wanna collaborate on a project with us? %{br}
+          Don't be afraid! shoot us an email at:", scope: ['staticpages', 'about'], br: It.tag("br")) %><br/> </p>
+					<center><b><%= it("support (at) diveboard.com", scope: ['staticpages', 'about']) %></b></center> <br/>
+					<p><%= it("and we'll get back in touch with you ASAP.", scope: ['staticpages', 'about']) %>
+				</p>
+			</div>
+		</div>
+	</div>
+	
+	
+	
+	
+	
+</div>
+			<!-- The Main Content Area Ends Here -->

@@ -1,0 +1,888 @@
+<%
+log_time = Time.now
+require 'yaml'
+require 'base64'
+require 'cgi'
+require 'openssl'
+%>
+<script type="text/javascript">
+/*
+*
+* GLOBAL VARIABLES USED IN SCRIPTS
+*
+*/
+<%if (!params["updated"].blank? && params["updated"] =="true") then @updated_dive = true else @updated_dive = false end%>
+
+var G_page_fullpermalink = "<%=@dive.fullpermalink%>";
+var G_page_fullpermalink_backup = "<%=@dive.fullpermalink%>";
+
+<% if !@user.nil? && @user.can_edit?(@owner) %>
+//Vars for the wizard
+var G_user_setting_auto_share = <%=@owner.auto_fb_share%>;
+var G_user_fb_perms_post_to_wall = <%=@owner.fb_permissions_granted("publish_stream") ==true%>;
+var G_user_fb_perms_add_fb_pict = <%=@owner.fb_permissions_granted("user_photos,user_videos") ==true%>;
+var G_user_fb_perms_publish_actions = <%=@owner.fb_permissions_granted("publish_actions") ==true%>;
+var G_user_setting_temperature = '<%=@user.preferred_units["temperature"]%>';
+var G_user_setting_distance = '<%=@user.preferred_units["distance"]%>';
+var G_user_setting_weight = '<%=@user.preferred_units["weight"]%>';
+var G_user_vanity_url = "<%=@owner.vanity_url%>";
+var G_dive_posted_to_fb_wall = <%=!@dive.graph_id.nil?%>;
+<%if @owner.fbtoken.nil? %>
+var G_user_fbtoken = "";
+<%else%>
+var G_user_fbtoken = "<%=@owner.fbtoken%>";
+<%end%>
+<% end %>
+<% if @picture.nil? %>
+var G_show_picture ="";
+<%else%>
+var G_show_picture = <%=@picture.id %>;
+<%end%>
+var FB_appID = "<%=FB_APP_ID%>";
+var gmaps_initialized = false;
+var galleria_initialized = false;
+var privacy = <%=@dive.privacy%>;
+var G_unit_temperature = "<%= if @user.nil? then "C" else @user.preferred_units["temperature"] end %>";
+var G_unit_distance = "<%= if @user.nil? then "m" else @user.preferred_units["distance"] end %>";
+var G_has_profile = <%= !@dive.duration.nil? && @dive.duration > 0 %>;
+var G_has_dives = <%= !@owner.dives.empty?%>;
+var G_owner_id = <%=@owner.id%>;
+var G_owner_full_name = "<%=@owner.nickname%>";
+var G_owner_email = "<%=@owner.email%>";
+var G_user_setting_temperature_unit = "<%= unit_distance(nil,true) %>";
+var G_user_first_dive = <%=
+  if !@owner.dives.empty?
+    @owner.dives.first.id
+  else
+    0
+  end %>;
+var G_dive_id = <%= @dive.id %>;
+var G_content = "dive";
+var G_dive_spot_id = <%= @dive.spot_id %>;
+var G_dive_spot_id_nil = <%= @dive.spot_id %>;
+var G_spot_lat = <%=@dive.spot.lat || 0 %>;
+var G_spot_long = <%=@dive.spot.long || 0%>;
+var G_spot_zoom = <%=@dive.spot.zoom%>;
+<% if @dive.safetystops.nil? %>
+var wizard_safety_stops = [];
+<%else%>
+var wizard_safety_stops = <%=@dive.safetystops.html_safe%>;
+<%end%>
+var G_dive_featured_picture = "<%=
+  if @dive.featured_picture.nil? then
+    ""
+  else
+    @dive.featured_picture.medium
+  end %>";
+
+<% if @dive.featured_picture.nil?%>
+var G_dive_featured_picture = "";
+<%else%>
+var G_dive_featured_picture =  <%=@dive.featured_picture.id%>;
+<%end%>
+
+var G_owner_vanity_url = "<%=@owner.vanity_url%>";
+var G_diveuser_vanity_url = "<%= if @dive.user.nil? then "" else @dive.user.vanity_url end%>";
+var G_root_url = "<%=ROOT_URL%>";
+var G_locale_root_url = "<%=root_url%>";
+var G_FB_COMMENT = "<%=FB_COMMENT%>";
+
+<% Rails.logger.debug "Time elapsed : #{Time.now - log_time}"
+log_time = Time.now  %>
+
+var G_dive_api = <%= @dive.to_api(:public, :caller => @user).to_json.html_safe %>;
+var G_spot_api = <%= @dive.spot.to_api(:public, :caller => @user).to_json.html_safe rescue "" %>;
+var G_owner_api = <%=  @dive.user.to_api(:public, :caller => @user).to_json.html_safe%>;
+
+<% Rails.logger.debug "Time elapsed : #{Time.now - log_time}"
+log_time = Time.now  %>
+
+var dive_pictures_data = [
+  <%
+  featured_picture_id=0;
+  this_dive_pictures = @dive.pictures_with_eol
+  this_dive_pictures.count
+  this_dive_pictures.each_with_index do |picture, idx|
+    %><% if idx > 0 %>,<%end%>
+    {
+         id: <%= picture.id %>,
+  shaken_id: '<%= picture.shaken_id %>',
+      image: '<%= picture.medium%>',
+      image_large: '<%= picture.large || ""%>',
+      thumb: '<%= picture.thumbnail%>',
+       size: <%= picture.size || 0 %>,
+       exif: <%= picture.useful_exif_data.to_json.html_safe %>,
+       link: <% if picture.href.nil?%>'#'<%else%>"<%=picture.href.html_safe%>"<%end%>,
+       data: <%= (picture.to_hash).to_json.html_safe%>,
+       dive: G_dive_api,
+       spot: G_spot_api,
+  permalink: "<%=picture.fullpermalink(@dive.user, :locale)%>",
+fullpermalink: "<%=picture.fullpermalink(@dive.user, :locale)%>",
+   tinylink: "<%=picture.fulltinylink%>",
+       user: G_owner_api,
+     player: <%if picture.player.nil? %>null <%else%>"<%=picture.player.html_safe%>"<%end%>,
+     player_small: <%if picture.player.nil? %>null <%else%>"<%=picture.player(320,240).html_safe%>"<%end%>,
+     player_big: <%if picture.player.nil? %>null <%else%>"<%=picture.player(1000,560).html_safe%>"<%end%>
+    }
+  <%end%>
+];
+
+<% Rails.logger.debug "Time elapsed : #{Time.now - log_time}"
+log_time = Time.now  %>
+
+var G_dive_picture_cover = <%=featured_picture_id%>;
+
+var G_wizard_picture_tags = {
+<%this_dive_pictures.each_with_index do |picture, idx|%><%if idx > 0 then%>,<%end%>
+  wizard_video_<%=picture.id%>: [
+    <%picture.eolcnames.each_with_index do |fish, idx|%>
+        <%if idx>0 then%>,<%end%>{"name": "<%=fish.cname%>", "id": "c-<%=fish.id%>"}
+    <%end%>
+    <%picture.eolsnames.each_with_index do |fish,idx|%>
+        <%if idx>0 || picture.eolcnames.count >0 then%>,<%end%>{"name": "<%=fish.sname%>", "id": "s-<%=fish.id%>"}
+    <%end%>
+  ]
+<%end%>
+};
+
+var G_wizard_picture_notes = {
+<%this_dive_pictures.each_with_index do |picture, idx|%><%if idx > 0 then%>,<%end%>
+  wizard_video_<%=picture.id%>: <%= (picture.notes || "").to_json.html_safe %>
+<%end%>
+};
+<% Rails.logger.debug "Time elapsed : #{Time.now - log_time}"
+log_time = Time.now  %>
+var G_dive_fishes = <%=@dive.species.to_json.html_safe%>;
+
+var dive_updated = false;
+
+var G_flickr_key = "<%= FLICKR_KEY %>";
+
+var favorite_picture;
+var G_this_dive_labels, G_this_dive_data, G_this_alarm_data, G_this_dive_unit;
+var G_wizard_dive_labels, G_wizard_dive_data, G_wizard_alarm_data, G_wizard_dive_unit;
+var clip =""; //clipboard
+
+<% Rails.logger.debug "Time elapsed : #{Time.now - log_time}"
+log_time = Time.now  %>
+
+
+function content_initialize() {
+  /* Intialize the logbook selector with the correct dive */
+
+  dive_ready();
+
+  <% if params[:edit] && !@user.nil? && @user.can_edit?(@owner)%>
+  $("#dive_edit_button").click();
+  <% else%>
+  //TODO XXX Open sign up popup 
+  <%end%>
+
+  //lets try and go to the reauested tab
+  try {
+    $("#tab_"+location.hash.slice(1)+"_link").click();
+  } catch(e){}
+
+  <% if !@dive.nil? %>
+  try {
+    jsPaneAPI.scrollToElement($("#dive<%=@dive.id%>"),true,false);
+    jsPaneAPI.scrollByY(-60);
+  } catch(e){}
+  <%end%>
+
+// open the proper tab
+<% if params["updated"].blank? ||(params["updated"] !="true" && params["updated"] != "false") %>
+<%  case @tab
+  when :pictures%>
+  $("#tab_pictures_link").click();
+  <% when :map%>
+  $("#tab_map_link").click();
+  <% when :profile%>
+  $("#tab_profile_link").click();
+  <% when :share%>
+  $("#tab_share_link").click();
+<%end%>
+<%end%>
+
+//if(window.history.pushState) window.history.pushState("","",G_dive_api.permalink);
+ga('set', 'contentGroup1', <%if @user && @user == @owner%>'logbook_own_dive'<%else%>'logbook_other_dive'<%end%>);
+console.log("ContentGroup1 Page category --> " + <%if @user && @user == @owner%>'logbook_own_dive'<%else%>'logbook_other_dive'<%end%>);
+ga('set', 'dimension1', <%if @user && @user == @owner%>'logbook_own_dive'<%else%>'logbook_other_dive'<%end%>);
+ga('send', 'pageview');
+
+}
+
+</script>
+
+
+
+<!-- ###################  HTML  ############### -->
+<div class="main_content_header">
+    <div class='head_picture'>
+      <img src='<%= @owner.picture_large%>' alt='user picture'>
+    </div>
+    <div class='head_title'><div class='head_title_valign'><ul>
+      <li>
+          <span class="header_title">
+          <% if @dive.spot.blank? ||  @dive.spot.id == 1%>
+            <%= it("%{owner}%{span:'s dive}", scope: ['diveinfo', 'divepage'], owner: @owner.nickname, span: It.tag("span", style: "color: #555 ; font-size: 23px")) %>
+          <%else%>
+            <% if !@dive.spot.name.empty? then%>
+            <%= it("%{owner} %{span:in} %{link:%{spot}}", scope: ['diveinfo', 'divepage'], owner: @owner.nickname, span: It.tag("span", style: "color: #555 ; font-size: 23px"), link: @dive.spot.fullpermalink(:locale) || "#", spot: @dive.spot.name) %>
+            <%elsif !@dive.spot.location.name.empty?%>
+            <%= it("%{owner} %{span:in} %{spot}", scope: ['diveinfo', 'divepage'], owner: @owner.nickname, span: It.tag("span", style: "color: #555 ; font-size: 23px"), spot: @dive.spot.location.name) %>
+            <%elsif !@dive.spot.country.cname.empty?%>
+            <%= it("%{owner} %{span:in} %{country}", scope: ['diveinfo', 'divepage'], owner: @owner.nickname, span: It.tag("span", style: "color: #555 ; font-size: 23px"), country: @dive.spot.country.cname) %>
+            <%end %>
+            </span>
+          <%end%>
+      </li>
+      <li>
+        <%if @dive.spot.country_id != 1 then %>
+          <% geonames_country=GeonamesCountries.where("ISO like ?",@dive.spot.country.ccode).first %>
+          <%if !geonames_country.nil?%>
+          <a href="/area/<%=geonames_country.name.to_url rescue "missing_name"%>-<%=geonames_country.shaken_id %>" id="country_title"><img src="<%=@dive.spot.country.path_to_flag%>"/> <%=@dive.spot.country.cname%></a>
+          <%end%>
+        <%end%>
+        <%if @dive.spot.location_id != 1 then%><a href="<%=@dive.spot.location.fullpermalink(:locale)%>"><%= @dive.spot.location.name%></a><%end%>
+        <% if !@dive.spot.region_id.nil? && @dive.spot.region_id != 1 && @dive.spot.country_id != nil && @dive.spot.country_id != 1 then%>
+          <% geonames_country=GeonamesCountries.where("ISO like ?",@dive.spot.country.ccode).first %>
+          <%if !geonames_country.nil?%>
+          <a href="/area/<%=geonames_country.name.to_url%>-<%=geonames_country.shaken_id %>/<%= @dive.spot.region.name.to_url %>-<%= @dive.spot.region.shaken_id %>"><%= @dive.spot.region.name%></a>
+          <%end%>
+        <%end%>
+        &nbsp;
+      </li>
+    </ul></div></div>
+    <div  class="header_top_action">
+    <ul class="plain_links">
+      <% if @user != nil and @user.can_edit?(@owner) %>
+      <li>&nbsp;</li>
+      <li><a href="#dialog" name="modal" id="dive_edit_button"><%= it("EDIT", scope: ['diveinfo', 'divepage']) %> <span class="symbol">S</span></a></li>
+      <%end%>
+    </ul>
+    </div>
+</div>
+<ul class="main_inner_header_tabs">
+    <li id="tab_overview_link" class="tab_link <% if !@updated_dive%>active<%end%> editable_tab"><a href="#" ><%= it("Overview", scope: ['diveinfo', 'divepage']) %></a></li>
+    <li id="tab_map_link" class='tab_link editable_tab' <%if @dive.spot.nil? || @dive.spot_id == 1 then%>style='display:none'<%end%>><a href="#"><%= it("Dive Site", scope: ['diveinfo', 'divepage']) %></a></li>
+    <li id="tab_ppl_link" class='tab_link editable_tab' style="display:none;"><a href="#"><%= it("People", scope: ['diveinfo', 'divepage']) %></a></li>
+    <li id="tab_species_link" class='tab_link editable_tab' <%if @dive.species.blank?%>style="display:none;"<%end%>><a href="#"><%= it("Species", scope: ['diveinfo', 'divepage']) %></a></li>
+    <li id="tab_pictures_link" class='tab_link editable_tab' style='<%if this_dive_pictures.empty? then%>display: none;<%end%>'><a href="#"><%= it("Pictures", scope: ['diveinfo', 'divepage']) %></a></li>
+    <li id="tab_profile_link" class='tab_link editable_tab' style='<%if !@dive.has_profile_data? then%>display: none;<%end%>'><a href="#"><%= it("Profile", scope: ['diveinfo', 'divepage']) %></a></li>
+    <li id="tab_gear_link" class='tab_link editable_tab' style='display:none'><a href="#"><%= it("Gear", scope: ['diveinfo', 'divepage']) %></a></li>
+    <li id="tab_dan_link" class='tab_link editable_tab' style='display:none'><a href="#"><%= it("DAN", scope: ['diveinfo', 'divepage']) %></a></li>
+    <li id="tab_share_link" class='tab_link share_tab_link <%if @updated_dive %>active<%end%>'><%if @user != nil && @user.can_edit?(@owner) && @dive.privacy == 1%><a href="#" class="red_alert tooltiped-js" title="<%= it("Your dive is currently %{b:private} and can't be shared", scope: ['diveinfo', 'divepage'], b: It.tag("b")) %>"><%else%><a href="#"><%end%><span class="symbol" >K</span> <%= it("SHARE", scope: ['diveinfo', 'divepage']) %></a></li>
+
+</ul>
+<div id="view_dive" class="editable rightbar">
+  <div id="tab_box">
+
+    <div id="tab_overview" class='tab_panel tab_overview' <% if @updated_dive%>style="display:none;"<%end%>>
+        <div class="main_content_box">
+          <%if @user != nil && @user.can_edit?(@owner) %>
+          <div class="signature">
+            <% if !@dive.signatures_confirmed.empty? %>
+            <span
+              class="symbol tooltiped-js"
+              style="color: green;"
+              title="<%= it("Dive %{b:CONFIRMED} by", scope: ['diveinfo', 'divepage'], b: It.tag("b")) %>
+                <%@dive.signatures_confirmed.each_with_index do |s,i|%>
+                  <%="<br/> #{s.signby_type} <a href='#{s.signby.fullpermalink(:locale)}' target ='_blank'> #{s.signby.nickname}</a> - #{unit_distance(s.signed_data["max_depth_m"], true, 1)} / #{t('min', scope:['units'], count: s.signed_data["duration"])}"%>
+                <%end%>
+                "
+              >/</span>
+            <%end%>
+          </div>
+          <%end%>
+          <div id="slider_290">
+            <div id="featured_pic_container">
+              <% if this_dive_pictures.empty? then  %>
+                <!--<div id="map_canvas" style="width: 280px; height: 202px">
+                </div>-->
+              <div style="width: 280px; height: 202px">
+                <a href="#" onclick="show_map_tab(event); return false;"><img src="<%=@dive.spot.pinned_map_url(280, 202)%>"/></a>
+              </div>
+              <% else %>
+              <a href="#" id="overview_featured_pict"><img id=featured_pic src="<%= @dive.featured_picture.medium%>" style="width: 280px; height: 202px" alt="#" /></a>
+              <% end %>
+            </div>
+          </div>
+          <ul class='header_dive'>
+              <li>
+                  <%if !@dive.number.nil? %>
+                  <span class="dive_number"><strong>Nº</strong><span><%=@dive.number%></span></span>
+                  <%end%>
+                  <img src="<%=HtmlHelper.lbroot "/img/date_icon.png"%>" width='13px' height='14px' alt="#" />
+                  <strong><%= it("Date:", scope: ['diveinfo', 'divepage']) %></strong> <span><%= @dive.date%><%if @dive.time != "00:00"%> - <%= @dive.time%></span><%end%>
+              </li>
+              <li>
+                  <img src="<%=HtmlHelper.lbroot "/img/depth_icon.png"%>" width='13px' height='14px' alt="#" />
+                  <strong><%= it("Max Depth:", scope: ['diveinfo', 'divepage']) %></strong> <span><%= unit_distance(@dive.maxdepth, true, 1)%></span> <strong style="margin-left: 15px;"><%= it("Duration:", scope: ['diveinfo', 'divepage']) %></strong> <span><%= @dive.duration%>mins</span>
+              </li>
+          </ul>
+      <% if show_notes %>
+            <div class="divers_comments">
+                <strong><%= it("Diver's Notes", scope: ['diveinfo', 'divepage']) %></strong>
+                <div class='divers_comments_text'><p><%if !@dive.notes.nil? then %><%=CGI.escapeHTML(@dive.notes.html_safe).gsub(/[\n\r]/,"<br/>").html_safe %><%else%><%= it("No notes for this dive!", scope: ['diveinfo', 'divepage']) %><%end%></p></div>
+            </div>
+      <%end%>
+        </div>
+
+        <div class="triple_box_container">
+            <div class="triple_box" style="overflow:hidden;">
+                <strong><%= it("Dive Profile", scope: ['diveinfo', 'divepage']) %></strong>
+                <% if !@dive.has_profile_data? then%>
+                    <p><%= it("No profile for this dive", scope: ['diveinfo', 'divepage']) %></p>
+          <img src="<%=HtmlHelper.lbroot "/img/data_placeholder.png"%>" style="margin-left: auto; margin-right: auto; display: block; margin-top: 19px;  "/>
+                <%else%>
+                <div id="graph_small">
+                <embed type="image/svg+xml" src="<%=@dive.profile_svg_url 'xsmall_blue', (if @user.nil? || @user.preferred_units["distance"] == "m" then 'm' else 'i' end)  %>" ></embed></div>
+        <%end%>
+                <!--<img src="/img/data_sample.png" alt="#" class="triple_box_content"/>-->
+            </div>
+            <div class="triple_box">
+                <% if this_dive_pictures.empty? then  %>
+                <strong><%= it("Pictures", scope: ['diveinfo', 'divepage']) %></strong>
+                <p>
+                    <%= it("No pictures for this dive", scope: ['diveinfo', 'divepage']) %>
+                </p>
+        <img src="<%=HtmlHelper.lbroot "/img/picture_placeholder.png"%>" style="margin-left: auto; margin-right: auto; display: block; margin-top: auto; margin-bottom: auto;"/>
+                <%else%>
+                <strong><%= it("Dive Location", scope: ['diveinfo', 'divepage']) %></strong>
+                <!--<div id="map_canvas" style="width: 190px; height: 100px" class="triple_box_content">
+                </div>-->
+        <div style="width: 190px; height: 100px" class="triple_box_content">
+          <a href="#" onclick="show_map_tab(event); return false;"><img src="<%=@dive.spot.pinned_map_url(190, 100)%>"/></a>
+        </div>
+                <%end%>
+            </div>
+
+            <div class="triple_box">
+                <%if show_notes then%><br/><%end%>
+                <ul style="height: 120px; overflow-y: scroll;">
+ 
+                    <% unless @dive.surface_interval.nil? %>
+                    <li>
+                    <strong class='inline'><%= it("Surface interval", scope: ['diveinfo', 'divepage'])%>:</strong><%= @dive.surface_interval%> mins
+                    </li>
+                    <%end%>
+                    <% if @dive.temp_surface != nil || @dive.temp_bottom != nil %><li>
+                         <strong class='inline'><%= it("Temp:", scope: ['diveinfo', 'divepage']) %></strong> <% if @dive.temp_surface != nil %><strong class='inline'><%= it("Surf", scope: ['diveinfo', 'divepage']) %></strong> <%= unit_temp(@dive.temp_surface, true)%><%end%> <%if @dive.temp_bottom != nil %><strong class='inline'><%= it("Bottom", scope: ['diveinfo', 'divepage']) %></strong> <%= unit_temp(@dive.temp_bottom, true)%><%end%>
+                    </li><%end%>
+                    <li>
+                        <% if @dive.divetype.count > 0 then %><strong class='inline'><%= it("Dive type :", scope: ['diveinfo', 'divepage']) %> </strong><%= @dive.divetype.map do |t| it(t, scope:['globals', 'divetype']) end .join(', ')%><%end%>
+                    </li>
+          <%if !@dive.visibility.nil? || !@dive.water.nil? %><li>
+            <%if !@dive.visibility.nil?%>
+            <strong class='inline'><%= it("Visibility:", scope: ['diveinfo', 'divepage']) %></strong> <%= it(@dive.visibility, scope: ['globals', 'visibility']) %>
+            <%end%><%if !@dive.water.nil?%>
+              <strong class='inline' <% if !@dive.visibility.nil? %> style="margin-left:5px;"<%end%> ><%= it("Water:", scope: ['diveinfo', 'divepage']) %> </strong><%=it(@dive.water, scope: ['globals', 'watertype'])%>
+            <%end%>
+          </li><%end%>
+
+          <% Rails.logger.debug "Time elapsed : #{Time.now - log_time}"
+          log_time = Time.now  %>
+                </ul>
+            </div>
+        </div>
+        <% Rails.logger.debug "Time elapsed : #{Time.now - log_time}"
+        log_time = Time.now  %>
+        <div class="single_container">
+      <% if @dive.featured_gears.length > 0 || !@dive.weights.nil? then %>
+      <div class="triple_box gear_box" style='max-height: none;'>
+        <strong><%= it("Specific gear used", scope: ['diveinfo', 'divepage']) %></strong>
+        <ul>
+        <% @dive.featured_gears.each do |gear| %>
+          <li><%=it(gear.category, scope:['globals', 'gear_categories'])%>: <%=gear.manufacturer%> <%if "#{gear.manufacturer}#{gear.model}".length>0 then%>-<%end%> <%=gear.model%></li>
+        <%end%>
+        <%if !@dive.weights.nil? then %>
+          <li><%= it("Weights:", scope: ['diveinfo', 'divepage']) %> <%=unit_weight(@dive.weights,false,1);%> <%=unit_weight(nil,true);%></li>
+        <%end%>
+        </ul>
+      </div>
+      <%end%>
+    <% Rails.logger.debug "Time elapsed : #{Time.now - log_time}"
+    log_time = Time.now  %>
+      <% if @dive.dive_reviews.size() > 0 %>
+        <div class="triple_box">
+          <strong>Dive reviews</strong>
+          <div class='editable_input'>
+          <table class='view_review'>
+            <% if @dive.dive_reviews.where(:name=>'overall').size() > 0 %>
+              <tr id='wizard_star_overall'>
+                <td><%= it("Overall review", scope: ['diveinfo', 'divepage']) %></td>
+                <td>
+                  <% (1..5).each do |i| %>
+                    <input type='radio' name='star_overall' disabled='disabled' class='star' <% if i == @dive.dive_reviews.where(:name=>'overall').first.mark%>checked='checked'<%end%>/>
+                  <% end %>
+                </td>
+                <td class='tooltip_star'></td>
+              </tr>
+            <% end %>
+            <% if @dive.dive_reviews.where(:name=>'difficulty').size() > 0 %>
+              <tr id='wizard_star_difficulty'>
+                <td><%= it("Dive difficulty", scope: ['diveinfo', 'divepage']) %></td>
+                <td>
+                  <% (1..5).each do |i| %>
+                    <input type='radio' name='star_difficulty' disabled='disabled' class='star' <% if i == @dive.dive_reviews.where(:name=>'difficulty').first.mark%>checked='checked'<%end%>/>
+                  <% end %>
+                </td>
+                <td class='tooltip_star'></td>
+              </tr>
+            <% end %>
+            <% if @dive.dive_reviews.where(:name=>'marine').size() > 0 %>
+              <tr id='wizard_star_marine'>
+                <td><%= it("Marine life quality", scope: ['diveinfo', 'divepage']) %></td>
+                <td>
+                  <% (1..5).each do |i| %>
+                    <input type='radio' name='star_marine' disabled='disabled' class='star' <% if i == @dive.dive_reviews.where(:name=>'marine').first.mark%>checked='checked'<%end%>/>
+                  <% end %>
+                </td>
+                <td class='tooltip_star'></td>
+              </tr>
+            <% end %>
+            <% if @dive.dive_reviews.where(:name=>'wreck').size() > 0 %>
+              <tr id='wizard_star_marine'>
+                <td><%= it("Wreck", scope: ['diveinfo', 'divepage']) %></td>
+                <td>
+                  <% (1..5).each do |i| %>
+                    <input type='radio' name='star_wreck' disabled='disabled' class='star' <% if i == @dive.dive_reviews.where(:name=>'wreck').first.mark%>checked='checked'<%end%>/>
+                  <% end %>
+                </td>
+                <td class='tooltip_star'></td>
+              </tr>
+            <% end %>
+            <% if @dive.dive_reviews.where(:name=>'bigfish').size() > 0 %>
+              <tr id='wizard_star_bigfish'>
+                <td><%= it("Big fish", scope: ['diveinfo', 'divepage']) %></td>
+                <td>
+                  <% (1..5).each do |i| %>
+                    <input type='radio' name='star_bigfish' disabled='disabled' class='star' <% if i == @dive.dive_reviews.where(:name=>'bigfish').first.mark%>checked='checked'<%end%>/>
+                  <% end %>
+                </td>
+                <td class='tooltip_star'></td>
+              </tr>
+            <% end %>
+          </table>
+          </div>
+        </div>
+      <% end %>
+
+    <% Rails.logger.debug "Time elapsed : #{Time.now - log_time}"
+    log_time = Time.now  %>
+
+      <% if !@dive.recent_unique_divers(4).empty? && @dive.spot.location_id != 1 then%>
+      <div class="triple_box">
+                <strong><%= it("Recent Divers in %{spot}", scope: ['diveinfo', 'divepage'], spot: @dive.spot.location.name) %></strong>
+                <ul class="small_pic_row">
+                    <% counter = 0%>
+                    <% @dive.recent_unique_divers(4).each do |recentdive| %>
+                    <li>
+                        <a href="<%= recentdive.fullpermalink(:locale) %>">
+                        <img src="<%= recentdive.user.picture_small%>" width="44px" height="44px" alt="#" class="triple_box_content tooltiped-js" title='<%= it("%{user} in %{spot}", scope: ['diveinfo', 'divepage'], user: recentdive.user.nickname, spot: recentdive.spot.location.name) %>'/>
+                        </a>
+                    </li>
+                    <% end %>
+                </ul>
+            </div>
+            <%end%>
+
+      <% if !@dive.recent_unique_pictures(8).empty? && @dive.spot.location_id != 1 then%>
+            <div class="triple_box">
+                <strong><%= it("Recent Pictures in %{spot}", scope: ['diveinfo', 'divepage'], spot: @dive.spot.location.name) %></strong>
+                <ul class="small_pic_row">
+          <% counter = 0%>
+                    <% @dive.recent_unique_pictures(8).each do |pict| %>
+                    <li>
+                        <a href="<%=pict.dive.fullpermalink(:locale)%>">
+                        <img src="<%= pict.thumbnail%>" width="44px" height="44px" alt="#" class="triple_box_content  tooltiped-js" title='<%= it("%{user} in %{spot}", scope: ['diveinfo', 'divepage'], user: pict.user.nickname, spot: pict.dive.spot.location.name) %>'/>
+                        </a>
+                    </li>
+                    <% end %>
+                </ul>
+            </div>
+      <%end%>
+    </div>
+    <% Rails.logger.debug "Time elapsed : #{Time.now - log_time}"
+    log_time = Time.now  %>
+    <% if (!@dive.diveshop.nil? && (!@dive.diveshop["name"].blank? || !@dive.guide.blank?)) || !@dive.buddies.empty? %>
+    <div class="buddy_box">
+      <strong><%= it("Dive Shop %{amp} Buddies", scope: ['diveinfo', 'divepage'], amp: "&amp;".html_safe) %></strong>
+      <% if !@dive.diveshop.nil? && (!@dive.diveshop["name"].blank? || !@dive.guide.blank?)%>
+      <ul><li style="padding-top:5px;"><img src="<%=HtmlHelper.lbroot "/img/mini_boat.png"%>" align="baseline" width="10px" height='10px' style="margin-right:5px;"/>
+
+<!-- TODO: check conditions -->
+      <%if !@dive.guide.blank? %>
+        <%if @dive.diveshop["url"].blank? %>
+          <%= it("Dive with %{guide}", scope: ['diveinfo', 'divepage'], guide: @dive.guide.titleize) %>
+        <%elsif @dive.diveshop["url"].blank? %>
+          <%= it("Dive with %{guide} from %{shop}", scope: ['diveinfo', 'divepage'], guide: @dive.guide.titleize, shop: @dive.diveshop["name"]) %>
+        <%elsif !@dive.shop.nil? && !@dive.shop.user_proxy.nil? %>
+          <%= it("Dive with %{guide} from %{link:%{shop}}", scope: ['diveinfo', 'divepage'], guide: @dive.guide.titleize, link: ensure_url(@dive.shop.fullpermalink(:locale)), shop: @dive.diveshop["name"].titleize) %>
+        <%else%>
+          <%= it("Dive with %{guide} from %{link:%{shop}}", scope: ['diveinfo', 'divepage'], guide: @dive.guide.titleize, link: It.link(ensure_url(@dive.diveshop["url"]), target: "_blank"), shop: @dive.diveshop["name"].titleize) %>
+        <%end%>
+      <%elsif @dive.diveshop["url"].blank? %>
+        <%= it("Dive with %{shop}", scope: ['diveinfo', 'divepage'], shop: @dive.diveshop["name"]) %>
+      <%elsif !@dive.shop.nil? && !@dive.shop.user_proxy.nil? %>
+        <%= it("Dive with %{link:%{shop}}", scope: ['diveinfo', 'divepage'], link: ensure_url(@dive.shop.fullpermalink(:locale)), shop: @dive.diveshop["name"].titleize) %>
+      <%else%>
+        <%= it("Dive with %{link:%{shop}}", scope: ['diveinfo', 'divepage'], link: It.link(ensure_url(@dive.diveshop["url"]), target: "_blank"), shop: @dive.diveshop["name"].titleize) %>
+      <%end%>
+
+        </li></ul>
+      <%end%>
+      <% if begin @dive.shop_signature.status == :signed rescue false end%>
+      <ul>
+        <!-- TODO: translate parameters ? -->
+        <li style="padding-top:5px;"><img src="<%=HtmlHelper.lbroot "/img/sign.png"%>" align="baseline" width="10px" height='10px' style="margin-right:5px;"/><%= it("%{signby} confirmed the dive with parameters:", scope: ['diveinfo', 'divepage'], signby: @dive.shop_signature.signby.nickname) %> <%="#{unit_distance(@dive.shop_signature.signed_data["max_depth_m"], true, 1)} / #{@dive.shop_signature.signed_data["duration"]}mins"%>
+        </li>
+      </ul>
+      <%end%>
+      <%if !@dive.buddies.empty?%>
+      <ul><li style="margin-top:5px;" ><img src="<%=HtmlHelper.lbroot "/img/aboutme_icon.png"%>" align="baseline" width="10px" height='10px' style="margin-right: 5px;position: relative;top: 1px;display: inline-block;"/><%= it("Dive buddies:", scope: ['diveinfo', 'divepage']) %> <%@dive.buddies.each_with_index do |bud, idx|%><%if User === bud then
+          buddy_source = "Diveboard"
+          begin
+            buddy_picture = bud.picture_small
+            buddy_url = bud.fullpermalink(:locale)
+          rescue
+            buddy_picture = HtmlHelper.lbroot "/img/no_picture.png"
+            buddy_url = nil
+          end
+        elsif bud.fb_id then
+          buddy_source = "Facebook"
+          buddy_picture = "https://graph.facebook.com/v2.0/#{bud.fb_id}/picture?type=square"
+          buddy_url = "http://www.facebook.com/#{bud.fb_id}"
+        else
+          buddy_source = "Email"
+          buddy_picture = bud.picturl || "/img/no_picture.png"
+          buddy_url = nil
+        end%><%if idx>0 %>, <%end%>
+        <%if buddy_url%><a href="<%=buddy_url%>" target='_blank' class="tooltiped-js-middle" title="<img src='<%=buddy_picture%>' width=50/>" ><%end%><%=bud.nickname rescue nil%><%if buddy_url%></a><%end%><%end%>
+      </li></ul>
+      <%end%>
+    </div>
+    <%end%>
+    </div>
+    <!-- TAB  PICTURES -->
+    <% Rails.logger.debug "Time elapsed : #{Time.now - log_time}"
+    log_time = Time.now  %>
+
+    <div id="tab_pictures" class='tab_panel tab_pictures'>
+      <div class=main_content_box>
+        <div id="galleria">
+        </div>
+        <div id='galleria-loading'>
+          <img src="<%=HtmlHelper.lbroot "/img/transparent_loader_3.gif"%>" height='66px' width='66px' style="margin-left:40%;" alt="#" />
+        </div>
+      </div>
+    </div>
+    <% Rails.logger.debug "Time elapsed : #{Time.now - log_time}"
+    log_time = Time.now  %>
+    <!-- TAB  MAP -->
+
+    <div id="tab_map" class='tab_panel tab_map'>
+        <div id="tab_gmap_holder"style=" width:660px; height: 490px;">
+        </div>
+        <div style="margin-top: 10px; margin-bottom: 10px; margin-left: 15px;">
+          <h3><%= it("Link to this spot:", scope: ['diveinfo', 'divepage']) %></h3>
+          <ul style="margin-top: 5px;">
+            <li><strong><%= it("Spot:", scope: ['diveinfo', 'divepage']) %></strong> <input type="text" value="<%=@dive.spot.fullpermalink(:locale)%>" disabled style="width: 600px;"></li>
+            <% if !@dive.spot.country_id.nil? && @dive.spot.country_id != 1 %>
+            <li><strong><%= it("Country:", scope: ['diveinfo', 'divepage']) %></strong> <input type="text" value="<%=@dive.spot.country.fullpermalink(:locale)%>" disabled style="width: 600px;"></li>
+            <%end%>
+            <% if !@dive.spot.location_id.nil? && @dive.spot.location_id != 1 %>
+            <li><strong><%= it("Area:", scope: ['diveinfo', 'divepage']) %></strong> <input type="text" value="<%=@dive.spot.location.fullpermalink(:locale)%>" disabled style="width: 600px;"0></li>
+            <%end%>
+            <% if !@dive.spot.region_id.nil? && @dive.spot.region_id != 1 %>
+            <li><strong><%= it("Body of water:", scope: ['diveinfo', 'divepage']) %></strong> <input type="text" value="<%=@dive.spot.region.fullpermalink(:locale)%>" disabled style="width: 600px;"></li>
+            <%end%>
+          </ul>
+        </div>
+        <% if !@user.nil? && @dive.spot_id != 1 then
+        does_follow_spot = @user.follow? :spot_id => @dive.spot.id rescue false
+        does_follow_location = @user.follow? :location_id => @dive.spot.location.id rescue false
+        does_follow_region = @user.follow? :region_id => @dive.spot.region.id rescue false
+        does_follow_country = @user.follow? :country_id => @dive.spot.country.id rescue false
+        %>
+        <ul id='tab_map_follow'>
+          <h3><%= it("Follow activity on this location", scope: ['diveinfo', 'divepage']) %></h3>
+          <%if !@dive.spot.nil? && @dive.spot_id != 1 then%>
+          <li><strong><%= it("Spot:", scope: ['diveinfo', 'divepage']) %></strong> <a href="#" class="follow_link" data-db-follow-what='spot_id' data-db-follow-id='<%=@dive.spot_id%>' >
+            <span class='text_follow tooltiped'   <%if does_follow_spot then%>style='display:none'<%end%> title='<%= it("Be notified when new stuff is logged in this spot", scope: ['diveinfo', 'divepage']) %>'><%= it("FOLLOW", scope: ['diveinfo', 'divepage']) %> <span class="symbol">+</span></span>
+            <span class='text_unfollow' <%if !does_follow_spot then%>style='display:none'<%end%>>
+              <span class='text_nohover'><%= it("FOLLOWING", scope: ['diveinfo', 'divepage']) %> <span class="symbol">.</span></span>
+              <span class='text_hover tooltiped' title='<%= it("Stop being notified when new stuff is added on this spot", scope: ['diveinfo', 'divepage']) %>'><%= it("UN-FOLLOW", scope: ['diveinfo', 'divepage']) %> <span class="symbol">×</span></span>
+            </span>
+          </a>
+          <br/><%=@dive.spot.name%></li>
+          <%end%>
+          <%if !@dive.spot.location.nil? && @dive.spot.location_id != 1 then%>
+          <li><strong><%= it("Location:", scope: ['diveinfo', 'divepage']) %></strong> <a href="#" class="follow_link" data-db-follow-what='location_id' data-db-follow-id='<%=@dive.spot.location_id%>' >
+            <span class='text_follow tooltiped'   <%if does_follow_location then%>style='display:none'<%end%> title='<%= it("Be notified when new stuff is logged in this area", scope: ['diveinfo', 'divepage']) %>'><%= it("FOLLOW", scope: ['diveinfo', 'divepage']) %> <span class="symbol">+</span></span>
+            <span class='text_unfollow' <%if !does_follow_location then%>style='display:none'<%end%>>
+              <span class='text_nohover' <%if !does_follow_location then%>style='display:none'<%end%>><%= it("FOLLOWING", scope: ['diveinfo', 'divepage']) %> <span class="symbol">.</span></span>
+              <span class='text_hover tooltiped'    <%if !does_follow_location then%>style='display:none'<%end%> title='<%= it("Stop being notified when new stuff is added on this spot", scope: ['diveinfo', 'divepage']) %>'><%= it("UN-FOLLOW", scope: ['diveinfo', 'divepage']) %> <span class="symbol">×</span></span>
+            </span>
+          </a>
+          <br/><%=@dive.spot.location.name%></li>
+          <%end%>
+          <%if !@dive.spot.region.nil? && @dive.spot.region_id != 1 then%>
+          <li><strong><%= it("Body of water:", scope: ['diveinfo', 'divepage']) %></strong> <a href="#" class="follow_link" data-db-follow-what='region_id' data-db-follow-id='<%=@dive.spot.region_id%>' >
+            <span class='text_follow tooltiped'   <%if does_follow_region then%>style='display:none'<%end%> title='<%= it("Be notified when new stuff is logged in this body of water", scope: ['diveinfo', 'divepage']) %>'><%= it("FOLLOW", scope: ['diveinfo', 'divepage']) %> <span class="symbol">+</span></span>
+            <span class='text_unfollow' <%if !does_follow_region then%>style='display:none'<%end%>>
+              <span class='text_nohover' <%if !does_follow_region then%>style='display:none'<%end%>><%= it("FOLLOWING", scope: ['diveinfo', 'divepage']) %> <span class="symbol">.</span></span>
+              <span class='text_hover tooltiped'    <%if !does_follow_region then%>style='display:none'<%end%> title='<%= it("Stop being notified when new stuff is added on this spot", scope: ['diveinfo', 'divepage']) %>'><%= it("UN-FOLLOW", scope: ['diveinfo', 'divepage']) %> <span class="symbol">×</span></span>
+            </span>
+          </a>
+          <br/><%=@dive.spot.region.name%></li>
+          <%end%>
+          <%if !@dive.spot.country.nil? && @dive.spot.country_id != 1 then%>
+          <li><strong><%= it("Country:", scope: ['diveinfo', 'divepage']) %></strong> <a href="#" class="follow_link" data-db-follow-what='country_id' data-db-follow-id='<%=@dive.spot.country_id%>' >
+            <span class='text_follow tooltiped'   <%if does_follow_country then%>style='display:none'<%end%> title='<%= it("Be notified when new stuff is logged in this country", scope: ['diveinfo', 'divepage']) %>'><%= it("FOLLOW", scope: ['diveinfo', 'divepage']) %> <span class="symbol">+</span></span>
+            <span class='text_unfollow' <%if !does_follow_country then%>style='display:none'<%end%>>
+              <span class='text_nohover' <%if !does_follow_country then%>style='display:none'<%end%>><%= it("FOLLOWING", scope: ['diveinfo', 'divepage']) %> <span class="symbol">.</span></span>
+              <span class='text_hover tooltiped'    <%if !does_follow_country then%>style='display:none'<%end%> title='<%= it("Stop being notified when new stuff is added on this spot", scope: ['diveinfo', 'divepage']) %>'><%= it("UN-FOLLOW", scope: ['diveinfo', 'divepage']) %> <span class="symbol">×</span></span>
+            </span>
+          </a>
+          <br/><%=@dive.spot.country.name%></li>
+          <%end%>
+        </ul>
+        <%end%>
+    </div>
+
+    <!-- TAB  PROFILE -->
+
+    <div id="tab_profile" class='tab_panel tab_profile'>
+      <h2><%= it("Dive Profile", scope: ['diveinfo', 'divepage']) %></h2>
+      <div id="graphs">
+        <object type="image/svg+xml" data="<%=@dive.profile_svg_url 'big_blue', (if @user.nil? || @user.preferred_units["distance"] == "m" then 'm' else 'i' end)  %>" width='100%' ></object>
+        <p></p>
+      </div>
+      <% if !@user.nil? && @user.can_edit?(@owner) then %>
+      <div class="triple_box_container" style="height:25px !important">
+        <%= it("Download this dive as a file:", scope: ['diveinfo', 'divepage']) %> <a href="/api/export_dives.zxl?listDives=<%=@dive.id%>"><%= it("DAN DL7 (ZXL)", scope: ['diveinfo', 'divepage']) %></a>, <a href="/api/export_dives.udcf?listDives=<%=@dive.id%>"><%= it("UDCF", scope: ['diveinfo', 'divepage']) %></a>
+      </div>
+      <%end%>
+
+      <div class="single_container">
+        <%if @user.nil? then si=true else si = @user.unitSI? end
+          @dive.tanks.each_with_index do |tank, idx|%>
+          <%= render :partial => 'tank/logview', :locals => {:idx => (idx+1), :tank => tank, :si => si}%>
+        <%end%>
+      </div>
+    </div>
+
+  <!-- TAB SPECIES -->
+
+  <div id="tab_species" class='tab_panel tab_species'>
+    <span class="credits"><%= it("Data provided by %{link:EOL.org}", scope: ['diveinfo', 'divepage'], link: "http://www.eol.org") %></span>
+    <h2><%= it("Species Identified", scope: ['diveinfo', 'divepage']) %></h2>
+    <% @dive.species.each do |s|%>
+    <div class="identified_species">
+      <%if s[:picture].blank?%>
+        <img src="<%=HtmlHelper.lbroot "/img/picture_placeholder.png"%>" width="150"/>
+      <%else%>
+        <img src="<%=s[:picture]%>" width="150"/>
+      <%end%>
+      <div class="species_details">
+        <span class="species_name"><%=s[:sname]%> <%if !s[:preferred_name].blank?%><i>(<%=s[:preferred_name]%>)</i><%end%></span>
+        <%if !s[:bio].blank?%>
+          <span class="species_bio"><%=truncate(s[:bio], :length => 300, :omission => "...<br/><a href='#' onclick='show_more_bio(this); return false;'>#{it('Read More', scope: ['diveinfo', 'divepage'])}</a>").html_safe%></span>
+          <span class="species_bio species_bio_full" style="display:none;"><%=s[:bio].html_safe%></span>
+        <%end%>
+      </div>
+    </div>
+    <%end%>
+  </div>
+
+  <!-- TAB  SHARE -->
+
+    <div id="tab_share" class='tab_panel tab_share' <%if @updated_dive %>style="display: block;"<%end%>>
+    <%if @updated_dive %>
+    <div id="updated_dive_confirmation">
+      <h2 class="updated_dive"><span class="symbol" style="color: green;">/</span> <%= it("YOUR DIVE HAS NOW BEEN UPDATED", scope: ['diveinfo', 'divepage']) %></h1>
+      <div class="share_spacer"></div>
+    </div>
+    <%end%>
+    <%if @dive.privacy ==0%>
+    <div id="public_share_dive" >
+      <% if !@user.nil? && @user.can_edit?(@owner) then %>
+      <div id="change_visibility">
+        <%= it("Privacy:", scope: ['diveinfo', 'divepage']) %> <span class="visibility_status public"><%= it("public", scope: ['diveinfo', 'divepage']) %></span>&nbsp;<a href="#" class="symbol tooltiped-js" title="<%= it("click lock to make private", scope: ['diveinfo', 'divepage']) %>" onclick="change_privacy(); return false;" style="color:green !important;">x</a>
+      </div>
+      <%end%>
+      <% if !@user.nil? && @user == @owner then %>
+      <div class="push_timeline">
+        <h2><%= it("Publish on your Facebook timeline", scope: ['diveinfo', 'divepage']) %></h2>
+        <p class="timeline_button">
+          <a class="fb_button fb_button_large" onclick="fbtimeline_publish();"><span class="fb_button_text"><%= it("Add to Timeline", scope: ['diveinfo', 'divepage']) %></span></a>
+        </p>
+        <p class="timeline_info"><span class="hidden symbol" style="color:green;">. </span>
+        <%if @dive.graph_id.blank? %>
+          <%if @dive.graph_id.blank? %>
+            <%= it("This dive has %{span1:not} been published on your timeline %{span2:yet}", scope: ['diveinfo', 'divepage'], span1: It.tag("span", style: "color:red; font-weight: bold;"), span2: It.tag("span")) %>
+          <%else%>
+            <%= it("This dive has %{span:not} been published on your timeline", scope: ['diveinfo', 'divepage'], span: It.tag("span", style: "color:red; font-weight: bold;")) %>
+          <%end%>
+        <%else%>
+          <%if @dive.graph_id.blank? %>
+            <%= it("This dive has been published on your timeline %{span:yet}", scope: ['diveinfo', 'divepage'], span: It.tag("span")) %>
+          <%else%>
+            <%= it("This dive has been published on your timeline", scope: ['diveinfo', 'divepage']) %>
+          <%end%>
+        <%end%>
+        </p>
+      </div>
+      <%end%>
+      <div class="push_social">
+        <h2><%= it("Share on Social Networks", scope: ['diveinfo', 'divepage']) %></h2>
+        <ul>
+        <li><b><%= it("Facebook", scope: ['diveinfo', 'divepage']) %></b>: <a href="//www.facebook.com/share.php?u=<%=@dive.fullpermalink(:canonical)%>" style="background-color: transparent;" target="_blank" onClick='showPopup(this.href);return(false);'><img src="<%=HtmlHelper.lbroot "/img/facebook_share_button_small.gif"%>" width='60px' height='18px' /></a> <p><%= it("personalize your shared text as well as its destination (wall, page...) or send as a private message to a friend", scope: ['diveinfo', 'divepage']) %></p></li>
+        <li><b><%= it("Twitter", scope: ['diveinfo', 'divepage']) %></b>: <a href="//twitter.com/share" class="twitter-share-button" data-url="<%=@dive.fullpermalink(:canonical)%>" data-text="<%= it("Check out this cool #scuba dive:", scope: ['diveinfo', 'divepage']) %> " data-count="none" data-via="diveboard"><%= it("Tweet", scope: ['diveinfo', 'divepage']) %></a><script type="text/javascript" src="//platform.twitter.com/widgets.js" async></script> <%= it("personalize your tweet", scope: ['diveinfo', 'divepage']) %></li>
+        <li><b><%= it("Google Plus", scope: ['diveinfo', 'divepage']) %></b>: <g:plusone callback="notify_google_like" href="<%=@dive.fullpermalink(:canonical)%>" annotation="none"></g:plusone> <%= it("+1 and add a comment", scope: ['diveinfo', 'divepage']) %></li>
+        </ul>
+        <%if @user && @user != @owner%>
+          <h2><%= it("Copy this dive in your own logbook", scope: ['diveinfo', 'divepage']) %></h2>
+          <p><%= it("If you dived with %{owner} on this dive, you can import the details of this dive into your own logbook.", scope: ['diveinfo', 'divepage'], owner: @owner.nickname) %></p>
+          <button class='grey_button_v1' onclick='diveboardCopyDive.init_copy_dive_to_logbook()' style='margin:10px 0px 20px 20px'><%= it("Copy this dive", scope: ['diveinfo', 'divepage']) %></button>
+        <%elsif @user && @user == @owner%>
+          <h2><%= it("Duplicate this dive", scope: ['diveinfo', 'divepage']) %></h2>
+          <p><%= it("If you did several times the same dive, or almost exactly the same dive, here is a way for you to duplicate a dive.", scope: ['diveinfo', 'divepage']) %></p>
+          <button class='grey_button_v1' onclick='diveboardCopyDive.init_copy_dive_to_logbook()' style='margin:10px 0px 20px 20px'><%= it("Duplicate this dive", scope: ['diveinfo', 'divepage']) %></button>
+        <%end%>
+      </div>
+      <div class="push_permalink">
+        <h2><%= it("Direct link to this dive", scope: ['diveinfo', 'divepage']) %></h2>
+        <ul>
+        <li><b><%= it("Long link:", scope: ['diveinfo', 'divepage']) %></b><input type="text" value="<%=@dive.fullpermalink(:locale)%>" class="share_link_input" onclick="$(this).select();"></li>
+        <li><b><%= it("Short link:", scope: ['diveinfo', 'divepage']) %></b><input type="text" value="<%="#{ROOT_TINY_URL}#{@dive.id}"%>" class="share_link_input" onclick="$(this).select();"></li>
+        </ul>
+        </div>
+    </div>
+    <%end%>
+    <%if @dive.privacy ==1%>
+    <div id="private_share_dive">
+      <%= it("%{link:Make dive public} %{span:or keep the dive private %{symbol}}", scope: ['diveinfo', 'divepage'], link: It.link("#", class: "yellow_button", onclick: "change_privacy(); return false;"), span: It.tag("span", style: "color:#828282;"), symbol: "<span class=\"symbol\">x</span>".html_safe) %>
+    </div>
+    <div style='padding-left:13px;'>
+      <h2><%= it("Duplicate this dive", scope: ['diveinfo', 'divepage']) %></h2>
+      <p><%= it("If you did several times the same dive, or almost exactly the same dive, here is a way for you to duplicate a dive.", scope: ['diveinfo', 'divepage']) %></p>
+      <button class='grey_button' onclick='diveboardCopyDive.init_copy_dive_to_logbook()' style='margin:10px 0px 20px 20px'><%= it("Duplicate this dive", scope: ['diveinfo', 'divepage']) %></button>
+    </div>
+    <%end%>
+    <% if !@user.nil? && @user.can_edit?(@owner) then
+      nopictures= @dive.pictures.empty?
+      nogear = @dive.gears.empty?
+      nobuddies = @dive.buddies.empty?
+      nodiveshop = @dive.diveshop.blank?
+      notanks = @dive.tanks.empty?
+      nospot = (@dive.spot.id == 1)
+      nonotes = (@dive.notes.blank?)
+      nospecies = @dive.species.empty?
+      nodansent =  @dive.dan_data_sent.nil?
+      noshopreview = !@dive.shop.nil? && @user.review_for_shop(@dive.shop).nil? && !@user.is_group? && !@dive.shop.user_proxy.nil?
+      %>
+    <% if nopictures || nogear || nobuddies || nodiveshop || notanks || nospot|| nonotes || nospecies || nodansent || noshopreview%>
+    <div id="missing_dive_details" class="grey_box_gradient">
+      <h2><%= it("Complete your dive record", scope: ['diveinfo', 'divepage']) %></h2>
+      <%if nospot%><h3 style="color:red;"><%= it("You should assign a dive spot to this dive", scope: ['diveinfo', 'divepage']) %></h3><%end%>
+      <% if nopictures || nogear || nobuddies || nodiveshop || notanks || nonotes || nospecies %>
+      <h3><%= it("To make your memories more vivid consider adding:", scope: ['diveinfo', 'divepage']) %></h3>
+      <ul>
+        <%if nonotes%><li>- <%= it("Notes (Overview tab)", scope: ['diveinfo', 'divepage']) %></li><%end%>
+        <%if nospecies%><li>- <%= it("Species encountered(Species tab)", scope: ['diveinfo', 'divepage']) %></li><%end%>
+        <%if nopictures%><li>- <%= it("Pictures (Pictures tab)", scope: ['diveinfo', 'divepage']) %></li><%end%>
+        <%if nogear%><li>- <%= it("Gear used (Gear tab)", scope: ['diveinfo', 'divepage']) %></li><%end%>
+        <%if notanks%><li>- <%= it("Tanks used (Profile tab)", scope: ['diveinfo', 'divepage']) %></li><%end%>
+        <%if nobuddies%><li>- <%= it("Dive Buddies (People tab)", scope: ['diveinfo', 'divepage']) %></li><%end%>
+        <%if nodiveshop%><li>- <%= it("Dive shop %{amp} Guide (People tab)", scope: ['diveinfo', 'divepage'], amp: "&amp;".html_safe) %></li><%end%>
+      </ul>
+      <%end%>
+      <%if nodansent%><h3><%= it("You should consider %{span:sharing your medical data with DAN} (DAN tab)", scope: ['diveinfo', 'divepage'], span: It.tag("span", style: "color:orange;")) %></h3><%end%>
+      <%if noshopreview%>
+        <h3><%= it("Fill in a %{link:quick review} about %{shop}", scope: ['diveinfo', 'divepage'], link: @dive.shop.fullpermalink(:locale) + "#write_review", shop: @dive.shop.name.titleize) %></a></h3>
+        <ul>
+          <li><%= it("You liked diving with %{shop} ? Or that was a poor experience ? %{link:Give your opinion} to help fellow divers decide whether they should go with them or avoid them.", scope: ['diveinfo', 'divepage'], shop: @dive.shop.name.titleize, link: @dive.shop.fullpermalink(:locale) + "#write_review") %></li>
+        </ul>
+      <%end%>
+    </div>
+    <%end%>
+    <%end%>
+  </div>
+
+  </div>
+  
+  <%if @dive.id != 1 && @dive.privacy ==0 then %>
+  <div id='disquscomments' class="double_box">
+  <div class="comments_box">
+  <fb:like href="<%=@dive.fullpermalink(:canonical)%>" show_faces="true" width="400" font="verdana" ref="dive-<%=@dive.id%>"></fb:like>
+  <%= render :partial => 'disqus/comments_box', :locals => {subject: @dive }%>
+  <script type="text/javascript">
+      // if ($("#lightbox_controls .disqus_thread iframe").length == 0)
+      //   $("#view_dive .disqus_thread").attr('id', 'old_disqus_thread')
+      // DISQUS.reset({reload:true, config: disqus_config}) 
+  </script>
+  </div>
+  </div>
+  <%end%>
+  
+  <br style="clear: both;"/>
+</div>
+
+<% Rails.logger.debug "Time elapsed : #{Time.now - log_time}"
+log_time = Time.now  %>
+
+<!-- Editor -->
+
+<% if !@user.nil? && @user.can_edit?(@owner) then %>
+<%= render "diveinfo/editor", :hidden => true %>
+<%end%>
+
+<!-- Modal Window Junk -->
+<div id="dialog-confirm" title="<%= it("Delete this dive permanently?", scope: ['diveinfo', 'divepage']) %>" style="display:none;">
+  <p class="dialog-text-highlight"><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><%= it("All the data in this dive will be erased (profile, notes, fish list...) and cannot be recovered. Are you sure?", scope: ['diveinfo', 'divepage']) %></p>
+</div>
+<div id="dialog-nodiveselected" title="<%= it("Dive selection", scope: ['diveinfo', 'divepage']) %>" style="display:none;">
+  <p class="dialog-text-highlight"><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><%= it("You need to select at least one dive to import your dives in Diveboard.", scope: ['diveinfo', 'divepage']) %></p>
+</div>
+<div id="dialog-copy-dive" title="<%= it("Copy this dive into your logbook", scope: ['diveinfo', 'divepage']) %>" style="display:none;">
+  <p class="dialog-text-highlight"><%= it("This dive will be copied into your own logbook.", scope: ['diveinfo', 'divepage']) %></p>
+  <p><%= it("Please select which details you would like to keep.", scope: ['diveinfo', 'divepage']) %></p>
+  <ul class='select_what_copy'>
+    <li><input type='checkbox' checked=checked name='basic' disabled /> <%= it("Basic dive details (spot, date, duration, depth, safety stops)", scope: ['diveinfo', 'divepage']) %></li>
+    <%if @user && @user == @owner%>
+    <li><input type='checkbox' class='filter_what_copy' checked=checked name='trip'/> <%= it("Trip name", scope: ['diveinfo', 'divepage']) %></li>
+    <%end%>
+    <li><input type='checkbox' class='filter_what_copy' checked=checked name='conditions'/> <%= it("Dive conditions (Temperatures, visibility,...)", scope: ['diveinfo', 'divepage']) %> </li>
+    <li><input type='checkbox' class='filter_what_copy' checked=checked name='shop'/> <%= it("Dive center and shop", scope: ['diveinfo', 'divepage']) %></li>
+    <li><input type='checkbox' class='filter_what_copy' checked=checked name='buddies'/> <%= it("Dive buddies", scope: ['diveinfo', 'divepage']) %></li>
+    <li><input type='checkbox' class='filter_what_copy' checked=checked name='profile'/> <%= it("Dive profile", scope: ['diveinfo', 'divepage']) %></li>
+    <li><input type='checkbox' class='filter_what_copy' checked=checked name='species'/> <%= it("Spotted species", scope: ['diveinfo', 'divepage']) %></li>
+    <%if @user && @user == @owner%>
+    <li><input type='checkbox' class='filter_what_copy' checked=checked name='weights'/> <%= it("Weights", scope: ['diveinfo', 'divepage']) %></li>
+    <%end%>
+    <%if @user && @user != @owner%>
+    <li><input type='checkbox' class='filter_what_copy' checked=checked name='add_buddy'/> <%= it("Add %{owner} as a buddy", scope: ['diveinfo', 'divepage'], owner: @owner.nickname) %></li>
+    <%end%>
+  </ul>
+
+  <div class='diveboard_popup_buttons'>
+    <button href='#' class='yellow_button copy_dive_ok'><%= it("Copy dive", scope: ['diveinfo', 'divepage']) %></button>
+    <button href='#' class='grey_button copy_dive_cancel'><%= it("Cancel", scope: ['diveinfo', 'divepage']) %></button>
+  </div>
+</div>
+<div id="dialog-copied-dive" title="<%= it("Copy this dive into your logbook", scope: ['diveinfo', 'divepage']) %>" style="display:none;">
+  <p class="dialog-text-highlight"><%= it("This dive has been copied into your own logbook.", scope: ['diveinfo', 'divepage']) %></p>
+  <div class='diveboard_popup_buttons'>
+    <a href='#' class='yellow_button copied_dive_ok' target='_blank'><%= it("Open dive in new window", scope: ['diveinfo', 'divepage']) %></a>
+    <button href='#' class='grey_button copied_dive_cancel'><%= it("Close", scope: ['diveinfo', 'divepage']) %></button>
+  </div>
+</div>
+<div id="mask" style="display:none;">
+  <img src="<%=HtmlHelper.lbroot "/img/transparent_loader_3.gif"%>" height='66px' width='66px' style="margin-left:50%; margin-top:25%" alt="#" />
+</div>
+<div id="boxes">
+</div>
+<!-- END Modal Window Junk -->

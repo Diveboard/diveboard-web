@@ -1,0 +1,446 @@
+Favorites:
+  - Suunto Vyper
+  - Suunto Vyper Air
+  - Suunto Zoop
+  - Suunto D9
+  - Mares Nemo Excel
+  - Uwatec Aladin
+
+Dislikes:
+  - Mares M2 (DB internal driver)
+  - Mares M2 Emulator
+  - Suunto Vyper (Diveboard internal driver)
+  - Suunto Emulator
+
+
+
+Computers:
+  Aeris Atmos AI:
+    driver: LDC vtpro
+    tested: true
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Aeris Atmos AI 2:
+    driver: LDC vtpro
+    tested: true
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Aeris Compumask:
+    driver: LDC atom2
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Aeris Elite T3:
+    driver: LDC atom2
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Aeris Epic:
+    driver: LDC atom2
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Atomics Aquatics Cobalt:
+    driver: LDC cobalt
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Cressy Edy:
+    driver: LDC edy
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Genesis React Pro:
+    driver: LDC veo250
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Heinrichs Weikamp OTSC:
+    driver: LDC ostc
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Hollis DG03:
+    driver: LDC veo250
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+  
+  Mares Darwin:
+    driver: LDC darwin
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Mares Icon HD:
+    driver: LDC iconhd
+    tested: true
+    instructions:
+      - Plug the USB cable into the proper connector on the right of the device.
+      - Connect the other end of the cable to your computer.
+      - If the computer did not switch into "Computer" mode, select the computer icon on the main menu.
+
+  Mares Nemo:
+    driver: LDC nemo
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Mares Nemo Excel:
+    driver: LDC nemo
+    tested: true
+    cable: http://www.amazon.com/gp/product/B001N4I856/ref=as_li_tf_tl?ie=UTF8&tag=diveboard-20&linkCode=as2&camp=1789&creative=9325&creativeASIN=B001N4I856
+    instructions:
+      - Plug the IRIS USB interface on your PC/Mac
+      - Place your dive computer in front of the receptor on the IRIS device
+      - Click on "Upload dive"
+      - Select the PC Mode on the device
+      - The transfer starts automatically once you've selected the PC Mode 
+      - Don't move the dive computer until the transfer is complete
+
+  Mares Nemo Air:
+    driver: LDC puck
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Mares Nemo Sport:
+    driver: LDC edy
+    cable: http://www.amazon.com/gp/product/B0010DKRFO/ref=as_li_tf_tl?ie=UTF8&tag=diveboard-20&linkCode=as2&camp=1789&creative=9325&creativeASIN=B0010DKRFO
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Mares Nemo Wide:
+    driver: LDC puck
+    tested: true
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Mares M2:
+    driver: LDC darwin
+    tested: true
+    cable: http://www.amazon.com/gp/product/B001N4I856/ref=as_li_tf_tl?ie=UTF8&tag=diveboard-20&linkCode=as2&camp=1789&creative=9325&creativeASIN=B001N4I856
+    instructions:
+      - Plug the IRIS USB interface on your PC/Mac
+      - Place your dive computer in front of the receptor on the IRIS device
+      - Select the PC Mode on the device
+      - Click on "Upload dive"
+
+  Mares Puck:
+    driver: LDC puck
+    tested: true
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Mares Puck Air:
+    driver: LDC puck
+    tested: true
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Oceanic Atom 2.0:
+    driver: LDC atom2
+    tested: true
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Oceanic Datamask:
+    driver: LDC atom2
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Oceanic Geo:
+    driver: LDC atom2
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Oceanic Geo 2.0:
+    driver: LDC atom2
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Oceanic Veo 2.0:
+    driver: LDC atom2
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Oceanic Veo 3.0:
+    driver: LDC atom2
+    tested: true
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Oceanic Veo 250:
+    driver: LDC veo250
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Oceanic Veo180 NX:
+    driver: LDC veo250
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Oceanic Versa Pro:
+    driver: LDC vtpro
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Oceanic VT3:
+    driver: LDC atom2
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Oceanic VT4:
+    driver: LDC atom2
+    instructions:
+      - Turn on the computer and make sure to display the Surface Main screen
+      - Plug in the computer cable both on the Dive computer and on this computer
+      - While the dive computer displays "PC COMM", click on the "Upload dives" button below
+
+  Oceanic VT Pro:
+    driver: LDC vtpro
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Reefnet Sensus:
+    driver: LDC sensus
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Reefnet Sensus Pro:
+    driver: LDC sensuspro
+    tested: true
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Reefnet Sensus Ultra:
+    driver: LDC sensusultra
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Sherwood Insight:
+    driver: LDC veo250
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Suunto Cobra:
+    driver: LDC vyper
+    cable: http://www.amazon.com/gp/product/B000JL2C06/ref=as_li_tf_tl?ie=UTF8RRRtag=diveboard-20RRRlinkCode=as2RRRcamp=1789RRRcreative=9325RRRcreativeASIN=B000JL2C06
+    instructions:
+      - Plug the cable in the USB socket of your PC/Mac
+      - Plug the other end on the back of your dive computer
+      - Turn on your dive computer and select the "TR - PC" mode in the "MEMORY" menu
+      - Click on "Upload Dive"
+
+  Suunto Cobra 3:
+    driver: LDC vyper2
+    tested: true
+    cable: http://www.amazon.com/gp/product/B000JL2C06/ref=as_li_tf_tl?ie=UTF8RRRtag=diveboard-20RRRlinkCode=as2RRRcamp=1789RRRcreative=9325RRRcreativeASIN=B000JL2C06
+    instructions:
+      - Plug the cable in the USB socket of your PC/Mac
+      - Plug the other end on the back of your dive computer
+      - Turn on your dive computer and select the "TR - PC" mode in the "MEMORY" menu
+      - Click on "Upload Dive"
+
+  Suunto Cobra 2:
+    driver: LDC vyper2
+    cable: http://www.amazon.com/gp/product/B000JL2C06/ref=as_li_tf_tl?ie=UTF8RRRtag=diveboard-20RRRlinkCode=as2RRRcamp=1789RRRcreative=9325RRRcreativeASIN=B000JL2C06
+    instructions:
+      - Plug the cable in the USB socket of your PC/Mac
+      - Plug the other end on the back of your dive computer
+      - Turn on your dive computer and select the "TR - PC" mode in the "MEMORY" menu
+      - Click on "Upload Dive"
+
+  Suunto D3:
+    driver: LDC vyper
+    cable: http://www.amazon.com/gp/product/B000JL2C06/ref=as_li_tf_tl?ie=UTF8RRRtag=diveboard-20RRRlinkCode=as2RRRcamp=1789RRRcreative=9325RRRcreativeASIN=B000JL2C06
+    instructions:
+      - Plug the cable in the USB socket of your PC/Mac
+      - Plug the other end on the back of your dive computer
+      - Turn on your dive computer and select the "TR - PC" mode in the "MEM" menu
+      - Wait 2 seconds to let the Data Transfert Mode activate automatically
+      - Click on "Upload Dive"
+
+  Suunto D4:
+    driver: LDC d9
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Suunto D6:
+    driver: LDC d9
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Suunto D9:
+    driver: LDC d9
+    tested: true
+    instructions:
+      - Plug the cable in the USB socket of your PC/Mac
+      - Insert the other end of the cabl on the right of your dive computer and turn clockwise
+      - Make sure the dive computer is on the main time screen
+      - Click on "Upload Dive"
+
+  Suunto D9tx:
+    driver: LDC d9
+    tested: false
+    instructions:
+      - Plug the cable in the USB socket of your PC/Mac
+      - Insert the other end of the cabl on the right of your dive computer and turn clockwise
+      - Make sure the dive computer is on the main time screen
+      - Click on "Upload Dive"
+
+  Suunto Eon:
+    driver: LDC eon
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Suunto Gekko:
+    driver: LDC vyper
+    tested: true
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Suunto HelO2:
+    driver: LDC vyper2
+    tested: true
+    cable: http://www.amazon.com/gp/product/B000JL2C06/ref=as_li_tf_tl?ie=UTF8RRRtag=diveboard-20RRRlinkCode=as2RRRcamp=1789RRRcreative=9325RRRcreativeASIN=B000JL2C06
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Suunto Mosquito:
+    driver: LDC vyper
+    cable: http://www.amazon.com/gp/product/B000JL2C06/ref=as_li_tf_tl?ie=UTF8RRRtag=diveboard-20RRRlinkCode=as2RRRcamp=1789RRRcreative=9325RRRcreativeASIN=B000JL2C06
+    instructions:
+      - Plug the cable in the USB socket of your PC/Mac
+      - Plug the other end on the back of your dive computer
+      - Turn on your dive computer and select the "TR - PC" mode in the "MEM" menu
+      - Wait 2 seconds to let the Data Transfert Mode activate automatically
+      - Click on "Upload Dive"
+
+  Suunto Solution:
+    driver: LDC solution
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Suunto Solution Alpha:
+    driver: LDC eon
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Suunto Solution Nitrox:
+    driver: LDC eon
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Suunto Spyder:
+    driver: LDC vyper
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Suunto Stinger:
+    driver: LDC vyper
+    instructions:
+      - Plug the cable in the USB socket of your PC/Mac
+      - Plug the other end on the back of your dive computer
+      - Turn on your dive computer and select the "TR - PC" mode in the "MEM" menu
+      - Wait 2 seconds to let the Data Transfert Mode activate automatically
+      - Click on "Upload Dive"
+
+  Suunto Vyper:
+    driver: LDC vyper
+    tested: true
+    cable: http://www.amazon.com/gp/product/B000JL2C06/ref=as_li_tf_tl?ie=UTF8RRRtag=diveboard-20RRRlinkCode=as2RRRcamp=1789RRRcreative=9325RRRcreativeASIN=B000JL2C06
+    instructions:
+      - Plug the cable in the USB socket of your PC/Mac
+      - Plug the other end on the back of your dive computer
+      - Turn on your dive computer and select the "TR - PC" mode in the "MEMORY" menu
+      - Click on "Upload Dive"
+
+  Suunto Vyper 2:
+    driver: LDC vyper2
+    cable: http://www.amazon.com/gp/product/B000JL2C06/ref=as_li_tf_tl?ie=UTF8RRRtag=diveboard-20RRRlinkCode=as2RRRcamp=1789RRRcreative=9325RRRcreativeASIN=B000JL2C06
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Suunto Vyper Air:
+    driver: LDC vyper2
+    tested: true
+    cable: http://www.amazon.com/gp/product/B000JL2C06/ref=as_li_tf_tl?ie=UTF8RRRtag=diveboard-20RRRlinkCode=as2RRRcamp=1789RRRcreative=9325RRRcreativeASIN=B000JL2C06
+    instructions:
+      - Plug the cable in the USB socket of your PC/Mac
+      - Plug the other end on the back of your dive computer
+      - Turn on your dive computer and select the "TR - PC" mode in the "MEMORY" menu
+      - Click on "Upload Dive"
+
+  Suunto Vytec:
+    driver: LDC vyper
+    tested: true
+    cable: http://www.amazon.com/gp/product/B000JL2C06/ref=as_li_tf_tl?ie=UTF8RRRtag=diveboard-20RRRlinkCode=as2RRRcamp=1789RRRcreative=9325RRRcreativeASIN=B000JL2C06
+    instructions:
+      - Plug the cable in the USB socket of your PC/Mac
+      - Plug the other end on the back of your dive computer
+      - Turn on your dive computer and select the "PC - SET" mode in the "MEMORY" menu
+      - Click on "Upload Dive"
+
+  Suunto Zoop:
+    driver: LDC vyper
+    tested: true
+    cable: http://www.amazon.com/gp/product/B000JL2C06/ref=as_li_tf_tl?ie=UTF8RRRtag=diveboard-20RRRlinkCode=as2RRRcamp=1789RRRcreative=9325RRRcreativeASIN=B000JL2C06
+    instructions:
+      - Plug the cable in the USB socket of your PC/Mac
+      - Plug the other end on the back of your dive computer
+      - Turn on your dive computer and select the "PC - SET" mode in the "MEMORY" menu
+      - Click on "Upload Dive"
+
+  Tusa Zen (IQ-900):
+    driver: LDC atom2
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Tusa Zen Air (IQ-950):
+    driver: LDC atom2
+    tested: true
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Uwatec Aladin:
+    driver: LDC aladin
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Uwatec Galileo:
+    driver: LDC smart
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Uwatec Memomouse:
+    driver: LDC memomouse
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+  Uwatec Smart:
+    driver: LDC smart
+    tested: true
+    instructions:
+      - We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us ! You can send that kind of information through the "PANIC" button on the left, or <a href='mailto:support@diveboard.com'>by mail</a>
+
+
+
+
+
+
+
+Emulators:
+  Suunto Vyper (driver 2):
+    driver: Suunto
+    instructions:
+      - This is another version of Suunto Vyper driver
+
+  Emulator 1 - 1 dive - Using Suunto driver:
+    driver: Emu Suunto
+    instructions:
+      - This is an emulator. Just click on Upload dives.
+
+  Emulator 2 - 41 dive - Using Mares M2 driver:
+    driver: Emu Mares M2
+    instructions:
+      - This is an emulator. Just click on Upload dives.
+

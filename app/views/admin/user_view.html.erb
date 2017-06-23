@@ -1,0 +1,117 @@
+<%= render :partial => 'admin_css'%>
+
+<style type="text/css">
+.tag {width:200px; display:inline-block;}
+
+</style>
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 2 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;padding-left:20px; width:640px !important;">
+
+<div style="padding-left:20px;">
+	<h1>User View/Edit</h1>
+
+
+
+	<h2 style="margin-top:20px; margin-bottom:30px;">
+		<%=@user_data.nickname%><br/>
+		&gt;&gt; <a href="/<%=@user_data.vanity_url%>" onclick='sudo_set_user(<%=@user_data.id%>); true'>ROOT ME</a><br/>
+		&gt;&gt; <a href="/<%=@user_data.vanity_url%>" target="_blank">User Home</a><br/>
+		&gt;&gt; <a href='/admin/dives/?search_user_id=<%=@user_data.id%>'>List the <%= @user_data.dives.count %> dives</a><br/>
+		<%if @user_data.is_group? then%>
+			&gt;&gt; <a href='/admin/reviews?what=shop&shop_id=<%=@user_data.shop_proxy.id%>'>List the <%= @user_data.shop_proxy.reviews.count %> reviews</a><br/>
+		<%else%>
+			&gt;&gt; <a href='/admin/reviews?what=user&user_id=<%=@user_data.id%>'>List the <%= @user_data.reviews.count %> reviews</a><br/>
+		<%end%>
+	</h2>
+		<div style="display:inline-block; width:100px; height: 150px;"><b>Picture:</b><br/><img src="<%=@user_data.picture%>"></div>
+		<div style="display:inline-block; width:100px; height: 150px; position: absolute; left: 631px;"><b>FB_Picture:</b><br/><img src="<%=@user_data.fb_picture%>" width="100"></div>
+		<div style="display:inline-block; width:100px; height: 150px; position: absolute; left: 493px;"><b>Custom_Picture:</b><br/>
+			<% if File.exists?("public/user_images/#{@user_data.id.to_s}.png")%>
+			<img src="<%="/user_images/#{@user_data.id.to_s}.png"%>">
+			<%else%>
+			No custom Pic
+			<%end%>
+			</div>
+		<div style="margin-top:10px;"></div>
+		<%= form_for(@user_data, :url=>{:action=>'user_view'}) do |f|%>
+		<p><div class="tag"><b>Vanity_URL : </b></div><%= f.text_field :vanity_url%></p>
+		<p><div class="tag"><b>ID : </b></div><%=@user_data.id%></p>
+		<p><div class="tag"><b>FB ID : </b></div><%=@user_data.fb_id%></p>
+		<p><div class="tag"><b>First Name : </b></div><%= f.text_field :first_name%></p>
+		<p><div class="tag"><b>Last Name : </b></div><%= f.text_field :last_name%></p>
+		<p><div class="tag"><b>Nickname : </b></div><%= f.text_field :nickname%></p>
+		<% if !@user_data.password.nil?%>
+		<p><div class="tag"><b>Login email : </b></div><%= f.text_field :email%></p>
+		<p><div class="tag"><b>Password : </b></div><%= f.text_field :password%></p>
+		<%end%>
+		<p><div class="tag"><b>Contact email : </b></div><%= f.text_field :contact_email%></p>
+		<p><div class="tag"><b>Location : </b></div><%= f.text_field :location%></p>
+		<p><div class="tag"><b>Settings : </b></div><%= f.text_field :settings%></p>
+		<p><div class="tag"><b>Role : </b></div><%= select_tag(:admin_rights,options_for_select([['User', 1], ['UserAdmin', 2], ['SpotAdmin',3], ['UserSpot Admin', 4]], @user_data.admin_rights)) %></p>
+		<p><div class="tag"><b>Plugin Debug Level : </b></div><%= select_tag(:plugin_debug,options_for_select([['NULL', nil], ['INFO', "INFO"], ['DEBUG',"DEBUG"], ['ERROR', "ERROR"]], @user_data.plugin_debug)) %></p>
+		<p><div class="tag"><b>Picture : </b></div><%= select_tag(:pict,options_for_select([['none', nil],['Facebook', 0], ['Custom', 1]], @user_data.pict)) %></p>
+		<p>User has <%=@user_data.auth_tokens.where("expires >= '#{Time.now.strftime("%Y-%m-%d %H:%M:%S")}'").count%> active tokens</p>
+		<p>User has <%=@user_data.public_dives.count%> public dives</p>
+		<p>User has <%=@user_data.dives.count%> logged dives</p>
+		<%if !@user_data.shop_proxy_id.blank?%>
+		<p>User is a proxy to dive shop <a href="/admin/shops/<%=@user_data.shop_proxy_id%>"> <%=@user_data.shop_proxy_id%></a></p>
+		<%end%>
+		<p style="margin-top:15px;" class='yellow_button'><%= f.submit "EDIT"%></p>
+		<%end%>
+		<div id="chart_hits"></div>
+</div>
+</div>
+
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+// Load the Visualization API and the piechart package.
+google.load('visualization', '1.0', {'packages':['corechart']});
+// Set a callback to run when the Google Visualization API is loaded.
+google.setOnLoadCallback(draw_chart);
+
+function draw_chart() {
+  draw_chart_activity();
+}
+
+function draw_chart_activity() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  <%
+    cols = ActiveRecord::Base.connection.select_all("select col2
+      from stats_sums
+      where aggreg in ('user', 'shop') and col1 = '#{@user_data.vanity_url}'
+      group by col2
+      order by count(*) DESC").map(&:values).flatten
+    cols.reject! do |col| col.nil? || ['api', 'blog', 'admin'].include?(col) end
+    cols_sql = cols.map do |col| "CONVERT(sum(CASE WHEN col2 = '#{col}' THEN nb else 0 end), SIGNED) as #{col}" end .join(", ")
+  %>
+  <% cols.each do |col|%>
+  data.addColumn('number', '<%=col%>');
+  <%end%>
+  data.addRows(<%=
+    ActiveRecord::Base.connection.select_all("select date_format(time, '%x-%v') week, #{cols_sql}
+      FROM stats_sums
+      where aggreg in ('user', 'shop') and col1 = '#{@user_data.vanity_url}'
+      group by date_format(time, '%x-%v') order by date_format(time, '%x-%v')")[1..-2].map(&:values) .to_json.html_safe unless cols.count == 0%>);
+
+  // Set chart options
+  var options = {'title':'Hits on Diveboard',
+    vAxis: {0: {title: 'Nb of hits'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "area",
+    lineWidth: 1.5,
+    isStacked: true,
+    'width':600,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var chart = new google.visualization.ComboChart(document.getElementById('chart_hits'));
+  chart.draw(data, options);
+}
+
+</script>

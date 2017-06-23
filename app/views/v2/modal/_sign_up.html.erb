@@ -1,0 +1,18 @@
+<div class="sign_up">
+  <img class="prev_menu" src="<%= HtmlHelper.lbroot "/img/drawer/svg/back_icon.svg" %>" >
+  <form name="sign_menu" action="#">
+    <input type="email" name="email" class="input_text" placeholder="Your email">
+    <input type="text" name="nickname" class="input_text" placeholder="Your nickname" >
+    <input type="password" name="pass" class="input_text" placeholder="Password">
+    <input type="password" name="verif_pass" class="input_text" placeholder="Confirm password">
+    <input type="submit" class="sign_button" value="Sign up for free">
+  </form>
+  <div style="color: grey; width: 80%; margin: 0 auto">
+    <div style="background: grey; margin:1rem auto; height:1px; width: 45%; vertical-align:middle; display: inline-block; margin-right: 0.1rem;">
+    </div>or<div style="background: grey; margin:1rem auto; height:1px; width: 45%; vertical-align:middle; display: inline-block; margin-left: 0.1rem;"></div>
+  </div>
+  <button class="sign_button fb_sign_in" style="background: #3366FF no-repeat; background-image: url('<%= HtmlHelper.lbroot "/img/drawer/svg/facebook_icon.svg" %>');background-position: 0.7rem;padding-left: 0.6rem;" >Sign up with Facebook</button>
+  <div style="background: grey; margin: 30px auto; height:1px; width: 80%;  "></div>
+  <p style="text-align: center;">Are you a pro?</p>
+  <a class="sign_button" href="/pro">Diveboard for business</a>
+</div>

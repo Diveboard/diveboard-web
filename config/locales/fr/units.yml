@@ -1,0 +1,47 @@
+---
+fr:
+  time:
+    formats:
+      full: "%A %d %B %Y"
+      ? "H:M"
+      : "%H:%M"
+  date:
+    formats:
+      d/m/y: "%d/%m/%y"
+  units:
+    dive:
+      one: "%{count} plongée"
+      other: "%{count} plongées"
+    meter:
+      one: "%{count}m"
+      other: "%{count}m"
+    min:
+      one: "%{count}min"
+      other: "%{count}min"
+    temperature:
+      F: "%{count}ºF"
+      C: "%{count}ºC"
+      K: "%{count}ºK"
+    weight:
+      kg: "%{count}kg"
+      lbs: "%{count}lb"
+    distance:
+      m: "%{count}m"
+      ft: "%{count}'"
+      in: "%{count}\""
+      cm: "%{count}cm"
+    pressure:
+      bar: "%{count}bar"
+      psi: "%{count}psi"
+    year:
+      one: "%{count} année"
+      other: "%{count} années"
+    day:
+      one: "%{count} jour"
+      other: "%{count} jours"
+    hr:
+      one: "%{count} h"
+      other: "%{count} h"
+    like:
+      one: "%{count} mention \"J'aime\""
+      other: "%{count} mentions \"J'aime\""

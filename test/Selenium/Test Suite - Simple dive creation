@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+  <title>Test Suite</title>
+</head>
+<body>
+<table id="suiteTable" cellpadding="1" cellspacing="1" border="1" class="selenium"><tbody>
+<tr><td><b>Test Suite</b></td></tr>
+<tr><td><a href="Check - ksso dive 13">Check - ksso dive 13</a></td></tr>
+<tr><td><a href="Action - Create temp fb user">Action - Create temp fb user</a></td></tr>
+<tr><td><a href="Action - login temp fb user">Action - login temp fb user</a></td></tr>
+<tr><td><a href="Check - No dives">Check - No dives</a></td></tr>
+<tr><td><a href="Action - change settings to Metric">Action - change settings to Metric</a></td></tr>
+<tr><td><a href="Action - Create new dive - suunto simu">Action - Create new dive - suunto emu</a></td></tr>
+<tr><td><a href="Check - Suunto simu dive - metric">Check - Suunto simu dive - metric</a></td></tr>
+<tr><td><a href="Check - Suunto simu dive - load wizard - metric">Check - Suunto simu dive - load wizard - metric</a></td></tr>
+<tr><td><a href="Action - change settings to Imperial">Action - Change settings to Imperial</a></td></tr>
+<tr><td><a href="Check - Suunto simu dive - imperial">Check - Suunto simu dive - imperial</a></td></tr>
+<tr><td><a href="Action - logout">Action - logout</a></td></tr>
+<tr><td><a href="Check - Suunto simu dive - metric">Check - Suunto simu dive - metric</a></td></tr>
+<tr><td><a href="Action - login">Action - login</a></td></tr>
+<tr><td><a href="Action - change settings to Metric">Action - Change settings to Metric</a></td></tr>
+<tr><td><a href="Action - Modify dive">Action - Modify dive</a></td></tr>
+<tr><td><a href="Check - Modified Suunto simu dive - metric">Check - Modified Suunto simu dive - metric</a></td></tr>
+<tr><td><a href="Action - logout">Action - logout</a></td></tr>
+<tr><td><a href="Check - Modified Suunto simu dive - metric">Check - Modified Suunto simu dive - metric</a></td></tr>
+<tr><td><a href="Action - login">Action - login</a></td></tr>
+<tr><td><a href="Action - Delete current dive">Action - Delete current dive</a></td></tr>
+<tr><td><a href="Check - No dives">Check - No dives</a></td></tr>
+<tr><td><a href="Action - logout">Action - logout</a></td></tr>
+<tr><td><a href="Action - Delete temp fb user">Action - Delete temp fb user</a></td></tr>
+</tbody></table>
+</body>
+</html>

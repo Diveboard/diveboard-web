@@ -1,0 +1,54 @@
+<table class='login_included_popup'>
+  <tr>
+    <th><div><%= it("CREATE AN ACCOUNT", scope: ['login', 'login_included_popup']) %></div></th>
+    <th><div><%= it("SIGN IN", scope: ['login', 'login_included_popup']) %></div></th>
+  </tr>
+  <tr>
+    <td>
+      <div id="login_review" class="<%=style ||= nil%> form_signup">
+        <span class="fb_login_link fb_login_inline"><img class="fb_login fb_signup" src='/img/fb_signup_2.png'/></span>
+        <span class="hspace" style="display: block;"><hr/><p><%= it("or", scope: ['login', 'login_included_popup']) %></p><hr/></span><div class="loader" style="display: none;"></div>
+
+        <label><%= it("Nickname", scope: ['login', 'login_included_popup']) %> <span class='right_note'><%= it("[At least 4 characters]", scope: ['login', 'login_included_popup']) %></span></label>
+        <input class="register_sidebar_input nickname" size="30" type="text"><div class='checks'><img class="nickname_ok" src="/img/ok.png" style="display:none;"/><img  class="nickname_nok" style="display:none;" src="/img/ok-not.png"/><img  class="nickname_search" style="display:none;" src="/img/indicator.gif"/></div>
+        <p style='display:none' class="errormsg nickname_length"><%= it("Nickname must have at least 4 characters", scope: ['login', 'login_included_popup']) %></p>
+        <p style='display:none' class="errormsg nickname_extra_length"><%= it("Nickname must have less than 30 characters", scope: ['login', 'login_included_popup']) %></p>
+
+        <label><%= it("Email", scope: ['login', 'login_included_popup']) %></label>
+        <input class="register_sidebar_input email" size="30" type="text"><div class='checks'><img class="email_ok" src="/img/ok.png" style="display:none;"/><img  class="email_nok" style="display:none;" src="/img/ok-not.png"/><img  class="email_search" style="display:none;" src="/img/indicator.gif"/></div>
+        <p style='display:none' class="errormsg email_used"><%= it("This email already has an account", scope: ['login', 'login_included_popup']) %></p>
+
+        <label><%= it("Password", scope: ['login', 'login_included_popup']) %> <span class='right_note'><%= it("[At least 5 characters]", scope: ['login', 'login_included_popup']) %></span></label>
+        <input class="register_sidebar_input password" size="30" type="password"><div class='checks'><img class="password_ok" src="/img/ok.png" style="display:none;"/><img  class="password_nok" style="display:none;" src="/img/ok-not.png"/><img  class="password_search" style="display:none;" src="/img/indicator.gif"/></div>
+        <p style='display:none' class="errormsg password_space"><%= it("Password must contain no space", scope: ['login', 'login_included_popup']) %></p>
+        <p style='display:none' class="errormsg password_length"><%= it("Password must have at least 5 characters", scope: ['login', 'login_included_popup']) %></p>
+        <p style='display:none' class="errormsg password_extra_length"><%= it("Password must have less than 20 characters", scope: ['login', 'login_included_popup']) %></p>
+
+        <div class='bottom_checkboxes'>
+          <label><%= it("Remember me", scope: ['login', 'login_included_popup']) %> : </label><input class="open_session" type="checkbox" checked="checked">
+        </div>
+        <div class='bottom_checkboxes'>
+          <label><%= it("Keep me in the loop for great scuba info", scope: ['login', 'login_included_popup']) %> : </label><input class="newsletter"  checked="checked" type="checkbox" value="1">
+        </div>
+        <button class="signup_button futurarealbold yellow_button" id="user_submit" style="position: relative; left: 60px; top: 10px;"><%= it("Create account", scope: ['login', 'login_included_popup']) %></button>
+      </div>
+    </td>
+    <td>
+      <div id="login_review" class="<%=style ||= nil%> form_signin">
+        <span class="fb_login_link fb_login_inline"><img class="fb_login" src='/img/fb_login_2.png'/></span>
+        <span class="hspace" style="display: block;"><hr/><p>or</p><hr/></span><div class="loader" style="display: none;"></div>
+
+        <label><%= it("Email", scope: ['login', 'login_included_popup']) %> <a class='right_note' href="/login/register?help=email" id="forgot_email"><%= it("[Lost email]", scope: ['login', 'login_included_popup']) %></a></label>
+        <input class="register_sidebar_input email" size="30" type="text">
+
+        <label><%= it("Password", scope: ['login', 'login_included_popup']) %> <span class='right_note'><a href="/login/register?help=pwd" class=""><%= it("[Forgot password]", scope: ['login', 'login_included_popup']) %></a></span></label>
+        <input class="register_sidebar_input password" size="30" type="password">
+        <p style='display:none' class="errormsg login_password_wrong"><%= it("Sorry, wrong login or password", scope: ['login', 'login_included_popup']) %></p>
+        <div class='bottom_checkboxes'>
+          <label><%= it("Remember me", scope: ['login', 'login_included_popup']) %> : </label><input class="open_session"  checked="checked" type="checkbox">
+        </div>
+        <button class="signin_button futurarealbold yellow_button" value="LOGIN" style="position: relative; left: 88px; top: 10px; "><%= it("Sign in", scope: ['login', 'login_included_popup']) %></button>
+      </div>
+    </td>
+  </tr>
+</table>

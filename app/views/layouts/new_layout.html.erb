@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html class="no-js" xmlns="http://www.w3.org/1999/xhtml"
+  xml:lang="<%=I18n.locale%>" lang="<%=I18n.locale%>"
+  xmlns:fb="http://www.facebook.com/2008/fbml"
+  xmlns:og="http://opengraphprotocol.org/schema/">
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# diveboard: http://ogp.me/ns/fb/diveboard#">
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=yes, width=device-width" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<meta name="csrf-token" content="<%= form_authenticity_token %>" />
+	<meta name="csrf-param" content="authenticity_token" />
+	<meta name="db-cookie-domain" content="<%=COOKIES_DOMAIN%>" />
+	<link rel="dns-prefetch" href="//graph.facebook.com/v2.0/">
+	<%Rails.configuration.balancing_roots.each do |host|%>
+		<link rel="dns-prefetch" href="<%=host%>">
+	<%end%>
+	<%Rails.configuration.google_cloud_buckets[:pictures].each do |host|%>
+		<link rel="dns-prefetch" href="//<%=host%>">
+	<%end%>
+	<link href="https://plus.google.com/+Diveboard" rel="publisher" />
+	<!--OG Meta Informations-->
+	<%= yield :meta_tags if content_for? :meta_tags %>
+	<!-- STYLESHEETS -->
+	<link href='http://fonts.googleapis.com/css?family=Quicksand:400,700' rel='stylesheet' type='text/css'>
+	<%= stylesheet_link_tag 'new_layout' %>
+	</head>
+
+	<body>
+		<%= yield :body if content_for? :body %>
+	</body>
+</html>

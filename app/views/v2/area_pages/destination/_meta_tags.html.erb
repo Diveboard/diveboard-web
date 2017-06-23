@@ -1,0 +1,22 @@
+<% content_for :for_head do %>
+
+<%
+  diveboard_tagline = it("Diveboard : Track and share your scuba diving experiences - Explore new spots and destinations", scope: ['logbook', 'meta_tags'])
+  diveboard_short_tagline = it("Diveboard : Your online scuba logbook.", scope: ['logbook', 'meta_tags'])
+%>
+<title>Diving in <%= @name %></title>
+<META NAME="Title" CONTENT="Diving in <%= @name %>" />
+<meta property="og:title" content="Diving in <%= @name %>" />
+<meta property="fb:app_id" ontent="<%=FB_APP_ID%>" />
+<meta property="og:title" content="Diving in <%=@name%>" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="<%= request.original_url %>" />
+
+<% if !@mark.nil? %>
+<meta property="og:description" content="Diving in <%= @name %> is <%= if @mark >=4 then 'amazing' elsif @mark >= 3 then 'great' elsif @mark >= 2 then 'nice' elsif @mark >= 1 then 'correct' else 'poor' end %> according to the <%= @dives.count %> dives logged in the vicinity with an average mark of <%= @mark %>"/>
+<% end %>
+<meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+
+<meta property="og:site_name" content="<%=diveboard_tagline%>" />
+
+<% end %>

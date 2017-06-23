@@ -1,0 +1,22 @@
+<% if @type == "dive" || @type == "picture"%>
+<%= it("New comments have been posted on Diveboard for your %{type} on %{spot} in %{country}.", scope: ['notify_user', 'notify_comment', 'text'], type: @type, spot: @dive.spot.name, country: @dive.spot.country.cname) %>
+<% elsif @type == "blogpost" %>
+<%= it("New comments have been posted on Diveboard for your blog post \"%{title}\".", scope: ['notify_user', 'notify_comment', 'text'], title: @post.title) %>
+
+<%end%>
+
+<% if !@comment_text.nil? then %><% if !@comment_user.nil? then %><%= it("%{user} said :", scope: ['notify_user', 'notify_comment', 'text'], user: @comment_user) %>
+
+<%end%><%=@comment_text%>
+
+<%end%>
+<%= it("You can view all the previous comments on Diveboard : %{txt_url}", scope: ['notify_user', 'notify_comment', 'text'], txt_url: @page.fullpermalink(:locale)) %>
+
+<%= it("Happy Diving !", scope: ['notify_user', 'notify_comment', 'text']) %>
+--
+<%= it("The Diveboard team", scope: ['notify_user', 'notify_comment', 'text']) %>
+http://www.diveboard.com
+
+
+<%= it("This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
+If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings", scope: ['notify_user', 'notify_comment', 'text']) %>

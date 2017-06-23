@@ -1,0 +1,39 @@
+<% if !@valid_claim.nil? %>
+<div class='main_content_box'>
+  <p class='dialog-text-highlight'><%= it("%{user} has requested the rights to administrate the page %{shop} on Diveboard.", scope: ['shop_pages', 'shop_profile_view'], user: @valid_claim[:user].nickname, shop: @owner.shop_proxy.name) %></p>
+  <p><%= it("If you know this person and you agree that he can write details about your shop, then validate the request.", scope: ['shop_pages', 'shop_profile_view']) %>
+    <%if @valid_claim[:group].has_admin?%><%= it("If not, then click on 'Reject claim'.", scope: ['shop_pages', 'shop_profile_view']) %>
+    <%else%><%= it("If not, then you may submit your own claim.", scope: ['shop_pages', 'shop_profile_view']) %><%end%>
+  </p>
+  <div class='claim_miniprofile_header'>
+    <div>
+      <b><%=@valid_claim[:user].nickname%></b>
+      <% if !@valid_claim[:user].contact_email.nil? then%><a href='mailto:<%=@valid_claim[:user].contact_email%>'>[<%=@valid_claim[:user].contact_email%>]</a><%end%>
+    </div>
+    <% if !@valid_claim[:user].fb_id.nil? then%>
+    <a class='link_with_arrow' target='_blank' href='http://www.facebook.com/<%=@valid_claim[:user].fb_id%>'><%= it("View facebook profile", scope: ['shop_pages', 'shop_profile_view']) %></a>
+    <br style='clear:both'/>
+    <%end%>
+  </div>
+  <div class='claim_miniprofile'>
+    <%= render :partial => 'logbook/mini_profile',  :locals => {:owner => @valid_claim[:user], :clickable => false, :hide_follow => true, :new_window => true, :hide_profile => @dive.nil?, :posts_link => false, :custom_header => false} %>
+    <br style='clear:both'/>
+  </div>
+  <div class='claim_action_buttons'>
+    <input type='hidden' id='shop_validate_claim_string' value="<%=@valid_claim[:claim]%>"/>
+    <input type='hidden' id='shop_validate_claim_nickname' value="<%=h @valid_claim[:user].nickname%>"/>
+    <button class='yellow_button' id='shop_validate_claim'><%= it("Validate claim", scope: ['shop_pages', 'shop_profile_view']) %></button>
+    <a class='yellow_button' href='<%=@owner.fullpermalink(:locale)%>'><%= it("Reject claim", scope: ['shop_pages', 'shop_profile_view']) %></a>
+    <%if !@valid_claim[:group].has_admin?%>
+    <button class='yellow_button claim_shop_link' href='#'><%= it("Claim this page for yourself", scope: ['shop_pages', 'shop_profile_view']) %></button>
+    <%end%>
+  </div>
+</div>
+<%end%>
+
+
+
+<% widget = WidgetProfile.find(shop.id) %>
+<div id='widget_<%=widget.class.name.underscore%>_<%=widget.id%>' class='widget_holder widget_<%=widget.class.name.underscore%> <%='first_widget' if @valid_claim.nil?%> mode_<%=params[:content]%>' data-widget_class='<%=widget.class.name%>' data-widget_id='<%=widget.id%>' data-mode='<%=params[:content]%>'>
+  <%=render :partial => "widgets/#{widget.class.name.underscore}_#{params[:content]}", :locals=> {:widget => widget, :shop => shop}%>
+</div>

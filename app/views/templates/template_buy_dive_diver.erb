@@ -1,0 +1,5 @@
+<li class='diver_detail'>
+  <b><%= it("Diver", scope: ['templates', 'template_buy_dive_diver']) %> <$=number$></b><br/>
+  <%= it("Certification:", scope: ['templates', 'template_buy_dive_diver']) %> <input class='certification' value='<$=certification.replace("'", "\\'")$>'/>
+  <%= it("Amount of %{span} for this diver:", scope: ['templates', 'template_buy_dive_diver'], span: content_tag("span", "", class: "dup_title em")) %> <input type='number' class='quantity' value='<$=quantity$>'/>
+</li>

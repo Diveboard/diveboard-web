@@ -1,0 +1,121 @@
+<style>
+
+.basket_table {table-layout: fixed; border-collapse: collapse; font-size: 12px; empty-cells: show;}
+.basket_table .note {font-size: 12px; font-style: italic;}
+.basket_table th { border-bottom: 2px solid #6678b1; font-size: 14px;}
+.basket_table tr.item_line td { border-bottom: 1px solid #ccc; }
+.basket_table tr.item_line:last-of-type td { border-bottom: 2px solid #6678b1; }
+.basket_table tr.total_line { font-weight: bold;}
+
+</style>
+
+<%baskets.each do |shop_id, basket|
+  shop = Shop.find(shop_id)
+  basket_currency = basket.total.currency.iso_code%>
+<div>
+  <div class='basket_refs'>
+    <h2><%= it("References", scope: ['basket', 'customer_view']) %></h2>
+    <div style='margin: -10px 0 15px 0;'><strong><%= it("Order made at:", scope: ['basket', 'customer_view']) %></strong> <a href='<%=shop.fullpermalink(:locale)%>/dive'><%=shop.name%></a></div>
+    <p><strong><%= it("Order Date:", scope: ['basket', 'customer_view']) %></strong><br/><span class='local_timezone'><%=basket.paypal_order_date || basket.created_at%></span></p>
+    <p><strong><%= it("Ref Order:", scope: ['basket', 'customer_view']) %></strong><br/><%=basket.reference(true)%></p>
+    <p><strong><%= it("Current status:", scope: ['basket', 'customer_view']) %></strong><br/><%=config_translate :basket_status, basket.status%></p>
+  </div>
+
+  <h2>Details</h2>
+  <table class='basket_table'>
+    <tr>
+      <th class='col1'><%= it("Designation", scope: ['basket', 'customer_view']) %></th>
+      <th class='col2'><%= it("Qtt.", scope: ['basket', 'customer_view']) %></th>
+      <th class='col3'><%= it("Unit price", scope: ['basket', 'customer_view']) %><br/><span class='note'><%if shop.price_ref_incl_tax then%><%= it("(inc. tax)", scope: ['basket', 'customer_view']) %><%else%><%= it("(excl. tax)", scope: ['basket', 'customer_view']) %><%end%></span></th>
+      <th class='col4'><%= it("Total", scope: ['basket', 'customer_view']) %></th>
+    </tr>
+
+    <%basket.basket_items.each do |item|%>
+      <tr class='item_line'>
+        <td class='col1'>
+          <div class='item_title'><%=item.good_to_sell.title%></div>
+          <%if item.deposit_option then%>
+            <div class='desc'>
+              <%= it("Deposit of %{price} to secure booking.", scope: ['basket', 'customer_view'], price: item.line_price_after_tax.format) %><br/>
+              <%= it("Balance of %{price} inc. taxes to be paid directly to %{shop}", scope: ['basket', 'customer_view'], price: item.remaining_after_deposit.format, shop: shop.name) %>.
+            </div>
+          <%end%>
+          <%unless item.details.blank?%>
+            <div class='desc'>
+              For <strong><%=item.details['divers'].length%> diver<%if item.details['divers'].length != 1%>s<%end%></strong>
+              <%if item.details['date_type'] == 'one' %>on the <strong><%=item.details['date_at']%></strong>
+              <%elsif item.details['date_type'] == 'period' %>from the <strong><%=item.details['date_from']%></strong> to the <strong><%=item.details['date_to']%></strong>
+              <%end%>
+            </div>
+            <div class='staffing'>
+              <%if item.details['divers'].length == 0%>
+                <%= it("No divers registered", scope: ['basket', 'customer_view']) %>
+              <%else%>
+                <ul><%item.details['divers'].each_with_index do |diver, idx|%>
+                  <li><%= it("Diver %{nb}:", scope: ['basket', 'customer_view'], nb: idx+1) %> <%= it("Quantity", scope: ['basket', 'customer_view']) %>=<%=diver['quantity']%> - <%= it("Certification", scope: ['basket', 'customer_view']) %>=<%=diver['certification']%></li>
+                <%end%></ul>
+              <%end%>
+            </div>
+            <div class='requests'>
+              <em><%= it("When do you want to dive?", scope: ['basket', 'customer_view']) %></em>
+              <%if item.details['pref_when'].blank?%><%= it("No preference specified.", scope: ['basket', 'customer_view']) %><%else%><%=item.details['pref_when']%><%end%>
+              <em><%= it("Specific requests/constraints?", scope: ['basket', 'customer_view']) %></em>
+              <%if item.details['constraints'].blank?%><%= it("No constraints specified.", scope: ['basket', 'customer_view']) %><%else%><%=item.details['constraints']%><%end%>
+              <em><%= it("How to contact you on short notice before the dives?", scope: ['basket', 'customer_view']) %></em>
+              <%if item.details['contact'].blank?%><%= it("No contact specified.", scope: ['basket', 'customer_view']) %><%else%><%=item.details['contact']%><%end%>
+            </div>
+          <%end%>
+        </td>
+        <td class='col2'>
+          <%=item.quantity%>
+        </td>
+        <td class='col3'>
+          <%if item.price_after_tax.currency.iso_code == basket_currency%>
+          <%=if shop.price_ref_incl_tax then item.price_after_tax else item.price_before_tax end%>
+          <%else%>
+          <%=if shop.price_ref_incl_tax then item.price_after_tax.format else item.price_before_tax.format end%>
+          <%end%>
+        </td>
+        <td class='col4'>
+          <%if item.line_price_after_tax.currency.iso_code == basket_currency%>
+          <%=if shop.price_ref_incl_tax then item.line_price_after_tax else item.line_price_before_tax end%>
+          <%else%>
+          <%=if shop.price_ref_incl_tax then item.line_price_after_tax.format else item.line_price_before_tax.format end%>
+          <%end%>
+        </td>
+      </tr>
+    <%end%>
+
+    <%if !shop.price_ref_incl_tax then%>
+      <tr>
+        <td class='col1'><%= it("Sub Total", scope: ['basket', 'customer_view']) %></td>
+        <td class='col2'/>
+        <td class='col3'/>
+        <td class='col4'><%=basket.subtotal.format%></td>
+      </tr>
+      <tr>
+        <td class='col1'><%= it("Sales Taxes", scope: ['basket', 'customer_view']) %></td>
+        <td class='col2'/>
+        <td class='col3'/>
+        <td class='col4'><%=basket.tax_amount.format%></td>
+      </tr>
+      <tr class='total_line'>
+        <td class='col1'><%= it("Total", scope: ['basket', 'customer_view']) %></td>
+        <td class='col2'/>
+        <td class='col3'/>
+        <td class='col4'><%=basket.total.format%></td>
+      </tr>
+    <%else%>
+      <tr class='total_line'>
+        <td class='col1'><%= it("Total", scope: ['basket', 'customer_view']) %></td>
+        <td class='col2'/>
+        <td class='col3'/>
+        <td class='col4'><%=basket.total.format%></td>
+      </tr>
+      <tr><td class='col1'><span class='note'><%= it("(Includes %{amount} sales taxes)", scope: ['basket', 'customer_view'], amount: basket.tax_amount.format) %></span></td></tr>
+    <%end%>
+
+  </table>
+  <%if !basket.note_from_shop.blank?%><p class='note_from_shop'><strong><%= it("Vendor confirmation note:", scope: ['basket', 'customer_view']) %></strong> <%=basket.note_from_shop%></p><%end%>
+</div>
+<%end%>

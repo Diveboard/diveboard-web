@@ -1,0 +1,123 @@
+<$
+
+function sort_dive_by_score(divelist) {
+  function dive_score(dive) {
+    var score = 0;
+    if (dive.featured_picture_medium) score += 15;
+    if (dive.favorite) score += 6;
+    if (dive.notes) score += 5;
+    if (dive.diveshop) score += 3;
+    if (dive.db_buddies) score += 3;
+    if (!dive.spot || dive.spot.name == "") score -= 5;
+    if (dive.max_depth == 0) score -= 2;
+    return(score);
+  };
+
+  return divelist.sort(function(a,b){
+    var sa=dive_score(a);
+    var sb=dive_score(b);
+    if (sa==sb && a.date == b.date) return 0;
+    if (sa==sb) return a.date < b.date?1:-1;
+    return sa<sb?1:-1;
+  });
+}
+
+function valuesOfHash(h)
+{
+  var vals = [];
+  for (var i in h)
+    vals.push(h[i]);
+  return(vals);
+}
+
+
+
+//This part should not execute on server since about_html is provided
+//And anyway, jquery $ is not loaded, so it would fail.
+if ('about' in user && user.about && !('about_html' in user)) {
+  var about_text = user.about.split("\n");
+  for (var i in about_text)
+    about_text[i] = $("<p></p>").text(about_text[i]).html();
+  user.about_html = about_text.join("<br/>");
+}
+
+var max_duration_dive = null;
+var max_depth_dive = null;
+for (dive_id in user.dives) {
+  var dive = user.dives[dive_id];
+  if (!max_duration_dive || parseFloat(dive.duration) > parseFloat(max_duration_dive.duration))
+    max_duration_dive = dive;
+  if (!max_depth_dive || parseFloat(dive.maxdepth) > parseFloat(max_depth_dive.maxdepth))
+    max_depth_dive = dive;
+}
+
+var list_dives = sort_dive_by_score(valuesOfHash(user.dives));
+
+$>
+
+
+
+<div id='xp_p2_info_tab' class='xp_result_tab xp_result_list'>
+  <$if (user.about_html){$>
+    <h3><img src="/img/aboutme_icon.png" width='16px' height='16px' alt="#">About <$=user.nickname$></h3>
+    <p><$=user.about_html$></p>
+    <a href='<$=user.permalink$>' target='_blank'>View <$=user.nickname$>'s logbook</a>
+  <$}$>
+  <h3><img src="/img/certificates_icon.png" alt="#">Certifications</h3>
+  <$ if (user.qualifications) {$>
+    <ul class='textlist'>
+      <$for (var j in user.qualifications.featured) {
+        var qualif = user.qualifications.featured[j];$>
+        <li><$=qualif.date$> : <$=qualif.org$> <$=qualif.title$></li>
+      <$}$>
+    </ul>
+  <$}$>
+  <h3><img src="/img/dived_spots_icon.png" alt="#">Stats</h3>
+  <ul class='textlist'>
+    <li>Total number of dives : <$=user.total_nb_dives$></li>
+    <li>Dives on Diveboard : <$=user.public_nb_dives$></li>
+    <$if (user.stat_longest_dive) {$>
+      <li>Longest dive : <$=user.stat_longest_dive$> min</li>
+    <$}$>
+    <$if (user.stat_deepest_dive) {$>
+      <li>Deepest dive : <$=user.stat_deepest_dive$> m</li>
+    <$}$>
+  </ul>
+
+  <$if (!user.about_html) {$><p><a href='<$=user.permalink$>' target='_blank'>View <$=user.nickname$>'s logbook</a></p><$}$>
+</div>
+
+<div id='xp_p2_dives_tab' class='xp_result_tab xp_result_list'>
+  <p><a class='zoomUser' href='#'>Adjust map</a> to have an overview of where <$=user.nickname$> &nbsp; dived</p>
+  <ul class='xp_panel_list'>
+  <$for (var i in list_dives) {
+    var dive = list_dives[i];$>
+    <li class='xp_panel_list_item xp_p2_dive_item' data-xp_data='{"dive_id":<$=dive.id$>,"spot_id":<$=dive.spot.id$>}'>
+      <$ if (dive.featured_picture_thumbnail) {$><div class='xp_pli_img'><img src='<$=dive.featured_picture_thumbnail$>' /></div>
+      <$} else {$><div class='xp_pli_img'><img src='/<$=user.vanity_url$>/<$=dive.id$>/profile.png?g=xxsmall_blue' /></div>
+      <$}$>
+      <div class='xp_pli_txt'>
+        <h4 class='xp_pli_head'><$=dive.date$> - <$if (dive.spot.id != 1){$><$=dive.spot.name$><$}$></h4>
+        <div class='xp_pli_content'>
+          <p style='text-align:left;'><$if (dive.spot.id != 1){$><$=dive.spot.area_name$><$}$></p>
+          <p><$=dive.duration$> min - <$=Math.round(dive.maxdepth)$> m</p>
+          <p><a href='<$=dive.permalink$>' target='_blank'>View in logbook</a></p>
+        <p><$=dive.notes$></p>
+        </div>
+      </div>
+      <div class='xp_pli_arrow'><span class="symbol">&gt;</span></div>
+    </li>
+  <$}$>
+</ul>
+</div>
+
+<div id='xp_p2_pictures_tab' class='xp_result_tab xp_result_list'>
+  <$if (!user.dive_pictures) {$>
+  <img src="/img/transparent_loader_2.gif" height='66px' width='66px' style="margin-left:165px; margin-top:50px" alt='#' />
+  <$} else {$>
+    <$for (var i in user.dive_pictures) {
+      var pic = user.dive_pictures[i];$>
+      <a href='<$=pic.permalink$>' target='_blank'><img src="<$=pic.thumbnail$>"/></a>
+    <$}$>
+  <$}$>
+</div>

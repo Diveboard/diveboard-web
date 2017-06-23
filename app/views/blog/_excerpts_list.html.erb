@@ -1,0 +1,77 @@
+<div id="blog_main_pane" class="blog_header">
+      <h1><%= it("Community", scope: ['blog', 'excerpts_list']) %></h1>
+      <p class="subtitle"><%= it("Share your thoughts, experiences or questions and participate in discussions over our favorite topic : SCUBA diving!", scope: ['blog', 'excerpts_list']) %></p>
+</div>
+<div id="blog_left_column" class="blog_excerpt_main">
+  <% if !@author.nil?%>
+    <div id="blog_header" class="blog_author_profile">
+      <h2><%= it("Posts by:", scope: ['blog', 'excerpts_list']) %></h2>
+      <%= render :partial => 'logbook/mini_profile',  :locals => {:owner => @author, :clickable => false, :hide_profile => false, :posts_link => true, :custom_header => false}%>
+    </div>
+  <%end%>
+  <%
+  if @user.nil?
+    user = nil
+  else
+    user = @user.id
+  end
+  %>
+  <%if @post_list.empty?%>
+    <%if @author.nil?%>
+    <h2><%= it("Sorry, there's no posts here - feel free to head to the %{link:main community page} for more!", scope: ['blog', 'excerpts_list'], link: It.link('/community', style: 'color:#FF6200')) %></h2>
+    <%else%>
+    <h2><%= it("Sorry, %{user} hasn't published anything yet - feel free to head to the %{link:main community page} page for more!", scope: ['blog', 'excerpts_list'], user: @author.nickname, link: It.link('/community', style: 'color:#FF6200')) %></h2>
+    <%end%>
+  <%else%>
+    <%@post_list.each do |p|%>
+      <% wiki = p.wiki(user)%>
+      <% next if wiki.nil?%>
+    <div id="blog_header" class="blog_excerpt blogpost_<%=p.shaken_id%>" data="<%=p.shaken_id%>">
+      <%if moderation%>
+        <%if p.published%>
+          <h3 style="color: red;"><%= it("Published on Community blog:", scope: ['blog', 'excerpts_list']) %></h3>
+        <%else%>
+          <h3><%= it("Published on User blog:", scope: ['blog', 'excerpts_list']) %></h3>
+        <%end%>
+        <br/>
+      <%end%>
+      <h2>
+        <a href="<%=p.fullpermalink(:locale)%>" <%if moderation%>target="_blank"<%end%>><%=p.title(user) || It.it("No Title", scope: ['blog', 'excerpts_list'])%></a>
+      </h2>
+      <%if !p.published_at.nil?%>
+        <p class="postby"><%= it("by %{user} on %{published_date}", scope: ['blog', 'excerpts_list'], user: link_to(p.user.nickname, p.user.fullpermalink(:locale)), published_date: l(p.published_at.to_date, format: :long)) %></p>
+      <%else%>
+        <p class="postby"><%= it("by %{user} - unpublished", scope: ['blog', 'excerpts_list'], user: link_to(p.user.nickname)) %></p>
+      <%end%>
+      <%begin%>
+      <%if moderation%>
+      <h3><%= it("Excerpt :", scope: ['blog', 'excerpts_list']) %></h3>
+      <%end%>
+        <%if !wiki.pictures.blank?%>
+        <a href='<%=p.fullpermalink(:locale)%>' <%if moderation%>target="_blank"<%end%>><img src="<%=wiki.pictures.first.small%>" style="float: left;"/></a>
+        <%end%>
+        <%= p.abstract_html :length => 700, :viewer_id => user %>
+      <%rescue%>
+      <p><%= it("No data or incomplete post", scope: ['blog', 'excerpts_list']) %></p>
+      <%end%>
+      <p class="readmore">
+        <a href="<%=p.fullpermalink(:locale)%>" <%if moderation%>target="_blank"<%end%> ><%= it("Read More...", scope: ['blog', 'excerpts_list']) %></a>
+      </p>
+      <%if moderation%>
+      <br style="clear:both;"/>
+      <h3><%= it("Full Article:", scope: ['blog', 'excerpts_list']) %></h3>
+
+      <%=HtmlHelper.sanitize(p.wiki_html(@user.id).html_safe, {:wordpress_article=> p.wordpress_article, :blog_article => true}).html_safe%>
+      <br style="clear:both;"/>
+      <h3><%= it("Moderation Actions", scope: ['blog', 'excerpts_list']) %></h3>
+      <p>
+        <a href="#" class="yellow_button admin_approve" data="<%=p.shaken_id%>"><%= it("PUBLISH TO THE MAIN BLOG", scope: ['blog', 'excerpts_list']) %></a>
+        <a href="#" class="grey_button admin_dismiss" data="<%=p.shaken_id%>"><%= it("DISMISS", scope: ['blog', 'excerpts_list']) %></a>
+        <a href="/community/edit/<%=p.shaken_id%>" class="grey_button"><%= it("EDIT POST", scope: ['blog', 'excerpts_list']) %></a>
+      </p>
+      <%end%>
+    </div>
+    <%end%>
+    <%=will_paginate @post_list%>
+  <%end%>
+</div>

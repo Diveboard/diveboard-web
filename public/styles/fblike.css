@@ -1,0 +1,15 @@
+/*
+	This is to have the comment box of the FB like button show to the LEFT of the button
+*/
+
+.connect_comment_widget .side_nub {
+	display: none !important;
+}
+
+div.fbSendButtonFormWidgetLight .side .nub {
+	display: none !important;
+}
+	
+.fbSendButtonBoxCount{margin-top:1px}
+
+#LikePluginPagelet .connect_widget_interactive_area{float: right;}

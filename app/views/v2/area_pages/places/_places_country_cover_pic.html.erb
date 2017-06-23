@@ -1,0 +1,57 @@
+<%
+  location_name = @geonames_country.name
+  location_name += ", #{@geonames_country.name}"
+%>
+<%= content_for :javascripts do%>
+
+<%end%>
+
+<div id="cover_pic" style="background-image: url('<% if !@header_picture.nil? %><%= @header_picture.large %><% else %> /img/areas/default_banner.jpg <% end %>')">
+	<div class="container">
+		<div class="infos">
+			<h1><%= @geonames_country.name %></h1>
+			<table class="rating">
+				<tr>
+					<%=
+						if @reviews.count != 0
+	            mark = (((@mark * 5.0) / 100.0) * 2.0).round / 2.0
+	            render "v2/shared/score_bullet", :score => mark
+	          end
+          %>
+					<td>
+						<% if @reviews.count == 0 %>
+							<p>
+								<%= it("No dive reviews yet",
+										scope: ['area_pages', 'v2', 'cover_pic']) %>
+							</p>
+						<% else %>
+							<p>
+								(<%= it("%{count} reviews",
+										 scope: ['homepage', 'v2', 'featured_destinations'],
+										 count: @reviews.count) %>)
+							</p>
+						<% end %>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="social">
+			<div>
+				<div class="shakable">
+					<div class="fb_share soc_button"><img src="<%= HtmlHelper.lbroot "/img/global/social/facebook_white_icon.svg" %>" alt="Facebook" /></div>
+				</div >
+				<% if !@header_picture.nil? %>
+					<div class="shakable">
+						<div class="pinterest_share soc_button"><img src="<%= HtmlHelper.lbroot "/img/global/social/pinterest_white_icon.svg" %>" alt="Pinterest" /></div>
+					</div>
+				<% end %>
+				<div class="shakable">
+					<div class="twitter_share soc_button"><img src="<%= HtmlHelper.lbroot "/img/global/social/twitter_white_icon.svg" %>" alt="Twitter" /></div>
+				</div>
+				<div class="shakable">
+					<div class="google_share soc_button"><img src="<%= HtmlHelper.lbroot "/img/global/social/google_plus_white_icon.svg" %>" alt="Google+" /></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

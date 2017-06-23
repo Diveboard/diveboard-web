@@ -1,0 +1,330 @@
+html
+{
+	font-size: 100%;
+}
+
+
+
+body
+{
+	background-color: #ffc114;
+	margin: 0;
+	font-family: 'Quicksand', sans-serif;
+}
+
+h1
+{
+	margin: 0;
+	padding: 0;
+	color: white;
+	text-transform: uppercase;
+	font-size: 2.5rem;
+	font-weight: normal;
+}
+
+h2
+{
+	margin: 0;
+	padding: 0;
+	font-weight: normal;
+	text-transform: uppercase;
+	font-size: 2rem;
+	olor: #2d3034;
+}
+
+#header
+{
+	padding-top: 30px;
+}
+
+#header_review_count
+{
+	color: white;
+}
+
+#main_container
+{
+	max-width: 1100px;
+	margin: 0 auto;
+}
+
+#pic_cover
+{
+	margin: 0 auto;
+	margin-top: 20px;
+	overflow: hidden;
+}
+
+.pic
+{
+	width: 19%;
+	height: auto;
+	float: left;
+	margin-right: 1.2%;
+}
+
+.pic img
+{
+	width: 100%;
+}
+
+#content
+{
+	background-color: #f6f7f8;
+	border: 1px solid #f4d896;
+	margin-top: 10px;
+}
+
+#header .score
+{
+	float: left;
+}
+
+#header .title
+{
+	float: left;
+	padding-top: 10px;
+	padding-left: 50px;
+}
+
+#tabs
+{
+	padding-top: 26px;
+	width: 60%;
+	margin: 0 auto;
+}
+
+#tabs .tab_link_first
+{
+	font-size: 1.06rem;
+	font-weight: bold;
+	float: left;
+	text-transform: uppercase;
+}
+
+#tabs .tab_link
+{
+	font-size: 1.06rem;
+	font-weight: bold;
+	float: left;
+	text-transform: uppercase;
+	margin-left: 50px;
+}
+
+#tabs a
+{
+	text-decoration: none;
+	color: #2d3034;
+}
+
+#tabs a:hover
+{
+	color: #ffc114;
+}
+
+.category_head
+{
+	background-color: white;
+}
+
+.category_head .logo
+{
+	float: left;
+	margin-top: 10px;
+	margin-left: 30px;
+	margin-bottom: 8px;
+}
+
+.category_head h2
+{
+	padding-top: 20px;
+	padding-left: 30px;
+	padding-bottom: 20px;
+}
+
+#review
+{
+	padding-bottom: 30px;
+}
+
+#review a.more
+{
+	text-decoration: none;
+	color: #2d3034;
+	background-color: #ffc114;
+}
+
+#review a.more:hover
+{
+	text-decoration: none;
+	background-color: #2d3034;
+	color: #ffc114;
+}
+
+#review .title
+{
+	padding-top: 10px;
+	padding-left: 30px;
+	padding-bottom: 10px;
+}
+
+#review .review_count
+{
+	color: #2d3034;
+}
+
+#review .user_review
+{
+	float: left;
+	margin-left: 1.2%;
+	-webkit-transition: all 0.5s ease-out;
+  	-moz-transition: all 0.5s ease-out;
+  	-o-transition: all 0.5s ease-out;
+  	transition: all 0.5s ease-out;
+}
+
+#review .size-1
+{
+	width: 49.4%;
+}
+
+#review .size-3
+{
+	width: 24.1%;
+}
+
+#review .size-0
+{
+	width: 19%;
+}
+
+#review .global_review
+{
+	padding: 6%;
+	color: #2d3034;
+	height: 330px;
+	overflow: hidden;
+	background-color: #ffc114;
+}
+
+#review_profile
+{
+	padding-top: 10px;
+}
+
+#review_profile .profile_pic
+{
+	width: 22%;
+	float: left;
+}
+
+#review_profile .name
+{
+	font-weight: bold;
+	color: #2d3034;
+	margin-top: 4px;
+	margin-left: 10%;
+	margin-bottom: 0px;
+	font-size: 0.87rem;
+	text-transform: uppercase;
+}
+
+#review_profile .date
+{
+	margin-left: 10%;
+	margin-top: 0px;
+	font-size: 0.68rem;
+}
+
+#review .comment
+{
+	border: 1px solid #e0e2e2;
+	background-color: white;
+	padding: 10%;
+	height: 256px;
+	overflow: hidden;
+}
+
+#review .expand{
+		float: right !important;
+		width: 98% !important;
+		margin: 1% !important;
+		.comment {
+			height: auto !important;
+		}
+		.profile_pic {
+			width: 3rem;
+		}
+}
+
+#description .content
+{
+	padding-left: 11%;
+	padding-right: 11%;
+	padding-top: 50px;
+	padding-bottom: 50px;
+}
+
+#service .good
+{
+	padding-top: 20px;
+	padding-bottom: 20px;
+	padding-left: 30px;
+	padding-right: 30px;
+}
+
+#service .name
+{
+	font-size: 1.25rem;
+	margin-left: 30px;
+}
+
+#service .book
+{
+	color: #2d3034;
+	font-family: 'Quicksand', sans-serif;
+	font-size: 1.12rem;
+	background-color: #ffc114;
+	border: 1px solid #fbdc86;
+	padding: 5px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	margin-right: 10px;
+}
+
+#service .book:active
+{
+	background-color: black;
+	border: 1px solid black;
+	color: #ffc114;
+}
+
+#service .price
+{
+	font-weight: bold;
+	font-size: 19px;
+	padding-right: 20px;
+	margin: 0;
+	text-align: right;
+}
+
+#service .order_table
+{
+	border: none;
+	border-collapse: collapse;	
+	width: 100%;
+}
+
+#service .quantity_number
+{
+	width: 28px;
+	padding: 7px;
+	text-align: center;
+	font-family: 'Quicksand', sans-serif;
+	font-size: 1.12rem;
+}
+
+#service .quantity_label
+{
+	font-size: 0.87rem;
+}

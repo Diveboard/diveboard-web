@@ -1,0 +1,129 @@
+<% if @user.nil?|| @user.id.nil? then nouser=true else nouser=false end%>
+<div id="header_container">
+<div id="idx_3_top">
+	<div class='div1_for_logo'><div class='div2_for_logo'><a href="/?redirect="><img class="logo" src="<%=HtmlHelper.lbroot "/img/embed/header/logo_white.png"%>"></img></a>
+	<form action="/search">
+        <fieldset>
+            <input type="text" name='s' id="menu_bar_search" name=what class="search_field"/>
+						<span class='symbol lookup_icon form_submit_button'>L</span>
+        </fieldset>
+    </form>
+<%if !nouser%>
+	<div class="tray_container">
+	<table cellspacing="0" cellpadding="0"><tr><td>
+       <a href="/about/import" class="main_menu_option tray_icon tooltiped-left" id="download_tray_icon" title="<%= it("A new version of Diveboard plugin is available. You need to download and install this latest version to benefit from the latest features !", scope: ['layouts', 'top_menu']) %>" style="display:none;">
+       <span class="main_menu_option_span">
+           <img src="/img/arrowgear.png" width='30px' height='25px' alt="#" style="display:inline;" />
+       </span>
+       </a>
+       <a href="/<%=@user.vanity_url%>/bulk?bulk=computer" class="main_menu_option tray_icon tooltiped-left" id="computer_tray_icon" title="<%= it("Go to the Dive Computer import page", scope: ['layouts', 'top_menu']) %>" style="display:none;">
+       <span class="main_menu_option_span">
+           <img src="/img/watch_icon.png" width='25px' height='25px' alt="#" style="display:inline;" />
+       </span>
+       </a>
+		</td></tr></table>
+    </div>
+<%end%>
+  </div></div>
+	<ul class="links">
+		<%basket_count = @baskets.values.flatten.map do |b| b.basket_items.count end .sum rescue 0%>
+		<li class="futura font_shadow_black hover basket_top_icon"><table><tr><td><a href="#" class="text_link show_basket" style='display: <%if basket_count == 0%>none<%else%>block<%end%>'><img class='svg_icon' src='<%=auto_file_versionning("/img/header/cart.svg")%>'/><div class='todo'><%=basket_count if basket_count > 0%></div></a></td></tr></table></li>
+		<%inbox_count = @global_inbox.map do |section| section[:count].values.sum end .sum rescue 0%>
+		<li class="futura font_shadow_black hover inbox_top_icon"><table><tr><td><a href="<%=@global_inbox.first[:url] rescue '/settings/messages'%>" class="text_link show_inbox" style='display:<%if inbox_count > 0%>block<%else%>none<%end%>' ><img class='svg_icon' src='<%=auto_file_versionning("/img/header/envelope_closed.svg")%>'/><div class='todo'><%=inbox_count%></div></a></td></tr></table></li>
+		<li class="futura font_shadow_black hover"><table><tr><td><a href="/explore" class="text_link"><%= it("EXPLORE", scope: ['layouts', 'top_menu']) %></a></td></tr></table></li>
+		<li class="futura font_shadow_black hover"><table><tr><td><a href="/explore/gallery" class="text_link"><%= it("GALLERY", scope: ['layouts', 'top_menu']) %></a></td></tr></table></li>
+		<li class="futura font_shadow_black hover"><table><tr><td><a href="/community" class="text_link"><%= it("COMMUNITY", scope: ['layouts', 'top_menu']) %></a></td></tr></table></li>
+		<li class="futura font_shadow_black hover"><table><tr><td><a href="#" onclick="showClassicWidget();" class="text_link"><%= it("HELP", scope: ['layouts', 'top_menu']) %></a></td></tr></table></li>
+
+		<%if nouser%>
+		<li class="futura nohover"><div class="button" style="margin-top: 3px;"><a href="#" id="global_signup" class="sign_up button_full_link"><%= it("SIGN UP", scope: ['layouts', 'top_menu']) %></a></div></li>
+
+		<li class="futura font_shadow_black hover"><table><tr><td><a class="sign_in text_link" href="#" id="global_signin"><%= it("LOG IN", scope: ['layouts', 'top_menu']) %></a></td></tr></table></li>
+
+		<li class="futura font_shadow_black hover" style='margin-left: -13px'><table><tr><td><img class='switch_language' src="/img/flags/<%=Rails.configuration.map_flag_locales[I18n.locale]%>.gif" alt="<%=I18n.locale%>" style="top: 8px; position: relative; opacity: 0.98"></td></tr></table></li>
+
+		<%else%>
+		<li class="header_user"><table border=0 cellspacing=0 cellpadding=0>
+			<!-- If you break the next line in multiple lines FF will put spaces between cells....-->
+			<tr><td><a href="/<%=@user.vanity_url%>"><img src="<%=@user.picture_small%>" width="30" height="30" class="heade_user_pic"></a></td><td><div class="header_user_profile futura"><span class="header_user_page"><%=It.it(@pagename, scope:['layouts', 'top_menu', 'pagenames'])%></span></div></td><td><div  class="header_user_button"></div></td></tr>
+			<tr class="caption futura"><td COLSPAN=3><span><%= it("MY PAGES", scope: ['layouts', 'top_menu']) %></span></td></tr>
+			</table>
+		</li>
+		<li class="useless_menu_container useless_menu_stuff">
+			<table border=0 cellspacing=0 cellpadding=0 class="useless_menu_stuff"><tr><td class="useless_menu_stuff"><div class="useless_menu_stuff" style="display:block;">{</div></td></tr></table>
+		</li>
+		<%end%>
+		
+	</ul>
+</div>
+<%if !nouser%>
+<div id="header_user_menu" class="futura font_shadow_black" style='width: 330px'>
+	<ul style='display: inline-block; vertical-align: top; width: 160px'>
+		<a href="/<%=@user.vanity_url%>" id="user_logbook_url"><li><%= it("Logbook", scope: ['layouts', 'top_menu']) %></li></a>
+		<a href="/<%=@user.vanity_url%>/new" id="user_logbook_url"><li style="padding-left: 24px;"><%= it("New Dive", scope: ['layouts', 'top_menu']) %></li></a>
+		<a href="/<%=@user.vanity_url%>/bulk?bulk=manager" id="add_batch_dive"><li style="padding-left: 24px;"><%= it("Dive Manager", scope: ['layouts', 'top_menu']) %></li></a>
+		<a href="/<%=@user.vanity_url%>/posts" id="user_logbook_url"><li><%= it("Posts", scope: ['layouts', 'top_menu']) %></li></a>
+		<a href="/community/new" id="user_logbook_url"><li style="padding-left: 24px;"><%= it("New Post", scope: ['layouts', 'top_menu']) %></li></a>
+		<%shops_owned = @user.shops_owned%>
+		<%if shops_owned.length == 1 then%>
+			<a href="<%=shops_owned.first.fullpermalink(:locale)%>/edit"><li><%=shops_owned.first.name%></li></a>
+		<%elsif shops_owned.length > 0 && shops_owned.length <= 5 then%>
+			<a href="#" class='make_sudo_link'><li><%= it("Business pages", scope: ['layouts', 'top_menu']) %></li></a>
+			<%shops_owned.each do |shop|%>
+				<a href="<%=shop.fullpermalink(:locale)%>/edit"><li style="padding-left: 24px;"><%=shop.name%></li></a>
+			<%end%>
+		<%elsif shops_owned.length > 5 then%>
+			<a href="#" class='make_sudo_link'><li><%= it("Business pages", scope: ['layouts', 'top_menu']) %></li></a>
+		<%end%>
+		<%if shops_owned.length <=1 && !@real_user.nil? && @real_user.can_sudo? then%>
+			<a href="#" class='make_sudo_link'><li><%= it("Other pages", scope: ['layouts', 'top_menu']) %></li></a>
+		<%end%>
+	</ul>
+
+
+	<ul style='display: inline-block; vertical-align: top; width: 160px'>
+		<a href="#" class='switch_language'><li><%= it("Language", scope: ['layouts', 'top_menu']) %><img src="/img/flags/<%=Rails.configuration.map_flag_locales[I18n.locale]%>.gif" alt="<%=I18n.locale%>" style="top: 1px; left: 3px; display: inline-block; position: relative; margin-right: 5px;"></li></a>
+		<a href="/settings"><li><%= it("Settings", scope: ['layouts', 'top_menu']) %></li></a>
+		<a href="/settings/orders"><li><%= it("Orders", scope: ['layouts', 'top_menu']) %></li></a>
+		<%if !@user.admin_rights.nil? && @user.admin_rights > 1 %>
+		<a href="/admin"><li><%= it("Admin", scope: ['layouts', 'top_menu']) %></li></a>
+		<%end%>
+	</ul>
+
+
+</div>
+<div id="useless_user_menu" class="futura font_shadow_black">
+	<ul>
+		<a href="/about/tour"><li><%= it("Tour", scope: ['layouts', 'top_menu']) %></li></a>
+		<a href="/api/redirect/logbook"><li><%= it("Random logbook", scope: ['layouts', 'top_menu']) %></li></a>
+		<a href="/logout"><li><%= it("Log Out", scope: ['layouts', 'top_menu']) %></li></a>
+	</ul>
+</div>
+<div id='inbox_infos'>
+	<%@global_inbox.each do |section|%>
+		<a class='inbox_line' href='<%=section[:url]%>'>
+			<img class='section_image' src='<%=section[:picture]%>'/>
+			<span class='shop_name'><%=section[:name]%></span>
+			<span class='details'><%= section[:count].map do |what, nb|
+				if nb == 1 && what == :messages then "#{nb} new message"
+				elsif nb > 1 && what == :messages then "#{nb} new messages"
+				elsif nb == 1 && what == :baskets then "#{nb} new order"
+				elsif nb > 1 && what == :baskets then "#{nb} new orders"
+				elsif nb == 1 && what == :signature then "#{nb} new sign request"
+				elsif nb > 1 && what == :signature then "#{nb} new sign requests"
+				end
+			end .join(", ")%></span>
+		</a>
+	<%end%>
+</div>
+
+<%end%>
+<div id="header_spacer"></div>
+</div>
+<% if begin cookies[:header_stays_top] rescue false end then%>
+<!-- Selenium does not want to click undr the header -->
+<style type="text/css">
+#header_container {position: relative !important;}
+</style>
+<%end%>
+

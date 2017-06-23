@@ -1,0 +1,18 @@
+<div class="login">
+  <div class="reset_pass">
+    <div id="reset_menu">
+      <p style="margin:25px"><%= it("Did you lose your password?%{br}%{br}Type in your email and we'll send you a link to recover it", scope: ['modal', 'v2', 'sign_reset_pass_2'], br: It.tag('br')) %></p>
+      <form name="reset_menu" action="#">
+        <input type="email" name="reset_login" class="input_text" placeholder="<%= it("Your email", scope: ['modal', 'v2', 'sign_reset_pass_2']) %>">
+        <p class="reset_login_error error"></p>
+        <input type="submit" class="sign_button" value="<%= it("Reset Password", scope: ['modal', 'v2', 'sign_reset_pass_2']) %>" style="margin-top: 30px;">
+      </form>
+      <p class="reset_pass_success" style="margin:25px; display:none;"><%= it("SUCCESS%{br}An email has been sent to you with a reset link", scope: ['modal', 'v2', 'sign_reset_pass_2'], br: It.tag('br')) %></p>
+    </div>
+    <div class="bottom" style="margin-bottom: 30px;">
+      <p>
+        <%= it("Find your password? %{signin_link:Sign in}", scope: ['modal', 'v2', 'sign_reset_pass_2'], signin_link: It.link('javascript:void(0)', modal_trigger: 'sign_in')) %>
+      </p>
+    </div>
+  </div>
+</div>

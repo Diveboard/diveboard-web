@@ -1,0 +1,8 @@
+<div id='switch_language_dialog' title="<%=it("Choose your language", scope: ['layouts', 'main_layout'])%>" style='display: none'>
+  <%Rails.configuration.opened_locales.each do |lang|%>
+    <div class='lang <%='active' if lang == I18n.locale%>' data-href-hostname='<%=HtmlHelper.find_hostname_for lang%>'>
+      <div class='flag'><img src="/img/flags/hd/<%=Rails.configuration.map_flag_locales[lang]%>.png" alt="<%=lang%>"></div>
+      <div class='name'><%=Rails.configuration.map_untranslated_locales[lang]%></div>
+    </div>
+  <%end%>
+</div>

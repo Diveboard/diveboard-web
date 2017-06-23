@@ -1,0 +1,36 @@
+<%= render :partial => 'admin_css'%>
+
+<style type="text/css">
+.cluster_table td {padding: 10px;}
+.spot_line.public_spot {background: #5f5;}
+.spot_line.publicly_visible_spot {background: #afa;}
+</style>
+
+<script type="text/javascript">
+
+
+</script>
+
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 3 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+  <h1>Spot management</h1>
+
+<div style='font-size: 20px; font-weight: bold'>WARNING ! With great power comes great responsibilities</div>
+
+<p>Total clusters identified: <%=roots.count%></p>
+<p>Total number of spots to be merged: <%=roots.map do |r| r['cnt'] end .sum%></p>
+
+<%roots.each do |cluster|
+  spot = Spot.unscoped.find(cluster['cluster_id']) rescue next
+  %>
+
+  <p><a href='/admin/uncluster_spot/<%=cluster['cluster_id']%>' >Cluster for spot <%=cluster['cluster_id']%> - <%=spot.name rescue "?????"%> : <%=cluster['cnt']%></a></p>
+<%end%>
+
+
+</div>
+

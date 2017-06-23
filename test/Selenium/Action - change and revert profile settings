@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://stage.diveboard.com/" />
+<title>Action - change and revert profile settings</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Action - change and revert profile settings</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/settings</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeValue</td>
+	<td>nickname</td>
+	<td>Initial_Nickname</td>
+</tr>
+<tr>
+	<td>storeValue</td>
+	<td>username</td>
+	<td>Initial_Username</td>
+</tr>
+<tr>
+	<td>storeEval</td>
+	<td>window.document.domain</td>
+	<td>host</td>
+</tr>
+<!--Initiate a profile-->
+<tr>
+	<td>type</td>
+	<td>nickname</td>
+	<td>javascript{storedVars['Initial_Nickname'] + (new Date()).getTime()}</td>
+</tr>
+<tr>
+	<td>storeValue</td>
+	<td>nickname</td>
+	<td>New_Nickname</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//body</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>country</td>
+	<td></td>
+</tr>
+<tr>
+	<td>typeKeys</td>
+	<td>country</td>
+	<td>man</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>Cayman Islands</td>
+	<td></td>
+</tr>
+<tr>
+	<td>mouseOver</td>
+	<td>//li[@class=&quot;ui-menu-item&quot;][1]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//li[@class=&quot;ui-menu-item&quot;][1]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>country</td>
+	<td>Cayman Islands</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>gender</td>
+	<td>label=Female</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>birthday</td>
+	<td>2000-02-29</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>save_form</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>save_ok</td>
+	<td></td>
+</tr>
+<!--Check on user mini-profile-->
+<tr>
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[1]/span</td>
+	<td>${New_Nickname}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[1]/span/img[contains(@src, &quot;ky.gif&quot;)]</td>
+	<td></td>
+</tr>
+<!--Check on logout-->
+<tr>
+	<td>clickAndWait</td>
+	<td>//img[@alt='logout']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='slide_one']/p</td>
+	<td>Connect to facebook, to share your dives and photos with friends.</td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/${Initial_Username}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[1]/span</td>
+	<td>${New_Nickname}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[1]/span/img[contains(@src, &quot;ky.gif&quot;)]</td>
+	<td></td>
+</tr>
+<!--re log in-->
+<tr>
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>//img[@alt='#']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//img[@alt='Bulk upload from Computer or file']</td>
+	<td></td>
+</tr>
+<!--Check on setting reload-->
+<tr>
+	<td>open</td>
+	<td>/settings</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>nickname</td>
+	<td>${New_Nickname}</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>country</td>
+	<td>Cayman Islands</td>
+</tr>
+<tr>
+	<td>verifySelectedLabel</td>
+	<td>gender</td>
+	<td>Female</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>birthday</td>
+	<td>2000-02-29</td>
+</tr>
+<!--Change profile settings-->
+<tr>
+	<td>type</td>
+	<td>nickname</td>
+	<td>javascript{storedVars['Initial_Nickname'] + (new Date()).getTime()+10}</td>
+</tr>
+<tr>
+	<td>storeValue</td>
+	<td>nickname</td>
+	<td>New_Nickname</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>country</td>
+	<td></td>
+</tr>
+<tr>
+	<td>typeKeys</td>
+	<td>country</td>
+	<td>mex</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>Mexico</td>
+	<td></td>
+</tr>
+<tr>
+	<td>mouseOver</td>
+	<td>//li[@class=&quot;ui-menu-item&quot;][1]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//li[@class=&quot;ui-menu-item&quot;][1]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>country</td>
+	<td>Mexico</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>gender</td>
+	<td>label=Male</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>birthday</td>
+	<td>2001-01-01</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>save_form</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>save_ok</td>
+	<td></td>
+</tr>
+<!--Check on user mini-profile-->
+<tr>
+	<td>open</td>
+	<td>/${Initial_Username}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[1]/span</td>
+	<td>${New_Nickname}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[1]/span/img[contains(@src, &quot;mx.gif&quot;)]</td>
+	<td></td>
+</tr>
+<!--Check on logout-->
+<tr>
+	<td>clickAndWait</td>
+	<td>//img[@alt='logout']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='slide_one']/p</td>
+	<td>Connect to facebook, to share your dives and photos with friends.</td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/${Initial_Username}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[1]/span</td>
+	<td>${New_Nickname}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[1]/span/img[contains(@src, &quot;mx.gif&quot;)]</td>
+	<td></td>
+</tr>
+<!--re log in-->
+<tr>
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>//img[@alt='#']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//img[@alt='Bulk upload from Computer or file']</td>
+	<td></td>
+</tr>
+<!--Check on setting reload-->
+<tr>
+	<td>open</td>
+	<td>/settings</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>nickname</td>
+	<td>${New_Nickname}</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>country</td>
+	<td>Mexico</td>
+</tr>
+<tr>
+	<td>verifySelectedLabel</td>
+	<td>gender</td>
+	<td>Male</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>birthday</td>
+	<td>2001-01-01</td>
+</tr>
+<!--Reset settings-->
+<tr>
+	<td>type</td>
+	<td>nickname</td>
+	<td>${Initial_Nickname}</td>
+</tr>
+<!--Change the vanity url-->
+<tr>
+	<td>type</td>
+	<td>username</td>
+	<td>javascript{storedVars['Initial_Username'] + (new Date()).getTime()}</td>
+</tr>
+<tr>
+	<td>storeValue</td>
+	<td>username</td>
+	<td>New_Username</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>save_form</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>save_ok</td>
+	<td></td>
+</tr>
+<!--check when logged in-->
+<tr>
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyLocation</td>
+	<td>http://${host}/${New_Username}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[1]/span</td>
+	<td>${Initial_Nickname}</td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/${Initial_Username}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//h1</td>
+	<td>Time to surface, diver ! It's a 404!</td>
+</tr>
+<!--Check when logged out-->
+<tr>
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>//img[@alt='logout']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//div[@id='slide_one']/p</td>
+	<td>Connect to facebook, to share your dives and photos with friends.</td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/${New_Username}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[1]/span</td>
+	<td>${Initial_Nickname}</td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/${Initial_Username}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//h1</td>
+	<td>Time to surface, diver ! It's a 404!</td>
+</tr>
+<!--re log in-->
+<tr>
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>//img[@alt='#']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//img[@alt='Bulk upload from Computer or file']</td>
+	<td></td>
+</tr>
+<!--Reset username-->
+<tr>
+	<td>open</td>
+	<td>/settings</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>username</td>
+	<td>${New_Username}</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>username</td>
+	<td>${Initial_Username}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>save_form</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>save_ok</td>
+	<td></td>
+</tr>
+<!--Check reset is OK-->
+<tr>
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyLocation</td>
+	<td>http://${host}/${Initial_Username}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[1]/span</td>
+	<td>${Initial_Nickname}</td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/${New_Username}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//h1</td>
+	<td>Time to surface, diver ! It's a 404!</td>
+</tr>
+</tbody></table>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<%= javascript_include_tag 'blog' %>
+<script>
+<%if !@user.nil? then%>
+  var G_user_api = <%= @user.to_api(:public).to_json.html_safe %>;
+<%end%>
+</script>
+<%content_for :css do %>
+<%= include_stylesheets :blog, :media => :all %>
+<%end%>
+
+<div id="main_content_area" class="blog">
+  <%if !@post.nil? && params["content"] != :edit%>
+    <%= render :partial => "article_detail"%>
+  <%elsif params["content"] == :edit%>
+    <%= render :partial => "new_blog_post"%>
+  <%else%>
+    <%= render :partial => "excerpts_list", :locals => {:moderation => false}%>
+  <%end%>
+  <%= render :partial => "right_column"%>
+</div>
+
+<div id="flag_panel" style="display:none">
+  <p style="margin-bottom: 5px;"><%= it("Please spend a few minutes stating explicitely the issue you're having regarding this post:", scope: ['blog', 'blog_layout']) %></p>
+  <p><textarea cols="50" rows="5"></textarea></p>
+</div>
+
+<!-- Adding activity feed-->
+<%content_for :after_container do %>
+<%= render :partial => 'feeds/activity_feed', :locals => {:user => @user} unless @user.nil?%>
+<%= render :partial => 'feeds/default_activity_feed', :locals => {} if @user.nil?%>
+<%end%>
+<!-- END Adding activity feed-->

@@ -1,0 +1,123 @@
+<h2>Default currency</h2>
+
+<p style='margin: 0px 10px 10px 10px'><%= it("Changing the default currency only affects new items. The currently existing prices will stay with their current currency, but %{b:the buy button will be disabled on those items}, until you edit them.", scope: ['shop_pages', 'shop_dive_edit'], b: It.tag("b")) %></p>
+<div class='currency_select_block' style='margin: 0px 20px 20px 20px'>
+  <div style='display: inline-block'><%= it("Select your default currency:", scope: ['shop_pages', 'shop_dive_edit']) %></div>
+  <div class='dropdown right white currency_select' <%if @shop.currency?%>data-selected='<%=@shop.currency%>'<%end%>>
+    <div class='options'>
+      <%currencies = Money::Currency.available%>
+      <%currencies.reject do |currency| currency[:priority] > 10 end .sort do |a,b| a[:priority] <=> b[:priority] end .each do |currency|%>
+        <div class='option' data-value='<%=currency[:iso_code]%>'><%=currency[:name]%> (<%=currency[:symbol]%>)</div>
+      <%end%>
+      <div class='option' data-value=''>------------------</div>
+      <%currencies.sort do |a,b| a[:name] <=> b[:name] end .each do |currency|%>
+        <div class='option' data-value='<%=currency[:iso_code]%>' <%= if params[:exchange] == currency[:iso_code] then 'selected' end%>><%=currency[:name]%> (<%=currency[:symbol]%>)</div>
+      <%end%>
+    </div>
+  </div>
+  <button class='yellow_button send' style='margin-left: 25px'><%= it("OK", scope: ['shop_pages', 'shop_dive_edit']) %></button>
+</div>
+
+
+<%if @shop.has_feature? :link_paypal then%>
+
+<h2><%= it("Paypal account", scope: ['shop_pages', 'shop_dive_edit']) %></h2>
+
+<%if @shop.paypal_id.blank? || @shop.paypal_token.blank? || @shop.paypal_secret.blank? then%>
+
+  <p style='margin: 0px 10px 20px 10px'><%= it("In order to be able to sell on Diveboard, you need to link this page with your Paypal account. Just click on the button below and you will be redirected on paypal where you will have to login and accept the permissions requested.", scope: ['shop_pages', 'shop_dive_edit']) %></p>
+  <p style='margin: 15px 10px'><%= it("Once you have accepted the permission request, be sure to wait until you are redirected to Diveboard, or we won't be able to confirm your account.", scope: ['shop_pages', 'shop_dive_edit']) %><p>
+
+  <p style='margin: 15px 20px'><a class='yellow_button' href='/api/paypal/permission_start?shop_id=<%=@shop.id%>' onclick='diveboard.mask_file(true);true;'><%= it("Link with paypal", scope: ['shop_pages', 'shop_dive_edit']) %></a></p>
+<%else%>
+
+    <p style='margin: 0px 10px 20px 10px'><%= it("You have linked this page with the Paypal account:", scope: ['shop_pages', 'shop_dive_edit']) %></p>
+    <p style='margin: 0px 10px 20px 10px; text-align: right;'><em><%=shop.paypal_id%></em>
+      <a class='yellow_button' style='margin-left: 100px' href='/api/paypal/permission_start?shop_id=<%=@shop.id%>'><%= it("Change Paypal account", scope: ['shop_pages', 'shop_dive_edit']) %></a>
+      <a class='grey_button paypal_unlink_button' style='margin-left: 25px'><%= it("Unlink paypal account", scope: ['shop_pages', 'shop_dive_edit']) %></a></p>
+
+<%end%>
+
+<%end%>
+<!-- Start of dive editor -->
+
+<h2><%= it("Diving pricelist", scope: ['shop_pages', 'shop_dive_edit']) %></h2>
+
+<%
+  services = YAML.load_file('config/dive_services.yml')
+  services_cat1 = services.map do |h| h.keys.first end
+  currencies = Money::Currency.available
+%>
+<script>
+G_dive_goods = <%=shop.all_dive_goods.to_api(:detailed).to_json.html_safe rescue "null"%>;
+G_dive_categories1 = <%=services_cat1.to_json.html_safe rescue "null"%>;
+G_currencies = <%=currencies.map do |c| c[:iso_code] end .to_json.html_safe rescue "null"%>;
+</script>
+
+
+<%if @shop.realm_dive.nil? || @shop.all_dive_goods.blank? then%>
+
+<div class='widget_holder widget_init_realm_dive' data-widget_class='WidgetInitRealmDive'>
+  <p class='desc'><%= it("This section allows you to list the services you provide along with their price. If you have activated your store account, you may even sell them online on Diveboard, or on your own website by using our widgets.", scope: ['shop_pages', 'shop_dive_edit']) %></p>
+  <div class='question'>
+    <p class='desc'><%= it("Which organization are you affilated with?", scope: ['shop_pages', 'shop_dive_edit']) %></p>
+    <%services[0]['Courses'].keys.each do |org|%>
+      <span class='item'><input type='checkbox' name='cert_<%=org.underscore%>'> <%=org%></span>
+    <%end%>
+  </div>
+
+
+  <div class='question'>
+    <p class='desc'><%= it("Which services do you provide?", scope: ['shop_pages', 'shop_dive_edit']) %></p>
+    <%services.each do |service|
+      service_name = service.keys.first%>
+      <span class='item'><input type='checkbox' name='service_<%=service_name.underscore%>'> <%=service_name%></span>
+    <%end%>
+  </div>
+
+  <%if !@shop.currency? then%>
+    <div class='question'>
+      <p class='desc'><%= it("What is your main currency?", scope: ['shop_pages', 'shop_dive_edit']) %></p>
+      <select class='currency_select'>
+        <%currencies.reject do |currency| currency[:priority] > 10 end .sort do |a,b| a[:priority] <=> b[:priority] end .each do |currency|%>
+          <option value='<%=currency[:iso_code]%>'><%=currency[:name]%> (<%=currency[:symbol]%>)</option>
+        <%end%>
+        <option value=''>------------------</option>
+        <%currencies.sort do |a,b| a[:name] <=> b[:name] end .each do |currency|%>
+          <option value='<%=currency[:iso_code]%>' <%= if params[:exchange] == currency[:iso_code] then 'selected' end%>><%=currency[:name]%> (<%=currency[:symbol]%>)</option>
+        <%end%>
+      </select>
+    </div>
+  <%end%>
+
+  <button class='yellow_button submit_init'><%= it("Submit", scope: ['shop_pages', 'shop_dive_edit']) %></button>
+</div>
+
+
+
+<%else%>
+
+  <div class='widget_holder' data-widget_class='WidgetRealmActivation' data-realm='realm_dive' style='line-height: 36px;'>
+    <div style='margin: 0px 0px 20px 9px'>
+      <div style='display: inline-block;'><%= it("The price list is", scope: ['shop_pages', 'shop_dive_edit']) %> </div>
+      <div class='dropdown right white select_realm_activation' data-realm='realm_dive' data-selected='<%=shop.realm_dive%>'>
+        <div class='options'>
+          <div class='option' data-value='true'><%= it("visible", scope: ['shop_pages', 'shop_dive_edit']) %></div>
+          <div class='option' data-value='false'><%= it("not visible", scope: ['shop_pages', 'shop_dive_edit']) %></div>
+        </div>
+      </div>
+      <div style='display: inline-block;'><%= it("by everyone on your Diveboard page.", scope: ['shop_pages', 'shop_dive_edit']) %> <span class='spin_ok_nok'></span></div>
+    </div>
+  </div>
+
+  <div id='XXXXX' class='widget_holder widget_spreadsheet' data-widget_class='WidgetSpreadsheet' data-widget_id='' data-mode='edit'>
+    <div style='position:relative;'>
+      <div class="dive_list_edit dataTable"></div>
+      <button class='yellow_button save_dive_price_list'><%= it("Save price list", scope: ['shop_pages', 'shop_dive_edit']) %></button>
+      <button class='grey_button reset_dive_price_list'><%= it("Reload price list", scope: ['shop_pages', 'shop_dive_edit']) %></button>
+    </div>
+  </div>
+
+<%end%>
+
+

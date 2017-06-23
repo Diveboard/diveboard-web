@@ -1,0 +1,379 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%=I18n.locale%>">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="csrf-token" content="<%= form_authenticity_token %>" />
+    <meta name="csrf-param" content="authenticity_token" />
+
+    <!-- FB Opengraph Tags -->
+
+    <meta property="og:title" content="Diveboard: <%= it("Your online scuba logbook. Track, share and explore scuba diving through community dive logs", scope: ['home', 'index_4']) %>" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="//www.diveboard.com/" />
+    <meta property="og:image" content="//www.diveboard.com/img/OG-thumb.png" />
+    <meta property="og:description" content="<%= it("Diveboard is a scuba diving community enabling divers to track their dives through an online logbook, explore new spots and destinations and share their passion", scope: ['home', 'index_4']) %>" />
+    <meta property="og:site_name" content="Diveboard: <%= it("Your online scuba logbook", scope: ['home', 'index_4']) %>" />
+    <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+    <%I18n.available_locales.each do |locale|%>
+      <link rel='alternate' href='<%=HtmlHelper.find_root_for locale%>' hreflang="<%=locale%>" />
+      <%if locale != I18n.locale then%>
+        <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+      <%end%>
+    <%end%>
+
+    <meta property="fb:admins" content="680251975" />
+    <meta property="fb:admins" content="1077557400" />
+    <meta name="db-cookie-domain" content="<%=COOKIES_DOMAIN%>" />
+    <link href="https://plus.google.com/+Diveboard" rel="publisher" />
+
+
+    <!-- END FB Opengraph Tags -->
+    <meta name="description" content="<%= it("Diveboard is a scuba diving community enabling divers to track their dives through an online logbook, explore new spots and destinations and share their passion", scope: ['home', 'index_4']) %>"/>
+    <META NAME="Title" CONTENT="Diveboard: <%= it("Your online scuba logbook. Track, share and explore scuba diving through community dive logs", scope: ['home', 'index_4']) %>"/>
+    <title>Diveboard: <%= it("Your online scuba logbook. Track, share and explore scuba diving through community dive logs", scope: ['home', 'index_4']) %></title>
+     <link rel="icon" href="<%=ROOT_URL%>img/favicon/favicon.ico" type="image/x-icon" />
+    <%= include_stylesheets :common, :media => :all %>
+    <!--[if IE]>
+    <link rel="stylesheet" type="text/css" href="<%=auto_file_versionning("/styles/global-ie.css")%>" media="all" />
+    <![endif]-->
+    <!--[if lte IE 8.0]>
+    <link rel="stylesheet" type="text/css" href="<%=auto_file_versionning("/styles/global-ie8.css")%>" media="all" />
+    <![endif]-->
+    <!--[if lt IE 8.0]>
+    <link rel="stylesheet" type="text/css" href="<%=auto_file_versionning("/styles/global-ie7.css")%>" media="all" />
+    <![endif]-->
+
+    <%if I18n.locale==:fr%>
+    <style>
+      #idx_3_mainframe_content .main_signup {width: 390px !important;}
+      #idx_3_mainframe h1 {width: 367px !important;}
+      #idx3_signup_1 .flat_button {height: 60px !important;}
+      #idx3_signup_1 .button .big_up {padding-top: 5px !important;}
+    </style>
+    <%elsif I18n.locale==:es%>
+    <style>
+      #idx_3_mainframe_content .main_signup {width: 270px !important;}
+    </style>
+    <%end%>
+
+
+    <!-- START COPYING HERE -->
+    <link rel="stylesheet" href="<%=auto_file_versionning("/styles/ribbon/ribbon.css")%>" />
+    <!--[if IE]>
+        <link rel="stylesheet" href="<%=auto_file_versionning("/styles/ribbon/ribbon.ie.css")%>" />
+    <![endif]-->
+    <!-- END COPYING HERE -->
+
+
+    <% if @user.nil? then %>
+    <style>
+    #idx_3_top {width:998px; }
+    #idx_3_top .div1_for_logo {right: 0px}
+    </style>
+    <%end%>
+
+      <title>Diveboard: <%= it("Your online scuba logbook. Track, share and explore scuba diving through community dive logs", scope: ['home', 'index_4']) %></title>
+
+<script type='text/javascript' src='/api/stats_trace/home/start'></script>
+  <script>
+  try {
+    var xmlhttp;
+    if (window.XMLHttpRequest) xmlhttp=new XMLHttpRequest();
+    else xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    xmlhttp.open("GET","/api/stats_trace/home/start_exec",true);
+    xmlhttp.send();
+  } catch(e){}
+  </script>
+
+  <script>
+  <!-- Dev Google Analytics --> 
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga2');
+  
+  ga2('create', 'UA-54315810-1', 'auto');
+  ga2('send', 'pageview');
+  </script>
+
+      <!--[if IE 7]>
+
+       <script src="/ie7/IE7.js" type="text/javascript"></script>
+       <script src="/js/modernizr-2.5.3.js"></script>
+       <script src="/js/es5-shim.min.js"></script>
+       <script src="/ie7/json2.js" type="text/javascript"></script>
+      <![endif]-->
+
+
+    <%= javascript_include_tag "jquery" %>
+    <%= javascript_include_tag 'basic' %>
+
+    <script type="text/javascript" >
+      $(document).ready( function () {
+        $('.search_field').autoclear();
+      });
+      $(document).ready( function () {
+        $('.idx3_explore_clickall a').click(function(e){e.stopPropagation();});
+        $('.idx3_explore_clickall').click(function(e){
+          e.preventDefault();
+          var url = $(this).find('a').last().attr('href');
+          window.location = url;
+         });
+      });
+    </script>
+
+  </head>
+  <body>
+    <div id="fb-root"></div>
+    <script src="//connect.facebook.net/<%=Rails.configuration.map_og_locales[I18n.locale]%>/sdk.js"></script>
+    <script>
+          // initialize the library with the API key
+    FB.init({ apiKey: '<%=FB_APP_ID%>', cookie: true });
+    </script>
+    <%= render :partial => 'layouts/top_menu'  %>
+
+    <!-- TOP LEFT RIBBON: START COPYING HERE -->
+    <div class="business-ribbon-wrapper left">
+        <div class="business-ribbon">
+            <a href="/pro"><%= it("Are you a %{bold:pro}?%{br}Check out Diveboard for Business", scope: ['home', 'index_4'], bold: It.tag("b"), br: It.tag("br")) %>
+            </a>
+        </div>
+    </div>
+    <!-- TOP LEFT RIBBON: END COPYING HERE -->
+
+
+    <div id="container">
+
+    <% #caching 10 versions of the home page
+    cache_version ||= params[:cache_version]
+    version=cache_version||Random.new.rand(10)
+    begin
+      fragment_file = Rails.cache.send(:read_entry,"views/#{I18n.locale} homepage_#{version}",{})
+      if cache_version || (fragment_file && Time.now - 30.minutes > Time.at(fragment_file.created_at)) then
+        ActionController::Base.new.expire_fragment "#{I18n.locale} homepage_#{version}"
+      end
+    rescue
+      Rails.logger.warn $!.message
+    end
+    cache "#{I18n.locale} homepage_#{version}" do %>
+
+      <%
+      posts = BlogPost.where(:published => true).order("published_at DESC").limit(2)
+      @blog_data = []
+      monthnames = [nil] + %w(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
+
+      posts.each do |blog|
+        blog_line = {}
+        date = blog.published_at
+        blog_line["day"] = date.day
+        blog_line["month"] = I18n.t('abbr_month_names', scope: [:date])[date.month]
+        if I18n.locale == :en then
+          blog_line["ext"] = blog_line["day"].ordinalize.gsub(/[0-9]/,'')
+        end
+        blog_line["title"] = blog.title
+        #stripped to 220 chars
+        #blog_line["txt"] = strip_tags(blog["post_content"]).gsub(/[\r\n\t]/,"").gsub(/\[.*\]/,"")[0..230]
+        blog_line["txt"] = (blog.wiki_html.gsub(/\[[^\]]*\]/,"").gsub(/[\r\n\t]/,"").gsub(/<[^\>]*>/,""))[0..230]
+        blog_line["url"] = blog.fullpermalink(:locale)
+        # blog_line["url"] = "/blog/#{category}/#{date.year}/#{(date.day/10).to_i.to_s}#{date.day.to_s}/"+blog["post_name"]
+        @blog_data << blog_line
+      end
+
+
+      begin
+        interval = -30
+        requested = 8
+        while (@pictures.nil? || @pictures.count < requested) && (interval+=60) < 200 do
+          @pictures = Picture.unscoped.includes(:picture_album_pictures => :dive).where('pictures.great_pic = 1 AND ROUND(width/height,1)=1.3 AND dives.privacy=0 AND pictures.updated_at > DATE_SUB(NOW(), interval ? day)', interval).order('rand()').limit(requested).to_ary
+        end
+        @pictures = nil if @pictures.blank?
+      rescue
+        @pictures = nil
+      end%>
+
+      <div id="idx_3_mainframe">
+        <div class="image_credit">
+          <% case Time.now.to_i % 3 %>
+          <% when 0 %>
+          <img src="<%=HtmlHelper.lbroot "/images/idx3_photog.jpg"%>" class="main_img"/>
+          <% when 1 %>
+          <img src="<%=HtmlHelper.lbroot "/images/home/top_doug.jpg"%>" class="main_img"/>
+          <p class="photo_credits futura"><%= it("Picture by %{name:Doug Anderson}", scope: ['home', 'index_4'], name: It.link("/doug.deep")) %></p>
+          <% when 2 %>
+          <img src="<%=HtmlHelper.lbroot "/images/turtle.jpg"%>" class="main_img"/>
+          <% end %>
+        </div>
+
+        <div id="idx_3_mainframe_content">
+          <h1 class="futura font_shadow_black"><%= it("YOUR ONLINE SCUBA LOGBOOK", scope: ['home', 'index_4']) %></h1>
+          <!--<div class="signup_main">
+            <a href="#" class="signup_main_top" alt="Sign Up"></a>
+            <a href="<%=@fb_connect_controller%>" class="signup_main_bottom" alt="Login with Facebook"></a>
+          </div>-->
+          <div id="idx3_signup_1" class="frame_button button futura font_shadow_yellow main_signup">
+            <a href="/login/register" class="button_full_link sign_up">
+              <span><%= it("SIGN UP NOW!", scope: ['home', 'index_4']) %></span><br/>
+              <span class="small">
+                <%= it("or login with", scope: ['home', 'index_4']) %> <img class="smallimg" src="<%=HtmlHelper.lbroot "/img/index_3/minifb.png"%>"/>
+              </span>
+            </a>
+          </div>
+          <div class="devices"></div>
+        </div>
+      </div>
+      <div id="idx3_headlines">
+        <ul>
+          <li class="content"><h2 class="futuralight"><%= it("LOG", scope: ['home', 'index_4']) %></h2>
+            <h3 class="futurarealmedium"><%= it("Save your scuba memories forever", scope: ['home', 'index_4']) %></h3>
+            <p class="futuralight">
+              <%= it("The logbook is an important part of the scuba diving experience. Diveboard helps you make sure your memories will remain vivid and visual to get your heart to pound again like it's the first time.", scope: ['home', 'index_4']) %>
+            </p>
+          </li>
+          <li class="vspace"></li>
+          <li class="content"><h2 class="futuralight"><%= it("DISCOVER", scope: ['home', 'index_4']) %></h2>
+            <h3 class="futurarealmedium"><%= it("See what's going on in the ocean", scope: ['home', 'index_4']) %></h3>
+            <p class="futuralight">
+              <%= it("Check out for new or past scuba destinations, learn from fellow scuba divers' experiences, dive into the diversity of marine species and get ready to enjoy diving even more.", scope: ['home', 'index_4']) %>
+            </p>
+          </li>
+          <li class="vspace"></li>
+          <li class="content"><h2 class="futuralight"><%= it("SHARE", scope: ['home', 'index_4']) %></h2>
+            <h3 class="futurarealmedium"><%= it("Your dives are everywhere you are", scope: ['home', 'index_4']) %></h3>
+            <p class="futuralight">
+              <%= it("Once you've logged your dives to Diveboard you can share them everywhere you want either online through Facebook, Twitter, Email... or offline by printing them.", scope: ['home', 'index_4']) %>
+            </p>
+          </li>
+        </ul>
+      </div>
+      <span id="idx3_hspace"></span>
+      <div id="idx3_signup_1">
+        <div class="button futura"><a href="/login/register" class="button_full_link sign_up big_up"><%= it("SIGN UP NOW!", scope: ['home', 'index_4']) %></a></div>
+        <div class="sub_button futura"><a href="/about/tour"><%= it("or learn more", scope: ['home', 'index_4']) %></a></div>
+        <h2 class="futuralight"><%= it("IT TAKES LESS THAN A MINUTE TO CREATE YOUR %{strong:FREE ACCOUNT} & START %{strong:SHARING}!!", scope: ['home', 'index_4'], strong: It.tag("strong", class: "futurabold")) %></h2>
+        <div class="fb_sign futuralight"><a href="<%=@fb_connect_controller%>"><img src="/img/index_3/minifb.png"></a><%= it("Have a Facebook account? You can use it to sign in!", scope: ['home', 'index_4']) %></div>
+        <div class='notconvinced_block'><div class="notconvinced futuralight"><%= it("Still not convinced?", scope: ['home', 'index_4']) %></div>
+        <div class="button futura flat_button"><a href="/about/tour" class="button_full_link"><%= it("Take the Diveboard tour", scope: ['home', 'index_4']) %></a></div></div>
+      </div>
+      <span id="idx3_hspace"></span>
+      <div id="idx3_explore">
+        <h2 class="futuralight"><%= it("On Diveboard you'll find:", scope: ['home', 'index_4']) %></h2>
+        <ul class="futuralight ">
+          <li><div class="futuralight label_divers"><div><span class="rotate-270 futurareallight"><%= it("LOGBOOKS", scope: ['home', 'index_4']) %></span></div></div>
+            <ul>
+              <li class="idx3_explore_clickall"><img src="<%=HtmlHelper.lbroot "/images/home/ksso.jpg"%>"/>
+                <p><strong>KSSO</strong>: <%= it("Diving since 2004 and trying to level up as an underwater photograher. He especially enjoy taking macro shoots.", scope: ['home', 'index_4']) %></p><a href="/ksso"><%= it("%{user}'s Logbook", scope: ['home', 'index_4'], user: "Ksso") %></a></li>
+              <li class="idx3_explore_clickall"><img src="<%=HtmlHelper.lbroot "/images/home/kernsart.jpg"%>"/>
+                <p><strong>KERNSART</strong>: <%= it("Dive professional who collects and dives \"antique,\" equipment. I love everything about diving and teaching.", scope: ['home', 'index_4']) %></p><a href="/kernsart"><%= it("%{user}'s Logbook", scope: ['home', 'index_4'], user: "Karnsart") %></a></li>
+              <li class="idx3_explore_clickall"><img src="<%=HtmlHelper.lbroot "/images/home/petri.jpg"%>"/><p><strong>PETRI</strong>:<%= it("Scuba diving enthusiast since 2008. Prefers the waters warm and clear, but almost anything goes.", scope: ['home', 'index_4']) %></p><a href="/hirvoksi"><%= it("%{user}'s Logbook", scope: ['home', 'index_4'], user: "Petri") %></a></li>
+              <li class="idx3_explore_clickall"><img src="<%=HtmlHelper.lbroot "/images/home/bocio.jpg"%>"/><p><strong>BOCIO</strong>: <%= it("A technical diver who enjoys exploring the depth of the Italian Med Sea coastline.", scope: ['home', 'index_4']) %></p><a href="/bocio.de-bocis"><%= it("%{user}'s Logbook", scope: ['home', 'index_4'], user: "Bocio") %></a></li>
+            </ul>
+          </li>
+
+          <%if @pictures then%>
+          <li class='pictures'><div class="futuralight label_divers"><div><span class="rotate-270 futurareallight"><%= it("PICTURES", scope: ['home', 'index_4']) %></span></div></div>
+            <ul>
+              <%@pictures.each do |picture|%>
+              <li class="idx3_explore_clickall"><img src="<%=picture.medium%>"/>
+                <p>By <%=picture.user.nickname%> in <%=picture.dive.spot.country.name%></p><a href="<%=picture.fullpermalink(nil, :locale)%>"><%= it("Pictures by %{username}", scope: ['home', 'index_4'], username: picture.user.nickname) %> </a></li>
+              <%end%>
+            </ul>
+          </li>
+          <%end%>
+
+          <li><div class="futuralight label_places"><div><span class="rotate-270 futurareallight" ><%= it("PLACES", scope: ['home', 'index_4']) %></span></div></div>
+            <ul>
+              <li class="idx3_explore_clickall"><img src="<%=HtmlHelper.lbroot "/images/home/maldives.jpg"%>"/>
+                <p><%= it("%{strong:MALDIVES}: Atolls, white-sand beaches,  transparent water... and incredible sea life amongst which huge playful mantas.", scope: ['home', 'index_4'], strong: It.tag("strong")) %></p>
+                <a href="/pages/spots/Maldives"><%= it("Discover Maldives", scope: ['home', 'index_4']) %></a></li>
+              <li class="idx3_explore_clickall"><img src="<%=HtmlHelper.lbroot "/images/home/malta.jpg"%>"/><p><%= it("%{strong:MALTA}: Home to the \"Blue Hole\" and spectacular cave diving spots, Malta has lots to offer.", scope: ['home', 'index_4'], strong: It.tag("strong")) %></p><a href="/pages/spots/Malta"><%= it("Discover Malta", scope: ['home', 'index_4']) %></a></li>
+              <li class="idx3_explore_clickall"><img src="<%=HtmlHelper.lbroot "/images/home/australia.jpg"%>"/><p><%= it("%{strong:AUSTRALIA}: There's more than just the great barreer reef to Australia. It's diver's paradise.", scope: ['home', 'index_4'], strong: It.tag("strong")) %></p><a href="/pages/spots/australia"><%= it("Discover Australia", scope: ['home', 'index_4']) %></a></li>
+              <li class="idx3_explore_clickall"><img src="<%=HtmlHelper.lbroot "/images/home/indonesia.jpg"%>"/><p><%= it("%{strong:INDONESIA}: Home of world-class diving sites and exceptional biodiversity. Shallow waters make it enjoyable for everyone.", scope: ['home', 'index_4'], strong: It.tag("strong")) %></p><a href="/pages/spots/Indonesia"><%= it("Discover Indonesia", scope: ['home', 'index_4']) %></a></li>
+            </ul>
+          </li>
+
+
+<!--
+          <li><div class="futuralight label_species"><span class="rotate-270 futurareallight">SPECIES</span></div>
+            <ul>
+              <li class="idx3_explore_clickall"><img src="/images/home/nudibranch.jpg"/><p><strong>NUDIBRANCH</strong>: Small and colorful sea slugs. With hundreds of species they bring shining colors to the reefs.</p><a href="/pascal/1850">Spotted by Pascal</a></li>
+              <li class="idx3_explore_clickall"><img src="/images/home/pinkanemonefish.jpg"/><p><strong>PINK ANEMONEFISH</strong>: Nemo's little cousin can be widely found in Indonesia and Pacific.</p><a href="/ksso/523">Spotted by Ksso</a></li>
+              <li class="idx3_explore_clickall"><img src="/images/home/manta.jpg"/><p><strong>MANTA</strong>: Huge peaceful ocean bird flapping wings in the blue while filtering Liters of water.</p><a href="/dag/1757">Spotted by Scubamut</a></li>
+              <li class="idx3_explore_clickall"><img src="/images/home/napoleon.jpg"/><p><strong>NAPOLEON</strong>: They spend the day roaming the reef, solitary - these large fish make each encounter magical.</p><a href="/pascal/34">Spotted by Pascal</a></li>
+            </ul>
+          </li>
+-->
+        </ul>
+      </div>
+      <span id="idx3_hspace"></span>
+      <div id="idx3_signup_1" style="height: 104px !important;">
+        <div class="button futura"><a href="/login/register" class="button_full_link sign_up big_up"><%= it("SIGN UP NOW!", scope: ['home', 'index_4']) %></a></div>
+        <div class="sub_button futura"><a href="/about/tour"><%= it("or learn more", scope: ['home', 'index_4']) %></a></div>
+        <h2 class="futuralight"><%= it("IT TAKES LESS THAN A MINUTE TO CREATE YOUR %{strong:FREE ACCOUNT} & START %{strong:SHARING}!!", scope: ['home', 'index_4'], strong: It.tag("strong", class: "futurabold")) %></h2>
+        <div class="fb_sign futuralight"><a href="<%=@fb_connect_controller%>"><img src="/img/index_3/minifb.png"></a><%= it("Have a Facebook account? You can use it to sign in!", scope: ['home', 'index_4']) %></div>
+      </div>
+      <span id="idx3_hspace"></span>
+      <div id="idx3_blog" class="futurareallight">
+        <h2 class="futuralight"><%= it("Straight from the blog:", scope: ['home', 'index_4']) %></h2>
+        <div id="new_bottom_blog_box" class="futurallight">
+          <ul class="new_bottom_blog_date">
+            <%@blog_data.each do |blog| %>
+            <li >
+              <div class="blog_date">
+                <%=blog["day"]%><span class="high_top"><%=blog["ext"]%></span><br/>
+                <span class="new_bottom_blog_date_month"><%=blog["month"]%></span>
+              </div>
+              <div class="blog_txt">
+                <a href="<%=blog["url"]%>" class="new_bottom_blog_title futurarealmedium"><%=blog["title"]%></a>
+                <p><%=blog["txt"]%>... <br/><a href="<%=blog["url"]%>"><%= it("Read More!", scope: ['home', 'index_4']) %></a></p>
+              </div>
+            </li>
+            <%end%>
+          </ul>
+        </div>
+        <div style="display: inline-block; position: relative; left: 309px; top: 20px;">
+          <a href="/community" class='blog_see_more'><%= it("SEE MORE", scope: ['home', 'index_4']) %></a>
+        </div>
+      </div>
+<%end%>
+    <%= render :partial => 'layouts/switch_user_dialog'%>
+    <%= render :partial => 'layouts/switch_language_dialog'%>
+    <%= render :partial => 'layouts/footer'  %>
+  </div>
+  <%=
+    #render :partial => 'layouts/login_popup', :locals=> { :style =>"login_popup_homepage" }
+  %>
+  <%= render :partial => 'layouts/trackers' %>
+  <script type="text/javascript">
+    (function() {
+      var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+      po.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+    })();
+  </script>
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+  <script type="text/javascript">
+    (function(d){
+      var f = d.getElementsByTagName('SCRIPT')[0], p = d.createElement('SCRIPT');
+      p.type = 'text/javascript';
+      p.async = true;
+      p.src = '//assets.pinterest.com/js/pinit.js';
+      p.setAttribute("data-pin-build", "pin_build_api");
+      f.parentNode.insertBefore(p, f);
+    }(document));
+  </script>
+  <script>
+    FB.XFBML.parse(document.getElementById("footer_container"));
+  </script>
+  <script>
+  try {
+    var xmlhttp;
+    if (window.XMLHttpRequest) xmlhttp=new XMLHttpRequest();
+    else xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    xmlhttp.open("GET","/api/stats_trace/home/end",true);
+    xmlhttp.send();
+  } catch(e){}
+  </script>
+
+  <%= render( :partial => 'login/sign_up_popup', :locals=> {:status => @signup_popup_status || :force_count} ) if @user.nil? %>
+  </body>
+</html>

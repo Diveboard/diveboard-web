@@ -1,0 +1,380 @@
+default:
+  width: 600
+  height: 400
+  margin_left: 25
+  margin_right: 10
+  margin_top: 0
+  margin_bottom: 0
+  margin_real_bottom: 25
+  font_size: 12
+  logo: ~
+  display_label_depth: false
+  display_label_time: true
+  display_warning: true
+  display_error: true
+  warning_color: DDC049
+  error_color: C18CD9
+  stroke_width: 3
+  graduation:
+    color: 777777
+    opacity: 0.5
+  depth:
+    line_color: 3f85bf
+    top_color: 3f85bf
+    top_opacity_gradient_top: 0.2
+    top_opacity_gradient_bottom: 0.8
+    bottom_color: CCCCCC
+    bottom_opacity: 0.3
+    legend: true
+    floating_labels: true
+    floating_labels_color: 333
+    label_time: true
+  temperature:
+    display: true
+    color: FCC632
+    height: 90
+    bonus_height: 0
+    show_points: false
+    background_color: CCCCCC
+    background_opacity: 0.3
+    legend: true
+    floating_labels: true
+    floating_labels_color: 333
+    label_time: false
+  pressure:
+    display: true
+    bonus_height: 0
+    color: AAAAAA
+    height: 100
+    show_points: false
+    background_color: CCCCCC
+    background_opacity: 0.3
+    legend: true
+    floating_labels: true
+    floating_labels_color: 333
+    label_time: true
+  gradient_factor:
+    display: false
+    bonus_height: 100
+    color: AAAAAA
+    height: 100
+    show_points: false
+    background_color: CCCCCC
+    background_opacity: 0.3
+    legend: true
+    floating_labels: false
+    floating_labels_color: 333
+    label_time: false
+
+small_or:
+  width: 160
+  height: 100
+  margin_left: 1
+  margin_right: 1
+  margin_top: 1
+  margin_bottom: 1
+  margin_real_bottom: 0
+  display_label_depth: false
+  display_label_time: false
+  depth:
+    line_color: FF6200
+    top_color: fcc632
+    top_opacity_gradient_top: 0.3
+    top_opacity_gradient_bottom: 0.8
+    bottom_color: 1D1D1D
+    bottom_opacity: 1
+    legend: false
+    floating_labels: false
+  stroke_width: 1.5
+  logo: public/img/logo_o.png
+  temperature:
+    display: false
+  pressure:
+    display: false
+  
+medium_blue:
+  width: 400
+  height: 210
+  display_label_depth: false
+  display_label_time: false
+  margin_left: 30
+  margin_right: 10
+  margin_top: 20
+  margin_bottom: 10
+  margin_real_bottom: 0
+  depth:
+    legend: false
+    floating_labels: true
+  temperature:
+    display: true
+    bonus_height: 90
+  pressure:
+    display: false
+
+
+small_blue:
+  width: 231
+  height: 140
+  display_label_depth: false
+  display_label_time: false
+  margin_left: 30
+  margin_right: 10
+  margin_top: 20
+  margin_bottom: 10
+  margin_real_bottom: 0
+  depth:
+    legend: false
+    floating_labels: false
+  temperature:
+    display: false
+  pressure:
+    display: false
+  
+xsmall_blue:
+  width: 190
+  height: 150
+  display_label_depth: false
+  display_label_time: false
+  margin_left: 1
+  margin_right: 1
+  margin_top: 15
+  margin_bottom: 40
+  margin_real_bottom: 0
+  depth:
+    legend: false
+    floating_labels: false
+  temperature:
+    display: false
+  pressure:
+    display: false
+  display_warning: false
+  display_error: false
+  
+xxsmall_blue:
+  width: 75
+  height: 75
+  display_label_depth: false
+  display_label_time: false
+  stroke_width: 2
+  margin_left: 1
+  margin_right: 1
+  margin_top: 1
+  margin_bottom: 1
+  margin_real_bottom: 0
+  depth: 
+    legend: false
+    floating_labels: false
+  temperature:
+    display: true
+    height: 25
+    legend: false
+    floating_labels: false
+  pressure:
+    display: true
+    height: 25
+    legend: false
+    floating_labels: false
+  display_warning: false
+  display_error: false
+  
+big_blue:
+  width: 630
+  height: 250
+  temperature:
+    display: true
+    height: 100
+    bonus_height: 100
+  pressure:
+    display: true
+    height: 100
+    bonus_height: 100
+
+wiz_blue:
+  width: 400
+  height: 170
+  margin_top: 25
+  temperature:
+    display: false
+  pressure:
+    display: false
+
+admin:
+  width: 240
+  height: 240
+  depth:
+    legend: false
+  temperature:
+    display: true
+    legend: false
+  pressure:
+    display: true
+    legend: false
+
+pdf_print:
+  width: 650
+  height: 200
+  depth:
+    line_color: 333
+    top_color: 3f72bf
+    top_opacity: 0
+    bottom_color: 3f72bf
+    bottom_opacity: 0
+  stroke_width: 3
+  graduation:
+    color: 000000
+    opacity: 0.7
+  margin_left: 25
+  margin_right: 10
+  margin_top: 20
+  margin_bottom: 20
+  margin_real_bottom: 0
+  font_size: 12
+  logo: ~
+  display_warning: true
+  display_error: true
+  warning_color: DDC049
+  error_color: C18CD9
+  temperature:
+    display: true
+    color: 777
+    height: 70
+    bonus_height: 70
+    background_color: FFF
+  pressure:
+    display: true
+    height: 70
+    bonus_height: 70
+    color: 777
+    background_color: FFF
+
+
+mobile_thumb:
+  width: 230
+  height: 130
+  display_label_depth: true
+  display_label_time: true
+  depth:
+    line_color: FF6200
+    top_color: fcc632
+    top_opacity: 1
+    bottom_color: 1D1D1D
+    bottom_opacity: 1
+  stroke_width: 1
+  graduation:
+    color: ffffff
+    opacity: 1
+  margin_left: 20
+  margin_right: 0
+  margin_top: 0
+  margin_bottom: 15
+  font_size: 12
+  logo: ~
+  display_warning: true
+  display_error: true
+  warning_color: DDC049
+  error_color: C18CD9
+  temperature:
+    display: true
+    height: 40
+    color: FF6200
+  pressure:
+    display: false
+    height: 40
+
+
+
+mobile_v002:
+  width: 650
+  height: 200
+  depth:
+    line_color: 333
+    top_color: 3f72bf
+    top_opacity: 0
+    bottom_color: 3f72bf
+    bottom_opacity: 0
+    top_opacity_gradient_top: 0
+    top_opacity_gradient_bottom: 0
+    legend: false
+    floating_labels: false
+    label_time: false
+  stroke_width: 3
+  graduation:
+    color: 000000
+    opacity: 0
+  margin_left: 25
+  margin_right: 10
+  margin_top: 20
+  margin_bottom: 20
+  margin_real_bottom: 0
+  font_size: 12
+  logo: ~
+  display_warning: false
+  display_error: false
+  warning_color: 000000
+  error_color: 000000
+  temperature:
+    display: false
+    color: 777
+    height: 70
+    bonus_height: 70
+    background_color: FFF
+    legend: false
+    floating_labels: false
+    label_time: false
+  pressure:
+    display: false
+    height: 70
+    bonus_height: 70
+    color: 777
+    background_color: FFF
+    legend: false
+    floating_labels: false
+    label_time: false
+
+mobile_v003:
+  width: 1280
+  height: 800
+  depth:
+    line_color: 333
+    top_color: 3f72bf
+    top_opacity: 0
+    bottom_color: 3f72bf
+    bottom_opacity: 0
+    top_opacity_gradient_top: 0
+    top_opacity_gradient_bottom: 0
+    legend: false
+    floating_labels: true
+    label_time: true
+  stroke_width: 3
+  graduation:
+    color: 999
+    opacity: 1
+  margin_left: 25
+  margin_right: 10
+  margin_top: 20
+  margin_bottom: 20
+  margin_real_bottom: 0
+  font_size: 20
+  logo: ~
+  display_warning: false
+  display_error: false
+  warning_color: 000000
+  error_color: 000000
+  temperature:
+    display: false
+    color: 777
+    height: 70
+    bonus_height: 70
+    background_color: FFF
+    legend: false
+    floating_labels: false
+    label_time: false
+  pressure:
+    display: false
+    height: 70
+    bonus_height: 70
+    color: 777
+    background_color: FFF
+    legend: false
+    floating_labels: false
+    label_time: false

@@ -1,0 +1,167 @@
+#dive_data
+{
+  width: 100%;
+  border-bottom: 1px solid #c5c6c7;
+  background-color: white;
+  //padding-bottom: 2rem; // with advanced information button
+
+  .container
+  {
+    width: 930px;
+    height: 100%;
+    margin: 0 auto;
+    position: relative;
+
+    .section{
+      width: calc(50% - 2rem);
+      height: 5rem;
+      padding-top: 1rem;
+      padding-left: 1rem;
+      display: inline-block;
+      vertical-align: top;
+      @media (max-width: 768px)
+      {
+        display:block;
+        margin: 1rem auto;
+        width: 300px;
+        max-height: 6rem;
+        height: auto;
+        padding-top: 0;
+      }
+    }
+
+    .temp{
+      img{
+        height: 3rem;
+        display: inline-block;
+        vertical-align: top;
+      }
+      .avgs{ 
+        height: 3rem;
+        margin-left: 1rem;
+        position: relative;
+        display: inline-block;
+        p{
+          position: relative;      
+        }
+      }  
+    }
+    .attendance{
+      p{
+        display: inline-block;
+        vertical-align: top;
+        margin-right: 1rem;
+      }
+      .chart{
+       display: inline-block;
+        .month{
+          display: inline-block;
+          width: 1rem;
+          text-align: center;
+          p{
+            margin: 0;      
+          }
+          .att_bar{
+            height: 3rem;
+            width: 10px;
+            margin: 0 auto;
+          }
+          .grad_0{
+            background: #3e94bb;
+          }
+          .grad_1{
+            background: #619995;
+          }
+          .grad_2{
+            background: #819d70;
+          }
+          .grad_3{
+            background: #a1a24c;
+          }
+          .grad_4{
+            background: #c1a627;
+          }
+          .grad_5{
+            background: #d2a814;
+          }
+          .grad_6{
+            background: #d1c150;
+          }
+          .grad_7{
+            background: #ddc345;
+          }
+          .grad_8{
+            background: #f1c632;
+          }
+          .grad_9{
+            background: #f1c231;
+          }
+          .grad_10{
+            background: #f1b331;
+          }
+          .grad_11{
+            background: #f1a531;
+          }
+        }
+      }
+    }
+    .depth{
+      img{
+        width: 2rem;
+        display: inline-block;
+      }
+      p{
+        display: inline-block;
+        vertical-align: top;
+        margin-left: 1rem
+      }
+    }
+    .fish{
+      img{
+        height: 48px;
+        display: inline-block;
+        margin-right: 0.7rem;
+      }
+      p{
+        display: inline-block;
+        margin-right: 1rem;
+        vertical-align: top;
+      }
+    }
+    @media (max-width: 960px)
+    {
+      width: 100%;
+    }
+  }
+
+  .sep_4
+  {
+    @media (max-width: 768px)
+    {
+      display:none;
+    }
+  }
+
+  .sep_1
+  {
+    background: gray;
+    height: 1px;
+    width: 92%;
+    margin: 0rem auto;
+    @media (min-width: 769px)
+    {
+      display:none;
+    }
+  }
+
+  .grey_button
+  {
+    margin-top: 10px;
+    margin-left: calc(50% - 130px);
+  }
+
+  .species
+  {
+    width: 45px;
+  }
+}

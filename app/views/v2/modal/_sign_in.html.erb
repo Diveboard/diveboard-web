@@ -1,0 +1,15 @@
+<div class="sign_in">
+  <form name="login_menu" action="#">
+    <input type="email" name="email" class="input_text" placeholder="Your email">
+    <input type="password" name="pass" class="input_text" placeholder="Password">
+    <a href="#" class="forgot_pass" modal_trigger="reset_pass">Forgot password? Click here</a>
+    <input type="submit" name="submit" class="sign_button" value="Sign in">
+  </form>
+  <span style="color: grey; margin-left: 25px;">
+    <div style="background: grey; margin:1rem auto; height:1px; width: 38%; vertical-align:middle; display: inline-block; margin-right: 0.1rem;">
+    </div>or<div style="background: grey; margin:1rem auto; height:1px; width: 38%; vertical-align:middle; display: inline-block; margin-left: 0.1rem;"></div>
+  </span>
+  <button class="sign_button fb_sign_in" style="background: #3366FF no-repeat; background-image: url('<%= HtmlHelper.lbroot "/img/drawer/svg/facebook_icon.svg" %>');background-position: 0.7rem;padding-left: 0.6rem;" >Sign in with Facebook</button>
+  <div style="background: grey; margin: 30px auto; height:1px; width: 80%; "></div>
+  <p style="text-align: center;">Don't have any of these?</p>
+</div>

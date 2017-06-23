@@ -1,0 +1,5 @@
+  <div class="main_info" align="left">
+    <p><a href='@from_url'><img src="<%=@from_pic%>" class="left" width=50/></a><%= it("%{link:%{name}} has left a message for you:", scope: ['notify_user', 'notify_new_message'], link: (@msg_url||It.tag('span')), name: @from_name) %></p>
+    <p style='margin: 15px 60px; text-align: center; font-style: italic;'><%=@content%></p>
+    <p><center style='margin:20px'><a href="<%=@msg_url%>" class="yellow_button" style="margin-top: 20px;"><%= it("View on Diveboard", scope: ['notify_user', 'notify_new_message']) %></a></center></p>
+  </div>

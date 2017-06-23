@@ -1,0 +1,101 @@
+<$
+
+  if ('about' in dive.user && dive.user.about && !('about_html' in dive.user)) {
+    var about_text = dive.user.about.split("\n");
+    for (var i in about_text)
+      about_text[i] = $("<p></p>").text(about_text[i]).html();
+    dive.user.about_html = about_text.join("<br/>");
+  }
+
+  var max_duration_dive = null;
+  var max_depth_dive = null;
+  for (dive_id in dive.user.dives) {
+    var dv = dive.user.dives[dive_id];
+    if (!max_duration_dive || parseFloat(dv.duration) > parseFloat(max_duration_dive.duration))
+      max_duration_dive = dv;
+    if (!max_depth_dive || parseFloat(dv.maxdepth) > parseFloat(max_depth_dive.maxdepth))
+      max_depth_dive = dv;
+  }
+
+$>
+<div id='xp_p2_info_tab' class='xp_result_tab xp_result_list'>
+
+  <$if (dive.notes){$>
+  <h3><span class=symbol>d</span>Notes</h3>
+  <p><$=dive.notes$></p>
+  <$}$>
+
+  <h3 class='xp_p2_user_item' <$ if (!dive.db_buddies && !dive.diveshop) {$>style='display:none'<$}$>><img src="/img/aboutme_icon.png" width='16px' height='16px' alt="#">Buddies</h3>
+  <p <$ if (!dive.db_buddies && !dive.diveshop) {$>style='display:none'<$}$> >
+    <$= I18n.t(["js","xp2_dive","This dive was logged by"]) $> <a href=# class='xp_p2_user_item' data-xp_data='{"user_id":<$=dive.user.id$>}'><$=dive.user.nickname$></a><span <$ if (!dive.db_buddies || dive.db_buddies.length==0) {$>style='display:none'<$}$>>, <$= I18n.t(["js","xp2_dive","along with"]) $> </span>
+    <$for (var i in dive.db_buddies){ buddy=dive.db_buddies[i];$> <a href=# class='xp_p2_user_item' data-xp_data='{"user_id":<$=buddy.id$>}'><$=buddy.nickname$></a><$}$>
+  </p>
+
+  <$ if (dive.diveshop && dive.diveshop.name && dive.diveshop.guide) {$>
+    <p><$= I18n.t(["js","xp2_dive","They dived with %{guide} from %{shop_url: shop_name}"], {
+      guide: dive.diveshop.guide,
+      shop_name: dive.diveshop.name,
+      shop_url: I18n.link_to(dive.diveshop.url, true)
+      }) $></p>
+  <$ } else if (dive.diveshop && dive.diveshop.name) {$>
+    <p><$= I18n.t(["js","xp2_dive","They dived with %{shop_url: shop_name}"], {
+      shop_name: dive.diveshop.name,
+      shop_url: I18n.link_to(dive.diveshop.url, true)
+      }) $></p>
+  <$ } else if (dive.diveshop && dive.diveshop.guide) {$>
+    <p><$= I18n.t(["js","xp2_dive","They dived with %{guide}"], {guide: dive.diveshop.guide}) $></p>
+  <$ } $>
+
+  <h3><span class=symbol>u</span><$= I18n.t(["js","xp2_dive","Profile"]) $></h3>
+  <p><$=dive.date$> - <$= I18n.t(["units","min"], {count: dive.duration})$> - <$= I18n.t(["units","meter"], {count: parseInt(dive.maxdepth)})$></p>
+  <img src='/<$=dive.user.vanity_url$>/<$=dive.id$>/profile.svg?g=medium_blue' />
+
+  <p><a href='<$=dive.permalink||dive.fullpermalink$>' target='_blank'><$= I18n.t(["js","xp2_dive","View the full dive entry in %{nickname}'s logbook"], {nickname: dive.user.nickname}) $></a></p>
+
+  <h3><img src="/img/dived_spots_icon.png" alt="#">Spot info</h3>
+  <ul class='xp_panel_list xp_p2_spot_item'data-xp_data='{"spot_id":<$=dive.spot.id$>}'>
+    <li><$= I18n.t(["js","xp2_dive","Name:"]) $> <$=dive.spot.name$></li>
+    <li><$= I18n.t(["js","xp2_dive","Country:"]) $> <img src='<$=dive.spot.country_flag_small$>' alt='Flag'/><$=dive.spot.country_name$></li>
+    <li><$= I18n.t(["js","xp2_dive","Region:"]) $> <$=dive.spot.region_name$><li>
+    <li><$= I18n.t(["js","xp2_dive","Location:"]) $> <$=dive.spot.location_name$><li>
+    <li><$= I18n.t(["js","xp2_dive","Coordinates:"]) $> <$=dive.spot.lat$>&deg; ; <$=dive.spot.lng$>&deg;</li>
+  </ul>
+</div>
+
+<div id='xp_p2_divers_tab' class='xp_result_tab xp_result_list'>
+
+  <h3 class='xp_p2_user_item' data-xp_data='{"user_id":<$=dive.user.id$>}'><img src="/img/aboutme_icon.png" alt="#"><$=dive.user.nickname$></h3>
+  <$ if (dive.user.about) {$>
+    <p><$=dive.user.about_html$></p>
+    <a href='<$=dive.user.permalink||dive.user.fullpermalink$>' target='_blank'><$= I18n.t(["js","xp2_dive","View %{nickname}'s logbook"], {nickname: dive.user.nickname}) $></a>
+  <$}$>
+  <h3><img src="/img/certificates_icon.png" alt="#">Certifications</h3>
+  <$ for (var i in dive.user.qualifications) { var qualif = dive.user.qualifications[i];$>
+  <ul class='textlist'>
+    <$ if (qualif.featured) {$>
+    <li><$=qualif.date$> : <$=qualif.org$> <$=qualif.title$></li>
+    <$}$>
+  </ul>
+  <$}$>
+  <h3><img src="/img/dived_spots_icon.png" alt="#">Stats</h3>
+  <ul class='textlist'>
+    <li><$= I18n.t(["js","xp2_dive","Total number of dives :"]) $> <$=dive.user.total_nb_dives$></li>
+    <li><$= I18n.t(["js","xp2_dive","Dives on Diveboard :"]) $> <$=dive.user.public_nb_dives$></li>
+    <li><$= I18n.t(["js","xp2_dive","Longest dive :"]) $> <$=I18n.t(["units","min"], {count: dive.user.stat_longest_dive})$></li>
+    <li><$= I18n.t(["js","xp2_dive","Deepest dive :"]) $> <$= I18n.t(["units","meter"], {count: dive.user.stat_longest_dive})$></li>
+  </ul>
+
+  <$if (!dive.user.about) {$><p><a href='<$=dive.user.permalink||dive.user.fullpermalink$>' target='_blank'><$= I18n.t(["js","xp2_dive","View %{nickname}'s logbook"], {nickname: dive.user.nickname}) $></a></p><$}$>
+</div>
+
+
+<div id='xp_p2_pictures_tab' class='xp_result_tab xp_result_list'>
+  <$if (!dive.pictures){$>
+  <img src="/img/transparent_loader_2.gif" height='66px' width='66px' style="margin-left:165px; margin-top:50px" alt='#' />
+  <$} else {$>
+    <$ for (var i in dive.pictures) { var pic = dive.pictures[i];$>
+      <a href='<$=pic.permalink||pic.fullpermalink$>' target='_blank'><img src="<$=pic.thumbnail$>"/></a>
+    <$}$>
+  <$}$>
+</div>
+

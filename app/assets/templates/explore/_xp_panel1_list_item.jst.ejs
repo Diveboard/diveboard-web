@@ -1,0 +1,13 @@
+<$
+try {if(!with_arrow) var a=1;} catch(e){with_arrow = false}
+$>
+<li class='xp_panel_list_item <$=class_tag$>'>
+  <$ if (img_src) {$><div class='xp_pli_img'><img src='<$=img_src$>' /></div><$}$>
+  <div class='xp_pli_txt'>
+    <div class='xp_pli_head'><$=title$></div>
+    <div class='xp_pli_content'>
+      <p><$=content$></p>
+    </div>
+  </div>
+  <$ if (with_arrow) {$><div class='xp_pli_arrow'><span class="symbol">&gt;</span></div><$}$>
+</li>

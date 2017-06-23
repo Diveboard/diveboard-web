@@ -1,0 +1,33 @@
+<div class='widgets_col0'>
+  <div class='main_content_box'>
+    <br/>
+    <br/>
+    <p><%= it("You went on holiday and dived with a great team ? Recommend them here to your online fellow divers !%{br}
+    No organization or security was poor ? Leave a comment so they know what to improve!", scope: ['shop_pages', 'shop_review_view'], br: It.tag("br")) %></p>
+    <br/>
+    <p><%= it("The feedback below comes exclusively from Diveboard users.", scope: ['shop_pages', 'shop_review_view']) %></p>
+  <% if Membership.where(:group_id => @owner.id, :role => 'admin').count == 0 then%>
+    <br/>
+    <p><%= it("If you work at this dive shop, you can %{link:claim this page} and add a description of your activity!", scope: ['shop_pages', 'shop_review_view'], link: It.link("/login/register_pro?start=1&shop_id=#{shop.id}")) %></p>
+  <%end%>
+  </div>
+</div>
+
+<div class='widgets_col1'>
+  <%widget_dives = WidgetListDives.new
+  widget_dives.owner_id = shop.id
+  %>
+  <div id='widget_<%=widget_dives.class.name.underscore%>_<%=widget_dives.id%>' class='widget_holder widget_<%=widget_dives.class.name.underscore%>' data-widget_class='<%=widget_dives.class.name%>' data-widget_id='<%=widget_dives.id%>' data-mode='<%=params[:content]%>'>
+
+    <%=render :partial => 'widgets/widget_list_dives_view', :locals => {:widget => widget_dives, :shop => shop}%>
+  </div>
+</div>
+
+<div class='widgets_col2'>
+  <%widget_review = WidgetReview.find(shop.id)%>
+  <div id='widget_<%=widget_review.class.name.underscore%>_<%=widget_review.id%>' class='widget_holder widget_<%=widget_review.class.name.underscore%>' data-widget_class='<%=widget_review.class.name%>' data-widget_id='<%=widget_review.id%>' data-mode='<%=params[:content]%>'>
+    <%=render :partial => 'widgets/widget_review_view', :locals => {:widget => widget_review, :shop => shop}%>
+  </div>
+</div>
+
+<%=render :partial => 'form_review', :locals => {:review => (@user && @user.review_for_shop(@owner.shop_proxy)), :shop => @owner.shop_proxy}%>

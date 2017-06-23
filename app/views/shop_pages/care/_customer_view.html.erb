@@ -1,0 +1,7 @@
+<%highlight ||= nil%>
+
+<!-- <iframe frameborder="0" height="245" width="200" scrolling="no" src="<%=customer.fullpermalink(:locale)%>/widget" style="border: 1px solid #AAA; position: absolute; right: 10px; top: 28px;"></iframe> -->
+<div class='customer_history_page'>
+  <%= render :partial => 'shop_pages/care/customer_history', :locals => {:shop => shop, :customer => customer, :highlight => highlight}%>
+</div>
+

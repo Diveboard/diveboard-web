@@ -1,0 +1,206 @@
+@import 'variables';
+
+
+/* patterns */
+
+.white_box {
+  background-color: #fff;
+  color: #333;
+  padding: 1rem 0rem;
+  h2 {
+    text-align: center;
+    margin: 1rem;
+  }
+}
+
+
+.nine_pic_block {
+  font-size: 0;
+  div {
+    display: inline-block;
+    width: 33.33%;
+    background-size: cover;
+    margin: 0;
+  }
+  div:before {  content: ""; display: block; padding-top: 100%; }
+}
+
+
+
+
+
+
+/* title */
+
+table.title{
+  width: 100%;
+  max-height: 7rem;
+  .map_icon{
+    font-family: icomoon;
+    background-color: $orange;
+    color: $grey;
+    font-size: 7rem;
+    width: 7rem;
+    min-height: 7rem;
+  }
+  .feature_title{
+    background-color: white;
+    color: $grey;
+    width: 100%;
+    h1{
+      padding-left: 2em;
+      font-weight: 900;
+      text-transform: uppercase;;
+    }
+  }
+}
+
+
+/* medium screens */
+@include media-layout(medium){
+  table.title{
+    .feature_title{
+      h1{
+        padding-left: 1em;
+      }
+    }
+  }
+}
+
+
+/* small screens */
+@include media-layout(small){
+  table.title{
+    .map_icon{
+      font-size: 4rem;
+      width: 4rem;
+      min-height: 4rem;
+    }
+    .feature_title{
+      h1{
+        padding-left: 0em;
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 1.4rem;
+      }
+    }
+  }
+}
+
+
+
+
+
+
+.featured_panel {
+  position: relative;
+  .weather_calendar {
+    width: 9rem;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    @for $i from 1 through 12 {
+      $top_position: ($i - 1) * 100% / 12;
+      .month:nth-child(#{$i}) {position: absolute; top: #{$top_position};}
+    }
+    .month > div {
+      display: inline-block;
+      padding: 0.3rem;
+    }
+  }
+  .presentation {
+    color: $grey;
+    margin-left: 9rem;
+    display: inline-block;
+    vertical-align: top;
+    @include media-layout(full) {width: 30rem;}
+    background-color: rgba(210, 210, 255, 0.7);
+    padding: 2rem;
+    .thumb_container {
+      @extend .nine_pic_block;
+      margin: 2rem -2rem -2rem -2rem;
+    }
+  }
+  .cta_with_picture {
+
+    display: inline-block;
+    vertical-align: top;
+    @include media-layout(small) {width: 100%}
+    @include media-layout(full) {position: absolute; left: 39rem; right: 0; top: 0; bottom: 0;}
+
+    background-color: rgba(230, 210, 255, 1);
+    min-height: 20rem;
+
+    background-size: cover;
+    position: relative;
+
+    .cta {
+      display: inline-block;
+      width: 20rem;
+      position: absolute;
+      @include media-layout(full) {bottom: 20%; left: 5rem;}
+      @include media-layout(small) {bottom: 2rem; left: 2rem;}
+    }
+    button {
+      display: block;
+      width: 100%;
+      background-color: $orange;
+      border: none;
+      font-size: 1.2rem;
+      height: 4rem;
+    }
+    .figures {
+      display: flex;
+      justify-content: space-between;
+      > div {
+        flex: 0 0 auto;
+        margin-top: 0.9rem;
+        padding: 0.5rem 0.8rem;
+        text-align: center;
+        background-color: #fff;
+        color: #333;
+      }
+    }
+    .figure {
+      display: block;
+      font-weight: 600;
+    }
+  }
+}
+
+
+
+
+.content_updates {
+  .feed_col {
+    @include media-layout(full) {width: 33%; float: left;}
+    @include media-layout(small) {margin: 1.5rem 0;}
+    > div {margin: 1.5rem 0}
+  }
+  .main_col {
+    @include media-layout(full) {float: right; width: 65%; }
+    @include media-layout(small) {margin: 1.5rem 0;}
+    > div {margin: 1.5rem 0}
+  }
+  > br {clear: both;}
+}
+
+
+.blog_section {
+  @extend .white_box;
+  .column {
+    display: inline-block;
+    vertical-align: top;
+    @include media-layout(full) {width: 30%; margin: 1rem 1%;}
+    @include media-layout(small) {width: 94%; margin: 1rem 3%;}
+  }
+}
+
+
+
+body {height: 4000px;}
+.using_flexbox {@include if-feature(no-flexbox) {display: none;}}
+.no_flexbox {@include if-feature(flexbox){display: none;}}
+
+

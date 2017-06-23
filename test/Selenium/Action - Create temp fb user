@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://stage.diveboard.com/" />
+<title>Action - Create temp fb user</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Action - Create temp fb user</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/ksso/13</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeElementPresent</td>
+	<td>//img[@alt='logout']</td>
+	<td>logout</td>
+</tr>
+<tr>
+	<td>gotoIf</td>
+	<td>storedVars['logout'] == false</td>
+	<td>skiplogout</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//img[@alt='logout']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@id='index_sidebar']/div[1]/a/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>label</td>
+	<td>skiplogout</td>
+	<td></td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/admin/testfbusergen</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>userid</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeText</td>
+	<td>userid</td>
+	<td>fb_user_id</td>
+</tr>
+<tr>
+	<td>storeText</td>
+	<td>loginurl</td>
+	<td>fb_user_login_url</td>
+</tr>
+<tr>
+	<td>storeText</td>
+	<td>password</td>
+	<td>fb_user_password</td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>${fb_user_login_url}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//h1[@id='pageLogo']/a</td>
+	<td></td>
+</tr>
+</tbody></table>
+</body>
+</html>

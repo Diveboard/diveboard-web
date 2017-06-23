@@ -1,0 +1,139 @@
+<%= content_for :javascripts do%>
+  <script type="text/javascript">
+    user_proxy_id = <%= @shop.user_proxy.id %>;
+  </script>
+<%end%>
+
+<div class="pictures section" id="pictures_edit">
+  <div id="category_title">
+    <h2>Logo</h2>
+    <div class="clear"></div>
+  </div>
+  
+  <div class="logo_upload">
+    <% #if !@shop.user_proxy.avatars.pictures.last.nil? %>
+    <div class="logo_preview">
+      <img src="<%= @shop.picture %>" alt="" />
+      <div class="delete"></div>
+    </div>
+    <div class="logo_dropzone dropzone light-blue-button" id="logo_dropzone"></div>
+    <div id="logo_content">
+      
+    </div>
+  </div>
+  <div class="clear"></div>
+
+  <div id="category_title">
+    <h2>Banner</h2>
+    <div class="clear"></div>
+  </div>
+  
+  <ul class="banner_list">
+    <%
+      if !@cover_pictures.nil?
+        @cover_pictures.each do |pic|
+    %>
+      <li picture-id="<%= pic.id %>">
+        <div class="delete"></div>
+        <img src="<%= pic.large %>" alt="" />
+      </li>
+    <%
+        end
+      end
+    %>
+  </ul>
+
+  <div class="banner_upload">
+    <div class="banner_dropzone dropzone light-blue-button" id="banner_dropzone"></div>
+    <div id="banner_content">
+
+    </div>
+  </div>
+  <div class="clear"></div>
+
+  <div id="category_title">
+    <h2>Gallery Pictures</h2>
+    <div class="clear"></div>
+  </div>  
+  <div class="picture_dropzone dropzone" id="picture_dropzone"></div>
+  <ul id="dropzone_content" >
+    <% @gallery_pictures.each do |pic| %>
+      <li class="file-row ui-state-default dz-processing dz-image-preview dz-success" picture-id="<%=pic.id%>">
+        <!-- This is used as the file preview template -->
+        <div data-dz-remove class="delete" style="display: block"></div>
+        <!--<div class="set" style="display: block;">
+          <div class="set_as logo"><img src="<%= HtmlHelper.lbroot "/img/shop/logo_edit.png" %>><p>Logo</p></div>
+          <div class="set_as cover"><img src="<%= HtmlHelper.lbroot "/img/shop/banner_edit.png" %>><p>Cover</p></div>
+        </div>-->
+        <div>
+          <span class="preview"><img data-dz-thumbnail src="<%= pic.medium %>" /></span>
+        </div>
+        <div class="data">
+          <!--<p class="size" data-dz-size></p>-->
+          <p class="status_wait">Waiting for upload</p> 
+          <p class="status_success" style="opacity:0"></p>
+          <strong class="error text-danger" data-dz-errormessage></strong>
+          <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="progress-bar progress-bar-success" style="width:0%;" ></div>
+          </div>
+
+        </div>
+      </li>
+    <% end%>
+  </ul>
+  <div class="clear"></div>
+</div>
+
+<div class="table table-striped" class="files" style="display: none;">
+  <div id="logo_template" class="file-row ui-state-default" >
+    <!-- This is used as the file preview template -->
+    <div class="preview">
+      <p>Crop image:</p>
+      <span><img data-dz-thumbnail /></span>
+    </div>
+    <div class="buttons">
+      <div class="green-button select start">Validate</div>
+      <br>
+      <div class="red-button cancel" data-dz-remove>Cancel</div>
+    </div>
+  </div>
+</div>
+
+<div class="table table-striped" class="files" style="display: none;">
+  <div id="banner_template" class="file-row ui-state-default" >
+    <!-- This is used as the file preview template -->
+    <div class="preview">
+      <p>Crop image:</p>
+      <span><img data-dz-thumbnail /></span>
+    </div>
+    <div class="buttons">
+      <div class="green-button select start">Validate</div>
+      <br>
+      <div class="red-button cancel" data-dz-remove>Cancel</div>
+    </div>
+  </div>
+</div>
+
+<div class="table table-striped" class="files" style="display: none;">
+  <li id="dropzone_template" class="file-row ui-state-default" >
+    <!-- This is used as the file preview template -->
+    <div data-dz-remove class="delete"></div>
+    <!--<div class="set">
+      <div class="set_as logo"><img src="<%= HtmlHelper.lbroot "/img/shop/logo_edit.png" %>><p>Logo</p></div>
+      <div class="set_as cover"><img src="<%= HtmlHelper.lbroot "/img/shop/banner_edit.png" %>><p>Cover</p></div>
+    </div>-->
+    <div>
+      <span class="preview"><img data-dz-thumbnail /></span>
+    </div>
+    <div class="data">
+      <!--<p class="size" data-dz-size></p>-->
+      <p class="status_wait">Waiting for upload</p> 
+      <p class="status_success" style="opacity:0">Picture uploaded!</p>
+      <strong class="error text-danger" data-dz-errormessage></strong>
+      <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="progress-bar progress-bar-success" style="width:0%;" ></div>
+      </div>
+
+    </div>
+  </li>
+</div>

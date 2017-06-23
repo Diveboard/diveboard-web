@@ -1,0 +1,105 @@
+<%
+require 'yaml'
+computer_yml = YAML.load_file "#{Rails.root}/config/computer.yml"
+%>
+
+<script type="text/javascript">
+
+var current_menu = 1;
+
+$(document).ready(function () {
+	String.prototype.strip = function( exp ){ return this.replace(exp?exp:/\s/g,""); };
+
+	if(window.history.pushState) window.history.pushState("","","/about/import");
+	set_menu(<%=@menu%>);
+	//menu clicks
+
+	$("#menu_1").click(function(ev){ev.preventDefault(); set_menu(1); });
+	$("#menu_2").click(function(ev){ev.preventDefault(); set_menu(2); });
+	$("#menu_3").click(function(ev){ev.preventDefault(); set_menu(3); });
+	$("#menu_4").click(function(ev){ev.preventDefault(); set_menu(4); });
+	$("#menu_5").click(function(ev){ev.preventDefault(); set_menu(5); });
+});
+
+
+function set_menu(num){
+	var items = $(".settings_sidebar").find("li");
+	$(".active_item").removeClass("active_item");
+	$(items[num-1]).addClass("active_item");
+	for(var i=0; i<items.length; i++){
+		if ((i+1) != num) $(("#"+$(items[i]).text().split('\'').join('').split(' ').join(''))).hide();
+	}
+	$(("#"+$(items[num-1]).text().split('\'').join('').split(' ').join(''))).show();
+	current_menu = num;
+	
+}
+
+</script>
+
+
+<!-- The Sidebar starts here! -->
+<div id="sidebar" class='about_style'>
+	<div class="settings_sidebar">
+		<ul>
+			<li class="active_item" id="menu_1"><a href="#"><%= it("Dive Computers", scope: ['staticpages', 'import']) %></a></li>
+			<li><a href="#" id="menu_2"><%= it("Import files", scope: ['staticpages', 'import']) %></a></li>
+
+		</ul> 	
+	</div>
+</div>
+<!-- The Sidebar Ends Here -->
+
+
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" class='about_style' style="height:auto !important;">
+	
+	<!-- The about:crew Menu Begins here -->
+	<div id="DiveComputers">
+		<div class="main_content_header main_padded_top">
+			<span class="header_title"><%= it("Dive computers", scope: ['staticpages', 'import']) %></span>
+			<div  class="header_top_action"> </div>
+		</div>
+		<div class="main_about_box">
+      <%= render "staticpages/agent", :location => :about %>
+			<!--<div class="about_profile_new_box">
+				<span class="second_lvl_header"><%= it("How we do it?", scope: ['staticpages', 'import']) %></span><br/>
+				<p><%= it("We developed a computer plugin connecting to Jef Driesen's %{link:libdivecomputer} (huuuge kudos Jef!). We also reverse engineered a few more computer protocols (we need to take some time and integrate them in libdive's trunk). We ported the plugin to MAC, Windows and Linux.", scope: ['staticpages', 'import'], link: It.link("http://www.divesoftware.org/libdc/", target: "_blank")) %></p>
+			</div>
+      <div id=about_download>
+					<p><%= it("Download for %{b:Windows}:", scope: ['staticpages', 'import'], b: It.tag("b")) %> <a href="/plugin/latest/win/diveboard.zip">diveboard.zip</a></p>
+          <p><%= it("Download for %{b:Mac}:", scope: ['staticpages', 'import'], b: It.tag("b")) %> <a href="/plugin/latest/mac/diveboard.dmg">diveboard.dmg</a></p>
+          <p><%= it("Download for %{b:Linux - DEB package}:", scope: ['staticpages', 'import'], b: It.tag("b")) %> <a href="/plugin/latest/linux/diveboard.deb">32bits</a> - <a href="/plugin/latest/linux/diveboard-64.deb">64bits</a></p>
+          <p><%= it("Download for %{b:Linux - RPM package}:", scope: ['staticpages', 'import'], b: It.tag("b")) %> <a href="/plugin/latest/linux/diveboard.rpm">32bits</a> - <a href="/plugin/latest/linux/diveboard-64.rpm">64bits</a></p>
+          <p><%= it("Download for %{b:Linux - tar.gz package}:", scope: ['staticpages', 'import'], b: It.tag("b")) %> <a href="/plugin/latest/linux/diveboard.tgz">32bits</a> - <a href="/plugin/latest/linux/diveboard-64.tgz">64bits</a></p>
+      </div>-->
+      <hr style="margin-top: 20px;"/>
+			<div class="about_profile_new_box">
+				<span class="second_lvl_header"><%= it("Supported computers", scope: ['staticpages', 'import']) %></span><br/>
+				<p><ul>	
+				 <% computer_yml["Computers"].keys.sort.each { |key| %><li><%= key %></li><% } %>
+				</ul></p>
+			</div>
+		</div>
+	</div>
+	
+	<!-- The about:inception Menu Begins here -->
+	<div id='Importfiles' style="display:none;">
+		<div class="main_content_header main_padded_top">
+			<span class="header_title"><%= it("Import Files", scope: ['staticpages', 'import']) %></span>
+			<div  class="header_top_action"> </div>
+		</div>
+		<div class="main_about_box">
+			<div class="about_profile_new_box">
+				<span class="second_lvl_header"><%= it("Dive Logs", scope: ['staticpages', 'import']) %></span><br/>
+				<p><%= it("Dive logs can currently be imported through %{b:UDCF}, %{b:ZXL/ZXU}, %{b:ASD} and %{b:SDE} files.", scope: ['staticpages', 'import'], b: It.tag("b")) %></p><br/></br/>
+				<p><%= it("%{b:UDCF} stands for \"Universal Dive Computer Format\". UDCF was intended as an easy and portable way to exchange and use profile data with any program supporting UDCF. Hence it is possible to do decompression calculations using data from any commercially available dive computer (of course you may need a special converter and a suitable software for converting profile-data into UDCF).", scope: ['staticpages', 'import'], b: It.tag("b")) %>					
+				</p><br/>
+				<p><%= it("%{b:ZXL} files are also known as DL7. The DL7 (Dive Log 7) Standard was drafted after a DAN Workshop at Cozumel in 1997, to enhance the data exchange between various dive log applications, scientific data acquisition software (DAS) and applications that may be used by hyperbaric chambers and hospitals to record recompression treatment of decompression illness.", scope: ['staticpages', 'import'], b: It.tag("b")) %></p><br/>
+				<p><%= it("%{b:SDE} files are used by Suunto's dive manager. They are quite full featured as they include every detail that you can fill in your Suunto dive manager (spot details, notes...). This is the preferred way of importing dives already stored in your Suunto Dive Manager.", scope: ['staticpages', 'import'], b: It.tag("b")) %></p>
+				<p><%= it("%{b:ASD} files can be generated by Uwatec SmartTrak. We recommend to give it a try if you're using SmartTrak. They hold a lot of detail, but some of the data depends a lot on the dive computer you've been using and thus may not be understood by Diveboard importer.", scope: ['staticpages', 'import'], b: It.tag("b")) %></p>
+			</div>
+		</div>
+	</div>	
+</div>
+
+			<!-- The Main Content Area Ends Here -->

@@ -1,0 +1,12 @@
+    <tr class='ad_item_row'>
+      <td style='text-align: center'><$if (ad.ended_at) {$>Inactive<$} else {$>Active<$}$></td>
+      <td style='padding-top:0px'><div class='ad_item_preview'></div><div>Redirects to: <a href='<$=ad.redirect_url$>' target='_blank'><$=ad.redirect_url$></a></div></td>
+      <td style='text-align: center'><$=ad.print_count$><br/>prints</td>
+      <td style='text-align: center'><$=ad.click_count$><br/>clicks</td>
+      <td style='text-align: right'>
+        <$if (ad.modify) {$><button class='yellow_button ad_item_modify'>Modify</button><br/><$}$>
+        <$if (ad.hold) {$><button class='grey_button ad_item_hold'>Put on hold</button><$}$>
+        <$if (ad.reactivate) {$><button class='grey_button ad_item_reactivate'>Reactivate</button><$}$>
+        <$if (ad.del) {$><button class='grey_button ad_item_delete'>Delete</button><$}$>
+      </td>
+    </tr>

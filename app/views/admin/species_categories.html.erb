@@ -1,0 +1,37 @@
+<%= render :partial => 'admin_css'%>
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 6 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+	<h1>Species management</h1>
+	<h2>Viewing category : <%=params[:category]%></h2>
+	<ul>
+	<%parent = 0
+	  gramps = 0
+	%>
+	
+	<%@species.each do |s|%>
+	<%if parent != s.parent_id%>
+    <%parent = s.parent_id
+    begin eolp = Eolsname.find(parent) rescue eolp = nil end
+    %>
+  </ul>
+      <%if !eolp.nil? && eolp.parent_id != gramps
+        gramps = eolp.parent_id
+        %>
+  <h2>Family : <%=begin Eolsname.find(gramps).sname rescue "unavailable" end%> <a href ="/admin/species/s-<%=gramps%>">EDIT</a></h2>
+  <img src="<%=begin Eolsname.find(gramps).thumbnail_href rescue "" end%>" width=100/>
+      <%end%>
+  <h3>Genus: <%=begin eolp.sname rescue "unavailable" end%> <a href ="/admin/species/s-<%=parent%>">EDIT</a></h3>
+  <img src="<%=begin eolp.thumbnail_href rescue "" end%>" width=100/>
+  <ul>
+  <%end%>
+  <li><%=s.id%>, <%=s.sname%>, category: <%=s.category%>, <a href="/admin/species/s-<%=s.id%>">EDIT</a></li>
+  <%end%>
+	</ul>
+	<br/>
+	<b>
+	<%if @page >0%> <a class="button" href="/admin/species/<%=params[:category]%>?page=<%=@page-1%>"/>Previous</a><%end%> <%=@page+1%>/<%=(@species_count.to_f/1000.to_f).ceil%> <% if @page < (@species_count.to_f/1000.to_f).ceil%> <a href="/admin/species/<%=params[:category]%>?page=<%=@page+1%>" class="button"/>Next</a><%end%>
+	</b>
+</div>

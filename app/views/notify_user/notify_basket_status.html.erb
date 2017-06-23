@@ -1,0 +1,25 @@
+  <div class="main_info" align="left">
+    <p><a href='<%=@from_url%>'><img src="<%=@shop.user_proxy.picture_small%>" class="left" width=50/></a>
+      <%if @basket.status == 'confirmed' then%>
+        <%= it("Your order with %{link:%{shop}} has been confirmed. Get ready to dive!", scope: ['notify_user', 'notify_basket_status'], link: @basket.customer_fullpermalink, shop: @shop.name) %>
+      <%elsif @basket.status == 'hold' then%>
+        <%= it("Your order with %{shop} requires some more information from you and has been put on hold. Please %{link:check on Diveboard} to complete the transaction.", scope: ['notify_user', 'notify_basket_status'], shop: @shop.name, link: @basket.customer_fullpermalink) %>
+      <%elsif @basket.status == 'delivered' then%>
+        <%= it("Your order with %{shop} has been marked as delivered. Don't forget to %{link:leave a review} to tell how satisfied you were!", scope: ['notify_user', 'notify_basket_status'], shop: @shop.name, link: @shop.fullpermalink(:locale)) %>
+      <%elsif @basket.status == 'cancelled' then%>
+        <%= it("Your order with %{shop} could not be fulfilled. For more details, please %{link:check online}.", scope: ['notify_user', 'notify_basket_status'], shop: @shop.name, link: @basket.customer_fullpermalink) %>
+      <%else%>
+        <%= it("Your order with %{link:%{shop}} has changed status to : %{status}", scope: ['notify_user', 'notify_basket_status'], link: @basket.customer_fullpermalink, shop: @shop.name, status: config_translate(:basket_status, @basket.status)) %>
+      <%end%></p>
+
+    <%if @basket.note_from_shop then%><p style='margin: 15px 50px;'><%=@basket.note_from_shop%></p><%end%>
+
+    <p><center style='margin:20px'><a href="<%=@basket.customer_fullpermalink%>" class="yellow_button" style="margin: 25px 0px 15px 0px;"><%= it("View on Diveboard", scope: ['notify_user', 'notify_basket_status']) %></a></center></p>
+
+    <table class='basket_for_email'>
+      <tr><td>
+      <%= render :partial => 'basket/customer_view.html', :locals => {:baskets => {@basket.shop_id => @basket}, :interactive => false}%>
+      </td></tr>
+    </table>
+
+  </div>

@@ -1,0 +1,51 @@
+<div class="marketing_ads section" id="marketing_ads_edit">
+
+  <div id="category_title">
+    <h2><%= it("Advertisements", scope: ['shop_pages', 'shop_marketing_edit']) %></h2>
+    <div class="clear"></div>
+  </div>
+
+  <div class='widget_holder' data-widget_class='WidgetAdsEditor'>
+
+    <script>
+      var G_ad_pictures = <%= shop.user_proxy.ad_album.pictures.to_api(:private).to_json.html_safe rescue '[]' %>;
+    </script>
+    <div class="container">
+      <p><%= it("Your advertisements will appear on the %{link:explore page} near the location of your shop. New items or changes may take a few minutes before they appear on the explore pages.", scope: ['shop_pages', 'shop_marketing_edit'], link: It.link("/explore", target: "_blank")) %></p>
+      <p><%= it("The number of views and clicks on each ad are updated every 24hrs.", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+      <%unless @shop.allowed_ads.nil?%>
+      <p><% if (@shop.allowed_ads>1) %>
+        <%= it("You may have %{allowed_ads} ads active ads at the same time", scope: ['shop_pages', 'shop_marketing_edit'], allowed_ads: @shop.allowed_ads) %>
+        <% else %>
+        <%= it("You may have %{allowed_ads} ad active ads at the same time", scope: ['shop_pages', 'shop_marketing_edit'], allowed_ads: @shop.allowed_ads) %>
+        <%end%><%end%></p>
+      </div>
+      <table id='ad_list'></table>
+      <button class='yellow_button ad_item_create' style='margin: 20px 30px'><%= it("Create new ad", scope: ['shop_pages', 'shop_marketing_edit']) %></button>
+
+      <div id='dialog-edit-ad' title="<%= it("Edit ad content", scope: ['shop_pages', 'shop_marketing_edit']) %>" style="display:none;">
+        <p class="dialog-text-highlight"><%= it("Define the content of your ad. You must assign a (square) picture, some title (25 chars. max) and some text (90 chars. max).
+          If you enter a specific URL for the redirection, please make sure the URL you enter is valid : we don't check whether the page exists or not.", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+
+          <div class='edit_ad_container'>
+          </div>
+          <div class='edit_ad_upload_container'>
+            <div class="imageuploader">
+              <span class="third_lvl_header"><%= it("Upload New Image (2Mb max):", scope: ['shop_pages', 'shop_marketing_edit']) %></span>
+              <div class="select_file_btn"><%= it("Import a picture", scope: ['shop_pages', 'shop_marketing_edit']) %></div>
+            </div>
+            <div class="picture_table" style="display:none;">
+              <div class="third_lvl_header"><%= it("Select a thumbnail:", scope: ['shop_pages', 'shop_marketing_edit']) %></div>
+              <div class="picturepreview" style='display: inline-block'></div>
+              <button href="#" class="yellow_button image_confirm" style='margin: 0px 10px'><%= it("Confirm", scope: ['shop_pages', 'shop_marketing_edit']) %></button>
+              <button href="#" class="grey_button_v1 image_cancel" style='margin:10px;'><%= it("Cancel", scope: ['shop_pages', 'shop_marketing_edit']) %></button>
+            </div>
+            <div class="third_lvl_header"><%= it("Or select a previously uploaded image.", scope: ['shop_pages', 'shop_marketing_edit']) %></div>
+            <div class='edit_ad_pictures_container'>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>

@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://stage.diveboard.com/" />
+<title>Create new dive - suunto emu</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Create new dive - suunto emu</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>create_dive_2</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>spotsearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>wizard_menu</td>
+	<td></td>
+</tr>
+<!--Searching and selecting a spot-->
+<tr>
+	<td>waitForVisible</td>
+	<td>spotsearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>spotsearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>typeKeys</td>
+	<td>spotsearch</td>
+	<td>blu ho go</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>Blue Hole, Gozo, Mediterranean Sea, Malta</td>
+	<td></td>
+</tr>
+<tr>
+	<td>mouseOver</td>
+	<td>//html/body/ul/li/a[.='Blue Hole, Gozo, Mediterranean Sea, Malta']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//html/body/ul/li/a[.='Blue Hole, Gozo, Mediterranean Sea, Malta']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//div[@id='correct_submit_spot_data']/label</td>
+	<td>Search for another spot or correct data</td>
+</tr>
+<!--Importing a profile from Suunto simulator-->
+<tr>
+	<td>click</td>
+	<td>link=Profile Data</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>wizard_import_btn</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>wizard_plugin_detect_extract</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>wizard_computer_select1</td>
+	<td>label=Emulator 1 - 1 dive - Using Suunto driver</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>wizard_plugin_detect_extract</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>wizard_dive_profile</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>wizard-date</td>
+	<td>2010-07-31</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>wizard-time-in-hrs</td>
+	<td>14</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>wizard-time-in-mins</td>
+	<td>34</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>wizard-duration-mins</td>
+	<td>66</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>wizard-max-depth</td>
+	<td>28.7</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>wizard_delete_graph</td>
+	<td>Delete profile or Import from file/computer</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>wizard-surface-temperature</td>
+	<td>33</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>wizard-bottom-temperature</td>
+	<td>19</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>stop_time</td>
+	<td>3</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>addsafetystops</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='profile_table']/table[1]/tbody/tr[6]/td[2]/input[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//div[@id='profile_table']/table[1]/tbody/tr[6]/td[2]/input[1]</td>
+	<td>6</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//div[@id='profile_table']/table[1]/tbody/tr[6]/td[2]/input[2]</td>
+	<td>3</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>addsafetystops</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//div[@id='profile_table']/table[1]/tbody/tr[7]/td[2]/input[1]</td>
+	<td>7</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//div[@id='profile_table']/table[1]/tbody/tr[7]/td[2]/input[2]</td>
+	<td>4</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Del</td>
+	<td></td>
+</tr>
+<!--Adding a comment-->
+<tr>
+	<td>click</td>
+	<td>link=Dive Notes</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>wizard-dive-notes</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>wizard-dive-notes</td>
+	<td>a test note for this &quot;émérite&quot; dive at l'échelle, near the village of 廃村白岩- <br />&lt;a&gt; wonderful dive &lt;/a&gt;; with me &amp; everyone !</td>
+</tr>
+<!--Adding spotted fishes-->
+<tr>
+	<td>click</td>
+	<td>link=Fish Data</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='wizard_content']/ul/li/input</td>
+	<td></td>
+</tr>
+<tr>
+	<td>typeKeys</td>
+	<td>//div[@id='wizard_content']/ul/li/input</td>
+	<td>manta ray</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>Manta raya</td>
+	<td></td>
+</tr>
+<tr>
+	<td>mouseOver</td>
+	<td>//div[@id='wizard_content']/ul/li/input</td>
+	<td></td>
+</tr>
+<tr>
+	<td>mouseDown</td>
+	<td>//li[.='Manta raya']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='wizard_content']/ul/li/input</td>
+	<td></td>
+</tr>
+<tr>
+	<td>typeKeys</td>
+	<td>//div[@id='wizard_content']/ul/li/input</td>
+	<td>clown</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>Anemonefishes and Clownfishes</td>
+	<td></td>
+</tr>
+<tr>
+	<td>mouseOver</td>
+	<td>//li[.='Anemonefishes and Clownfishes']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>mouseDown</td>
+	<td>//li[.='Anemonefishes and Clownfishes']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='wizard_content']/ul/li/input</td>
+	<td></td>
+</tr>
+<tr>
+	<td>typeKeys</td>
+	<td>//div[@id='wizard_content']/ul/li/input</td>
+	<td>grouper</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>Gulf grouper</td>
+	<td></td>
+</tr>
+<tr>
+	<td>mouseOver</td>
+	<td>//li[.='Gulf grouper']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>mouseDown</td>
+	<td>//li[.='Gulf grouper']</td>
+	<td></td>
+</tr>
+<!--Removing the clown-->
+<tr>
+	<td>click</td>
+	<td>//div[@id='wizard_content']/ul/li[2]/span</td>
+	<td></td>
+</tr>
+<!--Adding pictures-->
+<tr>
+	<td>click</td>
+	<td>link=Pictures</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>wizard_pict_url</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>wizard_pict_url</td>
+	<td>https://picasaweb.google.com/103180330852418292309/GreatBarrierReef#5455929773960873746</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>wizard_add_pict_button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@id='galleria-wizard']/div/div[1]/div[1]/div[2]/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>wizard_pict_url</td>
+	<td>http://www.facebook.com/media/set/fbx/?set=a.103492666406310.10359.100002367311036#!/photo.php?fbid=103492703072973&amp;set=a.103492666406310.10359.100002367311036&amp;type=1&amp;theater</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>wizard_add_pict_button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//img[contains(@src,'http://a6.sphotos.ak.fbcdn.net/hphotos-ak-snc6/216041_103492703072973_100002367311036_33469_1227396_n.jpg')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>wizard_pict_url</td>
+	<td>http://www.flickr.com/photos/sbailliez/3434813100/</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>wizard_add_pict_button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//img[contains(@src,'http://farm4.static.flickr.com/3337/3434813100_6064127dab.jpg')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='galleria-wizard']/div/div[2]/div[2]/div/div[1]/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='galleria-wizard']/div/div[2]/div[2]/div/div/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//img[contains(@src,'http://a6.sphotos.ak.fbcdn.net/hphotos-ak-snc6/216041_103492703072973_100002367311036_33469_1227396_n.jpg')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//img[contains(@src,'http://farm4.static.flickr.com/3337/3434813100_6064127dab.jpg')]</td>
+	<td></td>
+</tr>
+<!--Saving the dive-->
+<tr>
+	<td>click</td>
+	<td>wizard_save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>mask</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@id='main_content_area']/div[1]/ul[1]/li[1]/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeEval</td>
+	<td>window.document.domain</td>
+	<td>host</td>
+</tr>
+<tr>
+	<td>storeLocation</td>
+	<td>url_new_dive</td>
+	<td></td>
+</tr>
+</tbody></table>
+</body>
+</html>

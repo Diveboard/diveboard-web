@@ -1,0 +1,77 @@
+<script type="text/javascript">
+$(document).ready(function() {
+	//load tooltips
+	$('#main_content_area .tooltiped-nodive').qtip({
+	    style: {
+      tip: { corner: true },
+      classes: "ui-tooltip-diveboard"
+    },
+    position: {
+      at: "bottom center",
+      my: "top right"
+    }
+  });
+	ga('set', 'contentGroup1', <%if @user && @user == @owner%>'logbook_own_nodive'<%else%>'logbook_other_nodive'<%end%>);
+	console.log("ContentGroup1 Page category --> " + <%if @user && @user == @owner%>'logbook_own_nodive'<%else%>'logbook_other_nodive'<%end%>);
+	ga('set', 'dimension1', <%if @user && @user == @owner%>'logbook_own_nodive'<%else%>'logbook_other_nodive'<%end%>);
+  	ga('send', 'pageview');
+});
+</script>
+
+<div class="main_content_header logbook_header">
+  <div class='head_picture'><img src='<%= @owner.picture_large%>' alt='user picture'></div>
+	<div class='head_title'><div class='head_title_valign'><ul>
+	  <li><h1 class='unstyle'><span class="header_title"><%=@owner.nickname%></span><br/><img src="/img/flags/<%=@owner.location%>.gif" alt="<%=@owner.location%>" style="top: 1px; left: 3px; display: inline-block; position: relative; margin-right: 5px;"/> <%= it("Logbook", scope: ['diveinfo', 'nodive']) %></h1></li>
+  </ul></div></div>
+</div>
+
+<div class="no_content rightbar">
+<% if session[:errormsg].nil?%>
+	<img src="/img/no_dives_label.jpg" alt="#" />
+	<% if !@user.nil? && @user.can_edit?(@owner)%>
+	<p><%= it("You don't have any complete dives yet to show.", scope: ['diveinfo', 'nodive']) %><br/>
+		<%if @owner.draft_dives.count > 0 %>
+			<%= it("Nevertheless you currently have%{b: %{count} dives saved as draft}.%{br}Select a dive, hit \"edit\" and mark the spot where you dived to finalize the logbook entry.", scope: ['diveinfo', 'nodive'], b: It.tag("b"), count: @owner.draft_dives.count, br: It.tag("br")) %>
+		<%else%>
+		<%= it("To create a dive, simply hit the \"Create a new dive button\". If you have a dive computer loaded with your profiles or if you have a profile collection exported as a UDCF file, upload them using the \"Bulk upload\" button.", scope: ['diveinfo', 'nodive']) %>
+		<%end%></p>
+	<%else%>
+	<p><%= it("This user does not have anything to share yet - come back later!", scope: ['diveinfo', 'nodive']) %></p>
+	<%end%>
+<%else%>
+	<h1>Dive unavailable</h1>
+	<%=session[:errormsg]%>
+<%session[:errormsg] = nil%>
+<%end%>
+<p style="text-transform: uppercase; font-weight: bold; margin-top: 10px; font-size: 12px;"><%= it("Bubbling on Diveboard:", scope: ['diveinfo', 'nodive']) %></p>
+	<div style="margin-top: 7px; left: -10px; position: relative;">
+		<div class="triple_box" style="padding-left:8px;">
+		    <strong><%= it("Latest Dives", scope: ['diveinfo', 'nodive']) %></strong>
+		    <ul class="small_pic_row" style="line-height: 5px;">
+		        <% Dive.first.recent_dives(8).each do |recentdive| %>
+		        <li>
+		            <a href="<%= recentdive.fullpermalink(:locale) %>">
+		            <img src="<%= recentdive.user.picture_small%>" width="44px" height="44px" alt="#" class="triple_box_content tooltiped-nodive" title='<%="#{recentdive.user.nickname} in #{recentdive.spot.location.name}"%>'/>
+		            </a>
+		        </li>
+		        <% end %>
+		    </ul>
+		</div>
+		<div style="width: 9px; height: 98px; float: left;"></div>
+		<div class="triple_box" style="padding-left:8px;">
+		    <strong><%= it("Latest pictures", scope: ['diveinfo', 'nodive']) %></strong>
+		    <ul class="small_pic_row" style="line-height: 5px;">
+		       	<% 
+		       	   pictures = Picture.unscoped.includes(:picture_album_pictures => :dive).where('dives.privacy=0').offset(0).limit(8).order('pictures.great_pic DESC, ADDDATE(pictures.created_at, interval pictures.id%7 day) DESC')
+
+		       	 pictures.each do |recentpicture| %>
+		        <li>
+		            <a href="<%= recentpicture.dive.fullpermalink(:locale)%>">
+		            <img src="<%= recentpicture.thumbnail%>" width="44px" height="44px" alt="#" class="triple_box_content  tooltiped-nodive" title='<%="#{recentpicture.dive.user.nickname} in #{recentpicture.dive.spot.country.cname}"%>'/>
+		            </a>
+		        </li>
+		        <% end %>
+		    </ul>
+		</div>
+	</div>
+</div>

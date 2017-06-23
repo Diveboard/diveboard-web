@@ -1,0 +1,105 @@
+<$
+
+
+var to_stars = function(mark){
+  var l = [];
+  var threshold = 0.8;
+  for (var i = 0; i < 10; i++){
+    var star = "half_star ";
+    if (i+threshold <= mark*2) star += "on ";
+    else star += "off ";
+    if (i%2 == 0) star += "left";
+    else star += "right";
+    l.push(star);
+  }
+  return(l);
+};
+
+for (var m in shop.marks){
+  if (shop.marks[m])
+    shop.marks[m].classes = to_stars(shop.marks[m].mark);
+}
+
+$>
+
+
+<div id='xp_p2_info_tab' class='xp_result_tab xp_result_list'>
+  <$if (shop["can_sell?"]) {$><a class='yellow_button book_now' href='<$=shop.fullpermalink$>#services' target="_blank"><$=I18n.t(["js","xp2_dive","Book now"])$></a><$}$>
+  <h3 style="margin-bottom: 0px;"><img src="/img/mini_boat.png" alt="#" width='15px' height='15px'><a href="/<$=shop.vanity_url$>" target="_blank" style='color:inherit'><$=shop.name$></a></h3>
+  <p style="margin-left: 22px;"><$=shop.category$></a></p>
+  <$=shop.about_html$>
+  <h3><img src="/img/dived_spots_icon.png" alt="#">Stats</h3>
+  <ul class='xp_panel_list' style="margin-bottom: 10px;">
+    <li>Dives logged with this dive shop: <$=shop.dive_count$></li>
+    <li class='voted_reviews'>
+      <div><img src="/img/icons/vote_positive.png">Positive reviews: <$=shop.positive_reviews$></div>
+      <div><img src="/img/icons/vote_negative.png">Negative reviews: <$=shop.negative_reviews$></div>
+    </li>
+    <li>
+      <$ if (shop.marks) {$>
+        <table class="review_marks review_marks_summary">
+          <$ if (shop.marks.mark_orga) {$>
+            <tr>
+              <td>Organization</td>
+              <td class="col2"><span class='review_stars'><$ for (var k in shop.marks.mark_orga.classes) { c=shop.marks.mark_friend.classes[k];$><div class='<$=c$>' ></div><$}$></span></td>
+              <td class="col3"><$= shop.marks.mark_orga.count$> reviews</td>
+            </tr>
+          <$}$>
+          <$ if (shop.marks.mark_friend) {$>
+            <tr>
+              <td>Friendliness</td>
+              <td class="col2"><span class='review_stars'><$ for (var k in shop.marks.mark_friend.classes) { c=shop.marks.mark_friend.classes[k];$><div class='<$=c$>'></div><$}$></span></td>
+              <td class="col3"><$= shop.marks.mark_friend.count$> reviews</td>
+            </tr>
+          <$}$>
+          <$ if (shop.marks.mark_secu) {$>
+            <tr>
+              <td>Security</td>
+              <td class="col2"><span class='review_stars'><$ for (var k in shop.marks.mark_secu.classes) { c=shop.marks.mark_friend.classes[k];$><div class='<$=c$>'></div><$}$></span></td>
+              <td class="col3"><$= shop.marks.mark_secu.count$> reviews</td>
+            </tr>
+          <$}$>
+          <$ if (shop.marks.mark_boat) {$>
+            <tr>
+              <td>Ease of access to water</td>
+              <td class="col2"><span class='review_stars'><$ for (var k in shop.marks.mark_boat.classes) { c=shop.marks.mark_friend.classes[k];$><div class='<$=c$>'></div><$}$></span></td>
+              <td class="col3"><$= shop.marks.mark_boat.count$> reviews</td>
+            </tr>
+          <$}$>
+          <$ if (shop.marks.mark_rent) {$>
+            <tr>
+              <td>Equipment rental</td>
+              <td class="col2"><span class='review_stars'><$ for (var k in shop.marks.mark_rent.classes) { c=shop.marks.mark_friend.classes[k];$><div class='<$=c$>'></div><$}$></span></td>
+              <td class="col3"><$= shop.marks.mark_rent.count$> reviews</td>
+            </tr>
+          <$}$>
+         </table>
+      <$}$>
+    </li>
+    <li style="text-align:right;padding: 10px 20px 0px 0px;"><a href="<$=shop.permalink$>" target="_blank">See full profile &raquo;</a></li>
+  </ul>
+</div>
+
+
+<div id='xp_p2_dives_tab' class='xp_result_tab xp_result_list'>
+  <ul class='xp_panel_list'>
+  <$ if (!shop.dives) {$>
+    <li>No dives have been recorded with this dive shop</li>
+  <$}$>
+  <$for (var i in shop.dives) { var dive = shop.dives[i];$>
+    <li class='xp_panel_list_item xp_p2_dive_item' data-xp_data='{"dive_id":<$=dive.id$>,"spot_id":<$=dive.spot_id$>}'>
+      <$ if (dive.featured_picture_thumbnail) {$><div class='xp_pli_img'><img src='<$= dive.featured_picture_thumbnail$>' /></div>
+      <$} else {$><div class='xp_pli_img'><img src='/<$=dive.user.vanity_url$>/<$=dive.id$>/profile.png?g=xxsmall_blue' /></div><$}$>
+      <div class='xp_pli_txt'>
+        <h4 class='xp_pli_head'><$= dive.date$> - <$= dive.user.nickname$></h4>
+        <div class='xp_pli_content'>
+          <p><$=dive.duration$> min - <$Math.round(dive.maxdepth)$> m</p>
+          <p><a href='<$=dive.permalink$>' target='_blank'>View in <$=dive.user.nickname$>'s logbook</a></p>
+        <p><$= dive.notes$></p>
+        </div>
+      </div>
+      <div class='xp_pli_arrow'><span class="symbol">&gt;</span></div>
+    </li>
+  <$}$>
+  </ul>
+</div>

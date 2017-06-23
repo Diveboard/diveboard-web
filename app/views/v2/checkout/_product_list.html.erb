@@ -1,0 +1,67 @@
+<%= content_for :stylesheets do%>
+  <%= stylesheet_link_tag 'shop' %>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+<%end%>
+<% @checkout_baskets.each do |basket| 
+  if basket.nb_items != 0 %>
+  <div class="checkout-view">
+    <div class="shop-basket" data-shop-id="<%= basket.shop_id %>" data-shop="<%=basket.shop.to_api(:technical, :caller => @user).to_json%>">
+      <% basket.basket_items.each do |b| %>
+        <div id="item-<%= b.id %>" class="item" data-product-id="<%= b.good_to_sell_id %>" data-basket-item-id="<%= b.id %>" data-basket-item="<%= {id: b.good_to_sell_id, quantity: b.quantity, details: b.details}.to_json %>" data-product-price="<%= b.price_after_tax %>" data-product-name="<%= b.title %>" basket-id="<%=basket.id %>">      
+           <div class="product">
+            <p class="primary shop_title"><%= b.shop.name %></p>
+            <p class="shop_product"><%= b.title %></p>
+          </div>
+          <div class="details">
+            <a href=""><%= it("See details", scope: ['templates', 'template_product_list']) %></a>
+          </div>
+          <div>
+            <input type="number" name="howmuch" min="1" value="<%= b.quantity %>">
+          </div>
+          <div class="price">
+            <div class="embedded">
+              <span class="one"><%= b.price_after_tax.format %></span>
+              <span> -> </span>
+              <span class="total"><%= b.line_price_after_tax.format %></span>
+            </div>
+          </div>
+          <div class="delete_div">
+            <span></span>
+            <img class="delete" src="<%= HtmlHelper.lbroot "/img/global/icon_corbeille_panier.svg" %>">
+          </div>
+        </div>
+      <% end %>
+              <div class="total-basket">
+          <span>Total</span>
+          <span id = '<%= basket.id %>' class="price"><%= if basket.total != 0 then  basket.total.format  end%><%= basket.total.currency_as_string %></span>
+        </div>
+        <div class="valid-button">
+          <% @supported_currencies = Money::Currency.supported %>
+          <% if basket.shop.paypal_id && @supported_currencies.map {|m| m[:iso_code]}.include?(basket.shop.currency)%>
+            <div class="red-button confirm-payement" data-basket-id="<%= basket.id %>">
+              <%= it("Confirm payement", scope: ['templates', 'template_product_list']) %>
+            </div>
+          <% else %>
+            <div class="red-button inquire-shop" data-user-id= <%= @user.id %> data-shop-id= <%=basket.shop.id %> data-basket-id="<%= basket.id %>">
+              <%= it("Send request", scope: ['templates', 'template_product_list']) %>
+            </div>
+            <div id='modal_<%= basket.id %>' class="modal" >
+              <div class="modal_content">
+                <a href="javascript:void(0)" class="close" modal_trigger="close"></a>
+                <div class="container">
+                  <div class="title"><%= it("Shop Has Been Contacted For You", scope: ['templates', 'template_product_list']) %></div>
+                  <div class="modal_body" style="padding:10px">
+                    <div class="highlight">
+                      <%= it("This shop doesn't provide us billing information. We've send them an email with your contact and your basket.", scope: ['templates', 'template_product_list']) %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+    </div>
+  </div>
+  <% end %>
+<% end %>
+

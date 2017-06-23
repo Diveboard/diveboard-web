@@ -1,0 +1,79 @@
+<%= render :partial => 'admin_css'%>
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 'orders' } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+<h1>Pending Orders</h1>
+
+<%
+  warning_baskets = []
+  Basket.where(:paypal_attention => true).order('status, created_at ASC').each do |basket|
+    warning_baskets.push({:basket => basket, :warning => "Sync issue with paypal"})
+  end
+  Basket.where(:status => 'paid').where("DATE_SUB(NOW(), interval 5 day) > created_at").order('created_at ASC').each do |basket|
+    warning_baskets.push({:basket => basket, :warning => "No response from shop in 5 days"})
+  end
+
+  ###TODO: baskets that are confirmed but should be "delivered"
+%>
+
+
+<table>
+
+  <!--  Warning baskets -->
+  <%warning_baskets.each do |item|
+    basket = item[:basket]
+    message = item[:warning]%>
+  <tr style='background-color: #FAA'>
+    <td><%=basket.id%></td>
+    <td><%=basket.created_at%></td>
+    <td><a href='<%=basket.shop.fullpermalink(:locale)%>' target='_blank'><%=basket.shop.name%></a></td>
+    <td><a href='<%=basket.user.fullpermalink(:locale)%>' target='_blank'><%=basket.user.nickname%></a></td>
+    <td><%=basket.status%></td>
+    <td><%=message%> <%if basket.paypal_issue%>(<%=basket.paypal_issue%>)<%end%></td>
+    <td><a href='/admin/orders/<%=basket.id%>' class='grey_button_small'>View detail</a></td>
+  </tr>
+  <%end%>
+
+  <!-- Opened baskets -->
+  <%Basket.where(:status => 'paid').order('created_at ASC').each do |basket|%>
+  <tr>
+    <td><%=basket.id%></td>
+    <td><%=basket.created_at%></td>
+    <td><a href='<%=basket.shop.fullpermalink(:locale)%>' target='_blank'><%=basket.shop.name%></a></td>
+    <td><a href='<%=basket.user.fullpermalink(:locale)%>' target='_blank'><%=basket.user.nickname%></a></td>
+    <td><%=basket.status%></td>
+    <td></td>
+    <td><a href='/admin/orders/<%=basket.id%>' class='grey_button_small'>View detail</a></td>
+  </tr>
+  <%end%>
+
+</table>
+
+
+<h1>Stats</h1>
+
+<p>Total baskets delivered: <%=Basket.where(:status => 'delivered').count%></p>
+<p>Total amount delivered: <%=Basket.where(:status => 'delivered').map(&:total).sum.exchange_to('EUR').format rescue $!.message%></p>
+<p>Total baskets cancelled: <%=Basket.where(:status => 'cancelled').count%></p>
+
+
+<h1>All baskets</h1>
+<table>
+  <%Basket.all.each do |basket|%>
+  <tr>
+    <td><%=basket.id%></td>
+    <td><%=basket.created_at%></td>
+    <td><a href='<%=basket.shop.fullpermalink(:locale)%>' target='_blank'><%=basket.shop.name%></a></td>
+    <td><a href='<%=basket.user.fullpermalink(:locale)%>' target='_blank'><%=basket.user.nickname%></a></td>
+    <td><%=basket.status%></td>
+    <td><%if basket.paypal_attention%>ATTENTION REQUIRED<%end%> <%if basket.paypal_issue%>(<%=basket.paypal_issue%>)<%end%></td>
+    <td><a href='/admin/orders/<%=basket.id%>' class='grey_button_small'>View detail</a></td>
+  </tr>
+  <%end%>
+</table>
+
+
+</div>

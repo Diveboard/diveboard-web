@@ -1,0 +1,67 @@
+<div class="medium_dive_frame">
+	<div class="medium_dive_frame_top_arrow"></div>	
+	<div class="medium_dive_frame_content">
+	<div class="medium_dive_frame_thumb"><a href="<%=dive.fullpermalink(:locale)%>"><img src="<%=dive.thumbnail_image_url%>" alt="#"/></a></div>
+	<div class="medium_dive_frame_data">
+		<div class=result_dive_title><a href="<%=dive.fullpermalink(:locale)%>"><%=truncate(dive_title, :length=>145)%></a><span class=right><%="#{dive.maxdepth.round}m #{dive.duration.round}mins"%></span></div>
+		<p><%if dive.user.share_details_notes && !dive.notes.nil? && !dive.notes.empty?then %><%=truncate(dive.notes, :length => 385)%><%else%><i><%= it("This dive has no comment", scope: ['diveinfo', 'dive_medium_info']) %></i><%end%></p>
+    <% if !dive.diveshop.nil? && (!dive.diveshop["name"].blank? || !dive.guide.blank?)%>
+    <p class='medium_people_list'><img src="/img/mini_boat.png" align="baseline" width="10px" height='10px' style="margin-right:5px;"/>
+
+<!-- TODO: check conditions -->
+	<%if !dive.guide.nil? && !dive.guide.empty?%>
+		<%if !dive.diveshop["home"].blank?%>
+			<%= it("Dived with %{guide} from %{link:%{shop}}", scope: ['diveinfo', 'dive_medium_info'], guide: dive.guide.titleize, link: It.link(ensure_url(dive.diveshop["home"]), target: "_blank"), shop: dive.diveshop["home"].titleize) %>
+		<%elsif !dive.diveshop['url'].blank?%>
+			<%= it("Dived with %{guide} from %{link:%{shop}}", scope: ['diveinfo', 'dive_medium_info'], guide: dive.guide.titleize, link: It.link(ensure_url(dive.diveshop["url"]), target: "_blank"), shop: dive.diveshop["url"].titleize) %>
+		<%else%>
+			<%= it("Dived with %{guide} from %{shop}", scope: ['diveinfo', 'dive_medium_info'], guide: dive.guide.titleize, shop: dive.diveshop["name"]) %>
+		<%end%>
+	<%else%>
+		<%if !dive.diveshop["home"].blank?%>
+			<%= it("Dived with %{link:%{shop}}", scope: ['diveinfo', 'dive_medium_info'], link: It.link(ensure_url(dive.diveshop["home"]), target: "_blank"), shop: dive.diveshop["home"].titleize) %>
+		<%elsif !dive.diveshop['url'].blank?%>
+			<%= it("Dived with %{link:%{shop}}", scope: ['diveinfo', 'dive_medium_info'], link: It.link(ensure_url(dive.diveshop["url"]), target: "_blank"), shop: dive.diveshop["url"].titleize) %>
+		<%else%>
+			<%= it("Dived with %{shop}", scope: ['diveinfo', 'dive_medium_info'], shop: dive.diveshop["name"]) %>
+		<%end%>
+	<%end%>
+
+<!--
+    Dived with <%if !dive.guide.nil? && !dive.guide.empty?%><%=dive.guide.titleize%> from <%end%><%if !dive.diveshop["home"].blank? %><a href="<%=ensure_url dive.diveshop["home"]%>" target="_blank"><%=dive.diveshop["home"].titleize%></a><%elsif !dive.diveshop['url'].blank? %><a href="<%=ensure_url dive.diveshop["url"]%>" target="_blank"><%=dive.diveshop["url"].titleize%></a><%else%><%=dive.diveshop["name"]%><%end%>
+-->
+    </p>
+    <%end%>
+
+		<% dive_species = dive.species
+    if !dive_species.empty?%>
+		<p class="medium_species_list medium_species_list_long"><strong><%= it("Species spotted:", scope: ['diveinfo', 'dive_medium_info']) %> </strong>
+		<% charcount = 0
+			charmax = 140
+			truncated = false
+      max_species_index = dive_species.length-1%>
+		<%dive_species.each_with_index do |fish, idx|%>
+			<%if !truncated || (charcount+5) <= charmax
+			  fishname = fish[:preferred_name] || fish[:sname]
+			  %>
+				<a href="<%=fish[:link]%>" target="_blank" class="tooltiped" title='<%begin
+				if fish[:picture].to_i >0 %><img src="<%=fish[:thumbnail_href]%>"/><%end
+				rescue
+				end%><b><%=fish[:sname]%></b><br/><em>Data provided by <a href="http://www.eol.org" target="_blank">EOL.org</em>'><%= if (charcount + fishname.length)> charmax then
+						count = charcount
+						charcount = charmax
+						truncated = true
+						truncate(fishname, :length => (charmax-count)).titleize
+					else
+						charcount +=(fishname.length)
+						fishname.titleize
+					end %></a><%if idx < max_species_index && charcount != charmax && !truncated%>, <%end%>
+					<% if idx < max_species_index && (charcount+5) >= charmax && count=0 && !truncated%>...<%end%>
+					<% break if idx < max_species_index && (charcount+5) >= charmax && count=0 && !truncated%>
+			    <%end%>
+			<%end%>
+		</p>
+		<%end%>
+	</div>
+	</div>
+</div>

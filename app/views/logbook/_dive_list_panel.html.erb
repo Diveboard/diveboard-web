@@ -1,0 +1,47 @@
+  <ul>
+    <% current_trip = nil
+       dives_shown = false
+       picture_counts = {}
+       localized_countries = {}
+       Rails.logger.debug "Start of rendering dive list for logbook"
+       Media.select_all_sanitized('select dives.id id, count(picture_id) c from dives, picture_album_pictures pa where dives.album_id = pa.picture_album_id and user_id = :user_id group by dives.id', user_id: @owner.id).each { |r| picture_counts[r['id']] = r['c'] }
+       is_owner = !@user.nil? && @user.can_edit?(@owner)
+    %>
+    <% Dive.where(user_id: @owner.id).joins("LEFT JOIN trips ON dives.trip_id = trips.id").joins("LEFT JOIN spots ON dives.spot_id = spots.id and spots.id <> 1").joins("LEFT JOIN locations ON spots.location_id = locations.id and locations.id <> 1").joins("LEFT JOIN countries ON spots.country_id = countries.id and countries.id <> 1").pluck_all(id: 'dives.id', privacy: 'dives.privacy', time_in: 'dives.time_in', trip_id: 'dives.trip_id', trip_name: 'trips.name', spot_name: 'spots.name', location_name: 'locations.name', country_code: 'countries.ccode', country_name: 'countries.cname').each_with_index do |dive, idx| %>
+      <%if dive.privacy == 0 or is_owner then %>
+        <%localized_countries[dive.country_code] ||= Media.select_value_sanitized("select a.name from geonames_countries c, geonames_alternate_names a where c.ISO=:iso and a.geoname_id = c.geonames_id and a.language=:lang order by preferred DESC", iso: dive.country_code.upcase, lang: I18n.locale) || dive.country_name unless dive.country_code.nil?%>
+        <% if !compare_tripname(dive.trip_name, current_trip) && dives_shown then %>
+          <li class='trip_spacer'>&nbsp;</li>
+        <%end%>
+        <% if !compare_tripname(dive.trip_name, current_trip) && !dive.trip_name.blank? then %>
+          <li class='trip_name'><div class='symbol folding_icon' data-trip-class='.trip_<%=dive.trip_id%>'>[</div> <a href='<%=Trip.find(dive.trip_id).fullpermalink(:locale)%>' style='color: inherit; display: inline-block;'><h2 class='unstyle'><%=dive.trip_name.upcase%></h2></a></li>
+        <%end%>
+        <%current_trip = dive.trip_name%>
+             <li class='dive_item <%="trip_#{dive.trip_id}" unless dive.trip_id.nil?%> <%="scroll_active_item" if @divenumber == dive.id%>' id="dive<%=dive.id%>">
+      <table><tr>
+      <td class="dive_bullet_column">
+        <% if dive.privacy == 1 %>
+        <div class="dive_bullet_private"></div>
+        <%else%>
+        <div class="dive_bullet"></div>
+        <%end%>
+      </td>
+      <td class="dive_content_column">
+        <a href="<%=@owner.fullpermalink(:locale)%>/D<%=Mp.shake dive.id%>" >
+          <h3 class='unstyle'>
+            <%if !picture_counts[dive.id].nil? && picture_counts[dive.id] >0 then %>
+            <span class="symbol" style="float: right;">I</span>
+            <%end%>
+            <%= truncate("#{dive.time_in.to_date} #{localized_countries[dive.country_code]} #{dive.location_name.titleize unless dive.location_name.nil?}", :length=>29)%>
+            <br/>
+            <span><%= truncate(dive.spot_name.titleize,:length => 29) unless dive.spot_name.nil? %></span>
+          </h3>&nbsp;
+        </a>
+      </td>
+      <td class="dive_selected_pointer_column" valign="top"><div class="dive_selected_pointer"></div></td>
+      </tr></table>
+           </li>
+           <% dives_shown = true %>
+    <%end%>
+  <% end %>
+</ul>

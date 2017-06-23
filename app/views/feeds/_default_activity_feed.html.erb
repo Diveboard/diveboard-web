@@ -1,0 +1,54 @@
+<% content_for :css do %>
+<style>
+#container_out {right: 215px;}
+</style>
+<%end%>
+
+<%
+force_refresh ||= false
+feed = nil
+%>
+
+<%
+html = Rails.cache.fetch "views/#{I18n.locale}+user_default_feed", :expires_in => 30.minutes, :race_condition_ttl => 5.minutes, :force => (force_refresh||cookies[:header_stays_top]) do
+  fragment = nil
+  pos = @output_buffer.length
+  %>
+  <div id=activity_feed>
+
+    <div class='feed_head'>
+      <div><%= it("What's up on Diveboard", scope: ['feeds', 'activity_feed']) %></div>
+    </div>
+
+    <ul class='feed_content'>
+      <% feed ||= ActivityFeed::for_default_user.to_ary
+      feed.each do |activity_list| next if activity_list.empty?%>
+        <% if activity_list.first.tag == 'add_dive' && activity_list.count == 1 then %>
+          <%= render :partial => 'feeds/activity_single_add_dive', :locals => {:activity => activity_list.first, :count => activity_list.count} %>
+        <% elsif activity_list.first.tag == 'add_dive' && activity_list.count > 1 then %>
+          <%= render :partial => 'feeds/activity_multiple_add_dive', :locals => {:activity => activity_list.first, :activities => activity_list, :count => activity_list.count} %>
+        <% elsif activity_list.first.tag == 'add_picture' && activity_list.count == 1 then %>
+          <%= render :partial => 'feeds/activity_single_add_picture', :locals => {:activity => activity_list.first, :count => activity_list.count} %>
+        <% elsif activity_list.first.tag == 'add_picture' && activity_list.count > 1 then %>
+          <%= render :partial => 'feeds/activity_multiple_add_picture', :locals => {:activity => activity_list.first, :activities => activity_list, :count => activity_list.count} %>
+        <% else%>
+          <!--<li class='feed_item'><div>
+          <%=activity_list.first.user.nickname%> did <%=activity_list.count%> <%=activity_list.first.tag%> at <%=activity_list.first.created_at%>
+          </div></li>-->
+        <%end%>
+      <%end%>
+    </ul>
+  </div>
+  <%
+  if @output_buffer.html_safe?
+    safe_output_buffer = @output_buffer.to_str
+    fragment = safe_output_buffer.slice!(pos..-1)
+    self.output_buffer = @output_buffer.class.new(safe_output_buffer)
+  else
+    fragment = @output_buffer.slice!(pos..-1)
+  end
+  fragment
+end
+
+concat html.html_safe
+%>

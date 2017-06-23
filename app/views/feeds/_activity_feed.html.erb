@@ -1,0 +1,280 @@
+<% content_for :css do %>
+<style>
+#container_out {right: 215px;}
+</style>
+<%end%>
+
+<div id='activity_feed'>
+
+
+  <% notifications = @user && @user.notifications.reject do |n| !n.should_notify? end rescue []
+  if @user && notifications.length > 0 then %>
+    <div class='notif_head feed_head'>
+      <div>Notifications</div>
+    </div>
+
+    <ul class='notif_content feed_content'>
+      <%notifications.each do |notif|%>
+        <%= begin
+           render :partial => "feeds/notif_#{notif.kind}", :locals => {:notification => notif}
+        rescue
+          Rails.logger.error $!.message
+          Rails.logger.debug $!.backtrace.join("\n")
+          nil
+        end %>
+      <%end%>
+    </ul>
+  <%end%>
+
+  <div class='feed_head'>
+    <div><%= it("What's up on Diveboard", scope: ['feeds', 'activity_feed']) %></div>
+    <div class='feed_tool_config symbol'>S</div>
+  </div>
+
+  <%
+  # Starting cache of activity_feed
+  begin
+    cache_entry = Rails.cache.send(:read_entry,"views/#{I18n.locale} user_#{user.id}_feed",{})
+    if cache_entry && (cookies[:header_stays_top] || Time.now - 15.minutes > Time.at(cache_entry.created_at)) then
+      ActionController::Base.new.expire_fragment "#{I18n.locale} user_#{user.id}_feed"
+    end
+  rescue
+    Rails.logger.warn $!.message
+  end
+  %>
+
+  <% no_delay ||= false
+  if no_delay || cookies[:header_stays_top] || !Rails.cache.send(:read_entry,"views/#{I18n.locale} user_#{user.id}_feed",{}).nil? then
+    cache "#{I18n.locale} user_#{user.id}_feed" do %>
+    <!-- using a cached version of the activity feed -->
+    <ul class='feed_content'>
+      <% user.activity_feed.each do |activity_list| next if activity_list.empty?%>
+        <% if activity_list.first.tag == 'add_dive' && activity_list.count == 1 then %>
+          <%= render :partial => 'feeds/activity_single_add_dive', :locals => {:activity => activity_list.first, :count => activity_list.count} %>
+        <% elsif activity_list.first.tag == 'add_dive' && activity_list.count > 1 then %>
+          <%= render :partial => 'feeds/activity_multiple_add_dive', :locals => {:activity => activity_list.first, :activities => activity_list, :count => activity_list.count} %>
+        <% elsif activity_list.first.tag == 'add_picture' && activity_list.count == 1 then %>
+          <%= render :partial => 'feeds/activity_single_add_picture', :locals => {:activity => activity_list.first, :count => activity_list.count} %>
+        <% elsif activity_list.first.tag == 'add_picture' && activity_list.count > 1 then %>
+          <%= render :partial => 'feeds/activity_multiple_add_picture', :locals => {:activity => activity_list.first, :activities => activity_list, :count => activity_list.count} %>
+        <% else%>
+          <!--<li class='feed_item'><div>
+          <%=activity_list.first.user.nickname%> did <%=activity_list.count%> <%=activity_list.first.tag%> at <%=activity_list.first.created_at%>
+          </div></li>-->
+        <%end%>
+      <%end%>
+    </ul>
+    <%end
+  else%>
+
+  <!-- loading the activity feed with AJAX -->
+  <div class='feed_content' style='display: table; width:100%; height: 100%;'><div style='display: table-cell;text-align:center;vertical-align: middle;'><img src='/img/transparent_loader_3.gif' style='opacity: 0.4;'/></div></div>
+  <script>
+  $(function(){
+    $.get("/<%=user.vanity_url%>/feed", function(data) {
+     $("#activity_feed").replaceWith(data);
+     resize_activity_feed();
+    });
+  });
+  </script>
+  <%end%>
+
+
+  <%
+  # Starting cache of activity_feed_config
+  begin
+    cache_entry = Rails.cache.send(:read_entry,"views/#{I18n.locale} user_#{user.id}_feed_config",{})
+    if cache_entry && (cookies[:header_stays_top] || Time.now - 3.days > Time.at(cache_entry.created_at)) then
+      ActionController::Base.new.expire_fragment "#{I18n.locale} user_#{user.id}_feed_config"
+    end
+  rescue
+    Rails.logger.warn $!.message
+  end
+  %>
+
+
+  <%cache "#{I18n.locale} user_#{user.id}_feed_config" do %>
+  <div class='feed_config rabbit white_follow' style='display: none;'>
+    <p class='expl_text'><%= it("Select the elements you would like to follow on Diveboard:", scope: ['feeds', 'activity_feed']) %></p>
+
+    <h4><%= it("EVERYTHING", scope: ['feeds', 'activity_feed']) %></h4>
+    <ul>
+    <li>
+      <span class='feed_follow_title'><%= it("Include everything that happens on diveboard", scope: ['feeds', 'activity_feed']) %></span>
+      <div class='feed_config_follow'><%= render :partial => 'feeds/follow_button', :locals => {:what => nil, :id => nil, :name => 'anything', :does_follow => user.follow_all?} %></div>
+    </li>
+    </ul>
+    <% follow = user.following_includes %>
+
+    <% list = follow.reject {|f| f.class.to_s != 'Shop' }
+    suggest = user.following_suggest('shop_id')
+    if list.count > 0 || suggest.count > 0 then %>
+      <h4><%= it("DIVE SHOPS", scope: ['feeds', 'activity_feed']) %></h4>
+      <ul>
+        <%list.each do |shop| %>
+          <% next if shop.name.blank? %>
+          <li>
+            <span class='feed_follow_title'><%=shop.name%></span>
+            <div class='feed_config_follow'><%= render :partial => 'feeds/follow_button', :locals => {:what => 'shop_id', :id => shop.id, :name => shop.name, :does_follow => true} %></div>
+          </li>
+        <%end%>
+        <%suggest.each do |shop| %>
+          <% next if shop.name.blank? %>
+          <li>
+            <span class='feed_follow_title'><%=shop.name%></span>
+            <div class='feed_config_follow'><%= render :partial => 'feeds/follow_button', :locals => {:what => 'shop_id', :id => shop.id, :name => shop.name, :does_follow => false} %></div>
+          </li>
+        <%end%>
+      </ul>
+    <%end%>
+
+    <% list = follow.reject {|f| f.class.to_s != 'User' }
+    suggest = user.following_suggest('user_id')
+    if list.count > 0 || suggest.count > 0 then %>
+      <h4><%= it("DIVERS", scope: ['feeds', 'activity_feed']) %></h4>
+      <ul>
+        <%list.each do |diver| %>
+          <% next if diver.nickname.blank? %>
+          <li>
+            <span class='feed_follow_title'><%=diver.nickname%></span>
+            <div class='feed_config_follow'><%= render :partial => 'feeds/follow_button', :locals => {:what => 'user_id', :id => diver.id, :name => diver.nickname, :does_follow => true} %></div>
+          </li>
+        <%end%>
+        <%suggest.each do |user| %>
+          <% next if diver.nickname.blank? %>
+          <li>
+            <span class='feed_follow_title'><%=diver.nickname%></span>
+            <div class='feed_config_follow'><%= render :partial => 'feeds/follow_button', :locals => {:what => 'user_id', :id => user.id, :name => user.nickname, :does_follow => false} %></div>
+          </li>
+        <%end%>
+      </ul>
+    <%end%>
+
+    <% list = follow.reject {|f| f.class.to_s != 'Country' }
+    suggest = user.following_suggest('country_id')
+    if list.count > 0 || suggest.count > 0 then %>
+      <h4><%= it("COUNTRIES", scope: ['feeds', 'activity_feed']) %></h4>
+      <ul>
+        <%list.each do |country| %>
+          <% next if country.name.blank? %>
+          <li>
+            <span class='feed_follow_title'><%=country.name%></span>
+            <div class='feed_config_follow'><%= render :partial => 'feeds/follow_button', :locals => {:what => 'country_id', :id => country.id, :name => country.name, :does_follow => true} %></div>
+          </li>
+        <%end%>
+        <%suggest.each do |country| %>
+          <% next if country.name.blank? %>
+          <li>
+            <span class='feed_follow_title'><%=country.name%></span>
+            <div class='feed_config_follow'><%= render :partial => 'feeds/follow_button', :locals => {:what => 'country_id', :id => country.id, :name => country.name, :does_follow => false} %></div>
+          </li>
+        <%end%>
+      </ul>
+    <%end%>
+
+    <% list = follow.reject {|f| f.class.to_s != 'Location' }
+    suggest = user.following_suggest('location_id')
+    if list.count > 0 || suggest.count > 0 then %>
+      <h4><%= it("LOCATIONS", scope: ['feeds', 'activity_feed']) %></h4>
+      <ul>
+        <%list.each do |location| %>
+          <% next if location.name.blank? %>
+          <li>
+            <span class='feed_follow_title'><%=location.name%></span>
+            <div class='feed_config_follow'><%= render :partial => 'feeds/follow_button', :locals => {:what => 'location_id', :id => location.id, :name => location.name, :does_follow => true} %></div>
+          </li>
+        <%end%>
+        <%suggest.each do |location| %>
+          <% next if location.name.blank? %>
+          <li>
+            <span class='feed_follow_title'><%=location.name%></span>
+            <div class='feed_config_follow'><%= render :partial => 'feeds/follow_button', :locals => {:what => 'location_id', :id => location.id, :name => location.name, :does_follow => false} %></div>
+          </li>
+        <%end%>
+      </ul>
+    <%end%>
+
+    <% list = follow.reject {|f| f.class.to_s != 'Spot' }
+    suggest = user.following_suggest('spot_id')
+    if list.count > 0 || suggest.count > 0 then %>
+      <h4><%= it("SPOTS", scope: ['feeds', 'activity_feed']) %></h4>
+      <ul>
+        <%list.each do |spot| %>
+          <% next if spot.name.blank? %>
+          <li>
+            <span class='feed_follow_title'><%=spot.name%></span>
+            <div class='feed_config_follow'><%= render :partial => 'feeds/follow_button', :locals => {:what => 'spot_id', :id => spot.id, :name => spot.name, :does_follow => true} %></div>
+          </li>
+        <%end%>
+        <%suggest.each do |spot| %>
+          <% next if spot.name.blank? %>
+          <li>
+            <span class='feed_follow_title'><%=spot.name%></span>
+            <div class='feed_config_follow'><%= render :partial => 'feeds/follow_button', :locals => {:what => 'spot_id', :id => spot.id, :name => spot.name, :does_follow => false} %></div>
+          </li>
+        <%end%>
+      </ul>
+    <%end%>
+
+    <% list = follow.reject {|f| f.class.to_s != 'Region' }
+    suggest = user.following_suggest('region_id')
+    if list.count > 0 || suggest.count > 0 then %>
+      <h4><%= it("BODIES OF WATER", scope: ['feeds', 'activity_feed']) %></h4>
+      <ul>
+        <%list.each do |region| %>
+          <% next if region.name.blank? %>
+          <li>
+            <span class='feed_follow_title'><%=region.name%></span>
+            <div class='feed_config_follow'><%= render :partial => 'feeds/follow_button', :locals => {:what => 'region_id', :id => region.id, :name => region.name, :does_follow => true} %></div>
+          </li>
+        <%end%>
+        <%suggest.each do |region| %>
+          <% next if region.name.blank? %>
+          <li>
+            <span class='feed_follow_title'><%=region.name%></span>
+            <div class='feed_config_follow'><%= render :partial => 'feeds/follow_button', :locals => {:what => 'region_id', :id => region.id, :name => region.name, :does_follow => false} %></div>
+          </li>
+        <%end%>
+      </ul>
+    <%end%>
+
+    <% list = follow.reject {|f| f.class.to_s != 'Dive' }
+    suggest = user.following_suggest('dive_id')
+    if list.count > 0 || suggest.count > 0 then %>
+      <h4><%= it("DIVES", scope: ['feeds', 'activity_feed']) %></h4>
+      <ul>
+        <%list.each do |dive| %>
+          <li>
+            <span class='feed_follow_title'><%=dive.name%></span>
+            <div class='feed_config_follow'><%= render :partial => 'feeds/follow_button', :locals => {:what => 'dive_id', :id => dive.id, :name => 'this dive', :does_follow => true} %></div>
+          </li>
+        <%end%>
+      </ul>
+    <%end%>
+
+    <% list = follow.reject {|f| f.class.to_s != 'Picture' }
+    suggest = user.following_suggest('picture_id')
+    if list.count > 0 || suggest.count > 0 then %>
+      <h4><%= it("PICTURES", scope: ['feeds', 'activity_feed']) %></h4>
+      <ul>
+        <%list.each do |picture| %>
+          <li>
+            <span class='feed_follow_title'><%=picture.name%></span>
+            <div class='feed_config_follow'><%= render :partial => 'feeds/follow_button', :locals => {:what => 'picture_id', :id => picture.id, :name => 'this picture', :does_follow => true} %></div>
+          </li>
+        <%end%>
+      </ul>
+    <%end%>
+
+    <div style='height: 40px'/> <!--needed to display the whole pane when scrolling -->
+
+    </div>
+
+  </div>
+  <%end%>
+  <!--<div class='feed_tools'>
+    <div class='feed_tool_config symbol'>S</div>
+    <div class='feed_tool_close symbol'>'</div>
+  </div>-->
+
+</div>

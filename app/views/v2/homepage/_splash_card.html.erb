@@ -1,0 +1,21 @@
+<div id="splash_card_background"></div>
+<div id="splash_card">
+  <h1><%= it("Create your Diveboard online scuba logbook for free!", scope: ['homepage', 'v2', 'splash_card']) %></h1>
+  <p class="subtitle"><%= it("Over %{nb_thousands}k logbooks already created... Join us now !", scope: ['homepage', 'v2', 'splash_card'], nb_thousands: (4*User.count/10000.0).ceil*10) %></p>
+  <table>
+    <tr>
+      <td id="label_discover" class="tooltip"><img src="<%= HtmlHelper.lbroot "/img/home/discover_icon.svg" %>" alt="<%= it("Check out new places and destinations and find out what's in it for you. Build from the logs and feedbacks of likeminded divers, we'll guide you to your next dive!", scope: ['homepage', 'v2', 'splash_card']) %>" /><p class="label"><%= it("Discover", scope: ['homepage', 'v2', 'splash_card']) %></p></td>
+      <td><img class="arrow" src="<%= HtmlHelper.lbroot "/img/home/big_arrow.svg" %>" alt="" /></td>
+      <td id="label_book" class="tooltip"><img src="<%= HtmlHelper.lbroot "/img/home/book_icon.svg" %>" alt="<%= it("With thousands of dive shops on board, booking has never been so easy. Phone calls and long email threads have become history - booking a dive has never been so easy.", scope: ['homepage', 'v2', 'splash_card']) %>" /><p class="label"><%= it("Book", scope: ['homepage', 'v2', 'splash_card']) %></p></td>
+      <td><img class="arrow" src="<%= HtmlHelper.lbroot "/img/home/big_arrow.svg" %>" alt="" /></td>
+      <td id="label_review" class="tooltip"><img src="<%= HtmlHelper.lbroot "/img/home/review_icon.svg" %>" alt="<%= it("Did you have a blast ? Were you disappointed ? Log your dives and leave reviews to help fellow divers make the best of their next adventure.", scope: ['homepage', 'v2', 'splash_card']) %>" /><p class="label"><%= it("Review", scope: ['homepage', 'v2', 'splash_card']) %></p></td>
+      <td><img class="arrow" src="<%= HtmlHelper.lbroot "/img/home/big_arrow.svg" %>" alt="" /></td>
+      <td id="label_share" class="tooltip"><img src="<%= HtmlHelper.lbroot "/img/home/share_icon.svg" %>" alt="<%= it("Showcase your adventures, leave kudos to the ones who made it possible and keep track of your dive buddies. We'll let you build your own personal scuba place and spread the fun.", scope: ['homepage', 'v2', 'splash_card']) %>" /><p class="label"><%= it("Share", scope: ['homepage', 'v2', 'splash_card']) %></p></td>
+    </tr>
+  </table>
+  <p class="small_label"><%= it("Discover - Book - Review - Share", scope: ['homepage', 'v2', 'splash_card']) %></p>
+  <a class="signup" href="javascript:void(0)"><%= it("Sign up now for free !", scope: ['homepage', 'v2', 'splash_card']) %></a>
+  <div class="pro">
+    <a href="/pro"><%= it("Are you a pro? Check out Diveboard for Business", scope: ['homepage', 'v2', 'splash_card']) %></a>
+  </div>
+</div>

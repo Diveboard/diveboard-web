@@ -1,0 +1,19 @@
+<div id="<%=id rescue 'login_popup'%>" class="<%= style %> futurareallight login_popup" <%if begin hidden rescue true end then%>style="display:none;"<%end%>>
+	<div class="loader" style="display:none;"></div>
+	<label><%= it("Email", scope: ['layouts', 'login_popup']) %></label><p class="errormsg"></p>	
+	<input class="register_sidebar_input user_email" name="user[email]" size="30" type="text" />
+	<label><%= it("Password", scope: ['layouts', 'login_popup']) %></label>
+	<input class="register_sidebar_input user_password" name="user[password]" size="30" type="password" />
+	<div style="display: block; margin-bottom: 15px;">
+		<label><%= it("Remember me:", scope: ['layouts', 'login_popup']) %> </label><input class="token" name="token" type="checkbox" value="1" />
+	</div>
+	<input class="login_button futurarealbold" id="user_submit" name="commit" type="submit" value="LOGIN"/>
+	<div class="remember">
+		<a href="/login/register?help=pwd" id='forgot_pwd'><%= it("Lost pasword", scope: ['layouts', 'login_popup']) %></a><br/>
+		<a href="/login/register?help=email" id='forgot_email'><%= it("Lost email", scope: ['layouts', 'login_popup']) %></a>
+	</div>
+	<span class="hspace"><p><%= it("or", scope: ['layouts', 'login_popup']) %></p></span>
+	<a href="/login/fb_login/email" class="fb_login_link"><div class="fb_login"></div></a>
+	<span class="hspace needaccount"></span>
+	<p class="register futurareallight"><a href="/login/register"><%= it("Need an account?", scope: ['layouts', 'login_popup']) %></a></p>
+</div>

@@ -1,0 +1,19 @@
+
+---
+You received this email either because you're a Diveboard user or because you've been tagged as a buddy in a user's dive.
+Click here to unsubscribe: <%=ROOT_URL%>community/newsletter/unsuscribe?scope=<%=tag.split("-")[0] rescue ""%><%=
+    begin
+      if recipient.class.to_s != "String"  && !recipient.nil? then
+        "&recipient_id=#{recipient.shaken_id}&recipient_email=#{recipient.contact_email}"
+      else
+        "&email=#{recipient}"
+      end
+    rescue
+    end
+  %>.
+<%if begin recipient.class.to_s == "User" rescue false end%> Or check out your settings page: <%=ROOT_URL%>settings.<%end%>
+<%if begin recipient.class.to_s == "User" rescue false end%>
+  Forgot your Diveboard password? Get instructions on how to reset it: <%=ROOT_URL%>login/register?help=pwd</a>
+<%end%>
+
+All rights reserved Diveboard.com

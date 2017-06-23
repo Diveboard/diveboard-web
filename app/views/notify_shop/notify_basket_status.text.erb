@@ -1,0 +1,22 @@
+
+<%= it("Dear %{recipient},", scope: ['notify_shop', 'notify_basket_status', 'text'], recipient: @recipient.nickname) %>
+
+<%if @basket.status == 'paid' then
+  %><%= it("The order %{order} for %{user} awaits your confirmation. Please confirm on Diveboard your availablity as soon as possible (and absolutely within 29 days).", scope: ['notify_shop', 'notify_basket_status', 'text'], order: @basket.reference, user: @user.nickname) %>
+<%elsif @basket.status == 'cancelled' then
+  %><%= it("The order %{order} for %{user} has been cancelled.", scope: ['notify_shop', 'notify_basket_status', 'text'], order: @basket.reference, user: @user.nickname) %>
+<%else
+  %><%= it("The order %{order} for %{user} has changed status to : %{status}", scope: ['notify_shop', 'notify_basket_status', 'text'], order: @basket.reference, user: @user.nickname, status: config_translate(:basket_status, @basket.status)) %>
+<%end%>
+
+<%= it("View on Diveboard: %{txt_url}", scope: ['notify_shop', 'notify_basket_status', 'text'], txt_url: @basket.shop_fullpermalink) %>
+
+<%= it("Happy Diving !", scope: ['notify_shop', 'notify_basket_status', 'text']) %>
+--
+<%= it("The Diveboard team", scope: ['notify_shop', 'notify_basket_status', 'text']) %>
+http://www.diveboard.com
+
+
+
+<%= it("This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
+If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings", scope: ['notify_shop', 'notify_basket_status', 'text']) %>

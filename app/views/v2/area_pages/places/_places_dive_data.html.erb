@@ -1,0 +1,67 @@
+<%= content_for :stylesheets do%>
+	
+<%end%>
+
+<div id="dive_data">
+  <div class="container">
+    <div class="section temp">
+      <img src="<%= HtmlHelper.lbroot "/img/areas/icon_thermometer.svg" %>">
+      <div class="avgs">
+        <p>
+          <%= it("Average on surface:",
+              scope: ['area_pages', 'v2', 'dive_data']) %>
+          <%= !@avg_surf_temp.nil? ? "#{@avg_surf_temp.round}ºC" : it("no data",
+                                                                   scope: ['area_pages', 'v2', 'dive_data']) %>
+        </p>
+        <p>
+          <%= it("Average on bottom:",
+              scope: ['area_pages', 'v2', 'dive_data']) %>
+          <%= !@avg_bot_temp.nil? ? "#{@avg_bot_temp.round}ºC" : it("no data",
+                                                                 scope: ['area_pages', 'v2', 'dive_data']) %>
+        </p>
+      </div>
+    </div>
+    <div class="sep_1" ></div>
+
+    <div class="sep_1" ></div>
+    <div class="section depth">
+      <img src="<%= HtmlHelper.lbroot "/img/areas/icon_depth.svg" %>">
+      <p>
+        <%= it("Average depth:",
+            scope: ['area_pages', 'v2', 'dive_data']) %>
+        <%= !@avg_depth.nil? ? "#{@avg_depth.round(2)}m" : it("no data",
+                                                           scope: ['area_pages', 'v2', 'dive_data']) %>
+      </p>
+    </div>
+    <div class="sep_1"></div>
+    <div class="section fish">
+      <p>
+        <%= it("Fish:",
+            scope: ['area_pages', 'v2', 'dive_data']) %>
+      </p>
+      <%
+        i = 0
+        if @species.size == 0
+          "<p>" + it("no data",
+                  scope: ['area_pages', 'v2', 'dive_data']) + "</p>"
+        else
+          @species.each do |s|
+      %>
+            <img id="species<%= i %>" class="species" src="<%= HtmlHelper.lbroot "/img/species/#{s.category}.svg" %>" alt="<%= s.category %>" />
+      <%
+            i += 1
+          end
+        end
+      %>
+    </div>
+    <div class="sep_4">
+      <div style="background: grey; left: calc(50% - 1rem); top:0.8rem; height:38%; width: 1px; position: absolute;"></div>
+      <div style="background: grey; left: calc(50% - 1rem); top: 55%; height:38%; width: 1px; position: absolute;"></div>
+      <div style="background: grey; left:0; top: 49%; height: 1px; width: calc(50% - 2rem); position: absolute;"></div>
+      <div style="background: grey; left: calc(50% - 0rem); top: 49%; height: 1px; width: 45%; position: absolute;"></div>
+    </div>
+  </div>
+  <% if false %>
+  <a class="grey_button" href="#">Advanced information</a>
+  <% end %>
+</div>

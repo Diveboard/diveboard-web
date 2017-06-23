@@ -1,0 +1,15 @@
+<li class='feed_item'>
+    <div class='feed_abstract_img'><img src='<%=notification.about.logo_url%>'/></div>
+    <div class='feed_abstract_dismiss symbol' data-db-notif_id='<%=notification.id%>'>'</div>
+    <a href='<%=notification.about.fullpermalink(:locale)%>/edit'>
+      <div class='feed_abstract_title'>You now have the rights to administrate the page for <strong><%=notification.about.name%></srtrong>.</div>
+    </a>
+    <div class='feed_abstract_when'>
+      <%if !notification.when['days'].nil? then%><%=notification.when['days']%> days ago
+      <%elsif !notification.when['hours'].nil? then%><%=notification.when['hours']%> hours ago
+      <%elsif !notification.when['minutes'].nil? then%><%=notification.when['minutes']%> minutes ago
+      <%elsif !notification.when['seconds'].nil? then%><%=notification.when['seconds']%> seconds ago
+      <%end%>
+    </div>
+  </a>
+</li>

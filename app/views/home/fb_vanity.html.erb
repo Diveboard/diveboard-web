@@ -1,0 +1,211 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%=I18n.locale%>">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<meta name="csrf-token" content="<%= form_authenticity_token %>" />
+		<meta name="csrf-param" content="authenticity_token" />
+
+		<script type="text/javascript" src="/js/jquery-1.4.4.min.js"></script>
+		<script type="text/javascript" src="/js/jquery.scrollTo.js"></script>
+		<script type="text/javascript" src="/js/jquery.autoclear.js"></script>
+
+		<link rel="stylesheet" type="text/css" href="<%=auto_file_versionning("/styles/global.css")%>" media="all" />
+		<title><%= it("Login / Register - Diveboard - Track and share your scuba diving experiences - Explore new spots and destinations", scope: ['home', 'fb_vanity']) %></title>
+ 		<META NAME="Title" CONTENT="<%= it("Login / Register - Diveboard : Track and share your scuba diving experiences - Explore new spots and destinations", scope: ['home', 'fb_vanity']) %>">
+		<meta name="description" content="<%= it("Diveboard is a scuba diving community enabling divers to track their dives through an online logbook, explore new spots and destinations and share their passion", scope: ['home', 'fb_vanity']) %>"/>
+
+	</head>
+	<body>
+		<div id="header_container">
+			<div id="idx_3_top">
+				<span class="logo"></span>
+			</div>
+			<div id="header_spacer"></div>	
+			
+		</div>
+		<div id="container">
+			<!--<a href="/community"><img src="/img/new_blog_btn.png" class="bar_v2_blog_btn" alt="#" /></a>
+			<a href="/login/register"><img src="/img/new_login_btn.png" alt="#" /></a>
+			<a href="/#new_bottom_feats_area"><img src="/img/learn_more_btn.png" alt="#" /></a>-->
+			
+			<script type="text/javascript">
+			var auth_token ="";
+			$(document).ready(function () {
+				  $('.autoclear').autoclear();
+				  String.prototype.strip = function( exp ){ return this.replace(exp?exp:/\s/g,""); };
+				  auth_token = $("meta[name='csrf-token']").attr("content");
+				
+				$(".bar_v2_home").hover(function() {
+				  $(".bar_v2_home_up").fadeToggle("fast", "linear");
+				});
+				$(".bar_v2_explore").hover(function() {
+				  $(".bar_v2_explore_up").fadeToggle("fast", "linear");
+				});
+				$(".bar_v2_you").hover(function() {
+				  $(".bar_v2_you_up").fadeToggle("fast", "linear");
+				});
+				
+				$("#search_v2_field").hover(function() {
+				  $("#live_search_results_v2").toggle("fast");
+				});
+ 				
+				$('#password-clear').show();
+				$('#user_password').hide();
+
+				$('#password-clear').focus(function() {
+				    $('#password-clear').hide();
+				    $('#user_password').show();
+				    $('#user_password').focus();
+				});
+				$('#user_password').blur(function() {
+				    if($('#user_password').val() == '') {
+				        $('#password-clear').show();
+				        $('#user_password').hide();
+				    }
+				});
+				
+				$("#forgot_pwd").click(function(){
+					$("#register").hide();
+					$("#pwd_reset").hide();
+					$("#lost_email").hide();
+					$("#lost_pwd").show();
+					});
+				$("#forgot_email").click(function(){
+					$("#register").hide();
+					$("#pwd_reset").hide();
+					$("#lost_email").show();
+					$("#lost_pwd").hide();
+					});
+				$("#user_vanity_url").keyup(check_vanity_url);
+				
+			});
+			
+			var xhr;
+			var right_checker;
+			function check_vanity_url(){	
+				if(xhr) xhr.abort();
+
+				//$("#username").val($("#username").val().toLowerCase());
+				right_checker = this;
+				var username = $("#user_vanity_url").val().strip().toLowerCase();
+				if (username == "<%=@vanity_url%>"){
+					//same name - no need to check....
+					//$("#username_info").html("Your url will be ...);
+					$("#username_search").hide();
+					$("#username_ok").hide();
+					$("#username_nok").show();
+					//vanity_url_ok =true;
+				}else{
+					username_match = username.match(/[A-Za-z\.0-9\-\_]*/);
+					if( username_match != null && username_match[0] == username && username.length>3){
+						$("#username_ok").hide();
+						$("#username_nok").hide();
+						$("#username_search").show();
+						if(right_checker == this){
+
+							xhr = $.ajax({
+								url:"/api/check_vanity_url",
+								data:({
+										vanity: username,
+									  	'authenticity_token': auth_token
+									}),
+								type:"POST",
+								dataType:"json",
+								success:function(data){
+									if (data.available){
+										//$("#username_info").html("Your url will be ....);
+										$("#username_search").hide();
+										$("#username_nok").hide();
+										$("#username_ok").show();
+										//vanity_url_ok =true;
+									}
+									else{
+											//$("#username_info").html("This username is unavailable, please try another one");
+											$("#username_search").hide();
+											$("#username_ok").hide();
+											$("#username_nok").show();
+											//vanity_url_ok = false;
+									}
+
+								}
+							});
+						}
+					}else{
+						$("#username_search").hide();
+						$("#username_ok").hide();
+						$("#username_nok").show();
+						//vanity_url_ok = false;
+					}
+
+				}
+
+			}
+
+			</script>
+
+			<% if flash[:notice]%>
+			<div id="flash_notifications">
+				WARNING : <%=flash[:notice]%><br/>	
+			</div>
+			<%end%>
+
+		<div id="main_content_area" class="fb_vanity">
+			<div id="register">
+				<% @user = User.new if @user.nil? %>
+				<%= form_for(@user, :url=>{:action=>'callback', :controller=>"login"}) do |f|%>
+        <input type="hidden" name="fb_token" value="<%=@fb_token%>">
+				<div class="main_content_header single_main_header single_main_header_full_width">
+					<span class="header_title"><%= it("Finalize account creation", scope: ['home', 'fb_vanity']) %></span>
+				</div>
+				<div class="main_content_box">
+					<h1><%= it("Create a new account", scope: ['home', 'fb_vanity']) %></h1>
+					<div id="register_user_info">
+						<div style="text-align:left;"><%= it("The link will point to your logbook homepage, it's your personal Diveboard place so choose it wisely*!", scope: ['home', 'fb_vanity']) %><br/></div>
+						<label>http://www.diveboard.com/</label><%= f.text_field :vanity_url, :class=>"register_main_input register_input_fix", :style => "margin-right:120px !important;", :value => @vanity_url%><div style="position: absolute; margin-top: -44px; margin-left: 820px;"><img id="username_ok" src="/img/ok.png" align="absmiddle" style="display:none;"/><img  id="username_nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/><img  id="username_search" style="display:none;" align="absmiddle" src="/img/indicator.gif"/> </div>
+						<span class="register_input_explain"><%= it("* The URL can be changed on the settings pane, but all direct links to your logbook or dives will break upon change. It must be at least 4 character long a-z 0-9 \".-_\".", scope: ['home', 'fb_vanity']) %></span>
+						<%= display_all_error_messages(@user, :vanity_url) %>
+					</div>
+					<div id="register_button" style="left: 180px;  position: relative;">
+						<%= f.submit "Register personal URL", :class => "edit_save_register_btn", :name=> "fb_create"%>
+					</div>
+				</div>
+  				<%#if @fb_user.nil?%>
+            <div class="main_content_box" style="min-height: 0;">
+                <h1><center>- <%= it("OR", scope: ['home', 'fb_vanity']) %> -</center></h1>
+            </div>
+  					<div class="main_content_box">
+  						<h1><%= it("Connect to an existing account", scope: ['home', 'fb_vanity']) %></h1>
+  						<div id="register_user_info">
+  							<div style="text-align:left;"><%= it("Login to diveboard", scope: ['home', 'fb_vanity']) %><br/></div>
+  							<div style="display: block;">
+	  							<label><%= it("Email", scope: ['home', 'fb_vanity']) %></label><%= f.text_field :email, :class=>"register_main_input register_input_fix", :style => "margin-right:120px !important;", :value => @user_email || "" %>
+									<%= display_all_error_messages(@user, :email) %>
+                </div>
+                <div style="display: block;">
+	  							<label><%= it("Password", scope: ['home', 'fb_vanity']) %></label><%= f.password_field :password, :class=>"register_main_input register_input_fix force_visible", :style => "margin-right:120px !important; display: inline !important;"%>
+	  							 <%= display_all_error_messages(@user, :password) %>
+	  						</div>
+  						</div>
+  						<div id="register_button" style="left: 180px;  position: relative;">
+  							<%= f.submit "Login", :class => "edit_save_register_btn", :name=> "fb_merge"%>
+  						</div>
+  					</div>
+            <div class="main_content_box" style="min-height: 0;">
+                <h1><center>- <%= it("OR", scope: ['home', 'fb_vanity']) %> -</center></h1>
+            </div>
+            <div class="main_content_box">
+              <h1><%= it("Create an account later", scope: ['home', 'fb_vanity']) %></h1>
+              <span class="register_input_explain"><%= it("* You won't be able to log dives but you still can browse the public contents", scope: ['home', 'fb_vanity']) %></span>
+              <div id="register_button" style="left: 180px;  position: relative;">
+                <%= f.submit "Skip", :class => "edit_save_register_btn", :name=> "fb_skip"%>
+              </div>
+            </div>
+  				<%#end%>
+				<%end%>
+			</div>
+		</div>
+		</div>
+		<%= render :partial => 'layouts/trackers', :locals => {:page_category => 'register_fbvanity'}  %>
+		</body>
+</html>

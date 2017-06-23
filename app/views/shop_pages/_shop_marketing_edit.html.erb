@@ -1,0 +1,100 @@
+<script>
+G_root_url = <%=ROOT_URL.to_json.html_safe%>;
+G_locale_root_url = <%=root_url.to_json.html_safe%>;
+</script>
+<ul class="main_inner_header_tabs">
+    <li id="tab_widgets_link" class='tab_link active'><a href="#"><%= it("Widgets", scope: ['shop_pages', 'shop_marketing_edit']) %></a></li>
+    <li id="tab_ads_link" class='tab_link'><a href="#"><%= it("Advertisements", scope: ['shop_pages', 'shop_marketing_edit']) %></a></li>
+</ul>
+
+<div id="tab_widgets" class='tab_panel tab_widgets'>
+
+  <div class='widget_holder shop_widget_editor' data-widget_class='WidgetWidgetsEditor'>
+
+  <p><%= it("These widgets will help you %{b:secure new customers} by providing a %{b:trusted source of recommendation} to advertise on your own website. Reviews collected on Diveboard are left by real divers and are moderated to make sure they provide a real value for divers looking for a dive center.", scope: ['shop_pages', 'shop_marketing_edit'], b: It.tag("b")) %></p>
+
+  <h3><%= it("Ratings", scope: ['shop_pages', 'shop_marketing_edit']) %></h3>
+
+  <p><%= it("This widget will show your customers-to-be how well you perform on key topics. It brings valuable and trusted reassurance to divers who don't know you yet.", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+
+  <div class='widget_preview shop_medium'>
+    <div class='iframe_container'>
+      <iframe frameborder="0" height="156" width='220' scrolling="no" src="<%=root_url%>api/widget/shop_medium/<%=shop.shaken_id%>" class='widget_preview_iframe'></iframe>
+    </div>
+    <div class='controls'>
+      <p class='controls_title'><%= it("Parameters:", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+      <p><%= it("Width:", scope: ['shop_pages', 'shop_marketing_edit']) %> <input class='width' value='220' type=number max=285 min=195 /> <%= it("pixels", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+      <p class='controls_title'><%= it("HTML code to embed on your page:", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+      <textarea class='html_preview'></textarea>
+    </div>
+  </div>
+
+  <h3><%= it("Detailed reviews", scope: ['shop_pages', 'shop_marketing_edit']) %></h3>
+
+  <p><%= it("A bigger widget to embed on your page to show how well your customers like your place.", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+
+  <div class='widget_preview shop_large'>
+    <div class='iframe_container'>
+      <iframe frameborder="0" height='<%=168+60*5%>' width='320' scrolling="no" src="<%=root_url%>api/widget/shop_reviews/<%=shop.shaken_id%>?n=7" class='widget_preview_iframe' onload='this.height=this.contentWindow.document.body.scrollHeight + "px"'></iframe>
+    </div>
+    <div class='controls'>
+      <p class='controls_title'><%= it("Parameters:", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+      <p><%= it("Width:", scope: ['shop_pages', 'shop_marketing_edit']) %> <input class='width' value='320' type=number max=385 min=280 /> <%= it("pixels", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+      <p><%= it("Number max of reviews:", scope: ['shop_pages', 'shop_marketing_edit']) %> <input class='nbreviews' value='5' type=number max=7 min=3 /></p>
+      <p class='controls_title'><%= it("HTML code to embed on your page:", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+      <textarea class='html_preview'></textarea>
+    </div>
+  </div>
+
+
+
+
+  </div>
+</div>
+
+<div id="tab_ads" class='tab_panel tab_ads' style="display:none;">
+
+  <div class='widget_holder' data-widget_class='WidgetAdsEditor'>
+
+  <script>
+  var G_ad_pictures = <%= shop.user_proxy.ad_album.pictures.to_api(:private).to_json.html_safe rescue '[]' %>;
+  </script>
+
+  <p><%= it("Your advertisements will appear on the %{link:explore page} near the location of your shop. New items or changes may take a few minutes before they appear on the explore pages.", scope: ['shop_pages', 'shop_marketing_edit'], link: It.link("/explore", target: "_blank")) %></p>
+  <p><%= it("The number of views and clicks on each ad are updated every 24hrs.", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+  <%unless shop.allowed_ads.nil?%>
+  <p><% if (shop.allowed_ads>1) %>
+    <%= it("You may have %{allowed_ads} ads active ads at the same time", scope: ['shop_pages', 'shop_marketing_edit'], allowed_ads: shop.allowed_ads) %>
+  <% else %>
+    <%= it("You may have %{allowed_ads} ad active ads at the same time", scope: ['shop_pages', 'shop_marketing_edit'], allowed_ads: shop.allowed_ads) %>
+  <%end%><%end%></p>
+
+  <table id='ad_list'></table>
+  <button class='yellow_button ad_item_create' style='margin: 20px 30px'><%= it("Create new ad", scope: ['shop_pages', 'shop_marketing_edit']) %></button>
+
+  <div id='dialog-edit-ad' title="<%= it("Edit ad content", scope: ['shop_pages', 'shop_marketing_edit']) %>" style="display:none;">
+    <p class="dialog-text-highlight"><%= it("Define the content of your ad. You must assign a (square) picture, some title (25 chars. max) and some text (90 chars. max).
+      If you enter a specific URL for the redirection, please make sure the URL you enter is valid : we don't check whether the page exists or not.", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+
+    <div class='edit_ad_container'>
+    </div>
+    <div class='edit_ad_upload_container'>
+      <div class="imageuploader">
+        <span class="third_lvl_header"><%= it("Upload New Image (2Mb max):", scope: ['shop_pages', 'shop_marketing_edit']) %></span>
+        <div class="select_file_btn"><%= it("Import a picture", scope: ['shop_pages', 'shop_marketing_edit']) %></div>
+      </div>
+      <div class="picture_table" style="display:none;">
+        <div class="third_lvl_header"><%= it("Select a thumbnail:", scope: ['shop_pages', 'shop_marketing_edit']) %></div>
+        <div class="picturepreview" style='display: inline-block'></div>
+        <button href="#" class="yellow_button image_confirm" style='margin: 0px 10px'><%= it("Confirm", scope: ['shop_pages', 'shop_marketing_edit']) %></button>
+        <button href="#" class="grey_button_v1 image_cancel" style='margin:10px;'><%= it("Cancel", scope: ['shop_pages', 'shop_marketing_edit']) %></button>
+      </div>
+      <div class="third_lvl_header"><%= it("Or select a previously uploaded image.", scope: ['shop_pages', 'shop_marketing_edit']) %></div>
+      <div class='edit_ad_pictures_container'>
+      </div>
+    </div>
+
+  </div>
+
+  </div>
+</div>

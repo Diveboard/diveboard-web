@@ -1,0 +1,27 @@
+<ul class='widget_list_dives'>
+  <li class='logged_dives_head'><h2><%= it("Dives logged", scope: ['widgets', 'widget_list_dives_view']) %></h2></li>
+  <% if widget.from.public_dives.count == 0 %>
+    <li style='margin: 10px 20px'><%= it("No dives logged", scope: ['widgets', 'widget_list_dives_view']) %></li>
+  <%else%>
+    <%widget.from.public_dives.slice(0,widget.limit).each do |dive|%>
+
+      <li>
+        <div class="logged_dive_body">
+        <div class="logged_dive_body_inner">
+          <a href="<%=dive.fullpermalink(:locale)%>">
+            <img src="<%=if dive.featured_picture.nil? then dive.static_map_url else dive.featured_picture.thumbnail end%>" class='thumb_fav_dive' alt="#" />
+          </a>
+          <div><h3 class='unstyle'><a href="<%=dive.fullpermalink(:locale)%>">
+            <img src="<%=dive.spot.country.flag_small%>" title="<%=dive.spot.country.name%>" alt="<%=@owner.location%>" style="top: -2px; left: 3px; display: inline-block; position: relative; margin-right: 5px;"/>
+             <%= dive.spot.name %> (<%=dive.spot.location.name%>)</a></h3></div>
+          <p><%if dive.user.share_details_notes ||  (!@user.nil? && @user.can_edit?(dive)) %><%=dive.notes%><%end%></p>
+        </div>
+        </div>
+        <div style='clear:both; height: 1px'> </div>
+      </li>
+    <%end%>
+
+
+
+  <%end%>
+</ul>

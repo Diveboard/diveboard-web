@@ -1,0 +1,45 @@
+# for Facebook Connect / Koala
+#FB_APP_KEY = "b7d52f545512e20c1c4db513662346fe" 
+#FB_APP_SECRET = "0393edcdf2baa2c291b9f33960991b1f" 
+#FB_APP_ID = "126856984043229"
+
+# config/facebook.yml
+development:
+    app_id: "198715463484010"
+    secret_key: "4bd26ba3d63e109542c693d13e77ff6a" 
+    
+development_jean:
+    app_id: "198715463484010"
+    secret_key: "4bd26ba3d63e109542c693d13e77ff6a" 
+    
+development_squale:
+    app_id: "198715463484010"
+    secret_key: "4bd26ba3d63e109542c693d13e77ff6a"
+    
+development_local_squale:
+    app_id: "198715463484010"
+    secret_key: "4bd26ba3d63e109542c693d13e77ff6a"
+    
+development_alex:
+    app_id: "198715463484010"
+    secret_key: "4bd26ba3d63e109542c693d13e77ff6a"
+development_abruneau:
+    app_id: "198715463484010"
+    secret_key: "4bd26ba3d63e109542c693d13e77ff6a"
+        
+development_vm:
+    app_id: "198715463484010"
+    secret_key: "4bd26ba3d63e109542c693d13e77ff6a"
+
+staging:
+    app_id: "198715463484010"
+    secret_key: "4bd26ba3d63e109542c693d13e77ff6a"
+    
+test:
+    app_id: "193803977296892"
+    secret_key: "7117bb9b21c314d5d19a3006bf754c1b"
+
+production:
+    app_id: "193803977296892"
+    secret_key: "7117bb9b21c314d5d19a3006bf754c1b" 
+

@@ -1,0 +1,28 @@
+<div id="cover">
+</div>
+<div id="cover_up">
+<div class="container">
+  <div class="title">
+    <p class="main_title"><%= it("The first place to book your next dive trip", scope: ['homepage', 'v2', 'cover']) %></p>
+    <p class="subtitle"><%= it("Tap into the largest online logbook to find out the perfect destination and shop", scope: ['homepage', 'v2', 'cover']) %></p>
+  </div>
+    <div class="search_bar">
+      <table>
+        <tr>
+          <td class="pin_td"><img src="<%= HtmlHelper.lbroot "/img/home/pin_map_recherche_home_page.svg" %>" alt="" /></td>
+          <td>
+            <div class="search">
+              <form action="/search">
+                <input type="text" name="s" placeholder="<%= it("Location", scope: ['homepage', 'v2', 'cover']) %>" class="search_input" autocomplete="off"/>
+                <button class="search_button"><%= it("Search", scope: ['homepage', 'v2', 'cover']) %></button>
+                <button class="search_icon"><img src="<%= HtmlHelper.lbroot "/img/home/icon_search.svg" %>" alt="<%= it("Search", scope: ['homepage', 'v2', 'cover']) %>" /></button>
+                <ul class="suggestions" style="display:none;">
+                </ul>
+              </form>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

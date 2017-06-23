@@ -1,0 +1,27 @@
+<% if @shops.count > 0 %>
+<% cache @route+'_shops' do %>
+<div id="destination_shops">
+	<h2><%= it("Best dive shops in ",scope: ['area_pages', 'v2', 'destination']) %><%= @name %></h2>
+	<% @shops[0..5].each do |s| %>
+	<% if s!=nil %>
+
+		<div class="destination_shop">
+			<img src="<%= s.picture %>">
+			<div class="shop_info">
+				<%= s.name[0..15] %>
+				<table class="rating">
+					<%= render "v2/shared/score_bullet", :score => s.overall_rating, :color => :blue %>
+				</table>
+			 <%= it("Based on %{link:%{count} reviews}",
+        scope: ['shop_pages', 'v2', 'shop_details'],
+        link: It.link('#shop_reviews'),
+        count: s.reviews.count) %>
+			</div>
+
+			<a class="book" href="/pro/<%= s.vanity_url %>"><%= it("Book now",scope: ['area_pages', 'v2', 'destination']) %></a>
+		</div>
+	<% end %>
+	<% end %>
+</div>
+<% end %>
+<% end %>

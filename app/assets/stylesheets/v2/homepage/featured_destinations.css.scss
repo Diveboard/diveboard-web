@@ -1,0 +1,149 @@
+@import 'variablesv2';
+
+#featured_destinations
+{
+  max-width: $home-width;
+  margin: 0 auto;
+  margin-top: 10px;
+  @media (max-width: 720px)
+  {
+    padding-bottom: 20px;
+    #category_title h2, #category_title .subtitle
+    {
+      float: none;
+      text-align: center;
+    }
+  }
+  @media (max-width: 1110px)
+  {
+    max-width: 720px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  a
+  {
+    text-decoration: none;
+  }
+
+  .swiper-container
+  {
+    @media (min-width: 721px)
+    {
+      display: none;
+    }
+    height: 330px;
+    .swiper-slide {
+      width: 300px;
+      height: 330px;
+      .card
+      {
+        margin-left: 0;
+        margin-right: 0.1rem;
+      }
+    }
+  }
+
+  .cards_group
+  {
+    .card_container
+    {
+      float: left;
+      width: 25%;
+      .card
+      {
+        width:95%;
+        background-color: white;
+      }
+      @media (max-width: 660px)
+      {
+        float: none;
+        margin: 0 auto;
+        width: 100%;
+      }
+      @media screen and (min-width: 661px) and (max-width: 1110px)
+      {
+        width:50%;
+      }
+    }
+  }
+
+  .card
+  {
+    margin: 0 auto;
+    width: 280px;
+    height: 300px;
+    border: 1px solid #dfdfdf;
+    position: relative;
+    background-color: white;
+    cursor: pointer;
+    @media (max-width: 1110px)
+    {
+      margin-bottom: 10px;
+    }
+
+    &:hover
+    {
+      border: 1px solid $yellow-db;
+    }
+
+    .picture
+    {
+      height: calc(100% - 140px);
+      width: calc(100% - 10px);
+      background-color: #303336;
+      margin-left: 5px;
+      margin-top: 5px;
+      overflow: hidden;
+      background-size: cover;
+      background-position: 0;
+
+      @include centerScaleImg();
+    }
+
+    .title
+    {
+      display: block;
+      text-decoration: none;
+      margin-top: 15px;
+      margin-left: 10px;
+      color: #3c4245;
+      font-size: 1rem;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .title:hover, .title:active
+    {
+      color: #FDC90C;
+    }
+
+    .subtitle
+    {
+      color: #8a8e8f;
+      font-size: 14px;
+      margin-left: 10px;
+      height: 19px;
+    }
+
+    .rating
+    {
+      border-collapse: collapse;
+      margin-left: 10px;
+      margin-top: 10px;
+
+      td
+      {
+        padding-right: 10px;
+      }
+
+      p
+      {
+        font-size: 13px;
+        color: #8a8e8f;
+      }
+    }
+  }
+}

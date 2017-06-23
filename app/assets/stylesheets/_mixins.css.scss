@@ -1,0 +1,36 @@
+@mixin centerImg() {
+  img
+  {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    max-height: 100%;
+    max-width: 100%;
+    -moz-transform: translateY(-50%) translateX(-50%);
+    -ms-transform: translateY(-50%) translateX(-50%);
+    -webkit-transform: translateY(-50%) translateX(-50%);
+    -o-transform: translateY(-50%) translateX(-50%);
+    transform: translateY(-50%) translateX(-50%);
+  }
+}
+
+@mixin centerScaleImg() {
+  img
+  {
+    position: relative;
+    top: 50%;
+    min-height: 100%;
+    width: 100%;
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    -o-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
+}
+
+@mixin lang($lang) {
+  body.lang_#{$lang} & {
+    @content
+  }
+}

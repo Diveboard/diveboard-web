@@ -1,0 +1,251 @@
+<ul class='widget_reviews'>
+  <li class='reviews_head'><h2><%= it("Reviews", scope: ['widgets', 'widget_review_view']) %></h2></li>
+  <% if widget.reviews.count == 0 %>
+    <li style='margin: 10px 20px'><%= it("No reviews has been left yet.", scope: ['widgets', 'widget_review_view']) %></li>
+    <li class='user_has_not_review'>
+      Have you dived with <%= widget.shop.name.titleize %> ?
+      <div style='text-align:center;margin-top: 10px; margin-bottom: 10px;'><button class='leave_review_shop yellow_button'><%= it("Leave a review!", scope: ['widgets', 'widget_review_view']) %></button></div>
+    </li>
+  <%else%>
+
+    <li class='review_global' >
+      <div class='reviews_summary' itemscope itemtype="http://schema.org/AggregateRating" itemprop="aggregateRating">
+        <meta itemprop="ratingValue" content="<%=widget.shop.overall_rating%>">
+        <meta itemprop="reviewCount" content="<%=widget.shop.public_reviews.count%>">
+        <div><img src='/img/icons/vote_positive.png' alt='+' class='vote_icon' /><%= it("%{count} positive reviews", scope: ['widgets', 'widget_review_view'], count: widget.shop.positive_reviews) %></div>
+        <div><img src='/img/icons/vote_negative.png' alt='-' class='vote_icon' /><%= it("%{count} negative reviews", scope: ['widgets', 'widget_review_view'], count: widget.shop.negative_reviews) %></div>
+      </div>
+      <table class='review_marks review_marks_summary'>
+        <% [[:mark_orga, it("Organization", scope: ['shop_pages', 'form_review'])],
+            [:mark_friend, it("Friendliness", scope: ['shop_pages', 'form_review'])],
+            [:mark_secu, it("Security", scope: ['shop_pages', 'form_review'])],
+            [:mark_boat, it("Ease of access to water", scope: ['shop_pages', 'form_review'])],
+            [:mark_rent, it("Equipment rental", scope: ['shop_pages', 'form_review'])] ].each do |mark|
+              this_mark = widget.shop.send(mark[0])
+              next if this_mark.nil?
+        %>
+          <tr>
+            <td><%=mark[1]%></td>
+            <td class='col2'>
+              <% previous_level = [0,nil]
+              this_title = nil
+              this_idx = nil
+              grades = [ [0.5,'Really Terrible'], [1, it("Terrible", scope: ['shop_pages', 'form_review'])], [1.5, it("Terrible", scope: ['shop_pages', 'form_review'])], [2, it("Poor", scope: ['shop_pages', 'form_review'])], [2.5, it("Lower than Average", scope: ['shop_pages', 'form_review'])], [3,it("Average", scope: ['shop_pages', 'form_review'])], [3.5,it("Good", scope: ['shop_pages', 'form_review'])], [4,it("Very Good", scope: ['shop_pages', 'form_review'])], [4.5,it("Very Very Good", scope: ['shop_pages', 'form_review'])], [5,it("Excellent", scope: ['shop_pages', 'form_review'])] ]
+              #Let's find the correct grade to display
+              grades.each_with_index do |level, gridx|
+                if this_mark[:mark] > previous_level[0] && this_mark[:mark] <= level[0] then
+                  this_title = level[1]
+                  this_idx = gridx
+                end
+                previous_level = level
+              end
+              grades.each_with_index do |level, gridx| %>
+                <input type='radio' name='star_<%=mark[0]%>_glb' title='<%=this_title%>'  disabled='disabled' class='star {split:2}' <%=if gridx == this_idx then 'checked' end%>/>
+              <%end%>
+            </td>
+            <td class='col3'><%=this_mark[:count]%> review<%='s' unless this_mark[:count]==1%></td>
+          </tr>
+        <%end%>
+      </table>
+    </li>
+    <% if @user.nil? then %>
+      <li class='user_has_not_review'>
+        <%= it("Have you dived with %{shop_name}", scope: ['widgets', 'widget_review_view'], shop_name: widget.shop.name.titleize) %>?
+        <div style='text-align:center;margin-top: 10px; margin-bottom: 10px;'><button class='leave_review_shop yellow_button'><%= it("Leave a review !", scope: ['widgets', 'widget_review_view']) %></button></div>
+      </li>
+    <% elsif !(review = @user.review_for_shop(widget.shop)).nil? then %>
+      <li class='review_body review_own'>
+        <img src='<%=review.user.picture%>' class='review_image_user'/>
+        <span class='eval_date'><%=review.created_at.to_date%></span>
+        <p class='review_title'>
+          <img src='/img/icons/<%if review.recommend%>vote_positive.png<%else%>vote_negative.png<%end%>'>
+          <strong>
+          <%if review.anonymous%>
+            <%= it("Your anonymous review", scope: ['widgets', 'widget_review_view']) %>
+          <%else%>
+            <%= it("Your review", scope: ['widgets', 'widget_review_view']) %>
+          <%end%>
+          </strong>
+          <%unless review.title.blank?%><br/><%=review.title.titleize%><%end%>
+        </p>
+        <p class='review_abstract review_comment_text'><%=truncate review.comment, :length => 165, :separator => ' ' %></p>
+        <p class='review_detail review_comment_text'><%=review.comment%></p>
+
+        <div class='review_abstract' style='clear:both; padding: 5px 10px 10px 0px;'>
+          <% unless (review.mark_orga.nil? && review.mark_orga.nil? && review.mark_friend.nil? && review.mark_secu.nil? && review.mark_boat.nil? && review.mark_rent.nil?  && (truncate review.comment, :length => 165, :separator => ' ') == review.comment) || (review.title.blank? && review.comment.blank?) then %>
+          <button class='review_more review_abstract grey_button_small'><%= it("View More", scope: ['widgets', 'widget_review_view']) %></button>
+          <% end %>
+          <button class='leave_review_shop review_abstract grey_button_small'><%= it("Edit your review", scope: ['widgets', 'widget_review_view']) %></button>
+        </div>
+
+        <%if review.title.blank? && review.comment.blank? then%>
+          <div class='review_abstract'>
+        <%else%>
+          <div style='clear:both;'> </div>
+          <div class='review_detail' style='display: none;'>
+        <%end%>
+          <table class='review_marks'>
+          <% [[:mark_orga, it("Organization", scope: ['shop_pages', 'form_review'])],
+              [:mark_friend, it("Friendliness", scope: ['shop_pages', 'form_review'])],
+              [:mark_secu, it("Security", scope: ['shop_pages', 'form_review'])],
+              [:mark_boat, it("Ease of access to water", scope: ['shop_pages', 'form_review'])],
+              [:mark_rent, it("Equipment rental", scope: ['shop_pages', 'form_review'])] ].each do |mark|
+                this_mark = review.send(mark[0])
+                next if this_mark.nil?
+          %>
+            <tr>
+              <td><%=mark[1]%></td>
+              <td>
+                <% previous_level = [0,nil]
+                this_title = nil
+                this_idx = nil
+                grades = [ [0.5,'Really Terrible'], [1, it("Terrible", scope: ['shop_pages', 'form_review'])], [1.5, it("Terrible", scope: ['shop_pages', 'form_review'])], [2, it("Poor", scope: ['shop_pages', 'form_review'])], [2.5, it("Lower than Average", scope: ['shop_pages', 'form_review'])], [3,it("Average", scope: ['shop_pages', 'form_review'])], [3.5,it("Good", scope: ['shop_pages', 'form_review'])], [4,it("Very Good", scope: ['shop_pages', 'form_review'])], [4.5,it("Very Very Good", scope: ['shop_pages', 'form_review'])], [5,it("Excellent", scope: ['shop_pages', 'form_review'])] ]
+                #Let's find the correct grade to display
+                grades.each_with_index do |level, gridx|
+                  if this_mark > previous_level[0] && this_mark <= level[0] then
+                    this_title = level[1]
+                    this_idx = gridx
+                  end
+                  previous_level = level
+                end
+                grades.each_with_index do |level, gridx| %>
+                  <input type='radio' name='star_<%=mark[0]%>_own' title='<%=this_title%>'  disabled='disabled' class='star {split:2}' <%=if gridx == this_idx then 'checked' end%>/>
+                <%end%>
+              </td>
+            </tr>
+          <%end%>
+          </table>
+        </div>
+        <div class='review_detail' style='clear:both; padding: 5px 10px 10px 10px;'>
+          <button class='grey_button_small review_less review_detail '><%= it("View Less", scope: ['widgets', 'widget_review_view']) %></button>
+          <button class='leave_review_shop review_detail grey_button_small'><%= it("Edit your review", scope: ['widgets', 'widget_review_view']) %></button>
+        </div>
+      </li>
+    <%else%>
+      <li class='user_has_not_review'>
+        Have you dived with <%= widget.shop.name.titleize %> ?
+        <div style='text-align:center;margin-top: 10px; margin-bottom: 10px;'><button class='leave_review_shop yellow_button'><%= it("Leave a review!", scope: ['widgets', 'widget_review_view']) %></button></div>
+      </li>
+    <%end%>
+
+
+    <!-- Users reviews -->
+    <%widget.shop.public_reviews.to_a.reject{|r| r.user==@user}[0..40].each_with_index do |review, idx|
+      #don't display a review that is already displayed in the 'Your review' part
+    %>
+      <li class='review_body' itemprop="review" itemscope itemtype="http://schema.org/Review">
+        <span  itemprop="reviewRating" itemscope itemtype="http://schema.org/Rating"><meta itemprop="ratingValue" content="<%=review.average_mark%>"></span>
+        <img src='<%=if !review.anonymous then review.user.picture else "/img/no_picture.png" end %>' class='review_image_user'/>
+        <span class='eval_date' itemprop="datePublished" datetime="<%=review.created_at.to_date%>"><%=review.created_at.to_date%></span>
+        <p class='review_title'>
+          <img src='/img/icons/<%if review.recommend%>vote_positive.png<%else%>vote_negative.png<%end%>'>
+          <% if !review.anonymous then%>
+            <a href='/<%=review.user.vanity_url%>'><span itemprop="author"><%=review.user.nickname%></span></a>
+            <img src="<%=review.user.country.flag_small%>" title="<%=review.user.country.name%>" alt="<%=review.user.country.name%>" width='16px' height='11px'/>
+          <%else%>
+            <i itemprop="author"><%= it("Anonymous", scope: ['widgets', 'widget_review_view']) %></i>
+          <%end%>
+          <%unless review.title.blank?%><br/><span itemprop="description"><%=review.title.titleize%></span><%end%>
+        </p>
+        <p class='review_abstract review_comment_text'><%=truncate review.comment, :length => 220, :separator => ' ' %></p>
+        <p class='review_detail review_comment_text' itemprop="reviewBody"><%=review.comment%></p>
+        <% unless review.mark_orga.nil? && review.mark_orga.nil? && review.mark_friend.nil? && review.mark_secu.nil? && review.mark_boat.nil? && review.mark_rent.nil? && (truncate review.comment, :length => 220, :separator => ' ') == review.comment then %>
+        <button class='review_more review_abstract grey_button_small'><%= it("View More", scope: ['widgets', 'widget_review_view']) %></button>
+        <% end %>
+        <div style='clear:both;'> </div>
+        <div class='review_detail clear'>
+          <table class='review_marks'>
+          <% [[:mark_orga, it("Organization", scope: ['shop_pages', 'form_review'])],
+              [:mark_friend, it("Friendliness", scope: ['shop_pages', 'form_review'])],
+              [:mark_secu, it("Security", scope: ['shop_pages', 'form_review'])],
+              [:mark_boat, it("Ease of access to water", scope: ['shop_pages', 'form_review'])],
+              [:mark_rent, it("Equipment rental", scope: ['shop_pages', 'form_review'])] ].each do |mark|
+                this_mark = review.send(mark[0])
+                next if this_mark.nil?
+          %>
+            <tr>
+              <td><%=mark[1]%></td>
+              <td>
+                <% previous_level = [0,nil]
+                this_title = nil
+                this_idx = nil
+                grades = [ [0.5,'Really Terrible'], [1, it("Terrible", scope: ['shop_pages', 'form_review'])], [1.5, it("Terrible", scope: ['shop_pages', 'form_review'])], [2, it("Poor", scope: ['shop_pages', 'form_review'])], [2.5, it("Lower than Average", scope: ['shop_pages', 'form_review'])], [3,it("Average", scope: ['shop_pages', 'form_review'])], [3.5,it("Good", scope: ['shop_pages', 'form_review'])], [4,it("Very Good", scope: ['shop_pages', 'form_review'])], [4.5,it("Very Very Good", scope: ['shop_pages', 'form_review'])], [5,it("Excellent", scope: ['shop_pages', 'form_review'])] ]
+                #Let's find the correct grade to display
+                grades.each_with_index do |level, gridx|
+                  if this_mark > previous_level[0] && this_mark <= level[0] then
+                    this_title = level[1]
+                    this_idx = gridx
+                  end
+                  previous_level = level
+                end
+                grades.each_with_index do |level, gridx| %>
+                  <input type='radio' name='star_<%=mark[0]%>_<%=idx%>' title='<%=this_title%>'  disabled='disabled' class='star {split:2}' <%=if gridx == this_idx then 'checked' end%>/>
+                <%end%>
+              </td>
+            </tr>
+          <%end%>
+          </table>
+        </div>
+        <a href='#' onclick='report_review_as_spam(<%=review.id%>);return(false)' class='report_inappropriate_link'><%= it("Report as inappropriate", scope: ['widgets', 'widget_review_view']) %></a>
+        <button class='grey_button_small review_less review_detail'><%= it("View Less", scope: ['widgets', 'widget_review_view']) %></button>
+        <%if !review.reply.blank? %>
+          <div class='review_reply' style='clear:both;'>
+            <p><strong><%= it("%{shop_name} left a reply:", scope: ['widgets', 'widget_review_view'], shop_name: widget.shop.name) %></strong></p>
+            <p class='reply_text'><%=review.reply%></p>
+          </div>
+        <%end%>
+        <%if !@user.nil? && @user.can_edit?(widget.shop) && widget.shop.has_feature?(:reply_review)%>
+          <%if review.reply.blank?%>
+            <button class='yellow_button_small leave_reply review_reply'><%= it("Leave a reply", scope: ['widgets', 'widget_review_view']) %></button>
+          <%else%>
+            <button class='grey_button_small leave_reply review_reply'><%= it("Edit your reply", scope: ['widgets', 'widget_review_view']) %></button>
+          <%end%>
+          <div class='review_reply_editor' style='clear:both; display: none;'>
+            <input type='hidden' class='review_id' value='<%=review.id%>'>
+            <textarea class='review_reply_edit' name='reply'><%=review.reply%></textarea>
+            <div class='button_div'>
+              <button class='yellow_button_small review_reply_submit' ><%= it("Submit", scope: ['widgets', 'widget_review_view']) %></button>
+              <button class='grey_button_small review_reply_cancel' ><%= it("Cancel", scope: ['widgets', 'widget_review_view']) %></button>
+            </div>
+          </div>
+        <%end%>
+        <div style='clear:both'> </div>
+      </li>
+    <%end%>
+  <%end%>
+</ul>
+
+
+
+<div id='dialog-report-spam' title="<%= it("Report review as inappropriate", scope: ['widgets', 'widget_review_view']) %>" style="display:none;">
+  <p class="dialog-text-highlight"><%= it("Diveboard aims (among many other things !) at helping divers choose their dive center when travelling abroad. Thus, reviews need to be relevant for your fellow divers from all over the world.%{br}
+  If you think a review should be removed, report it to us and we'll decide what to do with the review based on the rules below.", scope: ['widgets', 'widget_review_view'], br: It.tag("br")) %></p>
+
+  <p><%= it("You may report a review if it breaks one or many of the following rules:", scope: ['widgets', 'widget_review_view']) %></p>
+  <ul class='dotted_list'>
+    <li><%= it("Must provide useful information for fellow divers", scope: ['widgets', 'widget_review_view']) %></li>
+    <li><%= it("Must be based on first-hand experience (i.e. hearsay, rumors, ...)", scope: ['widgets', 'widget_review_view']) %></li>
+    <li><%= it("Should be original (Same review submitted several times by different users are considered as spam)", scope: ['widgets', 'widget_review_view']) %></li>
+    <li><%= it("Shop owners must not impersonate customers", scope: ['widgets', 'widget_review_view']) %></li>
+  </ul>
+  <ul class='dotted_list'>
+    <li><%= it("Must not be racist, sexist, homophobic, sexually explicit, abusive or otherwise objectionable", scope: ['widgets', 'widget_review_view']) %></li>
+    <li><%= it("Must not break the law or condone or encourage unlawful activity. This includes breach of copyright, defamation and contempt of court", scope: ['widgets', 'widget_review_view']) %></li>
+    <li><%= it("Must not encourage activities which could endanger the safety or well-being of others", scope: ['widgets', 'widget_review_view']) %></li>
+    <li><%= it("Must not advertise products or websites unrelated to the shop", scope: ['widgets', 'widget_review_view']) %></li>
+  </ul>
+  <p><%= it("Please note that Diveboard will never remove reviews because they are too good or not good enough.", scope: ['widgets', 'widget_review_view']) %></p>
+</div>
+
+
+<div id='dialog-reply-review' title="<%= it("Reply to a user review", scope: ['widgets', 'widget_review_view']) %>" style="display:none;">
+  <p class="dialog-text-highlight"><%= it("You may reply to this review to provide details, answers, or simply to thank the one who left the review ! Your reply will appear on your page below the actual review, and the user who left the review will be notified.", scope: ['widgets', 'widget_review_view']) %></p>
+
+  <div class='review_copy'>
+  </div>
+
+  <textarea class='review_reply_edit'></textarea>
+
+  <button class='yellow_button review_reply_submit'><%= it("Submit your reply", scope: ['widgets', 'widget_review_view']) %></button>
+</div>
+

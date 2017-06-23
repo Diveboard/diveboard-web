@@ -1,0 +1,273 @@
+<%
+edit_flag = !@user.nil? && defined?(@shop) && !(review = @user.review_for_shop(@shop.id)).nil? ? true : false
+%>
+
+<%= content_for :javascripts do%>
+<script type="text/javascript">
+  var review_modal;
+  $(document).ready(function()
+  {
+    review_modal = new LightModal('write_review_modal');
+
+    review_modal.trigger['post_review'] = function()
+    {
+          // Check data
+          var error = false;
+          if ($('#recommend').val() == -1)
+          {
+            $('.recommend_error').slideDown({
+              progress: function()
+              {
+                review_modal._lightModalWinResize('write_review_modal');
+              }
+            });
+            error = true;
+          }
+          if ($('#service').val() == "")
+          {
+            $('.service_error').slideDown({
+              progress: function()
+              {
+                review_modal._lightModalWinResize('write_review_modal');
+              }
+            });
+            error = true;
+          }
+          var review_comment = $('#review_form_comment').val().trim();
+          if (review_comment != "" && review_comment.length < 50)
+          {
+            $('.comment_error').slideDown({
+              progress: function()
+              {
+                review_modal._lightModalWinResize('write_review_modal');
+              }
+            });
+            error = true;
+          }
+          if (error)
+            return ;
+
+          // Send data
+          var data_to_send = {
+            <%
+            if !edit_flag
+              %>
+            'user_id': <%= @user.nil? ? "null" : @user.id %>,
+            'shop_id': <%= shop.id %>,
+            <%
+            else
+              %>
+            'id': <%= review.id %>,
+            <% end %>
+            'anonymous': $("#review_anonymous").is(':checked'),
+            'recommend': ($("#recommend").val() == "1"),
+            'mark_orga': $("input[name=star_orga]:checked").val() || null,
+            'mark_friend': $("input[name=star_friend]:checked").val() || null,
+            'mark_secu': $("input[name=star_secu]:checked").val() || null,
+            'mark_boat': $("input[name=star_boat]:checked").val() || null,
+            'mark_rent': $("input[name=star_rent]:checked").val() || null,
+            'title': $("#review_title").val(),
+            'comment': $("#review_form_comment").val(),
+            'service': $("#service").val()
+          };
+
+          <% if @user.nil?%>
+          // User not connected
+          login_modal.display('initial', {type: 'shop_review', url: '/api/V2/review', data: data_to_send});
+          return ;
+          <% end %>
+
+          review_modal.display('processing');
+          $.ajax({
+            url: '/api/V2/review',
+            dataType: 'json',
+            data: {
+              arg: JSON.stringify(data_to_send),
+              'authenticity_token': $("meta[name='csrf-token']").attr("content")
+            },
+            type: "POST",
+            success: function(data){
+              review_modal.display('success');
+            }
+          });
+        };
+
+        $('.new_review').click(function()
+        {
+          review_modal.display('initial');
+          $('.modal_content input[name="star_orga"]').rating();
+          $('.modal_content input[name="star_friend"]').rating();
+          $('.modal_content input[name="star_secu"]').rating();
+          $('.modal_content input[name="star_boat"]').rating();
+          $('.modal_content input[name="star_rent"]').rating();
+          //$('#recommend').val('-1');
+          //$('#write_review_modal .select_option').removeClass('active');
+          //$('#review_title').val('');
+          //$('#review_form_comment').html('');
+
+          $('#write_review_modal .modal_content .select_option').click(function()
+          {
+            var type = $(this).attr('option_type');
+            var value = $(this).attr('option_value');
+
+            $('#write_review_modal .select_' + type + ' .select_option').removeClass('active');
+            $('#' + type + '_' + value).addClass('active');
+            $('#' + type).val(value);
+            $('.' + type + '_error').slideUp({
+              progress: function()
+              {
+                review_modal._lightModalWinResize('write_review_modal');
+              }
+            });
+          });
+
+          $('#write_review_modal .modal_content .cancel').click(function()
+          {
+            var name = $(this).attr('radio_name');
+            $('input[name="' + name + '"]').prop('checked', false);
+          });
+        });
+});
+</script>
+<% end %>
+
+<div id="write_review_modal" class="writeReviewModal modal">
+  <div class="modal_content">
+  </div>
+
+  <div class="modal_slides">
+    <div modal_id="initial" modal_class="modal_content_initial">
+      <a href="javascript:void(0)" class="close" modal_trigger="close"></a>
+      <div class="title">Review for <%= shop.name %></div>
+      <div class="modal_body">
+        <div class="highlight">
+          You have dived with <%= shop.name %>? Leave a comment about your experience, it will help out your fellow divers who travel to this part of the world. Thanks!
+        </div>
+        <div class="title">Overall</div>
+        <input type="hidden" id="recommend" value="<%= if edit_flag then review.recommend ? '1' : '0' else '-1' end %>" />
+        <div class="recommend_error error">
+          You need to tell us what <strong>Overall opinion</strong> you have.<br>
+          Please make up your mind wether you'd recommend this dive shop and try again.
+        </div>
+        <div class="select_recommend">
+            <div id="recommend_1" class="select_option <%= "active" if edit_flag && review.recommend %>" option_type="recommend" option_value="1">I would recommend it</div>
+            <div id="recommend_0" class="select_option <%= "active" if edit_flag && review.recommend == false %>" option_type="recommend" option_value="0">I would disrecommend it</div>
+        </div>
+        <div class="title">What service did you mainly use?</div>
+        <input type="hidden" id="service" value="<%= review.service if edit_flag %>" />
+        <div class="service_error error">
+          You need to tell us what <strong>service</strong> you've used.<br>
+          Please select one and try again.
+        </div>
+        <div class="select_service">
+          <div id="service_autonomous" class="select_option <%= 'active' if edit_flag && review.service == 'autonomous' %>" option_type="service" option_value="autonomous">Autonomous dive</div>
+          <div id="service_guide" class="select_option <%= 'active' if edit_flag && review.service == 'guide' %>" option_type="service" option_value="guide">Guide</div>
+          <div id="service_fill" class="select_option <%= 'active' if edit_flag && review.service == 'fill' %>" option_type="service" option_value="fill">Tank fill</div>
+          <div id="service_training" class="select_option <%= 'active' if edit_flag && review.service == 'training' %>" option_type="service" option_value="training">Training</div>
+          <div id="service_snorkeling" class="select_option <%= 'active' if edit_flag && review.service == 'snorkeling' %>" option_type="service" option_value="snorkeling">Snorkeling</div>
+          <div id="service_other" class="select_option <%= 'active' if edit_flag && review.service == 'other' %>" option_type="service" option_value="other">Other</div>
+        </div>
+        <div class="title">Would you like to say a few words? (optional - 50 characters minimum)</div>
+        <label for="review_title">Give your review a title:</label>
+        <input type="text" id="review_title" value="<%= review.title if edit_flag %>" />
+        <label for="review_form_comment">Your review:</label>
+        <div class="comment_error error">
+          You need to write <strong>50 characters minimum</strong>.<br>
+          Please tell us more about the shop and try again.
+        </div>
+        <textarea id="review_form_comment"><%= review.comment if edit_flag %></textarea>
+        <div class="title">Could you give some more detail? (optional)</div>
+        <%
+        grades = [ [1, it("Terrible", scope: ['shop_pages', 'form_review'])], [2, it("Poor", scope: ['shop_pages', 'form_review'])], [3,it("Average", scope: ['shop_pages', 'form_review'])], [4,it("Very Good", scope: ['shop_pages', 'form_review'])], [5,it("Excellent", scope: ['shop_pages', 'form_review'])] ]
+        %>
+        <div class="review_rating">
+          <div >
+            <table>
+              <tr>
+                <td>Organization</td>
+                <td>
+                  <%
+                  grades.each do |grade|
+                    %>
+                    <input type='radio' name='star_orga' title='<%= grade[1] %>' value="<%= grade[0] %>" <%= 'checked="checked"' if edit_flag && review.mark_orga == grade[0] %>/>
+                    <% end %>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Friendliness</td>
+                  <td>
+                    <%
+                    grades.each do |grade|
+                      %>
+                      <input type='radio' name='star_friend' title='<%= grade[1] %>' value="<%= grade[0] %>" <%= 'checked="checked"' if edit_flag && review.mark_friend == grade[0] %>/>
+                      <% end %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Security</td>
+                    <td>
+                      <%
+                      grades.each do |grade|
+                        %>
+                        <input type='radio' name='star_secu' title='<%= grade[1] %>' value="<%= grade[0] %>" <%= 'checked="checked"' if edit_flag && review.mark_secu == grade[0] %>/>
+                        <% end %>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Ease of access to water</td>
+                      <td>
+                        <%
+                        grades.each do |grade|
+                          %>
+                          <input type='radio' name='star_boat' title='<%= grade[1] %>' value="<%= grade[0] %>" <%= 'checked="checked"' if edit_flag && review.mark_boat == grade[0] %>/>
+                          <% end %>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Equipment rental</td>
+                        <td>
+                          <%
+                          grades.each do |grade|
+                            %>
+                            <input type='radio' name='star_rent' title='<%= grade[1] %>' value="<%= grade[0] %>" <%= 'checked="checked"' if edit_flag && review.mark_rent == grade[0] %>/>
+                            <% end %>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div class="anonymous_section">
+                      <span class="anonymous"><input type="checkbox" id="review_anonymous" <%= 'checked="checked"' if edit_flag && review.anonymous %>/></span>
+                      <span class="anonymous_label">Stay anonymous (your name won't be shown along with your comment)</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal_button">
+                  <a href="javascript:void(0)" modal_trigger="post_review"><%= edit_flag ? 'Save Edit' : 'Post Review' %></a>
+                  <a href="javascript:void(0)" modal_trigger="close">Cancel</a>
+                </div>
+              </div>
+
+              <div modal_class="modal_content_processing" modal_id="processing">
+                <div class="title">Review for <%= shop.name %></div>
+                <div class="modal_body">
+                  <div class="description">
+                    <img src="<%= HtmlHelper.lbroot "/img/transparent_loader.gif" %>" alt="" /><br>
+                    Processing please wait
+                  </div>
+                </div>
+              </div>
+
+              <div modal_class="modal_content_success" modal_id="success">
+                <a href="javascript:void(0)" class="close" modal_trigger="close"></a>
+                <div class="title">Review for <%= shop.name %></div>
+                <div class="modal_body">
+                  <div class="description">
+                   <%= edit_flag ? 'Your review is saved, thank you!' : 'Your review is sent, thank you!' %>
+                 </div>
+               </div>
+               <div class="modal_button">
+                <a href="javascript:void(0)" modal_trigger="reload">Close</a>
+              </div>
+            </div>
+          </div>
+        </div>

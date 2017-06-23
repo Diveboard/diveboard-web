@@ -1,0 +1,29 @@
+
+<%Membership.where(:group_id => @shop.user_proxy._id).order(:role, :user_id).each do |membership|
+  user = membership.user%>
+  <div class='staff_user' data-user_id='<%=user.shaken_id%>' data-membership_id='<%=membership.id%>'>
+    <img src='<%=user.picture%>' class='profile_pic'>
+    <div><%=user.nickname%></div>
+    <div><a href='<%=user.fullpermalink(:locale)%>'><%=user.fullpermalink(:canonical)%></a></div>
+
+    <!--
+      <div class='dropdown right white staff_selector' data-selected='<%=membership.role%>'>
+        <div class='options'>
+          <div class='option' data-value='admin'>Admin</div>
+          <div class='option' data-value='member'>Staff</div>
+        </div>
+      </div>
+    -->
+
+    <%if user.id != @user.id%><button class='grey_button_small staff_fire_button'><%= it("Revoke access", scope: ['shop_pages', 'shop_staff_edit']) %></button><%end%>
+
+  </div>
+<%end%>
+
+
+
+<div class='add_staff_block'>
+
+  <p><%= it("Add an existing Diveboard user:", scope: ['shop_pages', 'shop_staff_edit']) %> <input class='staff_add_id' type='hidden'><input class='staff_add_search wizard_big_input'/> <button class='yellow_button shop_claim_staff'><%= it("Add to staff", scope: ['shop_pages', 'shop_staff_edit']) %></button></p>
+
+</div>

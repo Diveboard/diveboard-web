@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+  <title>Test Suite</title>
+</head>
+<body>
+<table id="suiteTable" cellpadding="1" cellspacing="1" border="1" class="selenium"><tbody>
+<tr><td><b>Test Suite</b></td></tr>
+<tr><td><a href="Check - ksso dive 13">Check - ksso dive 13</a></td></tr>
+<tr><td><a href="Action - login">Action - login or ignore</a></td></tr>
+<tr><td><a href="Check - No dives">Check - No dives</a></td></tr>
+<tr><td><a href="Action - Bulk upload - Suunto 1 dive #1 ZXU">Action - Bulk upload - Suunto 1 dive #1 ZXU</a></td></tr>
+<tr><td><a href="Action - Bulk upload - Suunto 1 dive #2 ZXU.txt">Action - Bulk upload - Suunto 1 dive #2 ZXU</a></td></tr>
+<tr><td><a href="Action - Bulk upload - Suunto 1 dive #3 ZXU.txt">Action - Bulk upload - Suunto 1 dive #3 ZXU</a></td></tr>
+<tr><td><a href="Action - Bulk upload - Suunto 1 dive #4 ZXU.txt">Action - Bulk upload - Suunto 1 dive #4 ZXU</a></td></tr>
+<tr><td><a href="Action - Bulk upload - Suunto 1 dive #5 ZXU.txt">Action - Bulk upload - Suunto 1 dive #5 ZXU</a></td></tr>
+<tr><td><a href="Action - Bulk upload - Suunto 1 dive #6 ZXU.txt">Action - Bulk upload - Suunto 1 dive #6 ZXU</a></td></tr>
+<tr><td><a href="Action - Bulk upload - Suunto 1 dive #7 ZXU.txt">Action - Bulk upload - Suunto 1 dive #7 ZXU</a></td></tr>
+<tr><td><a href="Action - Bulk upload - Suunto 1 dive #8 ZXU.txt">Action - Bulk upload - Suunto 1 dive #8 ZXU</a></td></tr>
+<tr><td><a href="Action - Bulk upload - Suunto 1 dive #9 ZXU.txt">Action - Bulk upload - Suunto 1 dive #9 ZXU</a></td></tr>
+<tr><td><a href="Action - change settings to Metric">Action - Change settings to Metric</a></td></tr>
+<tr><td><a href="Check - dive data metric - Suunto 9 dive #1 ZXL">Check - dive data Metric - Suunto 9 dive #1 ZXL</a></td></tr>
+<tr><td><a href="Action - change settings to Imperial">Action - Change settings to Imperial</a></td></tr>
+<tr><td><a href="Check - dive data Imperial - Suunto 9 dive #1 ZXL">Check - dive data Imperial - Suunto 9 dive #1 ZXL</a></td></tr>
+<tr><td><a href="Action - change settings to Metric">Action - change settings to Metric</a></td></tr>
+<tr><td><a href="Check - ksso dive 13">Check - ksso dive 13</a></td></tr>
+<tr><td><a href="Action - Delete current 9 dives">Action - Delete current 9 dives</a></td></tr>
+<tr><td><a href="Check - No dives">Check - No dives</a></td></tr>
+<tr><td><a href="Action - logout">Action - logout</a></td></tr>
+<tr><td><a href="Check - ksso dive 13">Check - ksso dive 13</a></td></tr>
+</tbody></table>
+</body>
+</html>

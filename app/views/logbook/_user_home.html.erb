@@ -1,0 +1,666 @@
+<%= javascript_include_tag 'divepage' %>
+<%= javascript_include_tag 'editor'%>
+
+<script type='text/javascript'>
+var G_page_fullpermalink = "<%=@owner.fullpermalink%>";
+
+G_user_spots_data = <%=
+  @owner.full_public_dives.map do |dive| {:lat => dive.lat, :lng => dive.lng, :id => dive.spot_id} unless dive.lat.nil? || dive.lng.nil? || (dive.lat == 0 && dive.lng == 0)end .reject(&:nil?).to_json.html_safe;
+%>;
+
+G_user_extra_spots = <%=
+  @owner.user_extra_activities.map do |act| {:lat => act.lat, :lng => act.lng} end .to_json.html_safe
+%>;
+
+var G_private_user = <%= if @user == @owner then (@owner.to_api :private, :caller => @owner).to_json.html_safe else {} end%>;
+
+
+function content_initialize()
+{
+  logbook_user_home_initialize();
+  
+  ga('set', 'contentGroup1', <%if @user && @user == @owner%>'logbook_own_home'<%else%>'logbook_other_home'<%end%>);
+  console.log("ContentGroup1 Page category --> " + <%if @user && @user == @owner%>'logbook_own_home'<%else%>'logbook_other_home'<%end%>);
+  ga('set', 'dimension1', <%if @user && @user == @owner%>'logbook_own_home'<%else%>'logbook_other_home'<%end%>);
+  ga('send', 'pageview');
+
+   //lets try and go to the reauested tab
+  try {
+    $("#tab_"+location.hash.slice(1)+"_link").click();
+  } catch(e){}
+}
+
+</script>
+<%
+          certifs = {}
+          if !@owner.qualifications["featured"].nil? then
+            @owner.qualifications["featured"].each{|qualif|
+              line = "<b>"
+              if qualif["org"] != "Other" && qualif["org"] != "Self Assessed"  && qualif["org"] != "Organization" then
+                line += qualif["org"] + " "
+              end
+              line += qualif["title"]
+              line += " (" + qualif["date"].to_date.strftime("%b %Y") + ")" rescue ""
+              if certifs[qualif["date"]].nil? then
+                certifs[qualif["date"]] = []
+              end
+              line += "</b>"
+              certifs[qualif["date"]].push(line)
+            }
+          end
+          if !@owner.qualifications["other"].nil? then
+            @owner.qualifications["other"].each{|qualif|
+              if qualif["org"] != "Other" && qualif["org"] != "Self Assessed"  && qualif["org"] != "Organization" then
+                line = qualif["org"] + " "
+              else
+                line = ""
+              end
+              line += qualif["title"]
+              line += " (" + qualif["date"].to_date.strftime("%b %Y") + ")" rescue ""
+              if certifs[qualif["date"]].nil? then
+                certifs[qualif["date"]] = []
+              end
+              certifs[qualif["date"]].push(line)
+            }
+          end
+%>
+
+<!-- The hidden Share Menu begins here: -->
+<div id="diveboard_share_menu" style="display:none;">
+  <a href="#" id="share_close">x</a>
+  <div class="accordian">
+    <ul>
+      <li><%= it("Share on social networks", scope: ['logbook', 'user_home']) %></li>
+      <li>
+        <a href="//www.facebook.com/share.php?u=<%=@owner.fullpermalink(:canonical)%>" style="background-color: transparent;" target="_blank"><img src="/img/facebook_share_button_small.gif" width='60px' height='18px' /></a>
+        <a href="//twitter.com/share" class="twitter-share-button" data-url="<%="#{@root_tiny_url}u/#{@owner.vanity_url}"%>" data-text="<%= it("Check out this cool #scuba logbook:", scope: ['logbook', 'user_home']) %>" data-count="none" data-via="diveboard"><%= it("Tweet", scope: ['logbook', 'user_home']) %></a><script type="text/javascript" src="//platform.twitter.com/widgets.js" async></script><span style="width: 10px; display: inline-block;"></span>
+        <g:plusone callback="notify_google_like" href="<%="#{@root_tiny_url}u/#{@owner.vanity_url}"%>" annotation="none"></g:plusone>
+      </li>
+      <li><%= it("Grab the link", scope: ['logbook', 'user_home']) %></li>
+      <li>
+        <span class="diveboard_share_menu_40"><%= it("Long link", scope: ['logbook', 'user_home']) %>:</span><input type="text" value="<%="#{@owner.fullpermalink(:locale)}"%>" class="share_link_input"><br/>
+        <span class="diveboard_share_menu_40"><%= it("Short link", scope: ['logbook', 'user_home']) %>:</span><input type="text" value="<%="#{@root_tiny_url}u/#{@owner.vanity_url}"%>" class="share_link_input"></li>
+
+      <!--<li>Grab the widget</li>
+      <li><div class="share_color_picker">Pick a Color: <a href="#" class="share_menu_red"></a>
+      <a href="#" class="share_menu_yellow"></a>
+      <a href="#" class="share_menu_blue"></a></div>
+      <br/><textarea></textarea><br/><input type="radio" name="size"/><label>HTML</label><input type="radio" name="size"><label>BBCode</label>
+      </li> -->
+    </ul>
+
+  </div>
+</div>
+<!-- The hidden share menu ends here. -->
+
+<div class="main_content_header logbook_header">
+  <div class='head_picture'><img src='<%= @owner.picture_large%>' alt='user picture'></div>
+  <div class='head_title'><div class='head_title_valign'><ul>
+    <li><h1 class='unstyle'><span class="header_title"><%=@owner.nickname%></span><br/><img src="/img/flags/<%=@owner.location%>.gif" alt="<%=@owner.location%>" style="top: 1px; left: 3px; display: inline-block; position: relative; margin-right: 5px;"/> <%= it("Logbook", scope: ['logbook', 'user_home']) %></h1></li>
+  </ul></div></div>
+
+  <ul  class="header_top_action_home not_editable_form">
+    <li><a href="#" id="share_this_link"><%= it("SHARE", scope: ['logbook', 'user_home']) %> <span class="symbol">K</span></a></li>
+    <% if !@user.nil? && @user.can_edit?(@owner) then %>
+    <li><a href="#dialog" id="edit" class=edit_link name="modal"><%= it("EDIT", scope: ['logbook', 'user_home']) %> <span class="symbol">S</span></a></li>
+    <%end%>
+    <% if !@user.nil? && @owner.id != @user.id then
+    does_follow = @real_user.follow? :user_id => @owner.id %>
+    <li><a href="#" class="follow_link" data-db-follow-what='user_id' data-db-follow-id='<%=@owner.id%>' >
+      <span class='text_follow tooltiped'   <%if does_follow then%>style='display:none'<%end%> title='<%= it("Be notified when %{owner_nickname} adds new stuff on Diveboard", scope: ['logbook', 'user_home'], owner_nickname: @owner.nickname) %>'><%= it("FOLLOW", scope: ['logbook', 'user_home']) %> <span class="symbol">+</span></span>
+      <span class='text_unfollow' <%if !does_follow then%>style='display:none'<%end%>>
+        <span class='text_nohover' <%if !does_follow then%>style='display:none'<%end%>><%= it("FOLLOWING", scope: ['logbook', 'user_home']) %> <span class="symbol">.</span></span>
+        <span class='text_hover tooltiped'    <%if !does_follow then%>style='display:none'<%end%> title='<%= it("Stop being notified when %{owner_nickname} adds new stuff on Diveboard", scope: ['logbook', 'user_home'], owner_nickname: @owner.nickname) %>'><%= it("UNFOLLOW", scope: ['logbook', 'user_home']) %> <span class="symbol">×</span></span>
+      </span>
+    </a></li>
+    <%end%>
+  </ul>
+  <ul  class="header_top_action_home editable_form" id="editable_controls1">
+    <li><a href=# class='userhome_save' ><%= it("SAVE", scope: ['logbook', 'user_home']) %> <span class="symbol">/</span></a></li>
+    <li><a class='userhome_cancel' href=# ><%= it("CANCEL", scope: ['logbook', 'user_home']) %> <span class="symbol">×</span></a></li>
+  </ul>
+</div>
+
+
+<ul class="main_inner_header_tabs">
+    <li id="tab_info_link" class="tab_link editable_tab <%= "active" if @tab == :info%>"><a href="#" ><%= it("About me", scope: ['logbook', 'user_home']) %></a></li>
+    <li id="tab_community_link" class='tab_link <%= "active" if @tab == :community%>' <%if !@display_community%>style='display:none'<%end%>><a href="#"><%= it("Community", scope: ['logbook', 'user_home']) %></a></li>
+    <li id="tab_widgets_link" class='tab_link <%= "active" if @tab == :widgets%>' <%if @owner != @user%>style='display:none'<%end%>><a href="#"><%= it("Widgets", scope: ['logbook', 'user_home']) %></a></li>
+    <li id="tab_wallet_link" class='tab_link <%= "active" if @tab == :wallet%>' <%if @user.nil? || !@user.can_edit?(@owner)%>style='display:none'<%end%>><a href="#"><%= it("Wallet", scope: ['logbook', 'user_home']) %></a></li>
+</ul>
+
+
+<div class='rightbar'>
+  <div id="tab_box">
+    <div class='tab_panel tab_info' <%if @tab != :info%>style='display:none'<%end%>>
+
+      <%if (@user.nil? || (!@user.nil? && @user.id != @owner.id)) && (@owner.about.to_s.empty? && @owner.qualifications.blank?)
+          no_about = true
+        else
+          no_about = false
+        end%>
+      <div class="logbook_profile main_content_box <%if no_about%>no_about<%end%>">
+        <ul>
+          <% if @owner.about.to_s.empty? && !@user.nil? && @user.can_edit?(@owner) then %>
+          <% if !@owner.qualifications.nil? && (!@owner.qualifications["featured"].nil? || !@owner.qualifications["other"].nil?) then %>
+            <li class='editable'><p><i><%= it("Add some information by clicking on the %{link:EDIT %{symbol}} link above to help other divers get to know you. In the meantime, details of your certifications will be displayed here:", scope: ['logbook', 'user_home'], link: It.link("#", class: "edit_link"), symbol: "<span class=\"symbol\">S</span>".html_safe) %>
+              </i></p></li>
+          <% else %>
+             <li class='editable'><p><i><%= it("Add some information by clicking on the %{link:EDIT %{symbol}} link above to help other divers get to know you.", scope: ['logbook', 'user_home'], link: It.link("#", class: "edit_link"), symbol: "<span class=\"symbol\">S</span>".html_safe) %>
+              </i></p></li>
+          <% end %>
+          <%end%>
+          <% if @owner.about.to_s.empty? && !@owner.qualifications.nil? && (!@owner.qualifications["featured"].nil? || !@owner.qualifications["other"].nil?) then %>
+            <% certifs.sort.reverse.each{|date, lines|
+              lines.each{|text|%>
+            <li><%=text.html_safe%></li>
+            <%}}%>
+          <%end%>
+          <li><pre id='userhome_value_aboutme'><%=h @owner.about.to_s %></pre></li>
+        </ul>
+      </div>
+      <div class="places_dived  <%if no_about%>no_about<%end%>">
+        <div class="places_dived_title"><h2 class='unstyle'><%= it("Places I've Dived", scope: ['logbook', 'user_home']) %></h2></div>
+        <div id="map_user"></div>
+      </div>
+
+      <div class="single_container">
+
+        <% cache "#{I18n.locale} user_#{@owner.id}_home1_#{(rand*3).floor}" do # expiration done in application_controller.rb %>
+        <div id=profile_stat class="triple_box">
+        <ul>
+          <li class='editable_form'><strong><%= it("Total number of dives not on diveboard", scope: ['logbook', 'user_home']) %>:</strong><input id=userhome_edit_total_ext_dives class='editable_input' type=text size=3 value='<%=@owner.total_ext_dives%>' /><br/><i><%= it("This number is added to the total number of dives logged in Diveboard (public+private) for the stat \"Total number of dives\".", scope: ['logbook', 'user_home']) %></i></li>
+          <li class='editable'><strong><%= it("Dives published", scope: ['logbook', 'user_home']) %>:</strong><span class="half_box_data"><%=@owner.full_public_dives.count%></span></li>
+          <li class='editable'><strong><%= it("Total dives count", scope: ['logbook', 'user_home']) %>:</strong><span class="half_box_data"><%=@owner.total_ext_dives + @owner.dives.count%></span></li>
+          <li class='editable'><strong><%= it("Dives this year", scope: ['logbook', 'user_home']) %>:</strong><span class="half_box_data"><%=@owner.dives.where("YEAR(time_in) = ?",Time.now.year).count%></span></li>
+          <li class='editable'><strong><%= it("Total underwater time on Diveboard", scope: ['logbook', 'user_home']) %>:</strong><span class="half_box_data"><%=time_round_unit(@owner.underwater_time)%></span></li>
+          <% if @owner.full_public_dives.count > 0 then%>
+          <li class='editable'><strong><%= it("Most dives on Diveboard in", scope: ['logbook', 'user_home']) %>:</strong><br/><span class="half_box_data"><%=@owner.region_most_dived%></span></li>
+          <!-- TODO : Check -->
+          <% deepest_dive = @owner.deepest_dive
+            if !deepest_dive.nil? then 
+          %>
+          <li class='editable'><strong><%= it("Deepest Dive", scope: ['logbook', 'user_home']) %>:</strong><br/><%= it("%{maxdepth} in %{spot_location}", scope: ['logbook', 'user_home'], maxdepth: content_tag(:span, unit_distance(deepest_dive.maxdepth,true,1), class: "half_box_data"), spot_location: content_tag(:span, deepest_dive.spot.location.name + (", " + deepest_dive.spot.country.cname rescue ""), class: "half_box_data")) %></li>
+          <%end%>
+
+          <li class='editable'><strong><%= it("Longest Dive", scope: ['logbook', 'user_home']) %>:</strong><br/>
+          <%= it("%{box_data}%{duration}%{c_box_data}   in %{box_data}%{location}, %{country}%{c_box_data}", scope: ['logbook', 'user_home'], location: @owner.longest_dive.spot.location.name, country: (@owner.longest_dive.spot.country.cname rescue ""), box_data: "<span class=\"half_box_data\">".html_safe, c_box_data: "</span>".html_safe, duration: t("min", scope: ['units'], count: @owner.longest_dive.duration)) %>
+          </li>
+
+          <li class='editable'><strong><%= it("Pictures in logbook", scope: ['logbook', 'user_home']) %>:</strong><span class="half_box_data"><%=@owner.dive_picture_count%></span></li>
+          <li class='editable'><strong><%= it("Number of species spotted", scope: ['logbook', 'user_home']) %>:</strong><span class="half_box_data"><%=@owner.full_dives.map {|t| (t.eolcnames.count+t.eolsnames.count)}.sum%></span></li>
+          <%end%>
+        </ul>
+        </div>
+
+        <div class="triple_box" id="logbook_fav_pics">
+        <h2 class='unstyle small_h2'><%= it("Favorite Pictures", scope: ['logbook', 'user_home']) %></h2>
+        <ul class="small_pic_row">
+        <% @owner.full_public_dives_with_picture.sort_by{rand}[0..5].each{|dive| %>
+          <li><a href="<%=dive.fullpermalink(:locale)%>" onclick='showDive(<%=dive.id%>); return(false);'><img src="<%=if dive.featured_picture.nil? then dive.static_map_url else dive.featured_picture.thumbnail end%>" alt="#" class="triple_box_content"/></a></li>
+          <%}%>
+        </ul>
+        </div>
+
+        <div class="triple_box" id="species_spotted">
+        <div style="margin-bottom: 5px;"><h2 class='unstyle small_h2'><%= it("Species Spotted", scope: ['logbook', 'user_home']) %></h2></div>
+        <ul>
+          <% all_spotted_fishes = []
+          link_fish_to_dive = {}
+          @owner.full_dives.sort_by{rand} .map{|dive|
+            all_spotted_fishes |= dive.eolcnames.keep_if{|cname| !cname.eolsname.thumbnail_href.nil? && !cname.eolsname.thumbnail_href.empty?}
+            dive.eolcnames.each{|fish|
+              link_fish_to_dive[fish.cname] = dive
+            }
+            break if all_spotted_fishes.length > 6
+          }
+          all_spotted_fishes.sort_by{rand}[0..5].each { |fish| %>
+          <li><a href="<%=link_fish_to_dive[fish.cname].fullpermalink(:locale)%>" onclick='showDive(<%=link_fish_to_dive[fish.cname].id%>);return(false);'><img src="<%=fish.eolsname.thumbnail_href%>" alt="#" class="triple_box_content"/><%=fish.cname%></a></li>
+          <%}%>
+          <p><%= it("Data provided by EOL.org", scope: ['logbook', 'user_home']) %></p>
+        </ul>
+        </div>
+
+          <div class="triple_box" id="user_feed">
+          <div style="margin-bottom: 5px;"><h2 class='unstyle'>
+            <span class="symbol" style="position: relative;top: -1px;margin-right: 5px;">B</span><%= it("User Feed", scope: ['logbook', 'user_home']) %></h2></div>
+            <p><%= it("%{nickname}'s dives and posts %{link:%{symbol}RSS feed}", scope: ['logbook', 'user_home'], nickname: @owner.nickname, symbol: "<span class=\"symbol\" style=\"margin-right: 4px;\">r</span>".html_safe, link: It.link("/community/feed/"+@owner.vanity_url, target: "_blank", class: "grey_button_small")) %></a>
+            </p>
+          </div>
+
+
+
+      </div>
+
+      <div class="double_container">
+        <div class="double_box fav_dives">
+          <h2 class='unstyle'><%= it("Favorite Dives", scope: ['logbook', 'user_home']) %></h2>
+
+
+          <ul class='editable'>
+            <% if @owner.full_public_dives.count == 0 then %>
+              <li><%= it("There are no public dives !", scope: ['logbook', 'user_home']) %></li>
+            <%end%>
+            <% displayed_dives = []
+            if @owner.favorite_dives.count > 0 then
+              displayed_dives = @owner.favorite_dives
+            else
+              displayed_dives = @owner.full_public_dives
+            end
+            displayed_dives.sort_by{rand}[0..3].each{|dive| %>
+            <li class="fav_dive_body">
+
+            <a href="<%=dive.fullpermalink(:locale)%>" onclick='showDive(<%=dive.id%>); return(false);'>
+            <img src="<%=if dive.featured_picture.nil? then dive.static_map_url else dive.featured_picture.thumbnail end%>" class='thumb_fav_dive' alt="#" /></a>
+            <div class="fav_dive_body_inner">
+              <span><h3 class='unstyle'><a href="<%=dive.fullpermalink(:locale)%>" onclick='showDive(<%=dive.id%>); return(false);'><%=dive.date %> <%=dive.spot.country.cname rescue ""%> <%=dive.spot.location.name%><br/><%=dive.spot.name%></a></h3></span>
+              <p><%if (@user != @owner && @owner.share_details_notes) || (!@user.nil? && @user.can_edit?(@owner))%><%=dive.notes%><%end%></p>
+            </div>
+
+            </li>
+            <%}%>
+
+          </ul>
+        <%end%>
+        </div>
+
+
+        <% if (!@user.nil? && @user.can_edit?(@owner)) ||
+              (!@owner.about.to_s.empty? && !@owner.qualifications.nil? && (!@owner.qualifications["featured"].nil? || !@owner.qualifications["other"].nil?)) then %>
+          <div class="double_box" id="certificates">
+          <h2 class='unstyle'><%= it("My Certifications", scope: ['logbook', 'user_home']) %></h2>
+          <ul>
+          <% if @owner.qualifications["featured"].nil? && @owner.qualifications["other"].nil? then %>
+          <li><i><%= it("You have not entered any of your certifications yet. Click on the %{link:EDIT %{symbol}} link on top of this page to fill in this information. Currently, this block won't be displayed to other users accessing your page here.", scope: ['logbook', 'user_home'], link: It.link("#", class: "edit_link"), symbol: "<span class=\"symbol\">S</span>".html_safe) %></i></li>
+          <%end%>
+          <% certifs.sort.reverse.each{|date, lines|
+            lines.each{|text|%>
+          <li><%=text.html_safe%></li>
+          <%}}%>
+          </ul>
+          </div>
+        <%end%>
+
+
+
+      </div>
+        <div style="clear:both;"></div>
+    </div>
+    <% if !@user.nil? && @user.can_edit?(@owner) then %>
+    <div class='tab_panel tab_info_edit'style='display:none'>
+      <div class="logbook_profile main_content_box">
+        <h2><%= it("About Me", scope: ['logbook', 'user_home']) %></h2>
+        <div class="home_user_settings_edit">
+          <div id='settings_address_map' style="width:163px; height:163px; float: right; margin-top: -30px;"></div>
+
+          <div class="settings_label_left"><label for="nickname"><%= it("Name", scope: ['logbook', 'user_home']) %> *:</label></div>
+          <div class="settings_input_right"><input id="nickname" name="nickname" value="<%=@user.nickname%>"/>
+          <img id="nickname_ok" src="/img/ok.png" align="absmiddle"/>
+          <img  id="nickname_nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/>
+          <span class="settings_meta_text"><%= it("As shown in your profile", scope: ['logbook', 'user_home']) %></span></div>
+
+
+
+          <div class="settings_label_left"><label for="location"><%= it("Location", scope: ['logbook', 'user_home']) %> :</label></div>
+          <div class="settings_input_right" style='width: 280px'>
+            <input id="settings_address" value='<%=@user.city%>'/>
+            <img id="address_ok" src="/img/ok.png" align="absmiddle"/>
+            <img id="address_nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/>
+            <input id="settings_address_lat" type='hidden' value='<%=@user.lat%>'/>
+            <input id="settings_address_lng" type='hidden' value='<%=@user.lng%>'/>
+          </div>
+
+
+          <div class="settings_label_left"><label for="location"><%= it("Country", scope: ['logbook', 'user_home']) %>:</label></div>
+          <div class="settings_input_right" style='width: 250px; text-align: left; padding-left: 30px;'><img src="/img/flags/blank.gif"/><input id="country" name="location" style="width:163px; margin-left: 14px;" disabled="disabled" class="disabled"/>
+          </div>
+
+          <div class="settings_label_left"><label for="location"><%= it("Diveboard tag", scope: ['logbook', 'user_home']) %>:</label></div>
+          <div class="settings_input_right"><input id="tagid" name="tagid" value="<%=@user.tag.shaken_id rescue ""%>"/>
+          <img id="tagid_ok" src="/img/ok.png" align="absmiddle" <%if @user.tag.nil? %>style="display:none;"<%end%>/>
+          <img  id="tagid_nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/>
+          <img  id="tagid_search" style="display:none;" align="absmiddle" src="/img/indicator.gif"/>
+          <span class="settings_meta_text"><%= it("Learn more %{tooltip:about tags}", scope: ['logbook', 'user_home'], tooltip: It.link("#", class: "tooltiped", title: it("Tags are small rfid / qrcode keychains that link to your logbook.%{br}They have a unique code : /tag/XXXXXX written on it which you should input here to get them linked up.", scope: ['logbook', 'user_home'], br: It.tag("br")))) %></span></div>
+        </div>
+
+        <div class="settings_content">
+        <div class="settings_profile_pictures">
+          <div class="settings_profile_current_picture">
+          <span class="settings_image_label"><%= it("Your avatar", scope: ['logbook', 'user_home']) %>:</span>
+            <div style="width:100px;height:100px;overflow:hidden;margin-left:5px;">
+              <img id="preview" src="<%=@user.picture%>" alt="profile_pic" width="100" />
+            </div>
+          </div>
+          <div class="settings_profile_new_picture">
+            <% if !@user.fb_id.nil?%>
+            <div class="" style="height: 70px; font-weight: bold; font-size: 12px; padding: 18px 0px 18px 8px; margin-left: 10px; width: 200px; display: inline-block; position:relative;">
+            <span class="third_lvl_header" style="margin-bottom: 10px; height: 20px; display: inline-block;"><%= it("Facebook Picture", scope: ['logbook', 'user_home']) %> </span><br/>
+            <img src="<%=@user.fb_picture_small%>" alt="sample_profile_small" width="42" height="42" /> <a href="#"  style="left: 70px; position: absolute; top: 33px; padding: 10px" id="use_facebook" class="edit_save_btn" ><%= it("Select", scope: ['logbook', 'user_home']) %></a>
+            </div>
+            <%end%>
+
+            <div class="" id="imageuploader" style="height: 70px; font-weight: bold; font-size: 12px; padding: 18px 0px 18px 8px; margin-left: 10px; width: 205px; display: inline-block; vertical-align: top;">
+            <span class="third_lvl_header"><%= it("Upload New Profile Image (2Mb max)", scope: ['logbook', 'user_home']) %>:</span>
+                <div id="settings_upload_btn">
+                          <%= it("Import a picture.", scope: ['logbook', 'user_home']) %>
+                </div>
+            </div>
+            <div class="" id="picture_table" style="display:none; text-align: right;">
+              <span class="third_lvl_header"><%= it("Select a thumbnail", scope: ['logbook', 'user_home']) %>:</span>
+                <div id="picturepreview" style="margin-bottom: 6px;"></div>
+              <a href="#" class="grey_button_v1" id="image_cancel"><%= it("Cancel", scope: ['logbook', 'user_home']) %></a>
+              <a href="#" class="yellow_button" id="image_ok_avatar" style="margin-left: 15px;"><%= it("OK", scope: ['logbook', 'user_home']) %></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <p style="width: 99%; margin-bottom: 10px;"><i><%= it("This is where you should say a few words about yourself. Don't be shy and tell your story ! What brought you to scuba ? Why do you love it ?", scope: ['logbook', 'user_home']) %> </i></p>
+        <textarea id='userhome_edit_aboutme'></textarea>
+      </div>
+      <div class="logbook_profile main_content_box">
+        <h2><%= it("Dive experience", scope: ['logbook', 'user_home']) %></h2>
+        <p style="width: 99%; margin-bottom: 10px;">
+          <strong><%= it("Total number of dives not on diveboard", scope: ['logbook', 'user_home']) %>:</strong><input id="userhome_edit_total_ext_dives_edit" type="number" style="width: 50px;" /><br/><i><%= it("This number is added to the total number of dives logged in Diveboard (public+private) for the stat \"Total number of dives\".", scope: ['logbook', 'user_home']) %></i>
+        </p>
+        <h2><%= it("CERTIFICATIONS %{amp} Specializations", scope: ['logbook', 'user_home'], amp: "&amp;".html_safe) %></h2>
+        <div id="Certifications">
+          <div class="settings_cert_box_top">
+            <span class="third_lvl_header"><%= it("Main qualifications (Featured in mini-Profile)", scope: ['logbook', 'user_home']) %></span>
+            <ul id="sortable1" class="connectedSortable draggable_list">
+
+            </ul>
+            <span class="third_lvl_header"><%= it("Other qualifications (drag above to feature)", scope: ['logbook', 'user_home']) %></span>
+            <ul id="sortable2" class="connectedSortable draggable_list">
+
+            </ul>
+            <span class="third_lvl_header"><%= it("Add qualifications", scope: ['logbook', 'user_home']) %></span>
+            <div class="settings_cert_box_line">
+              <div class="settings_cert_box_one">
+                <select id="qualif_orga">
+                <!-- TODO: Check form values -->
+                  <option DISABLED><%= it("Organization", scope: ['logbook', 'user_home']) %></option>
+                  <option><%= it("CMAS", scope: ['logbook', 'user_home']) %></option>
+                  <option><%= it("PADI", scope: ['logbook', 'user_home']) %></option>
+                  <option><%= it("BSAC", scope: ['logbook', 'user_home']) %></option>
+                  <option><%= it("NAUI", scope: ['logbook', 'user_home']) %></option>
+                  <option><%= it("SSI", scope: ['logbook', 'user_home']) %></option>
+                  <option><%= it("UTD", scope: ['logbook', 'user_home']) %></option>
+                  <option>RAID</option>
+                  <option><%= it("FFESSM", scope: ['logbook', 'user_home']) %></option>
+                  <option><%= it("PSAI", scope: ['logbook', 'user_home']) %></option>
+                  <option><%= it("IANTD", scope: ['logbook', 'user_home']) %></option>
+                  <option><%= it("TDI", scope: ['logbook', 'user_home']) %></option>
+                  <option><%= it("SDI", scope: ['logbook', 'user_home']) %></option>
+                  <option><%= it("GUE", scope: ['logbook', 'user_home']) %></option>
+                  <option><%= it("SNSI", scope: ['logbook', 'user_home']) %></option>
+                  <option><%= it("Other", scope: ['logbook', 'user_home']) %></option>
+                  <option><%= it("Self-assessed", scope: ['logbook', 'user_home']) %></option>
+                </select>
+              </div>
+              <div class="settings_cert_box_two"><input type="text" value="<%= it("Enter Certification Title Here", scope: ['logbook', 'user_home']) %>" class="autoclear" id="qualif_title"></div>
+              <div class="settings_cert_box_three"><input type="text" class="date-pick"id="qualif_date_picker" value="<%=Time.now.to_date.to_s%>"/></div>
+              <div class="settings_cert_box_four">
+                <span class="edit_save_btn_hover"><a href="#" id="add_qualification" class="edit_save_btn"><%= it("+ Add", scope: ['logbook', 'user_home'])%></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="logbook_profile main_content_box">
+        <h2><%= it("Favorite dives", scope: ['logbook', 'user_home']) %></h2>
+          <div id="userhome_edit_favorite_dives" >
+            <p style="width: 99%; margin-bottom: 10px;"><i><%= it("Tick the boxes in front of the dives you would like to feature on your home page.%{br}
+            Note that if you select more than 4 dives, your home page will display randomly 4 of these.", scope: ['logbook', 'user_home'], br: It.tag("br")) %></i></p>
+            <div>
+              <div class="page_data"> <%= it("Selected dives", scope: ['logbook', 'user_home']) %>: <span></span> (<a href="#"><%= it("unselect all", scope: ['logbook', 'user_home']) %></a>)</div>
+              <div class="page_navigation"></div>
+            </div>
+            <ul class='editable_input content'>
+              <% @owner.full_dives.each{|dive| %>
+                <li>
+                <div class="fav_dive_body">
+                <div class="fav_dive_edit_box">
+                <input type=checkbox class='fav_dives_chk' <% if dive.privacy==1 then %>disabled<%end%> <%if !dive.favorite.nil? && dive.favorite then%>checked<%end%> name='favorite_<%=dive.id%>' />
+                <%if dive.privacy==0 %>
+                <img src="/img/lock_green.png" alt="Public" class="tooltiped-js" id='lock_<%=dive.id%>' title="">
+                <%else%>
+                <img src="/img/lock_red.png" alt="Private" class="tooltiped-js" id='lock_<%=dive.id%>' title="">
+                <%end%>
+                </div>
+                <div class="fav_dive_body_inner">
+                  <img src="<%=if dive.featured_picture.nil? then dive.static_map_url else dive.featured_picture.thumbnail end%>" class='thumb_fav_dive' alt="#" style="float: left;"/>
+                  <span><a href="#"><%=dive.date %> <%=dive.spot.country.cname rescue ""%> <%=dive.spot.location.name%> <%=dive.spot.name%></a></span>
+                  <br/><p style="display:inline;"><%=dive.notes%></p>
+                </div>
+                </div>
+                </li>
+              <%}%>
+            </ul>
+          </div>
+      </div>
+    </div>
+    <%end%>
+
+    <div class='tab_panel tab_community' <%if @tab != :community%>style='display:none'<%end%>>
+
+
+      <% cache "#{I18n.locale} user_#{@owner.id}_home2" do # expiration done in application_controller.rb %>
+
+      <div class="triple_box" id="buddies_list">
+        <h2 class='unstyle'><%= it("Buddies", scope: ['logbook', 'user_home']) %></h2>
+        <% if @user == @owner then%>
+          <div class='buddy_invite'>
+            <%= it("%{p_invite:To quickly select your dive buddies when logging a dive, add them here:} %{fb_button:Invite your dive buddies%{br}from facebook} %{p2_invite:...or enter a list of your dive buddies emails:}", scope: ['logbook', 'user_home'], p_invite: It.tag("p", class: 'invite_head'), p2_invite: It.tag("p", class: 'invite_text'), fb_button: It.tag('button', class: 'yellow_button invite_fb_dialog'), br: It.tag("br")) %>
+            <textarea class='invite_email_list'></textarea>
+            <button class='yellow_button_small massbuddy_invite_submit'><%= it("Invite", scope: ['logbook', 'user_home']) %></button>
+            <div style='clear:both'> </div>
+          </div>
+        <h2 class='unstyle'><%= it("Your dive buddies", scope: ['logbook', 'user_home']) %></h2>
+        <%end%>
+
+        <div class='buddy_holder'>
+          <% seen={}
+          @owner.users_buddies.sort do |a,b| b.public_dive_count <=> a.public_dive_count end .each do |link|
+            next if link.buddy_type != 'User'
+            buddy = link.buddy
+            next if seen[buddy.id]
+            seen[buddy.id] = true
+            %>
+          <div class='buddy_item'>
+            <a href='<%=buddy.fullpermalink(:locale)%>'>
+              <img src='<%=buddy.picture%>' class='buddy_pict'>
+              <p class='buddy_nick'><strong><%=buddy.nickname%></strong></p>
+              <%if link.public_dive_count%><p><%= it("%{nb_dive} together", scope: ['logbook', 'user_home'], nb_dive: t("dive", scope: ['units'], count: link.public_dive_count)) %><%end%>
+              <p><%= it("%{nb_dive} on Diveboard", scope: ['logbook', 'user_home'], nb_dive: t("dive", scope: ['units'], count: buddy.public_dives.count)) %></p>
+              <div style='clear:both'></div>
+            </a>
+            <%if @owner == @user%>
+            <div class='button_section'>
+              <button class='grey_button_v1_small destitute_buddy' data-type='user' data-id='<%=buddy.id%>'><%= it("Remove buddy", scope: ['logbook', 'user_home']) %></button>
+            </div>
+            <%end%>
+          </div>
+          <%end%>
+          <%seen = {}
+          @owner.users_buddies.sort do |a,b| b.public_dive_count <=> a.public_dive_count end .each do |link|
+            next if link.buddy_type != 'ExternalUser'
+            buddy = link.buddy
+            next if seen[buddy.id]
+            seen[buddy.id] = true
+            %>
+            <div class='buddy_item'>
+              <%if buddy.fb_id then invite_class = 'buddy_invite_fb'
+              elsif !buddy.email.blank? then invite_class = 'buddy_invite_submit'
+              else invite_class='buddy_invite_ask_email'
+              end%>
+              <img src='<%=buddy.picture%>' class='buddy_pict'>
+              <p class='buddy_nick'><strong><%=if !buddy.nickname.blank? then buddy.nickname elsif !buddy.email.blank? then buddy.email.match(/^(.*)@/)[1] rescue nil end%></strong></p>
+              <%if link.public_dive_count%><p><%= it("%{nb_dive} together", scope: ['logbook', 'user_home'], nb_dive: t("dive", scope: ['units'], count: link.public_dive_count)) %><%end%>
+              <% if @owner == @user then %>
+              <p><%=buddy.email%></p>
+              <p class='invitation_tag' <%if link.invited_at.nil? then%>style='display:none'<%end%>><%= it("Invited on", scope: ['logbook', 'user_home']) %> <span class='invitation_date'><%=link.invited_at.to_date rescue ""%></span></p>
+              <div class='button_section'>
+                <%if link.invited_at && link.invited_at < 7.days.ago then%>
+                  <button class='grey_button_small <%=invite_class%>' data-external-id='<%=buddy.id%>' data-external-nickname="<%=buddy.nickname%>" data-external-email='<%=buddy.email%>' data-external-fbid='<%=buddy.fb_id%>'><%= it("Re-Invite", scope: ['logbook', 'user_home']) %></button>
+                <%elsif link.invited_at.nil?%>
+                  <button class='yellow_button_small <%=invite_class%>' data-external-id='<%=buddy.id%>' data-external-email='<%=buddy.email%>' data-external-nickname="<%=buddy.nickname%>" data-external-fbid='<%=buddy.fb_id%>'><%= it("Invite", scope: ['logbook', 'user_home']) %></button>
+                <%end%>
+                <button class='grey_button_small destitute_buddy' data-type='external' data-id='<%=buddy.id%>'><%= it("Remove buddy", scope: ['logbook', 'user_home']) %></button>
+              </div>
+            <%end%>
+          </div>
+          <%end%>
+        </div>
+
+      </div>
+
+      <div class="double_container">
+
+
+        <% list_shops = []
+        if (!@user.nil? && @user.can_edit?(@owner)) then
+          list_shops = @owner.all_shops
+          list_shops += @owner.reviews.map(&:shop)
+          list_shops.uniq!
+        else
+          list_shops = @owner.public_shops
+          list_shops += @owner.reviews.reject {|r| r.anonymous} .map(&:shop)
+          list_shops.uniq!
+        end %>
+
+        <div class="double_box" id="reviews">
+        <h2 class='unstyle'><%= it("Visited Dive centers", scope: ['logbook', 'user_home']) %></h2>
+          <% if list_shops.count > 0 then %>
+          <table class='loghome_shops'>
+          <%list_shops.each do |shop|
+            review = @owner.review_for_shop(shop)%>
+            <tr>
+              <td class='content'>
+                <%if shop.user_proxy && shop.user_proxy.has_picture? then%><img class='icon' src='<%=shop.user_proxy.picture rescue User::NO_PICTURE%>'/><%end%>
+                <%if !shop.country_code.nil? && shop.country_code != 'BLANK'%>
+                  <img src='<%=shop.country.flag_small%>'/>
+                <%end%>
+                <%if shop.user_proxy%><a href='<%=shop.user_proxy.fullpermalink(:locale)%>' target='_blank'><%=shop.name%></a>
+                <%else%><%=shop.name%><%end%>
+                <%if (!shop.country_code.nil? && shop.country_code != 'BLANK') || !shop.city.blank?%>
+                  <br/>
+                <%end%>
+                <span style='color: #999; font-weight: lighter;'><%=shop.city%></span>
+              </td>
+              <%if review && (!@user.nil? && @user.can_edit?(@owner)) then%>
+                <td class='review'>
+                  <img src='/img/icons/<%if review.recommend%>vote_positive.png<%else%>vote_negative.png<%end%>'>
+                  <%=review.title%>
+                  <%if review.title.blank? then%><span style='font-style: italic; color: #999; font-weight: lighter;'><%= it("(No title)", scope: ['logbook', 'user_home']) %></span><%end%>
+                  <%if review.anonymous%><span style='font-style: italic; color: #999; font-weight: lighter;'><%= it("(Anonymous)", scope: ['logbook', 'user_home']) %></span><%end%>
+                </td>
+                <td>
+                  <% if !shop.vanity_url.blank? then%>
+                    <button class='grey_button_small leave_review' data-db-shopvanity='<%=shop.permalink%>'><%= it("Edit", scope: ['logbook', 'user_home'])%></button>
+                  <%end%>
+                </td>
+              <%elsif review && !review.anonymous then%>
+                <td class='review'>
+                  <img src='/img/icons/<%if review.recommend%>vote_positive.png<%else%>vote_negative.png<%end%>'>
+                  <%=review.title%>
+                  <%if review.title.blank? then%><span style='font-style: italic; color: #999; font-weight: lighter;'><%= it("(No title)", scope: ['logbook', 'user_home']) %></span><%end%>
+                </td>
+                <td></td>
+              <%elsif @owner == @user && !shop.vanity_url.blank? then%>
+                <td class='review' style='text-align: right;' colspan=2>
+                  <button class='yellow_button leave_review' data-db-shopvanity='<%=shop.permalink%>'><%= it("Leave a review", scope: ['logbook', 'user_home']) %></button>
+                </td>
+              <%else%>
+                <td class='review' style='text-align: right;' colspan=2></td>
+                  <!--no reviews left-->
+              <%end%>
+            </tr>
+
+          <%end%>
+          </table>
+          <%end%>
+          <%if @owner == @user %>
+          <div class='search_divecenter'>
+            <p><%= it("Look for divecenter which you already dived with, and maybe leave them a review to cheer them up", scope: ['logbook', 'user_home']) %>:</p>
+            <form action='/search'>
+              <input type='hidden' name='more' value='shops'/>
+              <input name='s' class='wizard_big_input wizard_input_100'>
+              <input type='submit' class='yellow_button' value='<%= it("Search", scope: ['logbook', 'user_home']) %>'/>
+            </form>
+          </div>
+          <%end%>
+        </div>
+      </div>
+    <%end #cache%>
+    </div>
+    <%if !@user.nil? && @user.can_edit?(@owner) then%>
+    <div class='tab_panel tab_widgets' <%if @tab != :widgets%>style='display:none'<%end%>>
+      <div class="logbook_profile main_content_box ">
+        <h2 class="unstyle"><%= it("Logbook Profile", scope: ['logbook', 'user_home']) %></h2>
+        <table><tr>
+          <td style="width: 220px; height: 245px; display: block;"><iframe frameborder="0" height="245" width="200" scrolling="no" src="<%=@owner.fullpermalink(:locale).gsub(/^http:/, "")+"/widget"%>" style="border: 1px solid #AAA;"></iframe></td>
+          <td><%= it("Widget code", scope: ['logbook', 'user_home']) %>:<br/><textarea readonly="readonly" style="margin: 5px 5px 0px 0px; width: 408px; height: 60px;"><iframe frameborder="0" height="245" width="200" scrolling="no" src="<%=@owner.fullpermalink(:locale)+"/widget"%>"></iframe></textarea></td>
+        </tr></table>
+      </div>
+    </div>
+    <%end%>
+
+    <%if !@user.nil? && @user.can_edit?(@owner) then%>
+    <div class='tab_panel tab_wallet'<%if @tab != :wallet%>style='display:none'<%end%>>
+      <div class="main_content_box ">
+        <p><%= it("Privately store copies of your licence cards, insurance, medical certificate, etc... so that you never miss one when diving abroad !", scope: ['logbook', 'user_home']) %></p>
+
+        <div class='wallet_container'>
+          <%@owner.wallet.pictures.each do |pic|%>
+            <div class='wallet_doc' data-doc_id='<%=pic.id%>' data-download_url='<%=pic.original_document_download_url%>'>
+              <div class='wallet_img'>
+                <a href='<%=pic.original_document_url%>' target='_blank' class='download_link'><img src='<%=pic.medium%>'/></a>
+              </div>
+              <div class='notes'><%=pic.notes%></div>
+            </div>
+          <%end%>
+          <div class='wallet_doc_menu' style='display: none'>
+            <div class='download'><%= it("Download", scope: ['logbook', 'user_home']) %></div>
+            <div class='delete'><%= it("Delete document", scope: ['logbook', 'user_home']) %></div>
+          </div>
+        </div>
+
+        <div class='wallet_uploader0'>
+          <div class='wallet_uploader'>
+            <div class="imageuploader">
+              <span class="third_lvl_header"><%= it("Upload New Document (2Mb max)", scope: ['logbook', 'user_home']) %>:</span>
+              <div class="select_file_btn"><%= it("Import a picture", scope: ['logbook', 'user_home']) %></div>
+            </div>
+            <div class="picture_table" style="display:none;">
+              <div class="picturepreview" style='display: inline-block'></div>
+              <button href="#" class="yellow_button image_confirm" style='margin: 0px 10px'><%= it("Confirm", scope: ['logbook', 'user_home']) %></button>
+              <button href="#" class="grey_button_v1 image_cancel" style='margin:10px;'><%= it("Cancel", scope: ['logbook', 'user_home']) %></button>
+              <div style='font-size: 10px; font-style: italic;'><%= it("You may choose to store only part of the image", scope: ['logbook', 'user_home']) %></div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+    <%end%>
+
+  </div>
+</div>
+
+
+<div id='dialog-ask-email-invite' title="<%= it("Invite a buddy", scope: ['logbook', 'user_home']) %>"  style="display:none;">
+  <p class="dialog-text-highlight"><%= it("We have no email for %{buddy_name}.
+  %{br}To be able to send an invitation to %{buddy_name}, could you please provide his/her e-mail ?", scope: ['logbook', 'user_home'], buddy_name: "<span class='buddy_name'></span>".html_safe, br: It.tag("br")) %> </p>
+
+  <p>E-mail address: <input class='buddy_email wizard_big_input wizard_input_100'></p>
+  <input type='hidden' class='buddy_id' value=''>
+
+  <br/>
+  <div style='text-align: right'>
+    <button class='yellow_button ask_email_invite_send'><%= it("Send invitation", scope: ['logbook', 'user_home']) %></button>
+    <button class='grey_button ask_email_invite_cancel'><%= it("Cancel", scope: ['logbook', 'user_home']) %></button>
+  </div>
+</div>
+

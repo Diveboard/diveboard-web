@@ -1,0 +1,66 @@
+<%
+  dives = activities.group_by(&:dive_id).values
+  dives.sort! do |d1, d2| d2.count <=> d1.count end
+  first_dives = dives[0..2].map {|d| { 'first' => d.first, 'count' => d.count, 'first_pictures' => d[0..6].map(&:picture) } }
+%>
+
+<li class='feed_item'>
+  <%user = activity.user %>
+  <div class='feed_abstract'>
+    <div class='feed_abstract_img'><img src='<%=user.picture%>'/></div>
+    <div class='feed_abstract_title'><%= it("%{user} has added %{count} new pictures", scope: ['feeds', 'activity_multiple_add_picture'], user: user.nickname, count: activities.count) %></div>
+    <div class='feed_abstract_when'>
+      <%if !activity.when['days'].nil? then%><%= it("%{count} days ago", scope: ['feeds'], count: activity.when['days']) %>
+      <%elsif !activity.when['hours'].nil? then%><%= it("%{count} hours ago", scope: ['feeds'], count: activity.when['hours']) %>
+      <%elsif !activity.when['minutes'].nil? then%> <%= it("%{count} minutes ago", scope: ['feeds'], count: activity.when['minutes']) %>
+      <%elsif !activity.when['seconds'].nil? then%><%= it("%{count} seconds ago", scope: ['feeds'], count: activity.when['seconds']) %>
+      <%end%>
+    </div>
+  </div>
+  <div class='feed_popup feed_popup_multiple_add_dive'>
+  <%first_dives.each do |activity|%>
+    <img class=feed_popup_arrow src='<%=HtmlHelper.lbroot "/img/feeds/popup_arrow.png"%>'/>
+    <a href='<%=activity['first'].dive.fullpermalink(:locale)%>#pictures' style='color:#333'>
+      <div class=feed_popup_main>
+        <img class='feed_popup_title_thumbimg' src='<%=activity['first'].user.picture%>' />
+        <div class='feed_popup_smalltitle'>
+          <%if activity['first'].dive.spot_id != 1 then%>
+            <%= it("%{bold:%{user}}%{br}has added %{count} pictures on his dive in %{spot}, %{area} on %{date}",
+                    scope: ['feeds', 'activity_multiple_add_picture'],
+                    spot: activity['first'].dive.spot.name,
+                    area: activity['first'].dive.spot.area_name,
+                    date: activity['first'].dive.date,
+                    user: activity['first'].user.nickname,
+                    bold: It.tag("strong", style: "#333 !important"),
+                    br: It.tag("br"),
+                    count: activity['count']
+                  ) %>
+          <%else%>
+            <%= it("%{bold:%{user}}%{br}has added %{count} pictures on his dive on %{date}",
+                    scope: ['feeds', 'activity_multiple_add_picture'],
+                    date: activity['first'].dive.date,
+                    bold: It.tag("strong", style: "#333 !important"),
+                    br: It.tag("br"),
+                    user: activity['first'].user.nickname,
+                    count: activity['count']
+                  ) %>
+          <%end%>
+        </div>
+        <div class='feed_popup_pictures'><%(activity['first_pictures']||[]).each do |pic|%><img src='<%=pic.thumbnail%>' /><%end%></div>
+        <div class='feed_popup_link'><span style='color:#ff6200'><%= it("View in logbook", scope: ['feeds']) %></span>
+          <div class='feed_popup_when'>
+            <%if !activity['first'].when['days'].nil? then%><%= it("%{count} days ago", scope: ['feeds'], count: activity['first'].when['days']) %>
+            <%elsif !activity['first'].when['hours'].nil? then%><%= it("%{count} hours ago", scope: ['feeds'], count: activity['first'].when['hours']) %>
+            <%elsif !activity['first'].when['minutes'].nil? then%> <%= it("%{count} minutes ago", scope: ['feeds'], count: activity['first'].when['minutes']) %>
+            <%elsif !activity['first'].when['seconds'].nil? then%><%= it("%{count} seconds ago", scope: ['feeds'], count: activity['first'].when['seconds']) %>
+            <%end%>
+          </div>
+        </div>
+        <br style='clear:both' />
+      </div>
+    </a>
+  <%end%>
+  </div>
+
+
+</li>

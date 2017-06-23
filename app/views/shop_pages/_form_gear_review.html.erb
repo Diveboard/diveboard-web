@@ -1,0 +1,88 @@
+<div id="dialog-enter-review" title="<%= it("Enter a review: %{gear_category}", scope: ['shop_pages', 'form_gear_review'], gear_category: t(gear.category, scope: ['model','gear','category'])) %> <%=gear.model %>" style="display:none;">
+  <p class="dialog-text-highlight"><%= it("You have used this equipment? Leave a comment about your experience, it will help out your fellow divers to choose the best equipment. Thanks!", scope: ['shop_pages', 'form_gear_review']) %></p>
+
+
+    <input type='hidden' id='review_id' value="<%= if review then review.id end %>" />
+    <input type='hidden' id='review_user_id' value="<%= @user.id rescue nil%>" />
+    <input type='hidden' id='review_gear_id' value="<%= gear.id %>" />
+    <p><%= it("Give your review a title (Mandatory - 50 characters minimum):", scope: ['shop_pages', 'form_gear_review']) %></p>
+    <div class='review_answer'>
+      <input type='text' id='review_form_title' value="<%=if review && !review.title.nil? then h review.title end%>"/>
+    </div>
+
+    <div class="review_gear_overall_stars">
+    <table>
+      <tr>
+          <td><%= it("Please rate this equipment (mandatory):", scope: ['shop_pages', 'form_gear_review']) %></td>
+          <td>
+            <input type='radio' name='star_overall' title='<%= it("Terrible", scope: ['shop_pages', 'form_gear_review']) %>'  id='overall1' value='1' class='required hover-star' <%= if review && review.mark_overall == 1 then 'checked' end %> />
+            <input type='radio' name='star_overall' title='<%= it("Poor", scope: ['shop_pages', 'form_gear_review']) %>'      id='overall2' value='2' class='hover-star' <%= if review && review.mark_overall == 2 then 'checked' end %> />
+            <input type='radio' name='star_overall' title='<%= it("Average", scope: ['shop_pages', 'form_gear_review']) %>'   id='overall3' value='3' class='hover-star' <%= if review && review.mark_overall == 3 then 'checked' end %> />
+            <input type='radio' name='star_overall' title='<%= it("Very good", scope: ['shop_pages', 'form_gear_review']) %>' id='overall4' value='4' class='hover-star' <%= if review && review.mark_overall == 4 then 'checked' end %> />
+            <input type='radio' name='star_overall' title='<%= it("Excellent", scope: ['shop_pages', 'form_gear_review']) %>' id='overall5' value='5' class='hover-star' <%= if review && review.mark_overall == 5 then 'checked' end %> />
+          </td>
+          <td class='tooltip_star'></td>
+        </tr>
+      </table>
+    </div>
+    <p><%= it("Your review:", scope: ['shop_pages', 'form_gear_review']) %></p>
+    <div class='review_answer'>
+      <textarea id='review_form_comment'><%=if review && !review.comment.nil? then h review.comment end%></textarea>
+    </div>
+    <h3><%= it("Could you give some more detail? (optional)", scope: ['shop_pages', 'form_gear_review']) %></h3>
+    <div class='review_answer'>
+      <table>
+        <tr>
+          <td><%= it("Value for money", scope: ['shop_pages', 'form_gear_review']) %></td>
+          <td>
+            <input type='radio' name='star_money' title='<%= it("Terrible", scope: ['shop_pages', 'form_gear_review']) %>'  value='1' class='hover-star' <%= if review && review.mark_money == 1 then 'checked' end %> />
+            <input type='radio' name='star_money' title='<%= it("Poor", scope: ['shop_pages', 'form_gear_review']) %>'      value='2' class='hover-star' <%= if review && review.mark_money == 2 then 'checked' end %> />
+            <input type='radio' name='star_money' title='<%= it("Average", scope: ['shop_pages', 'form_gear_review']) %>'   value='3' class='hover-star' <%= if review && review.mark_money == 3 then 'checked' end %> />
+            <input type='radio' name='star_money' title='<%= it("Very good", scope: ['shop_pages', 'form_gear_review']) %>' value='4' class='hover-star' <%= if review && review.mark_money == 4 then 'checked' end %> />
+            <input type='radio' name='star_money' title='<%= it("Excellent", scope: ['shop_pages', 'form_gear_review']) %>' value='5' class='hover-star' <%= if review && review.mark_money == 5 then 'checked' end %> />
+          </td>
+          <td class='tooltip_star'></td>
+        </tr>
+        <tr>
+          <td><%= it("Durability", scope: ['shop_pages', 'form_gear_review']) %></td>
+          <td>
+            <input type='radio' name='star_durability' title='<%= it("Terrible", scope: ['shop_pages', 'form_gear_review']) %>'  value='1' class='hover-star' <%= if review && review.mark_durability == 1 then 'checked' end %> />
+            <input type='radio' name='star_durability' title='<%= it("Poor", scope: ['shop_pages', 'form_gear_review']) %>'      value='2' class='hover-star' <%= if review && review.mark_durability == 2 then 'checked' end %> />
+            <input type='radio' name='star_durability' title='<%= it("Average", scope: ['shop_pages', 'form_gear_review']) %>'   value='3' class='hover-star' <%= if review && review.mark_durability == 3 then 'checked' end %> />
+            <input type='radio' name='star_durability' title='<%= it("Very good", scope: ['shop_pages', 'form_gear_review']) %>' value='4' class='hover-star' <%= if review && review.mark_durability == 4 then 'checked' end %> />
+            <input type='radio' name='star_durability' title='<%= it("Excellent", scope: ['shop_pages', 'form_gear_review']) %>' value='5' class='hover-star' <%= if review && review.mark_durability == 5 then 'checked' end %> />
+          </td>
+          <td class='tooltip_star'></td>
+        </tr>
+        <tr>
+          <td><%= it("Ease of use", scope: ['shop_pages', 'form_gear_review']) %></td>
+          <td>
+            <input type='radio' name='star_use' title='<%= it("Terrible", scope: ['shop_pages', 'form_gear_review']) %>'  value='1' class='hover-star' <%= if review && review.mark_use == 1 then 'checked' end %> />
+            <input type='radio' name='star_use' title='<%= it("Poor", scope: ['shop_pages', 'form_gear_review']) %>'      value='2' class='hover-star' <%= if review && review.mark_use == 2 then 'checked' end %> />
+            <input type='radio' name='star_use' title='<%= it("Average", scope: ['shop_pages', 'form_gear_review']) %>'   value='3' class='hover-star' <%= if review && review.mark_use == 3 then 'checked' end %> />
+            <input type='radio' name='star_use' title='<%= it("Very good", scope: ['shop_pages', 'form_gear_review']) %>' value='4' class='hover-star' <%= if review && review.mark_use == 4 then 'checked' end %> />
+            <input type='radio' name='star_use' title='<%= it("Excellent", scope: ['shop_pages', 'form_gear_review']) %>' value='5' class='hover-star' <%= if review && review.mark_use == 5 then 'checked' end %> />
+          </td>
+          <td class='tooltip_star'></td>
+        </tr>
+      </table>
+    </div>
+  <div class='diveboard_popup_buttons'>
+    <%if @user.nil? then%><a href='#' class='yellow_button review_popup_login'><%= it("Post review", scope: ['shop_pages', 'form_gear_review']) %></a><%end%>
+    <%if !@user.nil? then%><a href='#' class='yellow_button review_popup_post'><%= it("Post review", scope: ['shop_pages', 'form_gear_review']) %></a><%end%>
+    <%if !@user.nil? && review then%><a href='#' class='grey_button review_popup_delete'><%= it("Delete review", scope: ['shop_pages', 'form_gear_review']) %></a><%end%>
+    <a href='#' class='grey_button review_popup_cancel'><%= it("Cancel", scope: ['shop_pages', 'form_gear_review']) %></a>
+  </div>
+</div>
+<%if @user.nil?%>
+<div id="dialog-login-review" title="<%= it("Enter a review: %{gear_category}", scope: ['shop_pages', 'form_gear_review'], gear_category: t(gear.category, scope: ['model','gear','category'])) %>" style="display:none;">
+  <p class="dialog-text-highlight"><%= it("Just one step left to complete your review !", scope: ['shop_pages', 'form_gear_review']) %></p>
+
+  <%= render :partial => 'login/login_included_popup', :locals => {:id => 'login_review', :style => 'login_included', :hidden => false}%>
+
+  <div class='diveboard_popup_buttons'>
+    <a href='#' class='grey_button login_cancel'><%= it("Cancel", scope: ['shop_pages', 'form_gear_review']) %></a>
+  </div>
+
+</div>
+<%end%>

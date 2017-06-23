@@ -1,0 +1,50 @@
+# SQLite version 3.x
+#   gem install sqlite3-ruby (not necessary on OS X Leopard)
+
+development:
+    min_infix_len: 2
+    mem_limit: 256M
+    port: 9311
+    ignore_chars: U+20
+
+development_alex:
+    min_infix_len: 2
+    mem_limit: 256M
+    port: 9315
+    ignore_chars: U+20
+    
+development_abruneau:
+    min_infix_len: 2
+    mem_limit: 256M
+    port: 9315
+    ignore_chars: U+20
+
+development_squale:
+    min_infix_len: 2
+    mem_limit: 256M
+    port: 9313
+    ignore_chars: U+20
+
+development_local_squale:
+    min_infix_len: 2
+    mem_limit: 256M
+    port: 9313
+    ignore_chars: U+20
+
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+staging:
+    min_infix_len: 2
+    mem_limit: 1024M
+    port: 9314
+    ignore_chars: U+20
+
+
+production:
+    min_infix_len: 2
+    mem_limit: 1024M
+    port: 9312
+    ignore_chars: U+20
+

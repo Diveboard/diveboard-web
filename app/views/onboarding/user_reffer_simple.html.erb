@@ -1,0 +1,18 @@
+  <div class="main_info" align="left">
+    <div>
+      You've been enjoying diveboard since you joined us in <%=@recipient.created_at.strftime("%B %Y")%> and logged <%=@recipient.dives.count%> dives in <a href="<%=@recipient.fullpermalink%>">your logbook</a>.<br/><br/>
+
+      Every logged dive helps fuel the biggest online dive collection worldwide.<br/>
+      This data helps divers find their next destination and marine biologists monitor the evolution of the biotope, and <b>you're a big part of it</b>!<br/><br/>
+
+      <b>Keep sharing your dives</b> and <b>spread the scuba love</b> to your diving friends by inviting them!<br/>Hit the button and invite your friends from Facebook or by email:<br/><br/>
+      <center>
+      <a href="<%=@recipient.fullpermalink%>/community?force_private=true" class="yellow_button">Invite your friends</a>
+      </center>
+    
+      <br/>
+    </div>
+
+    
+    <br/>
+  </div>

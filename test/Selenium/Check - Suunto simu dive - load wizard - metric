@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://stage.diveboard.com/" />
+<title>Check - Suunto simu dive - load wizard - metric</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Check - Suunto simu dive - load wizard - metric</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>${url_new_dive}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//img[@alt='Edit']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>spot-country</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>//div[@id='wizard_spot_details']//img[@src='/img/flags/mt.gif']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='wizard_spot_details']//img[@src='/img/flags/mt.gif']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>spot-country</td>
+	<td>Malta</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>spot-location</td>
+	<td>Gozo</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>spot-name</td>
+	<td>Blue Hole</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>spot-region</td>
+	<td>Mediterranean Sea</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Profile Data</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>wizard_dive_profile</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>wizard-date</td>
+	<td>2010-07-31</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>wizard-surface-temperature</td>
+	<td>33</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>wizard-bottom-temperature</td>
+	<td>19</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>wizard-time-in-hrs</td>
+	<td>14</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>wizard-time-in-mins</td>
+	<td>34</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>wizard-duration-mins</td>
+	<td>66</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>wizard-max-depth</td>
+	<td>28.7</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>stop_depth</td>
+	<td>7</td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>stop_time</td>
+	<td>4</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>//div[@id='profile_table']/table[1]/tbody/tr[6]/td[2]/input[1]</td>
+	<td>3</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>//div[@id='profile_table']/table[1]/tbody/tr[6]/td[2]/input[2]</td>
+	<td>3</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Fish Data</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>//div[@id='wizard_content']/ul/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='wizard_content']/ul/li[contains(., 'Manta raya')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='wizard_content']/ul/li[contains(.,'Gulf grouper')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Dive Notes</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>wizard-dive-notes</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>wizard-dive-notes</td>
+	<td>a test note for this &quot;émérite&quot; dive at l'échelle, near the village of 廃村白岩- &lt;a&gt; wonderful dive &lt;/a&gt;; with me &amp; everyone !</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[@onclick='show_wizard_5()']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>//div[@id='galleria-wizard']/div/div[1]/div[1]/div[2]/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='galleria-wizard']/div/div[2]/div[2]/div/div[1]/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='galleria-wizard']/div/div[2]/div[2]/div/div[2]/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='galleria-wizard']/div/div[2]/div[2]/div/div[3]/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>link=Delete Dive</td>
+	<td></td>
+</tr>
+</tbody></table>
+</body>
+</html>

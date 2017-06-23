@@ -1,0 +1,221 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<%
+=begin
+ Code for embed :
+ <script src='http://cdn.diveboard.com/login/widget/scubapro.js' async />
+=end
+%><html class="no-js" xmlns="http://www.w3.org/1999/xhtml"
+  xml:lang="<%=I18n.locale%>" lang="<%=I18n.locale%>">
+  <!-- STYLESHEETS -->
+  <head>
+    <meta name="csrf-token" content="<%= form_authenticity_token %>" />
+    <meta name="csrf-param" content="authenticity_token" />
+    <meta name="db-cookie-domain" content="<%=COOKIES_DOMAIN%>" />
+    <base target='_top'/>
+    <style>
+      @font-face{
+        font-family: 'WebSymbolsRegular';
+        src: url('/img/fonts/websymbols-regular-webfont.eot');
+        src: url('/img/fonts/websymbols-regular-webfont.eot?3#iefix') format('embedded-opentype'),
+             url('/img/fonts/embed/websymbols-regular-webfont.woff') format('woff'),
+             url('/img/fonts/websymbols-regular-webfont.ttf') format('truetype'),
+             url('/img/fonts/websymbols-regular-webfont.svg#WebSymbolsRegular') format('svg');
+      }
+      #file_mask {position: absolute; background: #000;}
+      #file_mask img {position: absolute; left: 50%; top: 50%; margin-left: -33px; margin-top: -33px;}
+      <%= File.read("public/styles/widget.css").html_safe%>
+      <%= File.read("public/styles/sign_up_popup.css").html_safe%>
+    </style>
+  </head>
+  <body>
+    <div class="widget">
+      <script>
+        var todo = [];
+        var diveboard = {};
+        var auth_token = "";
+        var $ = function(){
+          var a = arguments;
+          var r = {};
+          r.ready = function(f){
+            todo.push({a: a, f: f})
+          }
+          return r
+        }
+      </script>
+
+      <%= render partial: 'sign_up_popup', locals: {status: :prompt_login}%>
+      <div>
+
+    </div>
+
+    <script>
+      var I18n = {locale: '<%=I18n.locale%>'};
+      diveboard.validateEmail = function(email){
+         var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+          return re.test(email);
+      }
+
+      diveboard.mask_file = function (loader, options){
+        if($("#mask_file").length == 0){
+          $(document.body).append("<div id='file_mask'><img src='/img/transparent_loader_3.gif' height='66px' width='66px' class='file_spinning' alt='#' /></div>")
+        }
+
+        if (!diveboard.mask_file.binded){
+          diveboard.mask_file.binded = true;
+          $(window).bind('resize', diveboard.mask_resize);
+        }
+
+        diveboard.mask_resize();
+
+        if (loader ==true) {
+          $(".file_spinning").show();
+        }else{
+          $(".file_spinning").hide();
+        }
+
+        //Apply css options
+        if (typeof options == 'undefined') options = {'z-index':25000};
+        $('#file_mask').css(options);
+
+        //transition effect
+        //$('#file_mask').fadeIn(200);
+        //$('#file_mask').fadeTo("fast",0.6);
+        $('#file_mask').show();
+        $('#file_mask').css("width","100%");
+        $('#file_mask').css("height","100%");
+        $('#file_mask').css("opacity","0.6");
+      }
+
+      diveboard.mask_resize = function(){
+        //Get the screen height and width
+        //var maskHeight = $(window).height();
+        //var maskWidth = $(window).width();
+
+        var maskHeight = "100%";
+        var maskWidth =  "100%";
+
+        //Set heigth and width to mask to fill up the whole screen
+        $('#file_mask').css({'width':maskWidth,'height':maskHeight, 'top':0, 'left':0 });
+      }
+
+      diveboard.unmask_file = function (options){
+        $('#file_mask').hide();
+        //Apply css options
+        if (typeof options == 'undefined') options = {};
+        $('#file_mask').css(options);
+      }
+
+
+      attempt_facebook_login = function(){
+        var settings = {};
+        settings.no_mask_file = true;
+        settings.fb_perms='user_friends';
+        settings.callback = function(){window.location.replace(document.URL);}
+        diveboard.mask_file(true);
+        FB.login(function(response) {
+          if (response.authResponse) {
+            $.ajax({
+              url: '/api/login_fb',
+              type: 'POST',
+              dataType: 'json',
+              data: {
+                'authenticity_token': auth_token,
+                open_session: 'long', //todo: XXX check if remember me was clicked or not
+                fbid: response.authResponse.userID,
+                fbtoken: response.authResponse.accessToken,
+                preferred_locale: '<%=I18n.locale%>',
+                source: $("#sign_up_popup").data("source"),
+                assign_vanity_url: true
+              },
+              success: function(data){
+                if (data.success){
+                  if (data.new_account)
+                    ga('send', {
+                      'hitType': 'event',          // Required.
+                      'eventCategory': 'account',   // Required.
+                      'eventAction': 'register',      // Required.
+                      'eventLabel': 'facebook',
+                      'nonInteraction': true
+                    });
+                  $("#sign_up_popup .login .login_form").attr('action', "/");
+                  $("#sign_up_popup .login .login_form").submit(); // ugly hack to get chrome to save password
+                } else {
+                  diveboard.unmask_file();
+                }
+              },
+              error: function(data){
+                diveboard.unmask_file();
+              }
+            });
+
+          } else {
+            diveboard.unmask_file();
+          }
+        }, {scope: settings.fb_perms});
+
+
+      }
+
+
+      var simple_require = function(url, callback){
+        var req = new XMLHttpRequest();
+        req.open('get', url, true);
+
+        req.onreadystatechange = function() {
+          if(req.readyState === 4 && req.status === 200) {
+            if (typeof callback != 'undefined'){
+              var se = document.createElement('script');
+              document.getElementsByTagName('head')[0].appendChild(se);
+              se.text = req.responseText;
+              return callback();
+            }
+          }
+        }
+
+        req.send();
+      }
+
+      window.fbAsyncInit = function() {
+       FB.init({
+        appId  : '<%=FB_APP_ID%>',
+        status : true, // check login status
+        cookie : true, // enable cookies to allow the server to access the session
+        xfbml  : true, // parse XFBML
+        channelURL : '//<%=root_url.gsub(/^.*:\/\//,"")%>channel.html', // channel.html file
+        oauth  : true, // enable OAuth 2.0
+        version: 'v2.1'
+      });
+      };
+      (function(d){
+         var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+         js = d.createElement('script'); js.id = id; js.async = true;
+         js.src = "//connect.facebook.net/<%=Rails.configuration.map_og_locales[I18n.locale]%>/sdk.js";
+         d.getElementsByTagName('head')[0].appendChild(js);
+       }(document));
+
+
+      simple_require("//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js", function(){
+        auth_token = $("meta[name='csrf-token']").attr("content");
+        $("#sign_up_popup").data("redirect_to", "<%=HtmlHelper.find_root_for :locale%>");
+        $("#sign_up_popup").data("source", "<%=partner%>");
+        for (var i in todo){
+          todo[i].f();
+        }
+      });
+
+      setTimeout(function(){simple_require("<%=javascript_path :common%>")},300);
+    </script>
+
+    <script type="text/javascript">
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', '<%=GOOGLE_ANALYTICS%>');
+      ga('cookieDomain', '<%=ROOT_DOMAIN%>');
+      ga('require', 'displayfeatures');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html class="no-js" xmlns="http://www.w3.org/1999/xhtml"
+  xml:lang="<%=I18n.locale%>" lang="<%=I18n.locale%>">
+  <meta name="csrf-token" content="<%= form_authenticity_token %>" />
+  <meta name="csrf-param" content="authenticity_token" />
+  <meta name="db-cookie-domain" content="<%=COOKIES_DOMAIN%>" />
+  <!-- STYLESHEETS -->
+  <head>
+    <%= yield :css if content_for? :css%>
+    <%= include_stylesheets :widget, :media => :all %>
+
+    <%= javascript_include_tag :jquery %>
+    <base target='_blank'/>
+  </head>
+  <body>
+    <div class="widget">
+      <%= yield %>
+      <!--Google maps cursor disappearing hack -->
+      <img src="http://maps.gstatic.com/mapfiles/openhand_8_8.cur" style="position: absolute; top: -1000px; left: -1000px; "/>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,149 @@
+<script type="text/javascript">
+/*
+*
+* GLOBAL VARIABLES USED IN SCRIPTS
+*
+*/
+
+
+var G_page_fullpermalink = "<%=@user.fullpermalink%>/new";
+var G_page_fullpermalink_backup = "<%=@user.fullpermalink%>/new";
+
+
+//Vars for the wizard
+var G_user_setting_auto_share = <%=@owner.auto_fb_share%>;
+var G_user_fb_perms_post_to_wall = <%=@owner.fb_permissions_granted("publish_stream") ==true%>;
+var G_user_fb_perms_add_fb_pict = <%=@owner.fb_permissions_granted("user_photos,user_videos") ==true%>;
+var G_user_setting_temperature = '<%=@user.preferred_units["temperature"]%>';
+var G_user_setting_distance = '<%=@user.preferred_units["distance"]%>';
+var G_user_setting_weight = '<%=@user.preferred_units["weight"]%>';
+var G_user_vanity_url = "<%=@owner.vanity_url%>";
+var G_dive_posted_to_fb_wall = false;
+<%if @owner.fbtoken.nil? %>
+var G_user_fbtoken = "";
+<%else%>
+var G_user_fbtoken = "<%=@owner.fbtoken%>";
+<%end%>
+
+var FB_appID = "<%=FB_APP_ID%>";
+
+var gmaps_initialized = false;
+var galleria_initialized = false;
+var privacy = 1;
+var G_unit_temperature = "<%= if @user.nil? then "C" else @user.preferred_units["temperature"] end %>";
+var G_unit_distance = "<%= if @user.nil? then "m" else @user.preferred_units["distance"] end %>";
+var G_has_profile = false
+var G_has_dives = <%= !@owner.dives.empty?%>;
+var G_dive_id = null;
+var G_content = "new";
+var G_dive_spot_id = 1;
+var G_dive_spot_id_nil = 1;
+var G_spot_lat = 0;
+var G_spot_long = 0;
+var G_spot_zoom = 1;
+var G_dive_country = "BLANK";
+var G_dive_profile_data = "";
+var dive_pictures_data = [ ];
+var G_wizard_picture_tags = {};
+var G_wizard_picture_notes = {};
+var G_dive_picture_cover = 0;
+var G_show_picture ="";
+var G_user_setting_auto_share = <%=@owner.auto_fb_share %>;
+var G_user_setting_temperature = '<%=@user.preferred_units["temperature"]%>';
+var G_user_setting_distance = '<%=@user.preferred_units["distance"]%>';
+var G_owner_id = <%=@owner.id%>;
+var G_owner_full_name = "<%=@owner.nickname%>";
+var G_owner_email = "<%=@owner.email%>";
+var G_user_setting_temperature_unit = "<%= unit_distance(nil,true) %>";
+var G_dive_bottom_temp = "";
+var G_dive_surface_temp = "";
+var G_dive_max_depth = "";
+var G_dive_duration = "";
+var G_dive_timein_mins = "";
+var G_dive_timein_hrs = "";
+var G_dive_date = "";
+var wizard_safety_stops = [];
+var G_dive_featured_picture = "";
+var G_diveuser_vanity_url = "<%= if @dive.nil? || @dive.user.nil? then "" else @dive.user.vanity_url end%>";
+var G_user_vanity_url = "<%=@user.vanity_url%>";
+
+var G_wizard_initial_notes = "";
+
+var G_dive_fishes = [];
+var G_flickr_key = "<%= FLICKR_KEY %>";
+
+var G_user_first_dive = <%=
+  if !@owner.dives.empty?
+    @owner.dives.first.id
+  else
+    0
+  end %>;
+var G_owner_vanity_url = "<%=@owner.vanity_url%>";
+var G_root_url = "<%=ROOT_URL%>";
+var G_locale_root_url = "<%=root_url%>";
+
+var favorite_picture;
+var G_this_dive_labels, G_this_dive_data, G_this_alarm_data, G_this_dive_unit;
+var G_wizard_dive_labels, G_wizard_dive_data, G_wizard_alarm_data, G_wizard_dive_unit;
+var G_all_trip_names = [
+  <%@user.dives.map(&:trip_name).uniq.reject(&:nil?).each_with_index do |name, idx| %>
+    <%if idx>0 then%>,<%end%>
+    "<%=CGI.escapeHTML(name)%>"
+  <%end%> ];
+
+function content_initialize() {
+  dive_ready();
+  show_wizard();
+  
+  ga('set', 'contentGroup1', 'logbook_own_new');
+  console.log("ContentGroup1 Page category --> logbook_own_new");
+  ga('set', 'dimension1', 'logbook_own_new');
+  ga('send', 'pageview');
+}
+</script>
+
+
+
+<!-- ###################  HTML  ############### -->
+<div class="main_content_header">
+
+    <div class='head_picture'><img src='<%= @owner.picture_large%>' alt='user picture'></div>
+
+    <div class='head_title'><div class='head_title_valign'><ul>
+      <li><h1 class='unstyle'><span class="header_title"><%=@owner.nickname%> - <%= it("New Dive", scope: ['diveinfo', 'newdive']) %></span><br/><img src="/img/flags/<%=@owner.location%>.gif" alt="<%=@owner.location%>" style="top: 1px; left: 3px; display: inline-block; position: relative; margin-right: 5px;"/> <%= it("Logbook", scope: ['diveinfo', 'newdive']) %></h1></li>
+    </ul></div></div>
+
+    <div  class="header_top_action">
+    </div>
+
+</div>
+    <ul class="main_inner_header_tabs">
+        <li id="tab_overview_link" class="tab_link active"><a href="#" ><%= it("Overview", scope: ['diveinfo', 'newdive']) %></a></li>
+        <li id="tab_map_link" class='tab_link'><a href="#"><%= it("Dive site", scope: ['diveinfo', 'newdive']) %></a></li>
+        <li id="tab_species_link" class='tab_link'><a href="#"><%= it("Species", scope: ['diveinfo', 'newdive']) %></a></li>
+        <li id="tab_ppl_link" class='tab_link' style="display:none;"><a href="#"><%= it("People", scope: ['diveinfo', 'newdive']) %></a></li>
+        <li id="tab_pictures_link" class='tab_link' ><a href="#"><%= it("Pictures", scope: ['diveinfo', 'newdive']) %></a></li>
+        <li id="tab_profile_link" class='tab_link' ><a href="#"><%= it("Profile", scope: ['diveinfo', 'newdive']) %></a></li>
+        <li id="tab_gear_link" class='tab_link' ><a href="#"><%= it("Gear", scope: ['diveinfo', 'newdive']) %></a></li>
+        <li id="tab_dan_link" class='tab_link'><a href="#"><%= it("DAN", scope: ['diveinfo', 'newdive']) %></a></li>
+    </ul>
+<div id="tab_box">
+
+<!-- DIVE EDITOR wizard -->
+
+<%= render "diveinfo/editor", :hidden => false %>
+</div>
+<!-- Modal Window Junk -->
+<div id="dialog-confirm" title="<%= it("Delete this dive permanently?", scope: ['diveinfo', 'newdive']) %>" style="display:none;">
+	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><%= it("All the data in this dive will be erased (profile, notes, fish list...) and cannot be recovered. Are you sure?", scope: ['diveinfo', 'newdive']) %></p>
+</div>
+<div id="dialog-nodiveselected" title="<%= it("Dive selection", scope: ['diveinfo', 'newdive']) %>" style="display:none;">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><%= it("You need to select at least one dive to import your dives in Diveboard.", scope: ['diveinfo', 'newdive']) %></p>
+</div>
+
+<div id="mask" style="display:none;">
+	<img src="/img/transparent_loader_3.gif" height='66px' width='66px' style="margin-left:50%; margin-top:25%" alt='#' />
+</div>
+<div id="boxes">
+</div>
+<!-- END Modal Window Junk -->

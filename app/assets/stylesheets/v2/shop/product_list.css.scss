@@ -1,0 +1,111 @@
+@import 'variablesv2';
+
+.product_list
+{
+  width: calc(100% - 15px);
+  padding-left: 10px;
+  padding-right: 10px;
+  border: 1px solid $light-gray-db;
+  background-color: white;
+  padding-bottom: 10px;
+
+  .category
+  {
+    color: $dark-gray-db;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 15px;
+    line-height: 40px;
+  }
+
+  .product
+  {
+    position: relative;
+
+    .name
+    {
+      color: $dark-gray-db;
+      font-size: 15px;
+      line-height: 40px;
+    }
+
+    .description
+    {
+      color: #3c4245;
+      font-size: 14px;
+    }
+    .price
+    {
+      color: $red-db;
+      line-height: 20px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      float: left;
+      white-space: nowrap;
+
+      img
+      {
+        float: left;
+        padding-right: 10px;
+        width: 22px;
+        height: 20px;
+      }
+    }
+
+    .special
+    {
+      font-weight: bold;
+    }
+
+    .book_details
+    {
+      float: right;
+      padding-top: 10px;
+      width: 250px;
+      position: absolute;
+      right: 0px;
+      bottom: 0px;
+
+      .book_button
+      {
+        float: right;
+      }
+
+      .details
+      {
+        font-size: 15px;
+        color: $navy-blue-db;
+        text-decoration: none;
+        line-height: 38px;
+        float: left;
+        padding-right: 10px;
+        font-weight: 600;
+
+        @media (max-width: 720px)
+        {
+          display: none;
+        }
+      }
+
+      .details:hover
+      {
+        text-decoration: underline;
+      }
+
+      .book
+      {
+        float: left;
+      }
+    }
+  }
+
+  .product_sep
+  {
+    width: calc(100% - 80px);
+    height: 0px;
+    margin: 0 auto;
+    border-top: 1px dashed $light-gray-db;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+}

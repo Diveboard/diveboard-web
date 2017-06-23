@@ -1,0 +1,12 @@
+<div id="faq">
+  <div id="category_title">
+    <h2><%= it("Q&A", scope: ['shop_pages', 'v2', 'faq']) %></h2>
+    <div class="clear"></div>
+  </div>
+  <% @faqs.each do |f| %>
+    <div class="question">
+      <p class="title"><%= it(f.question, scope: ['globals', 'shop', 'qa', 'questions'])%></p>
+      <p class="description"><%= f.answer.gsub("\n","<br>").html_safe %></p>
+    </div>
+  <% end %>
+</div>

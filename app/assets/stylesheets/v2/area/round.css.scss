@@ -1,0 +1,92 @@
+#round_intro{
+	margin-top:50px;
+	height:340px;
+	.container{
+	  max-width: 1060px;
+	}
+}
+
+	.round_element{
+	 	background:white;
+	 	height:120px;
+	 	margin-bottom:20px;
+	 	box-shadow: 1px 1px 1px #888;
+	}
+#round_shops{
+	margin-top: 50px;
+	margin-left:10%;
+	width: 40%;
+	display:inline-block;
+	float:left;
+	h2{
+		font-size:33px;
+		color: #03A9F4;
+	}
+	.container{
+		max-width:1060px;
+		margin :auto;
+	}
+	.picture{
+		width:120px;
+		height:120px;
+		background-size: cover;
+		float:left;
+	}
+	.round_shop_infos{
+		float:left;
+		padding-top: 15px;
+  		padding-left: 20px;
+
+  		.rating{
+  			margin-top: 5px;
+  			
+  			td{
+  				padding-right :10px;
+  				color: #8a8e8f;
+  			}
+  		}
+	}
+  	.round_book{
+  		float:right;
+  		margin-top:50px;
+  		margin-right:30px;
+  		padding-top:10px;
+  		background: #fdc90c;
+  		height:50px;
+  		width:130px;
+  		text-align:center;
+  	}
+}
+
+#round_dives{
+	h2{
+		font-size:33px;
+		color: #03A9F4;
+	}
+	margin-top: 50px;
+	margin-left:5%;
+	width: 40%;
+	display:inline-block;
+}
+
+#best_areas{
+	max-width:1060px;
+	margin:60px auto;
+	h2{
+		color:#03A9F4;
+		font-size:33px;
+	}
+	.best_area{
+		background: white;
+		display:inline-block;
+		height: 140px;
+		width: calc(47%);
+		margin-bottom :20px;
+		box-shadow : 1px 1px 1px grey;
+		border-radius:2px;
+		padding:5px;
+	}
+	.second{
+		float:right;
+	}
+}

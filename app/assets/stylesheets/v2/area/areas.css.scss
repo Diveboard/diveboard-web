@@ -1,0 +1,438 @@
+@import 'variablesv2';
+
+#areas, .areas
+{
+  max-width: $home-width;
+  margin: 0 auto;
+  padding-bottom: 10px;
+  @media (max-width: 720px)
+  {
+    padding-bottom: 20px;
+  }
+  @media (max-width: 1110px)
+  {
+    max-width: 720px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 60px;
+  }
+
+  a
+  {
+    text-decoration: none;
+  }
+
+  .swiper-container
+  {
+    @media (min-width: 721px)
+    {
+      display: none;
+    }
+    height: 330px;
+    .swiper-slide {
+      width: 300px;
+      height: 330px;
+      cursor: pointer;
+      .card
+      {
+        margin-left: 0;
+        margin-right: 0.1rem;
+      }
+    }
+  }
+
+  .cards_group
+  {
+    .card_container
+    {
+      float: left;
+      margin-top: 1rem;
+      width: 50%;
+      @media (max-width: 720px)
+      {
+        float: none;
+        width: 100%;
+        .card
+        {
+          width: 90%;
+        }
+      }
+      @media (min-width: 1111px)
+      {
+        width: 265px;
+      }
+    }
+    .large_container {
+      float: none;
+      margin: 0 auto;
+      margin-top: 1rem;
+      width: 100%;
+      .card
+      {
+        width: 610px;
+        .picture {
+          height: calc(100% - 100px);
+        }
+      }
+      @media (max-width: 720px)
+      {
+        float: none;
+        width: 100%;
+        .card
+        {
+          width: 90%;
+          .picture {
+            height: calc(100% - 140px);
+          }
+        }
+      }
+      @media (min-width: 1111px)
+      {
+        width: 100%;
+        .card
+        {
+          width: 675px;
+          .picture {
+            height: calc(100% - 100px);
+          }
+        }
+      }
+    }
+  }
+
+  .card
+  {
+    margin: 0 auto;
+    margin-bottom: 1rem;
+    width: 251px;
+    height: 300px;
+    border: 1px solid #dfdfdf;
+    position: relative;
+    background-color: white;
+
+    &:hover
+    {
+      border: 1px solid $yellow-db;
+    }
+
+    .picture
+    {
+      width: calc(100% - 10px);
+      height: calc(100% - 140px);
+      background-color: #303336;
+      margin-left: 5px;
+      margin-top: 5px;
+      overflow: hidden;
+      @include centerScaleImg();
+      div
+      {
+        height: 100%;
+        max-width: 100%;
+        background-size: cover;
+        background-position: 0px;
+      }
+    }
+
+    .title
+    {
+      display: block;
+      text-decoration: none;
+      margin-top: 15px;
+      margin-left: 10px;
+      color: #3c4245;
+      font-size: 1rem;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .title:hover, .title:active
+    {
+      color: #FDC90C;
+    }
+
+    .subtitle
+    {
+      color: #8a8e8f;
+      font-size: 14px;
+      margin-left: 10px;
+      height: 19px;
+    }
+
+    .rating
+    {
+      border-collapse: collapse;
+      margin-left: 10px;
+      margin-top: 10px;
+
+      td
+      {
+        padding-right: 10px;
+      }
+
+      p
+      {
+        font-size: 13px;
+        color: #8a8e8f;
+      }
+    }
+  }
+}
+
+$main_max_width:800px;
+
+#route{
+  margin: 40px auto 0;
+  height: 40px;
+  background-color: white;
+
+  h3{
+    max-width: 1060px;
+    margin: auto;
+    padding-top: 10px;
+    color: $link-blue-db;
+    text-align: left;
+    font-weight: 400;
+    margin-left: 28px;
+    a{
+      color: $link-blue-db;
+      text-decoration: none;
+      &:hover{
+        color: $navy-blue-db;
+      }
+    }
+  }
+
+}
+
+.destination_map{
+
+  margin-left:10%;
+  margin-top: 20px;
+  width:80%;
+  height:400px;
+  @media (min-width: 720px){
+    margin-right:50px;  
+    height:900px;
+    float:right;
+    width:30%;
+    margin-left:0%;
+  }
+}
+#destination_info{
+  width:80%;
+  margin: 0 10%;
+  padding-top: 20px;
+  padding-bottom: 30px;
+  background-color: white;
+  margin-top: 20px;
+  @media (min-width:720px){
+    width:50%;
+  }
+  border: 1px solid #dfdfdf;
+  .presentation{
+    margin-left:60px;
+    margin-bottom:20px;
+    padding-right: 60px;
+
+  }
+  hr{
+    margin-top:20px;
+    margin-bottom:20px;
+  }
+  ul{
+    list-style:none;
+  }
+  .new_review{
+    width: 160px; 
+    text-align: center;
+  }
+  .transparent_dark_gray_button{
+    width: 15%;
+    margin-left: 40%;
+    text-align:center;
+  }
+}
+#loadMores_modal{
+  padding:20px;
+  h1{
+    margin: 10px;
+  }
+}
+h2{
+  margin-left: 16px;
+  font-weight: 400;
+}
+#destination_spots{
+  margin: 20px 10% 20px;
+  padding-top: 20px;
+  padding-bottom: 30px;
+  background-color: white;
+  border: 1px solid #dfdfdf;
+  @media (min-width:720px){
+    width:50%;
+  }
+  .destination_spot{
+    height:340px;
+    margin:2%;
+    position: relative;
+    @media(min-width: 720px){
+      float:left;
+      display:inline-block;
+      width:45%;
+    }
+
+    img{
+      width:100%;
+      height:100%;
+      overflow:hidden;
+    }
+    .spot_infos_holder{
+      width: 422px;
+      display: block;
+      position: absolute;
+      bottom: 0px;
+      background-color: rgba(0,0,0,0.7);
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+
+    .spot_infos{
+      position: relative;
+      color: white;
+    }
+    .rating{
+      position: relative;
+      border-radius:20px;
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+  }
+  .second{
+    float: right;
+  }
+  #loadMoreSpot{
+    margin-left:45%;
+    text-align:center;
+    width:100px;
+  }
+}
+
+#destination_shops{
+    @media (min-width:720px){
+    width:50%;
+  }
+  margin: 0 10% 20px;
+  padding-top: 20px;
+  padding-bottom: 30px;
+  background-color: white;
+  margin-top: 10px;
+  border: 1px solid #dfdfdf;
+
+  .destination_shop{
+  height:120px;  
+  border: 1px solid #dfdfdf;
+  margin : 20px;
+
+    img{
+      width:120px;
+      height:120px;
+      overflow:hidden;
+      float:left;
+    }
+    .shop_info{
+      display:inline-block;
+      float:left;
+      position:relative;
+      margin:5px;
+      @media(max-width: 720px){
+        max-width:160px;
+      }
+    }
+    .book{
+      position: relative;
+      top: 50px;
+      right: 30px;
+      float: right;
+      text-align:center;
+      @media (max-width: 950px)
+      {
+        display:none;
+      }
+    }
+  }
+}
+
+#destination_arounds{
+  margin: 0 auto 20px;
+  padding-top: 20px;
+  padding-bottom: 30px;
+  margin-top: 10px;
+  width:67%;
+  h2{
+    font-size: 33px;
+    font-weight: normal;
+    color: #333333;
+  }
+  .around{
+    height:240px;  
+    width:240px;
+    background-color:white;
+    border: 1px solid #dfdfdf;
+    margin : 4px;
+    padding:5px;
+    display:inline-block;
+      .info{
+        margin: 0px auto;
+        text-align: center;
+      }
+      img{
+        width:100%;
+        height:160px;
+        float:left;
+        overflow:hidden;
+      }
+      .show{
+        background-color:#fdc90c;
+        color:#3c4245;
+        width: 130px;
+        height: 31px;
+        border-radius: 3px;
+        color: #3c4245;
+        padding-top: 9px;
+        margin-left: 45%;
+        margin-top:15px;
+        text-align:center;
+        text-decoration: none;
+        overflow: hidden;
+          a{
+                  color:#3c4245;
+
+            text-decoration:none;
+          }
+          img{  
+          top: -20px;
+          width:9px;
+          height:50px;
+          float:none;
+          position:relative;
+          left:50px;
+        }
+      }
+      .show:hover{
+        background-color:#3c4245;
+        color:#fdc90c;
+        a{
+          color:#fdc90c;
+          text-decoration:none;
+        }
+        img{
+          top: -50px;
+
+        }
+
+      }
+  }
+}

@@ -1,0 +1,107 @@
+<ul class="editable_input edit_buddy_list">
+  <% buddies.each do |bud|
+    if User === bud
+      buddy_source = "Diveboard"
+      begin
+        buddy_picture = bud.picture_small
+      rescue
+        buddy_picture = "/img/no_picture.png"
+      end
+    elsif bud.fb_id then
+      buddy_source = "Facebook"
+      buddy_picture = "https://graph.facebook.com/v2.0/#{bud.fb_id}/picture?type=square"
+    elsif !bud.email.blank?
+      buddy_source = "Email"
+      buddy_picture = bud.picturl || "/img/no_picture.png"
+    else
+      buddy_source = nil
+      buddy_picture = bud.picturl || "/img/no_picture.png"
+    end
+    %>
+
+  <li class="buddy"><img src='<%=buddy_picture%>' class='buddy_picker_list'/><input type="hidden" name="<%=bud.nickname%>" email="<%=bud.email if buddy_source == 'Email'%>" picturl="<%=buddy_picture%>" fb_id="<%=bud.fb_id%>" db_id="<%=bud.id if buddy_source == 'Diveboard'%>"><span class='buddy_picker_list_span'>
+  <%if buddy_source%>
+    <%= it("%{buddyname} via %{buddysource} %{link:Remove Buddy}", scope: ['diveinfo', 'buddy_editor'], buddyname: (bud.nickname rescue nil), buddysource: buddy_source, link: It.link("#", class: "remove_buddy")) %>
+  <%else%>
+    <%= it("%{buddyname} %{link:Remove Buddy}", scope: ['diveinfo', 'buddy_editor'], buddyname: (bud.nickname rescue nil), link: It.link("#", class: "remove_buddy")) %>
+  <%end%>
+  </span> </li>
+  <%end%>
+</ul><br/>
+
+<%past_buddies = @user.buddies_sorted%>
+<% if past_buddies.count > 0 then%>
+  <%= it("Add one of your past dive buddies:", scope: ['diveinfo', 'buddy_editor']) %>
+  <ul class='past_buddies'>
+    <%@user.buddies_sorted[0..20].each do |b|%>
+      <li data-type='<%=if b.is_a? User then "db" else "ex" end%>' data-id='<%=b.id%>'><%if true || b.has_picture?%><img src='<%=b.picture%>'><%end%>
+        <%=b.nickname%></li>
+    <%end%>
+  </ul>
+
+  <%= it("Or search and add buddies from :", scope: ['diveinfo', 'buddy_editor']) %>
+<%else%>
+  <%= it("Add your usual dive buddies on the Community section of %{link:your logbook} to facilitate the search. You may also manually add buddies to this dive by looking for them on :", scope: ['diveinfo', 'buddy_editor'], link: It.link(@user.fullpermalink(:locale), target: "_blank")) %>
+<%end%>
+
+
+
+
+<select onchange="show_buddy_picker(this.selectedIndex);">
+<option><%= it("Diveboard", scope: ['diveinfo', 'buddy_editor']) %></option>
+<option><%= it("Facebook", scope: ['diveinfo', 'buddy_editor']) %></option>
+<option><%= it("Name/Email", scope: ['diveinfo', 'buddy_editor']) %></option>
+</select> : <br/>
+<table id="set_dive_details" class="buddy_table buddy_db">
+<tbody>
+  <tr>
+      <td class="wizard_input_label">
+      <label>
+      <%= it("Add a Diveboard buddy:", scope: ['diveinfo', 'buddy_editor']) %>
+      </label>
+      </td>
+      <td>
+      <input id="buddy-db-name" type="text" class="editable_input wizard_input_100 wizard_big_input" value=""/>
+      <input id="buddy-db-name-hidden" type="hidden" value=""/>
+      </td>
+      </tr>
+</tbody></table>
+<table id="set_dive_details" class="buddy_table buddy_fb" style ="display:none;">
+<tbody>
+  <tr>
+      <td class="wizard_input_label">
+      <label>
+      <%= it("Add a Facebook buddy:", scope: ['diveinfo', 'buddy_editor']) %>
+      </label>
+      </td>
+      <td>
+      <input id="buddy-fb-name" type="text" class="editable_input wizard_input_100 wizard_big_input" value=""/>
+      <input id="buddy-fb-name-hidden" class="" type="hidden" value=""/>
+      </td>
+      </tr>
+</tbody></table>
+<table id="set_dive_details" class="buddy_table buddy_manual" style ="display:none;">
+<tbody>
+  <tr>
+      <td class="wizard_input_label">
+      <label>
+      <%= it("Buddy name:", scope: ['diveinfo', 'buddy_editor']) %>
+      </label>
+      </td>
+      <td>
+      <input id="buddy-name" type="text" class="editable_input wizard_input_100 wizard_big_input" value=""/>
+      </td>
+      </tr>
+  <tr>
+      <td class="wizard_input_label">
+      <label>
+      <%= it("Buddy email (optional):", scope: ['diveinfo', 'buddy_editor']) %>
+      </label>
+      </td>
+      <td>
+      <input id="buddy-email" type="text" class="editable_input wizard_input_100 wizard_big_input" value="" onkeyup="check_notify_buddy(this);"/>
+      </td>
+      </tr>
+</tbody></table>
+<div class="invite_buddy_by_email_div"><%= it("Notify your buddy:", scope: ['diveinfo', 'buddy_editor']) %> <input type="checkbox" id="invite_buddy_by_email" CHECKED></input></div>
+<p style="margin-left: 378px;"><a href="#" class="yellow_button" id="addbuddy" style="display:none;"><%= it("Add Buddy", scope: ['diveinfo', 'buddy_editor']) %></a></p>

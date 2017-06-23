@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://db.squale.net" />
+<title>Action - Modify dive</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Action - Modify dive</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>${url_new_dive}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//img[@alt='Edit']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>spot-country</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>changespot</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>changespot</td>
+	<td></td>
+</tr>
+<!--Searching and selecting a spot-->
+<tr>
+	<td>waitForVisible</td>
+	<td>spotsearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>spotsearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>typeKeys</td>
+	<td>spotsearch</td>
+	<td>amp pap cyp</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>Amphorae's Cave, Paphos, Mediterranean Sea, Cyprus</td>
+	<td></td>
+</tr>
+<tr>
+	<td>mouseOver</td>
+	<td>//html/body/ul/li/a[.=&quot;Amphorae's Cave, Paphos, Mediterranean Sea, Cyprus&quot;]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//html/body/ul/li/a[.=&quot;Amphorae's Cave, Paphos, Mediterranean Sea, Cyprus&quot;]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//div[@id='correct_submit_spot_data']/label</td>
+	<td>Search for another spot or correct data</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@id='wizard_spot_details']//img[@src='/img/flags/cy.gif']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='wizard_spot_details']//img[@src='/img/flags/cy.gif']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>spot-country</td>
+	<td>Cyprus</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>spot-location</td>
+	<td>Paphos</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>spot-name</td>
+	<td>Amphorae's Cave</td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>spot-region</td>
+	<td>Mediterranean Sea</td>
+</tr>
+<!--Changing basic profile data-->
+<tr>
+	<td>click</td>
+	<td>link=Profile Data</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>wizard-date</td>
+	<td>2010-01-01</td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>$(&quot;#wizard-date&quot;).datepicker(&quot;hide&quot;);</td>
+	<td></td>
+</tr>
+<tr>
+	<td>keyPress</td>
+	<td>wizard-date</td>
+	<td>\13</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>wizard-surface-temperature</td>
+	<td>50</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>wizard-bottom-temperature</td>
+	<td>10</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>wizard-time-in-hrs</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>wizard-time-in-hrs</td>
+	<td>09</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>wizard-time-in-mins</td>
+	<td>09</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>wizard-duration-mins</td>
+	<td>09</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>stop_depth</td>
+	<td>9</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>stop_time</td>
+	<td>9</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Del</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>addsafetystops</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//div[@id='profile_table']/table[1]/tbody/tr[7]/td[2]/input[1]</td>
+	<td>2</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//div[@id='profile_table']/table[1]/tbody/tr[7]/td[2]/input[2]</td>
+	<td>2</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>wizard-max-depth</td>
+	<td>99.9</td>
+</tr>
+<!--Changing fish data-->
+<tr>
+	<td>click</td>
+	<td>link=Fish Data</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='wizard_content']/ul/li/input</td>
+	<td></td>
+</tr>
+<tr>
+	<td>typeKeys</td>
+	<td>//div[@id='wizard_content']/ul/li/input</td>
+	<td>clown</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>Anemonefishes and Clownfishes</td>
+	<td></td>
+</tr>
+<tr>
+	<td>mouseOver</td>
+	<td>//li[.='Anemonefishes and Clownfishes']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>mouseDown</td>
+	<td>//li[.='Anemonefishes and Clownfishes']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Dive Notes</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>wizard-dive-notes</td>
+	<td>I'm not a &lt;#&gt; I'm a &quot;Phr33&quot; man<br /><br />J'aime énumérer les tags html : &lt;/html&gt; &lt;br/&gt;</td>
+</tr>
+<!--Changing pics-->
+<tr>
+	<td>click</td>
+	<td>//a[@onclick='show_wizard_5()']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@class='galleria-image-nav-right']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@id='galleria-wizard']/div/div[1]/div[1]/div[2]/img[contains(@src,'IMG_4564.JPG')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@class='galleria-image-nav-right']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@id='galleria-wizard']/div/div[1]/div[1]/div[1]/img[contains(@src,'216041_103492703072973_100002367311036_33469_1227396_n.jpg')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>wizard_pict_set_fave</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@class='galleria-image-nav-left']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@id='galleria-wizard']/div/div[1]/div[1]/div[2]/img[contains(@src,'IMG_4564.JPG')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>wizard_pict_delete</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementNotPresent</td>
+	<td>//div[@id='galleria-wizard']/div/div[1]/div[1]/div[2]/img[contains(@src,'IMG_4564.JPG')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>wizard_pict_url</td>
+	<td>http://ordacave.ru/en/files/2011/03/DSCF3847.jpg</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>wizard_add_pict_button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//img[contains(@src,'DSCF3847.jpg')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>wizard_save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>mask</td>
+	<td></td>
+</tr>
+</tbody></table>
+</body>
+</html>

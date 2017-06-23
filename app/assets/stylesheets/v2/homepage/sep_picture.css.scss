@@ -1,0 +1,17 @@
+#sep_picture
+{
+  margin-top: 10px;
+  height: 280px;
+  background-color: #303336;
+  background-image: url('/img/home/sep_picture.png');
+  background-position: 50%;
+  background-size: cover;
+  @media (max-width: 1024px)
+  {
+    height: 160px;
+  }
+  @media (max-width: 720px)
+  {
+    display: none;
+  }
+}

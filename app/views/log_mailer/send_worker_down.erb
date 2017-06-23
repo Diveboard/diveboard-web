@@ -1,0 +1,48 @@
+<html>
+<style type="text/css">
+  .alert {color: #F00; font-weight: bolder;}
+  .warn {color: #FF9040; font-weight: bolder;}
+  table th {background: #333; color: #FFF;}
+  table td {background: #DDD; margin: 2px;}
+</style>
+<body>
+<p><%= it("your workers are no longer working correctly!", scope: ['log_mailer', 'send_worker_down']) %></p>
+
+<h1><%= it("Processes running", scope: ['log_mailer', 'send_worker_down']) %></h1>
+<% if @data.length != Rails.application.config.workers_count then%><p class='alert'><%= it("%{length} processes running, %{workers} expected", scope: ['log_mailer', 'send_worker_down'], length: @data.length, workers: Rails.application.config.workers_count) %></p><%end%>
+<PRE>
+<%=@data.join "\n"%>
+</PRE>
+
+<%all_jobs = Delayed::Job.all.reject {|j| j.alert_ignore}%>
+
+<h1><%= it("Queue content: %{count} jobs", scope: ['log_mailer', 'send_worker_down'], count: all_jobs.count) %></h1>
+<% if all_jobs.count > Rails.application.config.workers_maxqueue_warn then %><p class='alert'><%= it("You have too many requests in the queue:", scope: ['log_mailer', 'send_worker_down']) %> <%=Delayed::Job.all.count%></p><%end%>
+<table style='border: solid 1px'>
+    <tr>
+      <th><%= it("ID", scope: ['log_mailer', 'send_worker_down']) %></td>
+      <th><%= it("Action", scope: ['log_mailer', 'send_worker_down']) %></td>
+      <th><%= it("created_at", scope: ['log_mailer', 'send_worker_down']) %></td>
+      <th><%= it("attempts", scope: ['log_mailer', 'send_worker_down']) %></td>
+      <th><%= it("failed?", scope: ['log_mailer', 'send_worker_down']) %></td>
+    </tr>
+  <%all_jobs.each do |job| %>
+    <tr>
+      <td><a href='#job_<%=job.id%>'><%=job.id%></a></td>
+      <td><%= job.handler.gsub(/.*object: !ruby\/object:([^\n]*)\n.* id: *([0-9]*)\n.*method_name:([^\n]*)\n.*/m, '\1(\2) \3') %></td>
+      <td class='<%if job.created_at+Rails.application.config.workers_maxold_warn <= Time.now && job.attempts != Delayed::Worker.max_attempts then%>alert<%end%>'><%= job.created_at %></td>
+      <td class='<%= if job.attempts==0 then '' elsif job.attempts == Delayed::Worker.max_attempts then 'alert' else 'warn' end%>'><%=job.attempts%><%if job.attempts == Delayed::Worker.max_attempts then %> - <%= it("Not retrying", scope: ['log_mailer', 'send_worker_down']) %><%end%></td>
+      <td class='alert'><% if job.failed? then %><%= job.failed_at %><%end%></td>
+    </tr>
+  <%end%>
+</table>
+
+<% all_jobs.reject{|j| j.last_error.nil?}.each do |job|%>
+  <h3>Job #<%=job.id%> : <%=job.handler.gsub(/.*object: !ruby\/object:([^\n]*)\n.* id: *([0-9]*)\n.*method_name:([^\n]*)\n.*/m, '\1(\2) \3')%></h3>
+  <pre id='job_<%=job.id%>'><%= job.to_yaml %></pre>
+<%end%>
+
+<p><%= it("Good luck!", scope: ['log_mailer', 'send_worker_down']) %></p>
+<p>Diveboard</p>
+</body>
+</html>

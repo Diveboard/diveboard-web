@@ -1,0 +1,67 @@
+  <div id="wizard_export_list">
+    <% @owner.dives.sort{|a,b| a.time_in <=> b.time_in}.reverse_each { |dive| %>
+    <div class='export_list_item export_list_item_folded'>
+      <div class='exitem_check'><input type=checkbox name='<%=dive.id%>' class='wizard_export_checkbox' <%if @selected_dives.include? dive.id then%>SELECTED="true" checked="yes"<%end%> privacy="<%=dive.privacy%>" graph_id="<%=dive.graph_id%>" number="<%=dive.number%>"/></div>
+      <div class='exitem_switch'><img src='/img/folding_left.png' alt='V'/></div>
+      <div class='exitem_privacy'><img src="/img/lock_<%= if dive.privacy == 0 then 'green' else 'red' end %>.png" alt="Private" class="tooltiped-js" title="" /> <%=dive.privacy%></div>
+      <div class='exitem_date'><a href='/<%=dive.user.vanity_url%>/<%=dive.id%>'><%= dive.time_in.strftime("%Y-%m-%d") %> <%= dive.time_in.strftime("%H:%M") %></a></div>
+      <div class='exitem_dan'><%if !dive.dan_data_sent.nil? then%><img src='/img/dan_icon.png' title='<%= it("Sent to DAN", scope: ['diveinfo', 'bulk_listing']) %>' alt='DAN' class='tooltiped'/><%end%></div>
+      <div class="exitem_fb"><%if !dive.graph_id.blank? %><div class="fb_button fb_button_small exitem_fb_logo tooltiped" title="<%= it("Published on Facebook", scope: ['diveinfo', 'bulk_listing']) %>"></div><%end%></div>
+      <% if !dive.number.nil?%>
+      <div class="exitem_dive_number"><strong><%= it("Number:", scope: ['diveinfo', 'bulk_listing']) %></strong> <%=dive.number%></div>
+      <%end%>
+      <!-- TODO: translate sentence ? -->
+      <div class='exitem_depthduration'> <span class='exitem_depth'><%= unit_distance(dive.maxdepth, false, 1)%></span><%= unit_distance(nil, true, 1)%> / <%= it("%{span:%{dive_duration}}", scope: ['diveinfo', 'bulk_listing'], span: It.tag("span", class: "exitem_duration"), dive_duration: it("min", scope: ['units'], count: dive.duration)) %><span class='exitem_duration'></div>
+      <div class='export_list_text_container'>
+        <div class='exitem_site'><strong><%= it("Site:", scope: ['diveinfo', 'bulk_listing']) %></strong> <%= if dive.spot.id > 1 then dive.spot.name end%></div>
+        <div class='exitem_location'><strong><%= it("Location:", scope: ['diveinfo', 'bulk_listing']) %></strong> <% if dive.spot.id > 1 then %><%= dive.spot.country.cname rescue nil%>, <%= dive.spot.location.name rescue nil%><%end%></div>
+        <div class='exitem_shop'>
+          <strong><%= it("Dive center:", scope: ['diveinfo', 'bulk_listing']) %></strong>
+          <%if !dive.shop.nil? && !dive.guide.blank? then%>
+            <%= it("%{guide} from %{link:%{shop}}", scope: ['diveinfo', 'bulk_listing'], guide: dive.guide, shop: dive.shop.name, link: (if dive.shop.fullpermalink(:locale).blank? then It.tag('span') else dive.shop.fullpermalink(:locale) end) ) %>
+
+          <%elsif !dive.shop.nil? && dive.guide.blank? then%>
+            <%if !dive.shop.fullpermalink(:locale).blank? then%>
+              <a href="<%=dive.shop.fullpermalink(:locale)%>" target="_blank"><%=dive.shop.name%></a>
+            <%else%>
+              <%=dive.shop.name%>
+            <%end%>
+          <%end%>
+
+        </div>
+        <div class='exitem_buddies'>
+          <strong><%= it("Dive buddies:", scope: ['diveinfo', 'bulk_listing']) %></strong>
+          <%if !dive.buddies.empty?%>
+            <%dive.buddies.each_with_index do |bud, idx|
+              if idx > 0 then %>, <% end
+              if bud.fullpermalink(:locale)
+                %><a href='<%=bud.fullpermalink(:locale)%>' target='_blank'><%=bud.nickname rescue nil%></a><%
+              elsif bud.fb_id
+                %><a target='_blank' href="http://www.facebook.com/<%=bud.fb_id%>"><%=bud.nickname rescue nil %></a><%
+              else
+                %><%=bud.nickname rescue nil%><%
+              end
+            end%>
+          <%end%>
+        </div>
+        <div class='exitem_trip'><strong><%= it("Trip name:", scope: ['diveinfo', 'bulk_listing']) %></strong> <%= dive.trip_name %></div>
+        <div class='exitem_signature'>
+          <strong><%= it("Shop signature:", scope: ['diveinfo', 'bulk_listing']) %></strong><%if dive.shop_signature.nil?%> <%= it("not requested", scope: ['diveinfo', 'bulk_listing']) %><%else%>
+            <%if dive.shop_signature.status == :signed%>
+            <span class="symbol tooltiped-wz" style="color: green;" title="<%= it("Confirmed by shop", scope: ['diveinfo', 'bulk_listing']) %>">/</span>
+            <%elsif dive.shop_signature.status == :pending%>
+            <span class="symbol tooltiped-wz" style="color: orange;" title="<%= it("Pending shop approval", scope: ['diveinfo', 'bulk_listing']) %>">/</span>
+            <%elsif dive.shop_signature.status == :rejected%>
+            <span class="symbol tooltiped-wz" style="color: red;" title="<%= it("Rejected by shop", scope: ['diveinfo', 'bulk_listing']) %>">W</span>
+            <%end%>
+          <%end%>
+        </div>
+        <div class='exitem_water'><strong><%= it("Water:", scope: ['diveinfo', 'bulk_listing']) %></strong> <%= it(dive.water, scope: ['globals', 'watertype']) %></div>
+        <div class='exitem_visibility'><strong><%= it("Visibility:", scope: ['diveinfo', 'bulk_listing']) %></strong> <%= it(dive.visibility, scope: ['globals', 'visibility']) %></div>
+        <div class='exitem_altitude'><strong><%= it("Altitude:", scope: ['diveinfo', 'bulk_listing']) %></strong> <%= dive.altitude %></div>
+        <div class='exitem_gear'><strong><%= it("Featured gear:", scope: ['diveinfo', 'bulk_listing']) %></strong> <% dive.featured_gears.each_with_index do |gear,idx| %><%if idx>0 then%>, <%end%><%= it(gear.category, scope: ['globals', 'gear_categories']) %>: <%=gear.manufacturer%> <%=gear.model%><%end%></div>
+        <div class='exitem_othergear'><strong><%= it("Other gear:", scope: ['diveinfo', 'bulk_listing']) %></strong> <% dive.other_gears.each_with_index do |gear,idx| %><%if idx>0 then%>, <%end%><%= it(gear.category, scope: ['globals', 'gear_categories']) %>: <%=gear.manufacturer%> <%=gear.model%><%end%></div>
+      </div>
+    </div>
+    <% } %>
+  </div>

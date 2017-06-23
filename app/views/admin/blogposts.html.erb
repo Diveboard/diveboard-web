@@ -1,0 +1,179 @@
+<%content_for :css do %>
+  <%= include_stylesheets :blog, :media => :all %>
+<%end%>
+<style>
+  #blog_main_pane {display:none;}
+  h3{border-top: 1px solid #666; padding-top: 6px; margin-left: -10px !important; width: 722px;}
+  #blog_header {border: 1px #555 solid; margin-bottom: 20px; }
+</style>
+
+<%= render :partial => 'admin_css'%>
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 10 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+<h1>Blog Posts moderation</h1>
+  <%
+    if User.find(30).updated_at < 1.hour.ago
+      User.find(30).update_fb_permissions_without_delay
+      User.find(30).touch
+    end
+  %>
+  <%if !User.find(30).fb_permissions_granted("publish_stream,manage_pages")%>
+  <p><span style="color:red;">WARNING : </span>when publishing a post, it will be also pushed to the timeline thanks to the "publish_stream" and "manage_pages" permission of Alex's account.</p>
+  <p> Apparently the permission is missing, please spank Alex ASAP, ask him to click on this link:<br/>
+    <a href="<%=ROOT_URL+"login/fb_login/publish_stream%2Cmanage_pages"%>"><%=ROOT_URL+"login/fb_login/publish_stream%2Cmanage_pages"%></a>
+  </p>
+  <%end%>
+  <p>View posts : <a href="/admin/blogposts?type=all" class='grey_button'>All</a> <a href="/admin/blogposts?type=perso" class='grey_button'>User blogs</a> <a href="/admin/blogposts?type=main" class='grey_button'>Main blog</a> <a href="/admin/blogposts?type=moderation" class='grey_button'>Awaiting moderation</a></p>
+  <div id="main_content_area" class="blog">
+    <% if @post_list.empty?%>
+    <h2>Nothing to do !</h2>
+    <%else%>
+    <%= render :partial => "blog/excerpts_list" , :locals => {:moderation => true}%>
+    <a href="#" class="grey_button admin_dismiss_all">DISMISS EVERYTHING ELSE ON THIS PAGE</a>
+    <%end%>
+  </div>
+
+</div>
+
+
+<script>
+
+function approve_post(e){
+  e.preventDefault();
+  var id = [$(e.target).attr("data")];
+  console.log("approving post "+id[0]);
+  approve_post_id(id);
+}
+
+
+function approve_post_id(id){
+  $.map(id, function(el){
+    mask_post(el);
+  });
+
+
+  $.ajax({
+    url: '/admin/blogposts/approve',
+    dataType: 'json',
+    data:  {
+        'ids': id,
+        'authenticity_token': "<%=form_authenticity_token%>"
+      },
+    type: "POST",
+    error: function(data) {
+      alert(data.statusText);
+       $.map(id, function(el){
+          unmask_post(el);
+        });
+      console.log(data);
+    },
+    success: function(data){
+       $.map(id, function(el){
+          unmask_post(el);
+        });
+       $.each(data.success_ids, function(idx, el){
+        $(".blogpost_"+el).remove();
+       });
+       if(data.error_ids.length > 0){
+        diveboard.notify("ERROR", "Posts with ids "+data.error_ids.toString()+" could not be approved");
+       }
+    }
+  });
+}
+
+function mask_post(id){
+  var element = $(".blogpost_"+id);
+  if($("#mask_"+id).length>0){
+    $("#mask_"+id).remove();
+  }
+
+  var mask="<div id='mask_"+id+"' class='mask' style='background-color: black; position: absolute; z-index: 9000; width: 1440px; height: 485px; top: 0px; left: 0px; display: block; opacity: 0.6; '><center><img src='/img/transparent_loader_3.gif' style='width: initial; background: none;'/></center></div>";
+  $(element).append($(mask));
+  $("#mask_"+id).css({
+    top: $(".blogpost_"+id).position().top+"px",
+    left: $(".blogpost_"+id).position().left+"px",
+    width: $(".blogpost_"+id).outerWidth()+"px",
+    height: $(".blogpost_"+id).outerHeight()+"px"
+  })
+  $("#mask_"+id+" img").css({
+    position: "relative",
+    top: ($(".blogpost_"+id).outerHeight()/2-40)+"px"
+  });
+}
+
+function unmask_post(id){
+  var element = $(".blogpost_"+id);
+  if($("#mask_"+id).length>0){
+    $("#mask_"+id).remove();
+  }
+}
+
+function dismiss_post(e){
+  e.preventDefault();
+  var id = [$(e.target).attr("data")];
+  console.log("dismissing post "+id[0]);
+  dismiss_post_id(id);
+}
+
+function dismiss_all_posts(e){
+  e.preventDefault();
+  var ready_id = new Array();
+  var id=$.map($(".blog_excerpt"), function(elem,idx){
+    if($(elem).find(".mask").length == 0)
+      ready_id.push( $(elem).attr("data"));
+  });
+
+  console.log("dismissing posts "+id.toString());
+  dismiss_post_id(ready_id);
+}
+
+function dismiss_post_id(id){
+  $.map(id, function(el){
+    mask_post(el);
+  });
+
+
+  $.ajax({
+    url: '/admin/blogposts/dismiss',
+    dataType: 'json',
+    data:  {
+        'ids': id,
+        'authenticity_token': "<%=form_authenticity_token%>"
+      },
+    type: "POST",
+    error: function(data) {
+      alert(data.statusText);
+       $.map(id, function(el){
+          unmask_post(el);
+        });
+      console.log(data);
+    },
+    success: function(data){
+       $.map(id, function(el){
+          unmask_post(el);
+        });
+       $.each(data.success_ids, function(idx,el){
+        $(".blogpost_"+el).remove();
+       });
+       if(data.error_ids.length > 0){
+        diveboard.notify("ERROR", "Posts with ids "+data.error_ids.toString()+" could not be dismissed");
+       }
+    }
+  });
+
+}
+
+
+$(document).ready(function(){
+  $(".admin_approve").live('click', approve_post);
+  $(".admin_dismiss_all").live('click', dismiss_all_posts);
+  $(".admin_dismiss").live('click', dismiss_post);
+});
+</script>
+
+
+

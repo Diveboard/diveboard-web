@@ -1,0 +1,233 @@
+@import 'variablesv2';
+
+#cover_pic
+{
+  width: 100%;
+  height: 340px;
+  background-color: $dark-gray-db;
+  background-size: cover;
+  background-position: 20%;
+  @media (max-width: 1024px)
+  {
+    height: 280px;
+  }
+  @media (max-width: 768px)
+  {
+    height: 200px;
+  }
+
+  .container
+  {
+    max-width: 1060px;
+    height: 100%;
+    margin: 0 auto;
+    position: relative;
+    @media (max-width: 1110px)
+    {
+      width: calc(100% - 40px);
+    }
+
+    .infos
+    {
+      position: absolute;
+      bottom: 20px;
+      @media (max-width: 768px)
+      {
+        text-align: center;
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .logo
+      {
+        width: 120px;
+        height: 120px;
+        background-color: white;
+        float: left;
+
+        @media (max-width: 768px)
+        {
+          display: none;
+        }
+        @include centerImg();
+      }
+
+      h1
+      {
+        float: left;
+        width: calc(100% - 140px);
+        padding-left: 20px;
+        color: white;
+        font-size: 36px;
+        font-weight: 600;
+        text-shadow: 0px 2px 0px rgba(0,0,0,0.50);
+        white-space: nowrap;
+        clear: right;
+        @media (max-width: 768px)
+        {
+          padding-right: 0px;
+          padding-left: 0;
+          width: 100%;
+          font-size: 25px;
+          white-space: normal;
+          float: none;
+        }
+      }
+
+      .country
+      {
+        font-weight: 400;
+        font-size: 24px;
+        @media (max-width: 768px)
+        {
+          font-size: 20px;
+        }
+      }
+
+      .rating
+      {
+        float: left;
+        margin-top: 2px;
+        border-collapse: collapse;
+        margin-left: 20px;
+        @media (max-width: 768px)
+        {
+          width: 208px;
+          margin: 0 auto;
+          float: none;
+        }
+
+        td
+        {
+          padding-right: 10px;
+
+          p
+          {
+            color: white;
+            font-size: 14px;
+            white-space: nowrap;
+          }
+        }
+      }
+    }
+  }
+
+  .social
+  {
+    border-collapse: collapse;
+    position: absolute;
+    right: 0;
+    bottom: 20px;
+    @media (max-width: 768px)
+    {
+      display: none;
+    }
+
+    img
+    {
+      height: 23px;
+      position: absolute;
+      top: 6px;
+    }
+
+    .fb_share
+    {
+      background-color: #395798;
+      border: 1px solid #395798;
+
+      img
+      {
+        left: 12px;
+      }
+    }
+
+    .pinterest_share
+    {
+      background-color: #cd1f26;
+      border: 1px solid #cd1f26;
+
+      img
+      {
+        left: 8px; 
+      }
+    }
+
+    .twitter_share
+    {
+      background-color: #5eaade;
+      border: 1px solid #5eaade;
+
+      img
+      {
+        width: 23px;
+        left: 7px;
+      }
+    }
+
+    .google_share
+    {
+      background-color: #cf3c2d;
+      border: 1px solid #cf3c2d;
+
+      img
+      {
+        left: 8px;
+      }
+    }
+
+    .email_share
+    {
+      border: 1px solid white;
+
+      img
+      {
+        width: 20px;
+        height: 15px;
+        left: 7px;
+        top: 9px;
+      }
+    }
+
+    .link_share
+    {
+      border: 1px solid white;
+
+      img
+      {
+        width: 20px;
+        height: 20px;
+        left: 7px;
+        top: 7px;
+      }
+    }
+    
+    .shakable
+    {
+      display: inline-block;
+      margin-right: 0.5rem;
+      transition:100ms;
+      cursor: pointer;
+      &:hover{
+        padding-bottom: 7.5px;
+      }
+      .soc_button
+      {
+        width: 33px;
+        height: 33px;
+        -webkit-border-radius: 17.5px;
+        -moz-border-radius: 17.5px;
+        border-radius: 17.5px;
+        position: relative;
+        
+      }
+    }
+  }
+}
+
+.qtip-wrappall
+{
+  max-width: 400px;
+  padding: 10px;
+}

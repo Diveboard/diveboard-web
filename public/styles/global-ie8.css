@@ -1,0 +1,15 @@
+#header_container{ background-color: #19191b !important;}
+#header_user_menu{ background-color: #000000 !important;}
+#useless_user_menu{ background-color: #000000 !important;}
+
+#idx_3_top .logo{width: 235px !important;}
+#idx_3_top form{margin-left: 245px !important; margin-top: 2px;}
+#idx_3_top ul { }
+#idx_3_top .button{position: relative !important; top: 6px !important; }
+#idx_3_top li.header_user{top:0px !important;}
+#idx_3_top .header_user_profile{top : -1px !important; }
+#idx_3_top .useless_menu_container{top: -12px; position: relative;}
+#header_user_menu li{height: 20px; padding-top: 8px;}
+#useless_user_menu li{height: 20px; padding-top: 8px;}
+/*#idx_3_top li table.text_links{;top: -7px;}*/
+#idx_3_top a.text_link{position: relative; top: -7px;}

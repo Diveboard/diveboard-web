@@ -1,0 +1,32 @@
+<html>
+<body>
+
+<div style='background-color: #222; color: #1D1D1D; max-width: 800px; padding: 20px; font-size: 12px; font-family: "Helvetica, Verdana, Arial, sans-serif"; text-shadow: white 0px 1px;'>
+
+  <div style='margin-top: 20px; margin-bottom: 30px;'>
+  <img src="http://www.diveboard.com/img/logo-alpha.png" alt="DiveBoard">
+  </div>
+
+
+  <div style='background-color: #f4f4f4; margin-top: 0; padding: 30px 10px 10px 10px;'>
+  <p style='margin: 5px 0 20px 0;'><%= it("Hi !", scope: ['notify_user', 'share_to_friend']) %></p>
+  <%= it("%{user} would like to share a page with you on %{link:Diveboard}.", scope: ['notify_user', 'share_to_friend'], user: @b_from, link: "http://www.diveboard.com") %>
+  <br/>
+  <%= it("You can see his message just below", scope: ['notify_user', 'share_to_friend']) %>
+    <br/>
+    <%= @message %>
+    <br/>
+  <%= it("Come and discover the shop %{link:%{name}}", scope: ['notify_user', 'share_to_friend'], link: @shop.fullpermalink, name: @shop.name) %>
+  <br/>
+  <br/>
+  </p>
+
+
+  <p style='margin: 30px 0 5px 0;'><%= it("Happy Diving !", scope: ['notify_user', 'share_to_friend']) %></p>
+  <p style='margin: 5px 0 5px 0;'><%= it("The Diveboard team", scope: ['notify_user', 'share_to_friend']) %></p>
+  <p style='margin: 5px 0 0px 0;'><a href='http://www.diveboard.com'>http://www.diveboard.com</a></p>
+
+  </div>
+</div>
+</body>
+</html>

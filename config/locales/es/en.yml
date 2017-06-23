@@ -1,0 +1,102 @@
+---
+es:
+  basket:
+    shop_view:
+      Total: Total
+      ? "Unit price"
+      : "Precio unitario"
+      ? "Vendor confirmation note:"
+      : "Nota de confirmación de proveedores:"
+      ? "When do you want to dive?"
+      : "¿Cuándo quieres bucear?"
+    view:
+      ? "(excl. tax)"
+      : "(IVA excl.)"
+      ? "(inc. tax)"
+      : "(IVA inc.)"
+      ? "Balance of %{price} inc. taxes to be paid directly to %{shop}"
+      : "El saldo del %{price} impuestos inc. a pagar directamente al %{shop}"
+      ? "Deposit of %{price} to secure booking."
+      : "Depósito de %{price} para garantizar la reserva."
+      Designation: Designación
+      ? "PayPal - The safer, easier way to pay online!"
+      : "PayPal - la manera más segura y fácil de pagar en línea!"
+      ? "Please sign in to diveboard, or if you don't have an account yet, %{link:sign up}"
+      : "Inicia sesión en diveboard, o si no tienes una cuenta todavía,%{link:sign up}"
+      ? "Proceed to checkout for %{shop}"
+      : "Proceder al pago del %{shop}"
+      Quantity: Cantidad
+      ? "Sales Taxes"
+      : "Impuestos sobre las ventas"
+      ? "Sub Total"
+      : "Sub Total"
+      Total: Total
+      ? "Unit price"
+      : "Precio unitario"
+      ? "continue shopping"
+      : "Sigue comprando"
+  basket_management:
+    shop_pages:
+      basket_confirmed:
+        ? "Basket history"
+        : "Historial de compra"
+        ? "Cancel order"
+        : "Cancelar pedido"
+        ? "Cancellation explanation:"
+        : "Explicación de la cancelación:"
+        ? "Choose your reply:"
+        : "Elija su respuesta:"
+        ? "Mark as delivered"
+        : "Marca como entregado"
+        ? "Once marked as delivered, this order will no longer appear in the listing of \"opened\" orders. You may still find it by filtering for \"delivered\" orders."
+        : "Una vez marcado como entregado, este pedido ya no aparecerá en el listado de pedidos \"abiertos\". Todavía podrás encontrarlo filtrando por pedidos \"entregados\"."
+        ? "Please check the transaction %{link:on paypal website}"
+        : "Por favor revise la transacción %{link:on paypal website}"
+        ? "Send reply"
+        : "Enviar respuesta"
+        ? "This order will be cancelled and the customer will be refunded. Some fees may stay at your charge, depending on you Paypal account."
+        : "Este pedido se cancelará y se devolverá al cliente. Algunos cargos puede que se le apliquen, dependiendo de su cuenta Paypal."
+        ? "This transaction requires your attention to be completed. Once the transaction on paypal is completed, the order will be automatically updated here."
+        : "Esta operación requiere su atención para ser completada. Una vez completada la transacción de paypal, la orden se actualizará automáticamente aquí."
+      basket_default:
+        ? "Basket history"
+        : "Historial de compra"
+        ? "This transaction requires your attention to be completed. Once the transaction on paypal is completed, the order will be automatically updated here."
+        : "Esta operación requiere su atención para ser completada. Una vez completada la transacción de paypal, la orden se actualizará automáticamente aquí."
+      basket_paid:
+        ? "Choose your reply:"
+        : "Elija su respuesta:"
+        Confirm: Confirmar
+        ? "Information request:"
+        : "Solicitud de información:"
+        ? "Mark order as delivered (will no longer show on your listing of opened orders)"
+        : "Marcar pedido como entregado (ya no se mostrará en el listado de pedidos abiertos)"
+        ? "Need more detail"
+        : "Se necesita más información"
+        ? "Not possible"
+        : "No es posible"
+        ? "Note for customer %{i:(optional)}:"
+        : "Nota para el cliente %{i:(optional)} </img>:"
+        ? "Refusal explanation:"
+        : "Razón de la devolución:"
+        ? "Send reply"
+        : "Enviar respuesta"
+        ? "The amount of the transaction will be transferred to your Paypal account once confirmed. By confirming this order, you commit to deliver this order as per the customer requests."
+        : "El monto de la transacción se transferirá a tu cuenta de Paypal una vez confirmada. Confirmando este pedido, usted se compromete a entregarlo acorde a las necesidades del cliente."
+        ? "This order will be closed. The customer will not be billed."
+        : "Este pedido se cerrará. No se cobrará al cliente."
+        ? "This order will stay on hold until a reply is received or you change the status."
+        : "Este pedido se retendrá hasta que se reciba una respuesta o cambies el estado."
+        ? "You have until the %{nb_days} to confirm this basket. After this time, the authorization will expire and the order will get cancelled."
+        : "Tienes hasta el %{nb_days} para confirmar la cesta de pedido. Después de este tiempo, la autorización caducará y el pedido se cancelará."
+      history:
+        ? "Status changed to %{status}"
+        : "Estado cambiado a %{status}"
+  blog:
+    article_detail:
+      ? "About the author:"
+      : "Sobre el autor:"
+      ? "Check out this post:"
+      : "Pásate por este post:"
+      Comments: Comentarios
+      EDIT: EDITAR

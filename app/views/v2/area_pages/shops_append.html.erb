@@ -1,0 +1,84 @@
+<%
+  shop_count = 0;
+  shops.each do |s|
+%>
+<div class="shop">
+  <%= link_to({:controller => :shop_pages, :action => :index, :vanity_url => s.vanity_url}) do %>
+  <div class="picture" style="background-image: url('<%= s.picture %>')"></div>
+  <% end %>
+  <div class="shop_info">
+    <%= link_to s.name, {:controller => :shop_pages, :action => :index, :vanity_url => s.vanity_url}, :class => :shop_name %>
+    <table class="rating">
+      <% if !s.reviews.empty? && !s.rating.nil?
+        total = s.rating;
+      %>
+        <tr>
+          <%
+            count = 0
+            while count < 5 do
+              if total >= 1
+                total -= 1
+          %>
+            <td><div class="outter-bullet"><div class="inner-bullet-full"></div></div></td>
+          <%
+              elsif total >= 0.5
+                total -= 0.5
+          %>
+            <td><div class="outter-bullet"><div class="inner-bullet-half"></div></div></td>
+          <%
+              else
+          %>
+            <td><div class="outter-bullet"></div></td>
+          <%
+              end
+              count += 1
+            end
+          %>
+          <td>
+            <p>
+              (<%= it("%{count} reviews",
+                   scope: ['homepage', 'v2', 'featured_destinations'],
+                   count: s.reviews.count) %>)
+            </p>
+          </td>
+        </tr>
+      <% else %>
+        <tr>
+          <td>
+            <p style="padding:0;">
+              <%= it("No reviews yet",
+                  scope: ['area_pages', 'v2', 'shops']) %>
+            </p>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+    <% if s.public_dive_goods.count != 0 %>
+    <table class="price">
+      <tr>
+        <td><img class="icon" src="/img/areas/cash-icon.png" alt="" /></td>
+        <td>
+          <p>
+            <% # TODO fix starting price %>
+            <%= it("From %{starting_price}",
+                scope: ['area_pages', 'v2', 'shops'],
+                starting_price: "45€") %>
+          </p>
+        </td>
+      </tr>
+    </table>
+    <% end %>
+    <%= link_to({:controller => :shop_pages, :action => :index, :vanity_url => s.vanity_url}, :class => :book) do %>
+      <p>
+        <%= it("Book now",
+            scope: ['shop_pages', 'shop_dive_view']) %>
+      </p>
+      <img src="<%= HtmlHelper.lbroot "/img/icon_arrow_book_now_bw.svg" %>" alt="" />        
+    <% end %>
+  </div>
+  <div class="clear"></div>
+</div>
+<%
+  shop_count += 1
+  end
+%>

@@ -1,0 +1,85 @@
+<%
+def display_stars mark
+  mark = 5 if mark > 5
+  mark = 0 if mark < 0
+  display_on = mark.to_i
+  mark_float = mark - display_on
+  return {on: mark.round, half: false, off: 5-mark.round}
+  if mark_float >= 0.75 then
+    display_on += 1
+    display_half = false
+  elsif mark_float >= 0.25 then
+    display_half = true
+  else
+    display_half = false
+  end
+  display_off = 5 - display_on
+  display_off -= 1 if display_half
+  return {on: display_on, half: display_half, off: display_off}
+end
+%>
+<div class='rating'>
+  <div class='rating_title'><%= it("Organization", scope: ['shop_widgets', 'ratings']) %></div>
+  <div class='rating_stars'>
+    <%if @shop.mark_orga%>
+      <%stars = display_stars @shop.mark_orga[:mark]%>
+      <%stars[:on].times do %><div class='star on'></div><%end%>
+      <%if stars[:half] then %><div class='star half on'></div><div class='star half off'></div><%end%>
+      <%stars[:off].times do %><div class='star off'></div><%end%>
+    <%else%>
+      <span class='no_star'><%= it("Not rated yet", scope: ['shop_widgets', 'ratings']) %></span>
+    <%end%>
+  </div>
+</div>
+<div class='rating'>
+  <div class='rating_title'><%= it("Friendliness", scope: ['shop_widgets', 'ratings']) %></div>
+  <div class='rating_stars'>
+    <%if @shop.mark_friend%>
+      <%stars = display_stars @shop.mark_friend[:mark]%>
+      <%stars[:on].times do %><div class='star on'></div><%end%>
+      <%if stars[:half] then %><div class='star half on'></div><div class='star half off'></div><%end%>
+      <%stars[:off].times do %><div class='star off'></div><%end%>
+    <%else%>
+      <span class='no_star'><%= it("Not rated yet", scope: ['shop_widgets', 'ratings']) %></span>
+    <%end%>
+  </div>
+</div>
+<div class='rating'>
+  <div class='rating_title'><%= it("Security", scope: ['shop_widgets', 'ratings']) %></div>
+  <div class='rating_stars'>
+    <%if @shop.mark_secu%>
+      <%stars = display_stars @shop.mark_secu[:mark]%>
+      <%stars[:on].times do %><div class='star on'></div><%end%>
+      <%if stars[:half] then %><div class='star half on'></div><div class='star half off'></div><%end%>
+      <%stars[:off].times do %><div class='star off'></div><%end%>
+    <%else%>
+      <span class='no_star'><%= it("Not rated yet", scope: ['shop_widgets', 'ratings']) %></span>
+    <%end%>
+  </div>
+</div>
+<div class='rating'>
+  <div class='rating_title'><%= it("Access to water", scope: ['shop_widgets', 'ratings']) %></div>
+  <div class='rating_stars'>
+    <%if @shop.mark_boat%>
+      <%stars = display_stars @shop.mark_boat[:mark]%>
+      <%stars[:on].times do %><div class='star on'></div><%end%>
+      <%if stars[:half] then %><div class='star half on'></div><div class='star half off'></div><%end%>
+      <%stars[:off].times do %><div class='star off'></div><%end%>
+    <%else%>
+      <span class='no_star'><%= it("Not rated yet", scope: ['shop_widgets', 'ratings']) %></span>
+    <%end%>
+  </div>
+</div>
+<div class='rating'>
+  <div class='rating_title'><%= it("Equipment rental", scope: ['shop_widgets', 'ratings']) %></div>
+  <div class='rating_stars'>
+    <%if @shop.mark_rent%>
+      <%stars = display_stars @shop.mark_rent[:mark]%>
+      <%stars[:on].times do %><div class='star on'></div><%end%>
+      <%if stars[:half] then %><div class='star half on'></div><div class='star half off'></div><%end%>
+      <%stars[:off].times do %><div class='star off'></div><%end%>
+    <%else%>
+      <span class='no_star'><%= it("Not rated yet", scope: ['shop_widgets', 'ratings']) %></span>
+    <%end%>
+  </div>
+</div>

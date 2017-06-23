@@ -1,0 +1,14 @@
+<li class='feed_item'>
+    <div class='feed_abstract_img'><img src='<%=notification.about.thumbnail%>'/></div>
+    <div class='feed_abstract_dismiss symbol' data-db-notif_id='<%=notification.id%>'>'</div>
+    <a href='/explore/gallery'>
+      <div class='feed_abstract_title'>Congratulations ! Your picture in <strong><%=notification.about.dive.label%></strong> has been featured on Diveboard Gallery.</div>
+    </a>
+    <div class='feed_abstract_when'>
+      <%if !notification.when['days'].nil? then%><%=notification.when['days']%> days ago
+      <%elsif !notification.when['hours'].nil? then%><%=notification.when['hours']%> hours ago
+      <%elsif !notification.when['minutes'].nil? then%><%=notification.when['minutes']%> minutes ago
+      <%elsif !notification.when['seconds'].nil? then%><%=notification.when['seconds']%> seconds ago
+      <%end%>
+    </div>
+</li>

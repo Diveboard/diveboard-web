@@ -1,0 +1,168 @@
+<%
+  nb_cards_per_group = 4;
+  areas_pictures = []
+  location_title = @shop.area.geonames_core.name
+  unless @shop.area.geonames_core.country.nil?
+    location_title += ", #{@shop.area.geonames_core.country.cname}"
+  end
+%>
+<div id="area" class="areas">
+  <div id="category_title">
+    <h2>
+      <%= it("Current area",
+          scope: ['shop_pages', 'v2', 'areas'], shop_name: @shop.name, location: location_title) %>
+    </h2>
+    <div class="clear"></div>
+  </div>
+
+
+  <div class="cards_group">
+  <%
+    location_title = @shop.area.geonames_core.name
+    unless @shop.area.geonames_core.country.nil?
+      location_title += ", #{@shop.area.geonames_core.country.cname}"
+    end
+  %>
+    <div class="card_container large_container">
+      <%= link_to({controller: :area_pages, action: :index, country: @shop.area.url_country, vanity_url: @shop.area.url_name}) do %>
+      <div class="card">
+        <%
+          picture = nil
+          if !@shop.area.favorite_picture.nil?
+            picture = @shop.area.favorite_picture
+          else
+            @shop.area.best_pictures.each do |p|
+              if !p.nil? && areas_pictures.include?(p.id) == false
+                picture = p
+                areas_pictures << p.id
+                break
+              end
+            end
+            if picture.nil?
+              @shop.area.pictures.each do |p|
+                if !p.nil? && areas_pictures.include?(p.id) == false
+                  picture = p
+                  areas_pictures << p.id
+                  break
+                end
+              end
+            end
+          end
+        %>
+        <div class="picture">
+          <%unless picture.nil?%>
+          <img src="<%= if !picture.nil? then picture.medium end %>" alt="Diving in <%= location_title %> - By <%= picture.user.nickname %>" />
+          <%else%>
+          <img src="/img/areas/default_banner.jpg" />
+          <%end%>
+        </div>
+        <p class="title"><%= location_title %></p>
+        <p class="subtitle"><%= picture.nil? ? '' : picture.dive.spot.name %></p>
+        <table class="rating">
+          <tr>
+            <%=
+              mark = (((@shop.area.mark * 5.0) / 100.0) * 2.0).round / 2.0
+              render "v2/shared/score_bullet", :score => mark
+            %>
+            <td>
+              <p>
+                (<%= it("%{count} reviews",
+                     scope: ['homepage', 'v2', 'featured_destinations'],
+                     count: @shop.area.count_reviews) %>)
+              </p>
+            </td>
+          </tr>
+        </table>
+        <div class="discover">
+          <p>
+            <%= it("Discover",
+                scope: ['homepage', 'v2', 'featured_destinations']) %>
+          </p>
+          <img src="<%= HtmlHelper.lbroot "/img/icon_arrow_book_now_bw.svg" %>" alt="" />        
+        </div>
+      </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="clear"></div>
+<div class="areas">
+  <div id="category_title">
+    <h2>
+      <%= it("Nearby areas",
+          scope: ['shop_pages', 'v2', 'areas']) %>
+    </h2>
+    <div class="clear"></div>
+  </div>
+  <div class="cards_group">
+  <%
+    @shop.area.near_areas(nb_cards_per_group).each do |a|
+
+      location_title = a.geonames_core.name
+      unless a.geonames_core.country.nil?
+        location_title += ", #{a.geonames_core.country.cname}"
+      end
+  %>
+    <div class="card_container">
+      <%= link_to({controller: :area_pages, action: :index, country: a.url_country, vanity_url: a.url_name}) do %>
+      <div class="card">
+        <%
+          picture = nil
+          if !a.favorite_picture.nil?
+            picture = a.favorite_picture
+          else
+            a.best_pictures.each do |p|
+              if !p.nil? && areas_pictures.include?(p.id) == false
+                picture = p
+                areas_pictures << p.id
+                break
+              end
+            end
+            if picture.nil?
+              a.pictures.each do |p|
+                if !p.nil? && areas_pictures.include?(p.id) == false
+                  picture = p
+                  areas_pictures << p.id
+                  break
+                end
+              end
+            end
+          end
+        %>
+        <div class="picture">
+          <img src="<%= if !picture.nil? then picture.medium end %>" alt="Diving in <%= location_title %> - By <%= picture.user.nickname %>" />
+        </div>
+        <p class="title"><%= location_title %></p>
+        <p class="subtitle"><%= picture.nil? ? '' : picture.dive.spot.name %></p>
+        <table class="rating">
+          <tr>
+            <%=
+              mark = (((a.mark * 5.0) / 100.0) * 2.0).round / 2.0
+              render "v2/shared/score_bullet", :score => mark
+            %>
+            <td>
+              <p>
+                (<%= it("%{count} reviews",
+                     scope: ['homepage', 'v2', 'featured_destinations'],
+                     count: a.count_reviews) %>)
+              </p>
+            </td>
+          </tr>
+        </table>
+        <div class="discover">
+          <p>
+            <%= it("Discover",
+                scope: ['homepage', 'v2', 'featured_destinations']) %>
+          </p>
+          <img src="<%= HtmlHelper.lbroot "/img/icon_arrow_book_now_bw.svg" %>" alt="" />        
+        </div>
+      </div>
+      <% end %>
+    </div>
+    <%
+      end
+    %>
+  </div>
+  <div class="clear"></div>
+</div>

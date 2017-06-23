@@ -1,0 +1,848 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<%
+
+    display_temperature = @graph_attributes['temperature']['display']
+    display_pressure = @graph_attributes['pressure']['display']
+    display_gradient_factor = @graph_attributes['gradient_factor']['display']
+
+    #
+    # DATA ANALYSIS
+    #
+    total_time = 0.0
+    total_samples = 0
+    max_depth = 0.0
+    found_temp = false
+    found_pressure = false
+
+    @log.dives.each{ |dive|
+      max_time = 0.0
+      total_samples += dive["sample"].length
+      dive["sample"].each do |sample|
+        if !sample["depth"].nil? then
+          if max_depth < sample["depth"] then
+            max_depth = sample["depth"]
+          end
+        end
+        if !sample["time"].nil? then
+          if max_time < sample["time"] / 60.0 then
+            max_time = sample["time"] / 60.0
+          end
+        end
+        found_pressure ||= !sample["main_cylinder_pressure"].nil? && sample["main_cylinder_pressure"] < 10000
+        found_temp     ||= !sample["current_water_temperature"].nil?
+      end
+      total_time += max_time
+    }
+
+    display_temperature = false if !found_temp
+    display_pressure = false if !found_pressure
+
+    @bubble_data = {}
+
+    #
+    # PLACING EVERY GRAPH ON THE WHOLE PAGE
+    #
+
+    if @unit == 'imperial' then
+      depth_unit = "feet"
+      temperature_unit = "Fahrenheit"
+      pressure_unit = "psi"
+    else
+      depth_unit = "meters"
+      temperature_unit = "Celsius"
+      pressure_unit = "bar"
+    end
+
+    margin_left  = @graph_attributes['margin_left']
+    margin_right = @graph_attributes['margin_right']
+    margin_top   = @graph_attributes['margin_top']
+    margin_bottom= @graph_attributes['margin_bottom']
+    margin_real_bottom= @graph_attributes['margin_real_bottom']
+
+    font_size = @graph_attributes['font_size']
+    width = @graph_attributes['width']
+    height = @graph_attributes['height']
+
+    #for the pressure
+    height_pressure = @graph_attributes['pressure']['height']
+    height_pressure = 0 if !display_pressure
+    height += @graph_attributes['pressure']['bonus_height'] || 0 if display_pressure
+
+    #for the temperature
+    height_temp = @graph_attributes['temperature']['height']
+    height_temp = 0 if !display_temperature
+    height += @graph_attributes['temperature']['bonus_height'] || 0 if display_temperature
+
+    #for the gradient_factor
+    height_gradient = @graph_attributes['gradient_factor']['height']
+    height_gradient = 0 if !display_gradient_factor
+    height += @graph_attributes['gradient_factor']['bonus_height'] || 0 if display_gradient_factor
+
+    #for the depth
+    height_depth = height - height_temp - height_pressure - height_gradient - margin_real_bottom
+    area_top_depth = 0 + margin_top
+    area_bottom_depth = area_top_depth + height_depth - margin_top - margin_bottom
+
+    area_top_temp = 0 + height_depth + margin_top
+    area_bottom_temp = area_top_temp + height_temp - margin_top - margin_bottom
+
+    area_top_pressure = 0 + height_depth + height_temp + margin_top
+    area_bottom_pressure = area_top_pressure + height_pressure - margin_top - margin_bottom
+
+    area_top_gradient = 0 + height_depth + height_temp + height_pressure + margin_top
+    area_bottom_gradient = area_top_pressure + height_pressure + height_pressure - margin_top - margin_bottom
+
+    #
+    # DEFINING RANGES, GRADUATIONS & SCALES FOR DEPTH
+    #
+
+    # depth
+    max_displayed_depth = ((1.0+max_depth.to_f)/5).ceil*5
+    max_displayed_depth = (max_displayed_depth.to_f*1.05).floor
+    logger.debug "Max displayed depth : #{max_displayed_depth} (real: #{max_depth})"
+
+    graduation_range_depth = []
+    if @unit == 'imperial' then
+      graduation_range_depth = (0..max_displayed_depth).step(30.*0.3048)
+    else
+      graduation_range_depth = (0..max_displayed_depth).step(10)
+    end
+
+    scale_time = (width - margin_left - margin_right).to_f/(60.0*(total_time+1))
+    graph_height = (height_depth - margin_top - margin_bottom).to_f
+    graph_height -= font_size if @graph_attributes['display_label_time'] && @graph_attributes['depth']['label_time']
+    graph_height -= font_size if @graph_attributes['depth']['floating_labels']
+    scale_depth = graph_height.to_f/(max_displayed_depth)
+
+
+
+
+    #
+    # GRAPHING DEPTH PATHS
+    #
+
+    previous_time = 0
+    path_top = "M#{margin_left},#{margin_top}"
+    path_bottom = "M#{margin_left},#{margin_top}"
+    path_line = "M#{margin_left},#{margin_top}"
+    path_red = "M#{margin_left},#{margin_top}"
+    last_x = margin_left
+    last_y = margin_top
+    current_depth = 0
+    upper_layer_svg = ""
+    warnings = []
+    @log.dives.each{ |dive|
+      dive["sample"].each { |sample|
+
+        current_depth = sample["depth"] unless sample["depth"].nil?
+
+        x = margin_left + sample["time"] * scale_time
+        y = margin_top + current_depth * scale_depth
+
+        path_line += "L#{x.round},#{y.round}"
+        path_bottom += "L#{x.round},#{y.round}"
+        path_top += "L#{x.round},#{y.round}"
+
+        if @unit == 'imperial' then
+          displayed_depth = (current_depth / 0.3048).to_i
+          displayed_depth_unit = 'ft'
+        else
+          displayed_depth = current_depth.round(1).to_f
+          displayed_depth_unit = 'm'
+        end
+
+        displayed_warning = ""
+        displayed_temperature = nil
+        displayed_temperature_y = nil
+        displayed_temperature_unit = nil
+        if sample["ascent_violation"] == "T" || sample["deco_violation"] == "T" then
+          displayed_warning += "Too fast ! "
+          path_red += "M#{last_x},#{last_y}L#{x},#{y}"
+        end
+        if sample["deco_start"] == "T" then
+          displayed_warning += "Deco. required. "
+          warnings.push({:x => x, :y => y})
+        end
+        if sample["bookmark"] == "T" then
+          displayed_warning += "Bookmark. "
+          warnings.push({:x => x, :y => y})
+        end
+
+        sample['displayed_depth'] = displayed_depth
+        sample['displayed_depth_unit'] = displayed_depth_unit
+
+        @bubble_data['depth'] ||= {}
+        @bubble_data['depth'][sample['time']] = {x: x, y: y, depth: displayed_depth, unit: displayed_depth_unit, time:sample['time'], warning: displayed_warning}
+        last_x = x
+        last_y = y
+      }
+      previous_time += dive["duration"]
+    }
+
+    path_top += "L#{width-margin_right},#{area_top_depth}L#{margin_left},#{area_top_depth}"
+    path_bottom += "L#{width-margin_right},#{area_top_depth}L#{width-margin_right},#{area_bottom_depth}L#{margin_left},#{area_bottom_depth}L#{margin_left},#{area_top_depth}"
+    path_line += "L#{width-margin_right},#{area_top_depth}"
+
+
+
+
+
+    def get_extrema sample_list, attribute, nb_max_extrema, with_borders
+      ## Getting local extrema
+      total_samples = 0
+      @log.dives.each do |dive|
+        total_samples += dive["sample"].length
+      end
+
+      min_value = nil
+      max_value = nil
+
+      radius = (total_samples/20).ceil
+      span = []
+      extrema = []
+      sample_list.each do |sample|
+        min_value = sample[attribute] if sample[attribute] && (min_value.nil? || min_value > sample[attribute])
+        max_value = sample[attribute] if sample[attribute] && (max_value.nil? || max_value < sample[attribute])
+        span.push sample
+        span.shift if span.count > radius * 2 + 1
+        sorted = span.reject do |a| a[attribute].nil? end
+        sorted.sort! do |a, b| a[attribute] <=> b[attribute] end
+        next if sorted.length == 0 || span.length <= radius
+        if (sorted.last[attribute] == span[-radius-1][attribute] || sorted.first[attribute] == span[-radius-1][attribute]) then
+          ex = span[-radius-1]
+          next if ex[attribute] < 2
+          Rails.logger.debug "Compare : #{ex[attribute]} : #{sorted.first[attribute]}  <  #{sorted.last[attribute]} ==> #{ex[attribute] == sorted.last[attribute]}"
+          ex["extrema_type_#{attribute}"] = ex[attribute] == sorted.last[attribute]
+          ex[:extrema_type] = ex[attribute] == sorted.last[attribute]
+          ex[:extrema_span] = -extrema[-1]['time'] rescue 0.0
+          extrema[-1][:extrema_span] += ex['time']||ex[:time] if extrema.count > 0
+          extrema.push ex
+        end
+      end
+
+      value_span = max_value - min_value rescue 0
+
+      Rails.logger.debug "Found #{extrema.length} local extrema"
+
+      #removing the ones that are worthless (similar depth)
+      tolerance = 0.9
+      tolerance = [value_span/10, 2].max if attribute == 'depth'
+      new_extrema = []
+      extrema.sort! do |a, b| (a['time']||a[:time]) <=> (b['time']||b[:time]) end
+      extrema.each_with_index do |ex, idx|
+        if idx ==0 then
+          new_extrema.push ex
+        elsif (new_extrema[-1][attribute] - ex[attribute]).abs > tolerance
+          new_extrema.push ex
+        elsif ex[attribute] > new_extrema[-1][attribute] then
+          new_extrema.pop
+          new_extrema.push ex
+        end
+      end
+      extrema = new_extrema
+
+      extrema.uniq!
+
+      Rails.logger.debug "Found #{extrema.length} interesting local extrema"
+
+      #limiting the number of extrema found
+      required_nb = nb_max_extrema
+      required_nb -= 2 if with_borders
+      if required_nb <= 0 then
+        extrema = []
+      elsif extrema.length > required_nb then
+        extrema.sort! do |b, a| a[:extrema_span] <=> b[:extrema_span] end
+        extrema = extrema[0..(required_nb-1)]
+      end
+
+      #taking the borders if required
+      if with_borders then
+        first_list = @log.dives.first['sample'].reject do |a| a[attribute].nil? end
+        extrema.push first_list.first if first_list.first
+        last_list = @log.dives.last['sample'].reject do |a| a[attribute].nil? end
+        extrema.push last_list.last if last_list.last
+      end
+
+      extrema.uniq!
+
+      return extrema
+    end
+
+    sample_list = []
+    @log.dives.each do |dive|
+      dive["sample"].each do |sample|
+        sample_list.push sample
+      end
+    end
+
+    extrema_depth = get_extrema(sample_list, 'depth', 5, false)
+
+
+
+%><svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='<%=width%>' height='<%=height%>' onmouseout='hideBubbles(this)'>
+<script>
+function closestNode(elt, type) {
+  if (elt.tagName.toLowerCase() == type.toLowerCase() || elt == null) return elt;
+  else return closestNode(elt.parentNode, type);
+}
+function findById(elt, id) {
+  if (elt.id) if (elt.id.toLowerCase() == id.toLowerCase()) return(elt);
+  if (elt.getElementById)
+    return(elt.getElementById(id));
+  else
+    for (var a = elt.childNodes.length-1; a>=0; a--)
+    {
+      n = findById(elt.childNodes[a], id);
+      if (n) return(n);
+    }
+  return(null);
+}
+function setText(rootElement, depth, unit, time, warning) {
+  var bubble = findById(rootElement, 'infoBubble');
+  findById(rootElement, 'infoBubble_text_depth').firstChild.data = depth + ' ' + unit;
+  findById(rootElement, 'infoBubble_text_time').firstChild.data = time + ' min';
+  findById(rootElement, 'infoBubble_text_warn').firstChild.data = warning;
+  if (warning == '')
+    findById(rootElement, 'infoBubble_text_warn').dy = 0;
+  else
+    findById(rootElement, 'infoBubble_text_warn').dy = 20;
+  adaptBubble(bubble);
+}
+function adaptBubble(bubble) {
+  try {
+    var text_elt = bubble.getElementsByClassName("infoBubble_text")[0];
+    var textBB = text_elt.getBBox();
+    var path_elt = bubble.getElementsByClassName("infoBubble_path")[0];
+    var path = path_elt.pathSegList;
+    adaptBubbleFrom(path, textBB);
+
+  } catch(e) {
+    console.log(e)
+  }
+}
+function adaptBubbleFrom(path, textBB)
+{
+  if (path.getItem(2).pathSegTypeAsLetter == 'L')
+  {
+    path.getItem(2).y = textBB.height - 5;
+    path.getItem(3).y = textBB.height - 5;
+    path.getItem(3).x = textBB.width + 18;
+    path.getItem(4).x = textBB.width + 18;
+  } else {
+    path.getItem(2).y = textBB.height - 5;
+    path.getItem(3).x = textBB.width + 18;
+    path.getItem(4).y = -textBB.height - 20;
+    path.getItem(5).x = -textBB.width - 18;
+  }
+}
+
+function invertBubble(bubble, pointing_right){
+  try {
+    var path = bubble.getElementsByClassName('infoBubble_path')[0];
+    var text = bubble.getElementsByClassName('infoBubble_text')[0];
+    var offset = path.getBBox().width;
+    if (!pointing_right){
+      path.setAttribute('transform', 'scale(-1 1)');
+      text.setAttribute('transform', 'translate(-'+(offset+10)+' 0)');
+    } else {
+      path.setAttribute('transform', 'scale(1 1)');
+      text.setAttribute('transform', 'translate(0 0)');
+    }
+  } catch(e){}
+}
+function hideBubbles(rootElement) {
+  try {
+    var bubbles = rootElement.getElementsByClassName('infoBubble');
+    for (var i in bubbles) {
+      bubbles[i].setAttribute('transform', 'translate(-200 0)');
+    }
+  } catch(e){}
+}
+
+function show1Bubble(rootElement, data){
+  try {
+    console.log(data);
+    var id = data['id'];
+    var x = data['x'];
+    var y = data['y'];
+    var label = data['label'];
+    var bubble = findById(rootElement, 'infoBubble_'+id);
+    bubble.setAttribute('transform', 'translate('+x+' '+y+')');
+
+    if (id == 'depth') {
+      findById(rootElement, 'infoBubble_text_depth').firstChild.data = data.depth + ' ' + data.unit;
+      findById(rootElement, 'infoBubble_text_time').firstChild.data = Math.round(data.time/60) + ' min';
+      findById(rootElement, 'infoBubble_text_warn').firstChild.data = data.warning;
+      if (data.warning == '')
+        findById(rootElement, 'infoBubble_text_warn').dy = 0;
+      else
+        findById(rootElement, 'infoBubble_text_warn').dy = 20;
+    } else {
+      findById(rootElement, 'infoBubble_'+id+'_text_value').firstChild.data = label;
+    }
+
+    adaptBubble(bubble);
+
+    var rootBB = rootElement.getBBox();
+    if (x + bubble.getBBox().width > rootBB.width+rootBB.x - 2 )
+      invertBubble(bubble, false)
+    else
+      invertBubble(bubble, true);
+
+
+  } catch(e){
+    console.log(e);
+  }
+
+}
+
+</script>
+
+
+
+
+
+<linearGradient id="topGradient" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="200">
+  <stop offset="0" stop-color="#<%=@graph_attributes['depth']['top_color']%>" stop-opacity="<%=@graph_attributes['depth']['top_opacity_gradient_top']%>"></stop>
+  <stop offset="1" stop-color="#<%=@graph_attributes['depth']['top_color']%>" stop-opacity="<%=@graph_attributes['depth']['top_opacity_gradient_bottom']%>"></stop>
+</linearGradient>
+
+
+
+  <% #Displaying the filling background for the dive %>
+
+  <path fill='url(#topGradient)' stroke='none' d='<%=path_top%>' ></path>
+  <path fill='#<%=@graph_attributes['depth']['bottom_color']%>' stroke='none' d='<%=path_bottom%>' style='opacity: <%=@graph_attributes['depth']['bottom_opacity']%>' opacity='<%=@graph_attributes['depth']['bottom_opacity']%>'></path>
+
+
+  <% #Displaying vertical graduation %>
+
+  <path fill='none' stroke='#<%=@graph_attributes['graduation']['color']%>' style='opacity: <%=@graph_attributes['graduation']['opacity']%>' d='M<%=margin_left%>,<%=area_top_depth%>L<%=margin_left%>,<%=area_bottom_depth%> L<%=width - margin_right%>,<%=area_bottom_depth%> M<%=width - margin_right%>,<%=area_top_depth%>L<%=width - margin_right%>,<%=area_bottom_depth%> <%
+  graduation_range_depth.each{ |depth|
+    y = depth * scale_depth
+    #Not displaying the last line if it would meddle with the time labels
+    next if @graph_attributes['display_label_time'] && @graph_attributes['depth']['label_time'] && y > area_bottom_depth-font_size
+    %>M<%=margin_left%>,<%=area_top_depth + y%>L<%=width-margin_right%>,<%=area_top_depth + y%><%
+  }
+  %>'></path>
+
+  <% #Displaying vertical graduation text %>
+  <g class='graduation'>
+  <%
+  graduation_range_depth.each{ |depth|
+    y = depth * scale_depth
+    if @graph_attributes['display_label_depth'] then
+      displayed_depth = 0
+      if @unit == 'imperial' then
+        displayed_depth = (depth/0.3048).round
+      else
+        displayed_depth = depth
+      end
+      %><text x='<%=margin_left - font_size%>' y='<%=area_top_depth + y + font_size/3%>' text-anchor='middle' style='text-anchor: middle; font: normal normal normal <%=font_size%>px/normal Helvetica, Arial; ' font='<%=font_size%>px Helvetica, Arial' stroke='none' fill='#aaaaaa'><tspan><%=displayed_depth%></tspan></text><%
+    end
+  }%>
+  </g>
+
+  <% # Legend %>
+  <%if @graph_attributes['depth']['legend'] %>
+    <text x='<%=width-margin_right - 5%>' y='<%=area_bottom_depth - 3*font_size/2 -2%>' text-anchor='end' style='fill:#<%=@graph_attributes['graduation']['color']%>; text-anchor: end; font: normal normal normal <%=font_size%>px/normal Helvetica, Arial; ' font='<%=font_size%>px Helvetica, Arial' stroke='none'><tspan>Depth in <%=depth_unit%></tspan></text>
+  <%end%>
+
+  <% #Displaying horizontal graduation text %>
+
+  <g class='graduation'>
+  <%
+  if @graph_attributes['display_label_time'] && @graph_attributes['depth']['label_time'] then
+    (0..total_time.ceil).step(5).each{ |t| %>
+        <text x='<%=margin_left + 60*scale_time*t%>' y='<%=area_bottom_depth-font_size/2%>' text-anchor='middle' style='text-anchor: middle; font: normal normal normal <%=font_size%>px/normal Helvetica, Arial; ' font='<%=font_size%>px Helvetica, Arial' stroke='none' fill='#aaaaaa'><tspan><%=t%></tspan></text><%
+    }
+  end
+  %>
+  </g>
+
+  <% if @graph_attributes['display_warning'] then
+       warnings.each do |pos| %>
+         <circle cx='<%=pos[:x]%>' cy='<%=pos[:y]%>' r='4' style='fill: #<%=@graph_attributes['warning_color']%>' fill='#<%=@graph_attributes['warning_color']%>'></circle>
+  <%   end
+     end%>
+
+  <path fill='none' class='svg_profile_path' stroke='#<%=@graph_attributes['depth']['line_color']%>' d='<%=path_line%>' style='stroke-width: <%=@graph_attributes['stroke_width']%>px; stroke-linejoin: round;' stroke-width='<%=@graph_attributes['stroke_width']%>' stroke-linejoin='round'></path>
+  <% if @graph_attributes['display_error'] then %>
+    <path fill='none' stroke='#<%=@graph_attributes['error_color']%>' d='<%=path_red%>' style='stroke-width: <%=@graph_attributes['stroke_width']%>px; stroke-linejoin: round;' stroke-width='<%=@graph_attributes['stroke_width']%>' stroke-linejoin='round'></path>
+  <% end %>
+
+
+
+  <% # Extrema for depth %>
+  <% if @graph_attributes['depth']['floating_labels'] then
+    extrema_depth.each do |sample|
+      Rails.logger.debug "Extrema: #{sample['depth']} => #{sample['extrema_type_depth']}"
+      dy = font_size*1.5 if sample['extrema_type_depth']
+      dy = -font_size*0.5 if !sample['extrema_type_depth']%>
+      <text x='<%=margin_left+sample["time"]*scale_time%>' y='<%=area_top_depth+sample["depth"]*scale_depth + dy %>' text-anchor='middle' style='text-anchor: middle; font: normal normal normal <%=font_size%>px/normal Helvetica, Arial; ' font='<%=font_size%>px Helvetica, Arial' stroke='none' fill='#<%=@graph_attributes['depth']['floating_labels_color']%>'><tspan><%=sample['displayed_depth']%></tspan></text>
+  <%end
+  end%>
+
+
+
+  <g id='infoBubble_depth' class='InfoBubble' transform='translate(-200 0)'>
+    <path class='infoBubble_path' fill='#222' stroke='#444' d='M0,0 l10,6 l0,20 l30,0 l0,-45 l-30,0 l0,13 Z' style='stroke-width: 1px; stroke-linejoin: round;opacity: 0.8' stroke-width='1px' stroke-linejoin='round'></path>
+    <text class='infoBubble_text' font-family='Verdana' font-size='15'>
+      <tspan id='infoBubble_text_depth' x='14' dy='0' style='font-size: <%=@graph_attributes['font_size']%>px; fill:#AAA;'> </tspan>
+      <tspan id='infoBubble_text_time' x='14' dy='<%=@graph_attributes['font_size'].to_f*4/5+2%>' style='font-size: <%=@graph_attributes['font_size'].to_f*4/5%>px; fill:#<%=@graph_attributes['depth']['line_color']%>'> </tspan>
+      <tspan id='infoBubble_text_warn' x='14' dy='<%=@graph_attributes['font_size'].to_f*4/5+2%>' style='font-size: <%=@graph_attributes['font_size'].to_f*4/5%>px; fill: #<%=@graph_attributes['error_color']%>'> </tspan>
+    </text>
+  </g>
+
+
+
+
+<% def generate_graph title, local_id, values, graduation_range, local_attributes, area_top, global_attributes
+
+
+  is_first = true
+
+  scale_time = global_attributes[:scale_time]
+  font_size = global_attributes[:font_size]
+  total_time = global_attributes[:total_time]
+
+  font_size = @graph_attributes['font_size']
+  width = @graph_attributes['width']
+  margin_left  = @graph_attributes['margin_left']
+  margin_right = @graph_attributes['margin_right']
+  margin_top   = @graph_attributes['margin_top']
+  margin_bottom= @graph_attributes['margin_bottom']
+
+
+  graduation = graduation_range.map do |grad|
+    if grad.is_a?(Fixnum) || grad.is_a?(Float)
+      {value: grad, label: grad}
+    else
+      grad
+    end
+  end unless graduation_range.nil?
+
+  displayed_values = values.map do |s| s[:value] end
+  displayed_values.reject! &:nil?
+  displayed_values.push(graduation.last[:value]) unless graduation.nil?
+  displayed_values.push(graduation.first[:value]) unless graduation.nil?
+  min_displayed_value = displayed_values.min
+  max_displayed_value = displayed_values.max
+
+  if graduation.nil? then
+    graduation = []
+    round_level = -Math.log(max_displayed_value - min_displayed_value).ceil - 1 rescue 0
+    step = (max_displayed_value - min_displayed_value) / 5
+    step = step.round(round_level)
+    (min_displayed_value..max_displayed_value).step(step).each do |v|
+      graduation.push({value: v.round(round_level), label: v.round(round_level)})
+    end
+  end
+
+  height = local_attributes['height']
+  area_bottom = area_top + height - margin_top - margin_bottom
+
+  graph_height = height - margin_top - margin_bottom
+  graph_height -= font_size if local_attributes['label_time']
+  graph_height -= font_size if local_attributes['floating_labels']
+  scale = graph_height / (max_displayed_value - min_displayed_value)
+
+  offset_0 = max_displayed_value * scale
+  offset_0 += font_size if local_attributes['floating_labels']
+  extrema = get_extrema(values, :value, 4, true) if local_attributes['floating_labels']
+
+  %>
+
+
+  <!-- horizontal graduation text for <%=title%> -->
+
+  <g class='graduation'>
+  <%
+  if @graph_attributes['display_label_time']  && local_attributes['label_time'] then
+    (0..total_time.ceil).step(5).each{ |t| %>
+        <text x='<%=margin_left + 60*scale_time*t%>' y='<%=area_bottom + font_size + 2%>' text-anchor='middle' style='text-anchor: middle; font: normal normal normal <%=font_size%>px/normal Helvetica, Arial; ' font='<%=font_size%>px Helvetica, Arial' stroke='none' fill='#aaaaaa'><tspan><%=t%></tspan></text><%
+    }
+  end
+  %>
+  </g>
+
+  <!-- Vertical graduation text for <%=title%> -->
+
+  <%if local_attributes['display_label'] then%>
+    <g class='graduation'>
+      <%graduation.each { |grad|
+        %><text x='<%=margin_left - font_size %>' y='<%=area_top+offset_0 - grad[:value]*scale + font_size/2 %>' text-anchor='middle' style='text-anchor: middle; font: normal normal normal <%=font_size%>px/normal Helvetica, Arial; ' font='<%=font_size%>px Helvetica, Arial' stroke='none' fill='#aaaaaa'><tspan><%=grad[:label]%></tspan></text><%
+      }%>
+    </g>
+  <%end%>
+
+  <!-- Legend for <%=title%>-->
+  <%if local_attributes['legend'] then%>
+    <text x='<%=width-margin_right - 5%>' y='<%=area_top + font_size %>' text-anchor='end' style='fill:#<%=@graph_attributes['graduation']['color']%>; text-anchor: end; font: normal normal normal <%=font_size%>px/normal Helvetica, Arial; ' font='<%=font_size%>px Helvetica, Arial' stroke='none'><tspan><%=title%></tspan></text>
+  <%end%>
+
+
+
+  <rect x='<%=margin_left%>' y='<%=area_top%>' width='<%=width-margin_left-margin_right%>' height='<%=height-margin_top-margin_bottom%>' style='fill: #<%=local_attributes['background_color']%>; opacity: <%=local_attributes['background_opacity']%>;'></rect>
+  <path fill='none' stroke='#<%=@graph_attributes['graduation']['color']%>' style='opacity: <%=@graph_attributes['graduation']['opacity']%>' d='M<%=margin_left%>,<%=area_top%> L<%=margin_left%>,<%=area_bottom%> L<%=width - margin_right%>,<%=area_bottom%> L<%=width - margin_right%>,<%=area_top%> '></path>
+
+
+  <!-- Path for <%=title%> -->
+  <path id='<%=local_id%>_path' fill='none' stroke='#<%=local_attributes['color']%>' d='<% values.each do |sample|
+      if !sample[:value].nil? then
+        x = margin_left+sample[:time]*scale_time
+        y = area_top+offset_0-sample[:value]*scale
+        @bubble_data[local_id] ||= {}
+        @bubble_data[local_id][sample[:time].round(2)] = {x: x, y: y, label: (sample[:label] || sample[:value]) }
+        if is_first then
+          %>M<%=x%>,<%=y%><%
+          is_first = false
+        end
+        %>L<%=x%>,<%=y%><%
+      end
+    end
+  %>' style='stroke-width: <%=@graph_attributes['stroke_width']%>px; stroke-linejoin: round;' stroke-width='<%=@graph_attributes['stroke_width']%>' stroke-linejoin='round'></path>
+
+  <% if local_attributes['show_points'] then%>
+    <!-- Points for <%=title%> -->
+    <%values.each do |sample|
+      if !sample[:value].nil? then
+        %><circle cx='<%=margin_left+sample[:time]*scale_time%>' cy='<%=area_top+offset_0-sample[:value]*scale%>' r='3' fill='FFF' stroke='#<%=local_attributes['color']%>' stroke-width='2px' style='fill: #FFF; stroke: #<%=local_attributes['color']%>; stroke-width: 2px;' ></circle><%
+      end
+    end
+  end%>
+
+
+  <!-- Extrema for <%=title%> -->
+  <% if local_attributes['floating_labels'] && local_attributes['floating_labels_color'] then
+      extrema.each do |sample|
+        dy = font_size*1.5 if sample['extrema_type_pressure']
+        dy = -font_size*0.5 if !sample['extrema_type_pressure']%>
+      <text x='<%=margin_left+sample[:time]*scale_time%>' y='<%=area_top+offset_0-sample[:value]*scale + dy %>' text-anchor='middle' style='text-anchor: middle; font: normal normal normal <%=font_size%>px/normal Helvetica, Arial; ' font='<%=font_size%>px Helvetica, Arial' stroke='none' fill='#<%=local_attributes['floating_labels_color']%>'><tspan><%=sample[:label]||sample[:value]%></tspan></text>
+  <%end
+  end%>
+
+
+
+
+  <g id='infoBubble_<%=local_id%>' class='infoBubble' transform='translate(-200 0)'>
+    <path id='infoBubble_<%=local_id%>_path' class='infoBubble_path' fill='#fff' stroke='#444' d='M0,0 l10,6 l0,20 l30,0 l0,-45 l-30,0 l0,13 Z' style='stroke-width: 1px; stroke-linejoin: round;' stroke-width='1px' stroke-linejoin='round'></path>
+    <text id='infoBubble_<%=local_id%>_text' class='infoBubble_text' font-family='Verdana' font-size='15'>
+      <tspan id='infoBubble_<%=local_id%>_text_value' x='14' dy='0'> </tspan>
+    </text>
+  </g>
+
+<%end%>
+
+
+<%
+
+global_graph_properties = {
+  scale_time: scale_time,
+  total_time: total_time
+}
+
+if display_temperature then
+
+  temp_values = []
+  temp_values_float = []
+  displayed_temperature_unit = nil
+
+  @log.dives.each do |dive|
+    dive["sample"].each do |sample|
+      if !sample["current_water_temperature"].nil? then
+        if @unit == "imperial" then
+          displayed_temperature = (9 * sample["current_water_temperature"] /5 + 32).round
+          displayed_temperature_unit = "Fahrenheit"
+          label = "#{displayed_temperature}º F"
+        else
+          displayed_temperature = sample["current_water_temperature"].round
+          displayed_temperature_unit = "Celsius"
+          label = "#{displayed_temperature}º C"
+        end
+        temp_values.push({time: sample['time'], value: sample["current_water_temperature"], label: label})
+        temp_values_float.push sample["current_water_temperature"]
+      else
+        temp_values.push({time: sample['time'], value: nil, label: nil})
+      end
+    end
+  end
+
+  min_temp = temp_values_float.min
+  max_temp = temp_values_float.max
+
+  # temperature
+  graduation_range_temp = []
+  min_displayed_temp = min_temp
+  max_displayed_temp = max_temp
+
+  if @unit == 'imperial' then
+    min_displayed_temp = 5*(((32+9*min_temp/5.0)/10).floor*10 - 32) /9.0
+    max_displayed_temp = 5*(((32+9*max_temp/5.0)/10).ceil*10 - 32) /9.0
+    if max_displayed_temp == min_displayed_temp then
+      min_displayed_temp -= 9.0/50
+      max_displayed_temp += 9.0/50
+    end
+    graduation_range_temp = (min_displayed_temp..max_displayed_temp).step(50.0/9)
+  else
+    min_displayed_temp = (min_temp/5).floor*5
+    max_displayed_temp = (max_temp/5).ceil*5
+    if max_displayed_temp == min_displayed_temp then
+      min_displayed_temp -= 5
+      max_displayed_temp += 5
+    end
+    graduation_range_temp = (min_displayed_temp..max_displayed_temp).step(5)
+  end
+
+  scale_temp = (height_temp - margin_top - margin_bottom) / (max_displayed_temp - min_displayed_temp)
+
+  generate_graph "Temperature in #{displayed_temperature_unit}", 'temp', temp_values, graduation_range_temp, @graph_attributes['temperature'], area_top_temp, global_graph_properties
+end
+
+
+
+
+
+
+
+if display_pressure then
+
+  pressure_values = []
+  pressure_values_float = []
+  displayed_pressure_unit = nil
+
+  @log.dives.each do |dive|
+    dive["sample"].each do |sample|
+      #the limit of 10000 bar is there to fix a memory overflow when allcation the range with overflowed pressures (e.g. 296127000 bar)
+      if !sample["main_cylinder_pressure"].nil? && sample["main_cylinder_pressure"] < 10000 then
+        if @unit == "imperial" then
+          displayed_pressure_unit = "psi"
+          displayed_pressure = (15*sample["main_cylinder_pressure"]).round
+          label = "#{displayed_pressure} psi"
+        else
+          displayed_pressure_unit = "bar"
+          displayed_pressure = sample["main_cylinder_pressure"].round
+          label = "#{displayed_pressure} bar"
+        end
+        pressure_values.push({time: sample['time'], value: sample["main_cylinder_pressure"], label: label})
+        pressure_values_float.push sample["main_cylinder_pressure"]
+      else
+        pressure_values.push({time: sample['time'], value: nil, label: nil})
+      end
+    end
+  end
+
+  max_pressure = pressure_values_float.max
+  min_pressure = 0
+
+  graduation_range_pressure = []
+  min_displayed_pressure = 0.0
+  max_displayed_pressure = 15*max_pressure
+
+  if @unit == 'imperial' then
+    max_displayed_pressure = (15*max_pressure/500).ceil*500 / 15
+    if max_displayed_pressure == min_displayed_pressure then
+      max_displayed_pressure += 500/15
+    end
+    min_displayed_pressure = 0.0 if min_displayed_pressure < 0
+    graduation_range_pressure = (min_displayed_pressure..max_displayed_pressure).step(1000/15)
+  else
+    max_displayed_pressure = (max_pressure/50).ceil*50
+    if max_displayed_pressure == min_displayed_pressure then
+      max_displayed_pressure += 50
+    end
+    min_displayed_pressure = 0.0 if min_displayed_pressure < 0
+    graduation_range_pressure = (min_displayed_pressure..max_displayed_pressure).step(50)
+  end
+
+  generate_graph "Main cylinder pressure in #{displayed_pressure_unit}", 'pressure', pressure_values, graduation_range_pressure, @graph_attributes['pressure'], area_top_pressure, global_graph_properties
+end
+
+
+
+
+
+
+if display_gradient_factor then
+  values = []
+  values_float = []
+  displayed_unit = "%"
+
+  @log.dives.each do |dive|
+    deco = DecoHelper::Buhlmann16::DiveProfileIterator.new(dive['internal_sequence'])
+    while !deco.next.nil? do
+      gf = deco.get_current_gf * 100
+      gf=0 if gf <= 0
+      values.push({time: deco.current_time, value: gf, label: "#{gf.to_i} %"})
+      values_float.push gf
+    end
+  end
+
+  max_value = values_float.max
+  min_value = 0
+
+  graduation_range = []
+  min_displayed = 0.0
+  max_displayed = (max_value/10).ceil*10
+
+  graduation_range = (min_displayed..max_displayed).step(20)
+
+  generate_graph "ZHL-16B GF in %", 'gradient', values, graduation_range, @graph_attributes['gradient_factor'], area_top_gradient, global_graph_properties
+end
+
+
+
+
+
+%>
+
+
+
+
+
+  <g id='upper_layer'>
+  <%
+    # making bubbles appear more often
+    data_types = @bubble_data.keys
+    times = @bubble_data.values.map(&:keys).flatten.sort.uniq
+
+    time_frames = {}
+    data_types.each do |type|
+      time_frames[type] = @bubble_data[type].keys.sort
+      @bubble_data[type].values.each do |v| v[:id] = type end
+    end
+
+    timed_bubble_data = {}
+    times.each do |time|
+      timed_bubble_data[time] = []
+      data_types.each do |type|
+        prev_time = 0
+        time_frames[type].each_with_index do |next_time, idx|
+          if idx == 0 && time < next_time then
+            timed_bubble_data[time].push @bubble_data[type][next_time]
+          elsif idx == time_frames[type].length - 1 && time >= next_time then
+            timed_bubble_data[time].push @bubble_data[type][next_time]
+          elsif time >= prev_time && time < next_time && time < (prev_time+next_time)/2 then
+            timed_bubble_data[time].push @bubble_data[type][prev_time]
+          elsif time >= prev_time && time < next_time && time >= (prev_time+next_time)/2 then
+            timed_bubble_data[time].push @bubble_data[type][next_time]
+          end
+          prev_time = next_time
+        end
+      end
+    end
+
+    last_x = 0
+    times.each_with_index do |time, idx|
+      bubbles = @bubble_data[time]
+      x = margin_left + time * scale_time
+      %>
+        <!--  <%=idx%> <%=time%> <%=bubbles.inspect.html_safe%>  -->
+        <rect x='<%=last_x%>' y='<%=margin_top%>' height='<%=height-margin_top-margin_bottom%>' width='<%=(x-last_x).ceil%>' onmouseover='<% timed_bubble_data[time].each do |data|
+          %>show1Bubble(this.parentNode.parentNode, <%=data.to_json%>);<%
+        end%>' fill='#fff' style='opacity: 0' opacity='0' ></rect>
+    <%last_x = x
+    end%>
+  </g>
+</svg>

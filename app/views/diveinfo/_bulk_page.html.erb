@@ -1,0 +1,448 @@
+<%= javascript_include_tag 'editor' %>
+<%content_for :css do%>
+<%= include_stylesheets :editor %>
+<%end%>
+<script type="text/javascript">
+/*
+*
+* GLOBAL VARIABLES USED IN SCRIPTS
+*
+*/
+
+var G_all_dive_data = { <% if !@owner.nil? then @owner.dives.each_with_index do |dive, idx| %>
+  <%= if idx > 0 then ',' end%> <%=dive.id%> : <%= (dive.to_api :private, :caller => @owner).to_json.html_safe %>
+<%end end%>};
+
+
+//Vars for the wizard
+var G_user_setting_auto_share = <%=@user.auto_fb_share%>;
+var G_user_fb_perms_post_to_wall = <%=@user.fb_permissions_granted("publish_stream") ==true%>;
+var G_user_fb_perms_add_fb_pict = <%=@user.fb_permissions_granted("user_photos,user_videos") ==true%>
+var G_user_setting_temperature = '<%=@user.preferred_units["temperature"]%>';
+var G_user_setting_distance = '<%=@user.preferred_units["distance"]%>';
+var G_user_vanity_url = "<%=@owner.vanity_url%>";
+var G_dive_posted_to_fb_wall = false;
+<%if @user.fbtoken.nil? %>
+var G_user_fbtoken = "";
+<%else%>
+var G_user_fbtoken = "<%=@user.fbtoken%>";
+<%end%>
+
+var FB_appID = "<%=FB_APP_ID%>";
+
+var gmaps_initialized = false;
+var galleria_initialized = false;
+var privacy = 1;
+var G_unit_temperature = "<%= if @user.nil? then "C" else @user.preferred_units["temperature"] end %>";
+var G_unit_distance = "<%= if @user.nil? then "m" else @user.preferred_units["distance"] end %>";
+var G_has_profile = false
+var G_has_dives = <%= !@owner.dives.empty?%>;
+var G_dive_id = null;
+var G_content = "new";
+var G_user_setting_auto_share = <%=@user.auto_fb_share %>;
+var G_user_setting_temperature = '<%=@user.preferred_units["temperature"]%>';
+var G_user_setting_distance = '<%=@user.preferred_units["distance"]%>';
+var G_user_setting_weight = '<%=@user.preferred_units["weight"]%>';
+var G_user_setting_temperature_unit = "<%= unit_distance(nil,true) %>";
+var G_diveuser_vanity_url = "<%= if @dive.nil? || @dive.user.nil? then "" else @dive.user.vanity_url end%>";
+var G_user_vanity_url = "<%=@user.vanity_url%>";
+var G_owner_id = <%= @owner.id || 'null' %>;
+var wizard_bulk = true;
+var G_private_dives_digest = <%= ((@owner.dives.sort{|u,v| v.time_in<=>u.time_in}).map{|d| {:date => d.time_in, :maxdepth => d.maxdepth.to_f, :duration => d.duration, :id => d.shaken_id, :has_uploaded_profile => !d.uploaded_profile_id.nil?}}).to_json.html_safe  %>;
+var G_user_skipped_dives = <%=(@owner.skip_import_dives || "").split(",").to_json.html_safe%>;
+
+
+var G_user_first_dive = <%=
+  if !@owner.dives.empty?
+    @owner.dives.first.id
+  else
+    0
+  end %>;
+var G_owner_vanity_url = "<%=@owner.vanity_url%>";
+var G_root_url = "<%=ROOT_URL%>";
+var G_locale_root_url = "<%=root_url%>";
+
+var G_this_dive_labels, G_this_dive_data, G_this_alarm_data, G_this_dive_unit;
+var G_wizard_dive_labels, G_wizard_dive_data, G_wizard_alarm_data, G_wizard_dive_unit;
+var G_wizard_user_gear = <%= @owner.user_gears[0..-1].map{|t| js=t.as_json['user_gear']; js['class']=t.class.to_s; js  }.to_json.html_safe %>;
+
+<%if !@import_profile_data.nil?
+  if @import_profile_data == false %>
+var import_profile_data = false;
+  <% else %>
+var import_profile_data = '<%= @import_profile_data.to_json.html_safe %>';
+  <% end %>
+<%end%>
+
+
+function content_initialize() {
+  $("#tab_bulklist_link").click(function(ev){if (ev) ev.preventDefault(); show_tab("bulklist"); if(window.history.pushState) window.history.pushState("","","/<%=@owner.vanity_url%>/bulk?bulk=manager");   });
+  $("#tab_profile_link").click(function(ev){if (ev) ev.preventDefault(); show_tab("profile"); if(window.history.pushState) window.history.pushState("","","/<%=@owner.vanity_url%>/bulk?bulk=wizard");   });
+
+  try {
+    gear_manager_initialize();
+  } catch(e) {
+    track_exception_global(e)
+  }
+
+  try {
+    set_wizard_bindings();
+  } catch(e) {
+    track_exception_global(e)
+  }
+  try {
+    bulk_wizard_set_ui();
+  } catch(e) {
+    track_exception_global(e)
+  }
+  try {
+    wizard_store_default();
+    wizard_store_current_spot();
+    wizard_reset_ui_controls();
+  } catch(e) {
+    track_exception_global(e)
+  }
+
+  //reset plugin
+  try {
+    wizard_plugin_cancel();
+  } catch(e) {
+    track_exception_global(e)
+  }
+
+  //setup the file uploader
+  try {
+    setup_upload_udcf_file();
+  } catch(e) {
+    track_exception_global(e)
+  }
+
+  //reset file uplaoder
+  $("#dive_list_selector").hide();
+  $("#dive_list_selected").empty();
+  $(".manual_creation").show();
+  $("#dive_list_selected").empty();
+  $("#wizard_plugin_uploader").hide();
+
+  //show tab
+  if (wizard_bulk_step_load == "manager") {
+    show_tab("bulklist");
+    if(window.history.pushState)
+      window.history.pushState("","",G_owner_api.permalink+"/bulk?bulk=manager");
+  }
+  else if (wizard_bulk_step_load == "wizard") {
+    show_tab("profile");
+  }
+  else if (wizard_bulk_step_load == "computer") {
+    show_tab("profile");
+    wizard_computerplugin_load();
+  }
+  else if (wizard_bulk_step_load == "gear") {
+    show_tab("gear");
+  }
+
+
+  if (typeof import_profile_data != 'undefined'){
+    if(import_profile_data == false)
+      diveboard.notify(I18n.t(["js", "bulk_page", "No dives found"]), I18n.t(["js","bulk_page", "We could not find any usable dives in the uploaded file, please try again"]));
+    else{
+      set_dive_picker(JSON.parse(import_profile_data));
+    }
+  }
+  ga('set', 'contentGroup1', 'logbook_own_bulk');
+  ga('set', 'dimension1', 'logbook_own_bulk');
+  ga('send', 'pageview');
+
+}
+</script>
+
+
+
+<!-- ###################  HTML  ############### -->
+<div class="main_content_header">
+    <div class='head_picture'>
+      <img src='<%= @owner.picture_large%>' alt='user picture'>
+    </div>
+
+    <div class='head_title'><div class='head_title_valign'><ul>
+      <li>&nbsp;</li>
+        <span class="header_title"><%= it("Dive manager", scope: ['diveinfo', 'bulk_page']) %></span>
+      </li>
+    </ul></div></div>
+
+    <div  class="header_top_action">
+    </div>
+</div>
+
+    <ul class="main_inner_header_tabs">
+        <li id="tab_bulklist_link" class="tab_link"><a href="#" ><%= it("All Dives", scope: ['diveinfo', 'bulk_page']) %></a></li>
+        <li id="tab_profile_link" class='tab_link active' ><a href="#"><%= it("Bulk upload", scope: ['diveinfo', 'bulk_page']) %></a></li>
+        <li id="tab_gear_link" class='tab_link' ><a href="#"><%= it("My gear", scope: ['diveinfo', 'bulk_page']) %></a></li>
+    </ul>
+
+
+<div id="tab_box" class='bulk_tabs rightbar'>
+
+<!-- DIVE EDITOR wizard -->
+<div id="tab_bulklist" class='tab_panel tab_bulklist'>
+<div id='bulk_wizard_tab'>
+<div class="main_content_box">
+  <label><%= it("Manage all your dives with a single click !", scope: ['diveinfo', 'bulk_page']) %></label>
+  <p><%= it("Just select the dives you want to change, then select the action in the list", scope: ['diveinfo', 'bulk_page']) %></p>
+
+  <p><br/><%= it("Display :", scope: ['diveinfo', 'bulk_page']) %>
+    <select id='exitem_view_class'>
+      <option value='export_list_item_view0'><%= it("Location", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='export_list_item_view1'><%= it("Trip name, Dive center", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='export_list_item_view2'><%= it("Dive buddies", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='export_list_item_view3'><%= it("Water type, Visibility, Altitude", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='export_list_item_view4'><%= it("Featured gear", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='export_list_item_view5'><%= it("Other gear", scope: ['diveinfo', 'bulk_page']) %></option>
+    </select>
+  &nbsp;&nbsp;
+  <%= it("Sort by :", scope: ['diveinfo', 'bulk_page']) %>
+    <select id='exitem_sort_class'>
+      <option value='.exitem_date'><%= it("Date", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='.exitem_depth'><%= it("Depth", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='.exitem_duration'><%= it("Duration", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='.exitem_privacy'><%= it("Privacy", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='.exitem_trip'><%= it("Trip name", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='.exitem_location'><%= it("Location", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='.exitem_site'><%= it("Site name", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='.exitem_shop'><%= it("Dive center", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='.exitem_buddies'><%= it("Buddies list", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='.exitem_water'><%= it("Water type", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='.exitem_visibility'><%= it("Visibility", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='.exitem_altitude'><%= it("Altitude", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='.exitem_gear'><%= it("Featured gear list", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='.exitem_othergear'><%= it("Other gear list", scope: ['diveinfo', 'bulk_page']) %></option>
+    </select>
+    <select id='exitem_sort_order'>
+      <option value='DESC'><%= it("DESC", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='ASC'><%= it("ASC", scope: ['diveinfo', 'bulk_page']) %></option>
+    </select>
+  </p>
+
+  <p><br/><%= it("Action to apply on all selected dives:", scope: ['diveinfo', 'bulk_page']) %><wbr/>
+    <select id='wizard_export_action'>
+      <option value=''><i><%= it("Select an action", scope: ['diveinfo', 'bulk_page']) %></i></option>
+      <option value='wizard_bulk_public'><%= it("Set as Public", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='wizard_bulk_private'><%= it("Set as Private", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='wizard_bulk_fb_timeline'><%= it("Publish to Facebook Timeline", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='wizard_bulk_delete'><%= it("Delete", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value=''>------------</option>
+      <option value='wizard_export_zxl'><%= it("Export as DAN DL7 (ZXL)", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='wizard_export_udcf'><%= it("Export as UDCF", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='wizard_bulk_print'><%= it("Print as PDF", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value=''>------------</option>
+      <option value='wizard_bulk_numbering'><%= it("Assign a Number", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='wizard_bulk_altitude'><%= it("Assign an Altitude", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='wizard_bulk_shop'><%= it("Assign a Dive Center", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='wizard_bulk_signature'><%= it("Request Logbook Signature", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='wizard_bulk_gear'><%= it("Assign a Gear", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='wizard_bulk_location'><%= it("Assign a Location/Dive site", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='wizard_bulk_buddy'><%= it("Assign a list of Buddies", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='wizard_bulk_trip'><%= it("Assign a Trip name", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='wizard_bulk_visibility'><%= it("Assign a Visibility", scope: ['diveinfo', 'bulk_page']) %></option>
+      <option value='wizard_bulk_water'><%= it("Assign a Water type", scope: ['diveinfo', 'bulk_page']) %></option>
+    </select>
+	<button id="apply_bulk_action" class="yellow_button"><%= it("APPLY", scope: ['diveinfo', 'bulk_page']) %></button>
+  </p>
+  <p id=wizard_export_select_all>
+    <a href=# class='bulk_list_expand'><%= it("Expand all", scope: ['diveinfo', 'bulk_page']) %></a> / <a href=# class='bulk_list_fold'><%= it("none", scope: ['diveinfo', 'bulk_page']) %></a>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <a href=# onclick='$(".wizard_export_checkbox").attr("checked", "checked"); return(false);'><%= it("Select all", scope: ['diveinfo', 'bulk_page']) %></a> / <a href=# onclick='$(".wizard_export_checkbox").removeAttr("checked"); return(false);'><%= it("none", scope: ['diveinfo', 'bulk_page']) %></a>
+  </p>
+    <br/>
+
+  <div id=tab_bulklist_content>
+    <%= render :partial => 'diveinfo/bulk_listing' %>
+  </div>
+</div>
+</div>
+
+<div id='wizard_bulk_water_div' class='bulk_editor_div' style='display:none;'>
+  <div class='main_content_box' style='background-image: url(/img/triple_box_bg.jpg);clear: both; background-size: 100% 100%;'>
+    <p><%= it("Water type for these dives :", scope: ['diveinfo', 'bulk_page']) %> <select id="water" style="width:65px !important;"><option></option><option value="salt"><%= it("salt", scope: ['diveinfo', 'bulk_page']) %></option><option value="fresh"><%= it("fresh", scope: ['diveinfo', 'bulk_page']) %></option></select></p>
+    <div class='bulk_editor_warn' style='display:none'>
+      <p><%= it("%{strong:Warning} : The dives you have selected do not currently have the same water type. The water type displayed above is the one of the first dive selected.", scope: ['diveinfo', 'bulk_page'], strong: It.tag("strong")) %></p>
+    </div>
+    <div class='wizard-right'>
+      <a href='#' class='yellow_button' id='wizard_bulk_apply_water'><%= it("Apply", scope: ['diveinfo', 'bulk_page']) %></a> <a href='#' class='yellow_button wizard_bulk_cancel'><%= it("Cancel", scope: ['diveinfo', 'bulk_page']) %></a>
+    </div>
+  </div>
+</div>
+
+<div id='wizard_bulk_visibility_div' class='bulk_editor_div' style='display:none;'>
+  <div class='main_content_box' style='background-image: url(/img/triple_box_bg.jpg);clear: both; background-size: 100% 100%;'>
+    <p><%= it("Water visibility for these dives :", scope: ['diveinfo', 'bulk_page']) %>
+      <select id="wizard-visibility">
+        <option value=""></option>
+        <option value="bad"> <%= it("Bad (under 5m / 15ft)", scope: ['diveinfo', 'bulk_page']) %> </option>
+        <option value="average"> <%= it("Average (5-10m / 15-30ft)", scope: ['diveinfo', 'bulk_page']) %></option>
+        <option value="good"> <%= it("Good (10-25m / 40-75ft)", scope: ['diveinfo', 'bulk_page']) %></option>
+        <option value="excellent"> <%= it("Excellent (over 25m / 75ft)", scope: ['diveinfo', 'bulk_page']) %></option>
+      </select>
+    </p>
+    <div class='bulk_editor_warn' style='display:none'>
+      <p><%= it("%{strong:Warning} : The dives you have selected do not currently have the same visibility. The visibility displayed above is the one of the first dive selected.", scope: ['diveinfo', 'bulk_page'], strong: It.tag("strong")) %></p>
+    </div>
+    <div class='wizard-right'>
+      <a href='#' class='yellow_button' id='wizard_bulk_apply_visibility'><%= it("Apply", scope: ['diveinfo', 'bulk_page']) %></a> <a href='#' class='yellow_button wizard_bulk_cancel'><%= it("Cancel", scope: ['diveinfo', 'bulk_page']) %></a>
+    </div>
+  </div>
+</div>
+
+<div id='wizard_bulk_altitude_div' class='bulk_editor_div' style='display:none;'>
+  <div class='main_content_box' style='background-image: url(/img/triple_box_bg.jpg);clear: both; background-size: 100% 100%;'>
+    <p><%= it("Altitude for these dives :", scope: ['diveinfo', 'bulk_page']) %> <input id="altitude" type="number" value="0" style="width:50px;"/> <%=unit_distance(nil,true);%></p>
+    <div class='bulk_editor_warn' style='display:none'>
+      <p><%= it("%{strong:Warning : }The dives you have selected do not currently have the same altitude. The altitude displayed above is the one of the first dive selected.", scope: ['diveinfo', 'bulk_page'], strong: It.tag("strong")) %></p>
+    </div>
+    <div class='wizard-right'>
+      <a href='#' class='yellow_button' id='wizard_bulk_apply_altitude'>Apply</a> <a href='#' class='yellow_button wizard_bulk_cancel'><%= it("Cancel", scope: ['diveinfo', 'bulk_page']) %></a>
+    </div>
+  </div>
+</div>
+
+<div id='wizard_bulk_trip_div' class='bulk_editor_div' style='display:none;'>
+  <div class='main_content_box' style='background-image: url(/img/triple_box_bg.jpg);clear: both; background-size: 100% 100%;'>
+    <p><%= it("These dives belong to the trip named :", scope: ['diveinfo', 'bulk_page']) %> <input class='editable_input wizard_input_100' id="wizard-trip" value=''/></p>
+    <div class='bulk_editor_warn' style='display:none'>
+      <p><%= it("%{strong:Warning : }The dives you have selected do not currently belong to the same trip. The trip name displayed above is the one of the first dive selected.", scope: ['diveinfo', 'bulk_page'], strong: It.tag("strong")) %></p>
+    </div>
+    <div class='wizard-right'>
+      <a href='#' class='yellow_button' id='wizard_bulk_apply_trip'><%= it("Apply", scope: ['diveinfo', 'bulk_page']) %></a> <a href='#' class='yellow_button wizard_bulk_cancel'><%= it("Cancel", scope: ['diveinfo', 'bulk_page']) %></a>
+    </div>
+  </div>
+</div>
+
+<div id='wizard_bulk_shop_div' class='bulk_editor_div' style='display:none;'>
+  <div class='main_content_box' style='background-image: url(/img/triple_box_bg.jpg);clear: both; background-size: 100% 100%;'>
+    <%= render :partial => 'diveinfo/shop_selector', :locals => {:diveshop => nil, :guide => nil, :shop_signature => nil} %>
+    <div class='bulk_editor_warn' style='display:none'>
+      <p><%= it("%{strong:Warning : }The dives you have selected do not currently have the same dive center. The dive center displayed above is the one of the first dive selected.", scope: ['diveinfo', 'bulk_page'], strong: It.tag("strong")) %></p>
+    </div>
+    <div class='wizard-right'>
+      <a href='#' class='yellow_button' id='wizard_bulk_apply_shop'><%= it("Apply", scope: ['diveinfo', 'bulk_page']) %></a> <a href='#' class='yellow_button wizard_bulk_cancel'><%= it("Cancel", scope: ['diveinfo', 'bulk_page']) %></a>
+    </div>
+  </div>
+</div>
+
+
+<div id='wizard_bulk_buddy_div' class='bulk_editor_div' style='display:none;'>
+		<div class='main_content_box' style='background-image: url(/img/triple_box_bg.jpg);clear: both; background-size: 100% 100%;'>
+    <div class='bulk_editor_warn' style='display:none'>
+      <p><%= it("%{strong:Warning : }The dives you have selected do not currently have the same list of buddies. The buddies displayed above are those of the first dive selected.", scope: ['diveinfo', 'bulk_page'], strong: It.tag("strong")) %></p>
+    </div>
+    <%= render :partial => 'diveinfo/buddy_editor', :locals => { :buddies => []} %>
+    <div class='wizard-right'>
+      <a href='#' class='yellow_button' id='wizard_bulk_apply_buddy'><%= it("Apply", scope: ['diveinfo', 'bulk_page']) %></a> <a href='#' class='yellow_button wizard_bulk_cancel'><%= it("Cancel", scope: ['diveinfo', 'bulk_page']) %></a>
+    </div>
+		</div>
+</div>
+
+
+<div id='wizard_bulk_location_div' class='bulk_editor_div' style='display:none;'>
+  <div class='bulk_editor_warn' style='display:none'>
+    <p><%= it("%{strong:Warning : }The dives you have selected do not currently have the same dive site associated. The dive site displayed below is the one of the first dive selected.", scope: ['diveinfo', 'bulk_page'], strong: It.tag("strong")) %></p>
+  </div>
+  <%= render :partial => 'diveinfo/location_editor' %>
+  <div class='wizard-right'>
+    <a href='#' class='yellow_button' id='wizard_bulk_apply_location'><%= it("Apply", scope: ['diveinfo', 'bulk_page']) %></a> <a href='#' class='yellow_button wizard_bulk_cancel'><%= it("Cancel", scope: ['diveinfo', 'bulk_page']) %></a>
+  </div>
+</div>
+
+<div id='wizard_bulk_numbering_div' class='bulk_editor_div' style='display:none; padding-left: 15px;
+padding-right: 15px;'>
+  <p><br/><%= it("We can try and guess your dive numbers based on the declared number of dives not on Diveboard, the dive dates and existing numbers.", scope: ['diveinfo', 'bulk_page']) %><br/><a href="#" class='yellow_button' id="wizard_bulk_numbering_div_magic"><%= it("Auto-number my dives", scope: ['diveinfo', 'bulk_page']) %></a></p>
+  <br/>
+  <p><%= it("When you change a dive number, all subsequent dive numbers will be updated too, so you should work this out %{b:from the oldest (bottom)} >> %{b:to the most recent dive (top)}.%{br}Leaving the number empty will skip the dive.", scope: ['diveinfo', 'bulk_page'], b: It.tag("b"), br: It.tag("br")) %></p><br/>
+  <p>
+    <p><%= it("You have declared %{input} dives not stored on Diveboard.", scope: ['diveinfo', 'bulk_page'], input: It.tag("input", id: "wizard_bulk_numbering_data_ext", type: "number", value: @owner.total_ext_dives, def: @owner.total_ext_dives, size: "4")) %></p>
+    <br/>
+    <ul id="wizard_bulk_numbering_data" style="padding-left:20px;">
+    </ul>
+    <ul id="wizard_bulk_numbering_template" style="display:none;">
+      <% @owner.dives.each do |d|%>
+        <li name="<%=d.id%>"><input type="number" size="3" value="<%=d.number%>" min=0> <%= d.time_in.strftime("%Y-%m-%d") %> <%= d.time_in.strftime("%H:%M") %> - <%=d.spot.name%>
+      <%end%>
+    </ul>
+    <br/>
+  </p>
+  <div class='wizard-right'>
+    <a href='#' class='yellow_button' id='wizard_bulk_apply_numbering'><%= it("Apply", scope: ['diveinfo', 'bulk_page']) %></a> <a href='#' class='yellow_button wizard_bulk_cancel'><%= it("Cancel", scope: ['diveinfo', 'bulk_page']) %></a>
+  </div>
+</div>
+
+<div id='wizard_bulk_print_div' class='bulk_editor_div' style='display:none; padding-left: 15px;
+padding-right: 15px;'>
+  <div class='bulk_editor_warn'>
+    <p><%= it("You will be printing %{span:0} dive(s)", scope: ['diveinfo', 'bulk_page'], span: It.tag("span")) %></p>
+    <p><%= it("%{strong:Warning :} Generating the PDF can take up to several minuted depending on the number of dives pictures to include", scope: ['diveinfo', 'bulk_page'], strong: It.tag("strong")) %></p>
+    <p><%= it("When printing your logbook, ensure that you have disabled scaling in your printer settings.", scope: ['diveinfo', 'bulk_page']) %></p>
+  </div>
+  <div class="bulk_print_options">
+    <p><%= it("Include Pictures:", scope: ['diveinfo', 'bulk_page']) %> <select id="bulk_print_pictures">
+        <option value="-1" selected=""><%= it("All", scope: ['diveinfo', 'bulk_page']) %></option>
+        <option value="0"><%= it("None", scope: ['diveinfo', 'bulk_page']) %></option>
+        <option value="1"><%= it("1 page per dive", scope: ['diveinfo', 'bulk_page']) %></option>
+        <option value="2"><%= it("2 page per dive", scope: ['diveinfo', 'bulk_page']) %></option>
+        <option value="3"><%= it("3 page per dive", scope: ['diveinfo', 'bulk_page']) %></option>
+        <option value="4"><%= it("4 page per dive", scope: ['diveinfo', 'bulk_page']) %></option>
+        </select>
+    </p>
+    <p><%= it("Format:", scope: ['diveinfo', 'bulk_page']) %> <select id="bulk_print_format">
+        <option value="a5-2" selected=""><%= it("A5 - standard 2-side", scope: ['diveinfo', 'bulk_page']) %></option>
+        <option value="a5-1"><%= it("A5 - standard 1-side", scope: ['diveinfo', 'bulk_page']) %></option>
+        </select>
+    </p>
+    <p><br/></p>
+  </div>
+  <div class='wizard-right'>
+    <a href='#' class='yellow_button' id='wizard_bulk_apply_print'><%= it("Print", scope: ['diveinfo', 'bulk_page']) %></a> <a href='#' class='yellow_button wizard_bulk_cancel'><%= it("Cancel", scope: ['diveinfo', 'bulk_page']) %></a>
+  </div>
+</div>
+
+<div id='wizard_bulk_gear_div' class='bulk_editor_div' style='display:none'>
+  <div class='bulk_editor_warn' style='display:none'>
+    <p><%= it("%{strong:Warning : }The dives you have selected do not currently have the same gear associated. The gear displayed below is the one of the first dive selected.", scope: ['diveinfo', 'bulk_page'], strong: It.tag("strong")) %></p>
+  </div>
+  <%= render :partial => 'diveinfo/gear_editor' %>
+  <div class='wizard-right'>
+    <a href='#' class='yellow_button' id='wizard_bulk_apply_gear'><%= it("Apply", scope: ['diveinfo', 'bulk_page']) %></a> <a href='#' class='yellow_button wizard_bulk_cancel'><%= it("Cancel", scope: ['diveinfo', 'bulk_page']) %></a>
+  </div>
+</div>
+
+</div>
+
+<div id='tab_gear' class='tab_panel tab_gear'>
+    <div class="main_content_box">
+      <div id='gearlist'>
+      <%= render :partial => 'diveinfo/gear_manager' %>
+      </div>
+    </div>
+</div>
+
+  <%= render "diveinfo/uploader", :location => :bulk, :hidden => false %>
+</div>
+<!-- Modal Window Junk -->
+<div id="dialog-confirm" title="<%= it("Delete this dive permanently?", scope: ['diveinfo', 'bulk_page']) %>" style="display:none;">
+	<p class='dialog-text-highlight'><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><%= it("All the data in this dive will be erased (profile, notes, fish list...) and cannot be recovered. Are you sure?", scope: ['diveinfo', 'bulk_page']) %></p>
+</div>
+<div id="dialog-nodiveselected" title="<%= it("Dive selection", scope: ['diveinfo', 'bulk_page']) %>" style="display:none;">
+  <p class='dialog-text-highlight'><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><%= it("You need to select at least one dive to import your dives in Diveboard.", scope: ['diveinfo', 'bulk_page']) %></p>
+</div>
+<div id="dialog-bulk-noneselected" title="<%= it("Dive selection", scope: ['diveinfo', 'bulk_page']) %>" style="display:none;">
+  <p class='dialog-text-highlight'><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><%= it("You need to select at least one dive to do that.", scope: ['diveinfo', 'bulk_page']) %></p>
+</div>
+<div id="dialog-bulk-noactionselected" title="<%= it("Dive selection", scope: ['diveinfo', 'bulk_page']) %>" style="display:none;">
+  <p class='dialog-text-highlight'><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><%= it("Please select an action to apply.", scope: ['diveinfo', 'bulk_page']) %></p>
+</div>
+
+<div id="mask" style="display:none;">
+	<img src="/img/transparent_loader_2.gif" height='66px' width='66px' style="margin-left:50%; margin-top:25%" alt='#' />
+</div>
+<div id="boxes">
+</div>
+<!-- END Modal Window Junk -->

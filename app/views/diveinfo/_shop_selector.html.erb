@@ -1,0 +1,103 @@
+<% has_review = !@user.nil? && @user.review_for_shop(Shop.find(diveshop["id"])) rescue false%>
+<table id="set_dive_details">
+<tbody>
+  <tr class='wz_shop_line_found' <%if diveshop.nil? || diveshop['name'].nil? then%>style='display:none'<%end%>>
+    <td class="wizard_input_label"><label><%= it("Dive Center:", scope: ['diveinfo', 'shop_selector']) %></label></td>
+    <td>
+      <input id='wz_shop_found_id' type='hidden' value='<%=diveshop["id"] unless diveshop.nil?%>'/><span id='wz_shop_found_name'><%=diveshop["name"] unless diveshop.nil?%></span> <a href='<%=diveshop["url"] unless diveshop.nil?%>' class='wz_shop_url' id='wz_shop_found_url' target='_blank'><%=diveshop["url"] unless diveshop.nil?%></a>
+    </td>
+    <td><a class='yellow_button' id='wz_shop_change' href='#'><%= it("Change", scope: ['diveinfo', 'shop_selector']) %></a></td>
+  </tr>
+  <tr class="wz_shop_line_found wz_shop_line_without_review" style="vertical-align: middle;height: 100px; <%if diveshop.nil? || diveshop['name'].nil? || has_review then%>display:none;<%end%>">
+    <td></td>
+    <td><%= it("You liked diving with them ? Or it has been a mess? Complete in a few clicks a review to let divers know how good this place is.", scope: ['diveinfo', 'shop_selector']) %></td>
+    <td><button class="yellow_button wizard_leave_review"><%= it("Leave a review", scope: ['diveinfo', 'shop_selector']) %></button></td>
+  </tr>
+  <tr class="wz_shop_line_found wz_shop_line_with_review" style="vertical-align: middle;height: 100px; <%if diveshop.nil? || diveshop['name'].nil? || !has_review then%>display:none;<%end%>">
+    <td></td>
+    <td><% shop_link = It.link(begin diveshop["url"] rescue "#" end, class: "wz_shop_home", target: "_blank") rescue It.tag("span")%>
+    <%= it("You have already left a review with this dive shop. You can edit it on %{link:their page}", scope: ['diveinfo', 'shop_selector'], link: shop_link)  %></td>
+    <td></td>
+  </tr>
+  <tr class='wz_shop_line_search' <%unless diveshop.nil? || diveshop['name'].nil? then%>style='display:none'<%end%>>
+    <td class="wizard_input_label"><label><%= it("Dive Center:", scope: ['diveinfo', 'shop_selector']) %></label></td>
+    <td>
+      <input id="diveshop-search" type="text" class="editable_input wizard_input_100 wizard_big_input" value="<%=diveshop["name"] unless diveshop.nil?%>"/>
+    </td>
+  </tr>
+  <tr class='wz_shop_line_search' <%unless diveshop.nil? || diveshop['name'].nil? then%>style='display:none'<%end%>>
+    <td class="wizard_input_label"> </td>
+    <td style='padding-left: 5px'><a id='wz_shop_create' href='#'><%= it("Can't find the dive center?", scope: ['diveinfo', 'shop_selector']) %></a></td>
+  </tr>
+  <tr class='wz_shop_line_create' style='display:none'>
+    <td class="wizard_input_label"><label><%= it("Dive Center:", scope: ['diveinfo', 'shop_selector']) %></label></td>
+    <td> </td>
+  </tr>
+  <tr class='wz_shop_line_create' style='display:none'>
+    <td class="wizard_input_label" style='text-align: right'><%= it("Name", scope: ['diveinfo', 'shop_selector']) %></td>
+    <td>
+      <input id="diveshop-name" type="text" class="editable_input wizard_input_100 wizard_big_input"  value='<%=diveshop["name"] if !diveshop.nil? && diveshop['id'].nil?%>' readonly />
+    </td>
+  </tr>
+  <tr class='wz_shop_line_create' style='display:none'>
+    <td class="wizard_input_label" style='text-align: right'><%= it("Country", scope: ['diveinfo', 'shop_selector']) %></td>
+    <td>
+      <input id="diveshop-country" type="text" class="editable_input wizard_input_100 wizard_big_input" value='<%=diveshop["country"] if !diveshop.nil? && diveshop['id'].nil?%>' readonly />
+    </td>
+  </tr>
+  <tr class='wz_shop_line_create' style='display:none'>
+    <td class="wizard_input_label" style='text-align: right'><%= it("Town", scope: ['diveinfo', 'shop_selector']) %></td>
+    <td>
+      <input id="diveshop-town" type="text" class="editable_input wizard_input_100 wizard_big_input" value='<%=diveshop["town"] if !diveshop.nil? && diveshop['id'].nil?%>' readonly />
+    </td>
+  </tr>
+  <tr class='wz_shop_line_create' style='display:none'>
+    <td class="wizard_input_label" style='text-align: right'><%= it("URL", scope: ['diveinfo', 'shop_selector']) %></td>
+    <td>
+      <input id="diveshop-url" type="text" class="editable_input wizard_input_100 wizard_big_input" value='<%=diveshop["url"] if !diveshop.nil? && diveshop['id'].nil?%>' readonly />
+    </td>
+  </tr>
+  <tr class='wz_shop_line_create' style='display:none'>
+    <td class="wizard_input_label" style='text-align: right'><%= it("Contact Email", scope: ['diveinfo', 'shop_selector']) %></td>
+    <td>
+      <input id="diveshop-url" type="text" class="editable_input wizard_input_100 wizard_big_input" value='<%=diveshop["url"] if !diveshop.nil? && diveshop['id'].nil?%>' readonly />
+    </td>
+  </tr>
+  <tr class='wz_shop_line_create' style='display:none'>
+    <td class="wizard_input_label"> </td>
+    <td style='padding: 5px;'>
+      <a href="#" class="yellow_button" id='wz_shop_create_confirm' ><%= it("Confirm", scope: ['diveinfo', 'shop_selector']) %></a>
+      <a href="#" class="yellow_button" id='wz_shop_create_cancel'><%= it("Cancel", scope: ['diveinfo', 'shop_selector']) %></a>
+    </td>
+  </tr>
+  <tr>
+  <td class="wizard_input_label"><%= it("Dive Signing:", scope: ['diveinfo', 'shop_selector']) %></td>
+  <td style='padding: 5px;'>
+    <% if !shop_signature.nil? && shop_signature.status == :pending then%>
+      <% since_sign_request = Time.now.to_date.mjd - shop_signature.request_date.to_date.mjd%>
+      <%if since_sign_request > 0%>
+      <%= it("Your dive signing has been pending for %{days} days", scope: ['diveinfo', 'shop_selector'], days: since_sign_request) %>
+      <%else%>
+      <%= it("Your dive signing has been pending for a few moment", scope: ['diveinfo', 'shop_selector']) %>
+      <%end%> - <%= it("resend request", scope: ['diveinfo', 'shop_selector']) %>
+      <input type="checkbox" id="signing_shop_request" <%if since_sign_request > 10%>CHECKED<%end%> />
+    <%elsif !shop_signature.nil? && shop_signature.status == :rejected%>
+      <%= it("Your dive verification has been rejected by %{name}", scope: ['diveinfo', 'shop_selector'], name: shop_signature.signby.nickname) %>
+    <% elsif !shop_signature.nil? && shop_signature.status == :signed%>
+      <%= it("Congratulations! your dive has been signed by %{name}", scope: ['diveinfo', 'shop_selector'], name: shop_signature.signby.nickname) %>
+    <%else%>
+      <%= it("Request the dive center to sign this dive", scope: ['diveinfo', 'shop_selector']) %>
+      <input type="checkbox" id="signing_shop_request"
+        <%if diveshop.nil? || (!diveshop.nil? && diveshop['name'].nil?) then%>READONLY="readonly"<%else%>CHECKED<%end%>
+      />
+    <%end%>
+  </td>
+  </tr>
+  <tr>
+    <td class="wizard_input_label"><label><%= it("Guide name:", scope: ['diveinfo', 'shop_selector']) %></label></td>
+    <td>
+      <input id="guide" type="text" class="editable_input wizard_input_100 wizard_big_input" value="<%=guide unless guide.nil?%>"/>
+    </td>
+  </tr>
+</tbody>
+</table>

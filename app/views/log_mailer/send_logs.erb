@@ -1,0 +1,24 @@
+<html>
+<body>
+<p><%= it("An error with the plugin has been found:", scope: ['log_mailer', 'send_logs']) %></p>
+
+<ul>
+<% @data.each_key { |key|
+if (key != "data") %>
+<li><%= key %> : <%= @data[key] %></li>
+<% end
+} %>
+</ul>
+
+<%if !@data['user_id'].blank? then%>
+<p><a href='<%=ROOT_URL%>admin/dives?search_user_id=<%=@data['user_id']%>'><%= it("View user dives in admin", scope: ['log_mailer', 'send_logs']) %></a></p>
+<%end%>
+
+<PRE>
+<%= @data["data"] %>
+</PRE>
+
+<p><%= it("Good luck!", scope: ['log_mailer', 'send_logs']) %></p>
+<p>Diveboard</p>
+</body>
+</html>

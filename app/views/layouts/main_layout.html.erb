@@ -1,0 +1,380 @@
+<%
+  render "v2/header/header"
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html class="no-js" xmlns="http://www.w3.org/1999/xhtml"
+  xml:lang="<%=I18n.locale%>" lang="<%=I18n.locale%>"
+  xmlns:fb="http://www.facebook.com/2008/fbml"
+  xmlns:og="http://opengraphprotocol.org/schema/">
+  <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# diveboard: http://ogp.me/ns/fb/diveboard#">
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=yes, width=device-width" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="csrf-token" content="<%= form_authenticity_token %>" />
+  <meta name="csrf-param" content="authenticity_token" />
+  <meta name="db-cookie-domain" content="<%=COOKIES_DOMAIN%>" />
+  <link rel="dns-prefetch" href="//graph.facebook.com/v2.0/">
+  <%Rails.configuration.balancing_roots.each do |host|%>
+  <link rel="dns-prefetch" href="<%=host%>">
+  <%end%>
+  <%Rails.configuration.google_cloud_buckets[:pictures].each do |host|%>
+  <link rel="dns-prefetch" href="//<%=host%>">
+  <%end%>
+  <link href="https://plus.google.com/+Diveboard" rel="publisher" />
+  <!--OG Meta Informations-->
+  <%= render 'meta_tags'  %>
+
+  <!-- IE Debug
+  <script type="text/javascript" src="https://getfirebug.com/firebug-lite.js#startOpened=true"></script>
+  -->
+  <!-- STYLESHEETS -->
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+  <%= include_stylesheets :common, :media => :all %>
+  <%= stylesheet_link_tag :global_v2, :media => :all %>
+
+  <%= yield :css if content_for? :css %>
+
+  <%if !@user.nil? && @user.admin_rights >= 4 then%><style type='text/css'>.admin {display:initial !important;}</style><%end%>
+
+  <!--[if IE]>
+  <link rel="stylesheet" type="text/css" href="<%=auto_file_versionning("/styles/global-ie.css")%>" media="all" />
+  <![endif]-->
+  <!--[if lte IE 8.0]>
+  <link rel="stylesheet" type="text/css" href="<%=auto_file_versionning("/styles/global-ie8.css")%>" media="all" />
+  <![endif]-->
+  <!--[if lt IE 8.0]>
+  <link rel="stylesheet" type="text/css" href="<%=auto_file_versionning("/styles/global-ie7.css")%>" media="all" />
+  <![endif]-->
+  <% if ff11osx? %>
+  <link rel="stylesheet" type="text/css" href="<%=auto_file_versionning("/styles/global-ff11osx.css")%>" media="all" />
+  <%end%>
+  <link rel="icon" href="<%=ROOT_URL%>img/favicon/favicon.ico" type="image/x-icon" />
+  <link rel="search" type="application/opensearchdescription+xml" title="Diveboard" href="//www.diveboard.com/opensearch.xml" />
+
+
+  <!-- JAVASCRIPTS -->
+
+  <!--[if IE 8]>
+     <script src="/ie7/IE8.js" type="text/javascript"></script>
+     <script src="/js/modernizr-2.5.3.js"></script>
+     <script src="/ie7/json2.js" type="text/javascript"></script>
+
+  <![endif]-->
+
+  <!--[if IE 7]>
+
+   <script src="/ie7/IE7.js" type="text/javascript"></script>
+   <script src="/js/modernizr-2.5.3.js"></script>
+   <script src="/js/es5-shim.min.js"></script>
+   <script src="/ie7/json2.js" type="text/javascript"></script>
+  <![endif]-->
+
+  <%=
+    javascript_include_tag "jquery"
+  %>
+  <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>-->
+
+  <script>
+    var G_LOG_LEVEL = "<% if @user.nil? %>INFO<%else%><%=@user.plugin_debug || "INFO"%><%end%>";
+    var props = $.event.props;
+  //removes JS bindings http://stackoverflow.com/questions/7825448/webkit-issues-with-event-layerx-and-event-layery
+  $(function(){
+      // remove layerX and layerY
+      var all = $.event.props,
+          len = all.length,
+          res = [];
+      while (len--) {
+        var el = all[len];
+        if (el != 'layerX' && el != 'layerY') res.push(el);
+      }
+      $.event.props = res;
+  }());
+  var G_USER_LOGGED = <%=!@user.nil?%>;
+
+  <!-- Dev Google Analytics --> 
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga2');
+  
+  ga2('create', 'UA-54315810-1', 'auto');
+  ga2('send', 'pageview');
+
+
+
+  $(document).ready(function(){
+    //http://stackoverflow.com/questions/18684099/jquery-fail-to-detect-ie-11
+    // needed for elrte to properly detect it's IE
+    if (!!navigator.userAgent.match(/Trident\/7\./))
+      $.browser.msie = true;
+
+    //set datepicker to proper locale
+    $.datepicker.setDefaults($.datepicker.regional['<%=I18n.locale%>']);
+  })
+
+  </script>
+
+
+
+  <%= javascript_include_tag 'basic' %>
+  <%= javascript_include_tag 'common0' %>
+  <%= javascript_include_tag 'common1' %>
+
+    </head>
+    <body>
+    <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+       FB.init({
+        appId  : '<%=FB_APP_ID%>',
+        status : true, // check login status
+        cookie : true, // enable cookies to allow the server to access the session
+        xfbml  : true, // parse XFBML
+        channelURL : '//<%=root_url.gsub(/^.*:\/\//,"")%>channel.html', // channel.html file
+        oauth  : true, // enable OAuth 2.0
+        version: 'v2.1'
+      });
+      };
+      (function(d){
+         var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+         js = d.createElement('script'); js.id = id; js.async = true;
+         js.src = "//connect.facebook.net/<%=Rails.configuration.map_og_locales[I18n.locale]%>/sdk.js";
+         d.getElementsByTagName('head')[0].appendChild(js);
+       }(document));
+    </script>
+    <script type="text/javascript"> if (window.location.hash == '#_=_') try {history.pushState({},'', window.location.href.replace(/#.*$/,'')); } catch(e){} </script>
+    <%=
+      #render :partial => 'layouts/top_menu'
+    %>
+    <%= yield :header %>
+
+      <div id="container_out">
+        <div id="container">
+
+            <!--<div id="header">
+                <div class="main_menu">
+                  <div class="main_menu_content">
+          <% if @user.nil?%><a href="/" class="main_menu_option">
+                    <%else%><a id="user_home_url" href="/<%=@user.vanity_url%>" class="main_menu_option tooltiped" title="Your logbook's homepage" ><%end%>
+                    <span class="main_menu_option_span">
+                        <img src="/img/home_btn_hover.png" alt="#" class="fade"  style="display:inline; z-index:1000;"/><img style="position: absolute;  left: 0px; display:inline; z-index:0;" src="/img/home_btn.png" class="fade" alt="#"/>
+                    </span>
+                    </a>
+          <% if !@user.nil?%>
+                    <a  id="user_dives_url" href="/<%=@user.vanity_url%>" class="main_menu_option">
+                    <span class="main_menu_option_span">
+                        <img src="/img/dives_btn_hover.png" alt="#" class="fade"  style="display:inline;"/><img style="position: absolute;  left: 0px; display:inline;" src="/img/dives_btn.png" class="fade" alt="#"/>
+                    </span>
+                    </a>
+          <%end%>
+                    <a href="/explore" class="main_menu_option">
+                    <span class="main_menu_option_span">
+                        <img src="/img/explore_btn_hover.png" alt="#" class="fade" style="display:inline;" /><img style="position: absolute;  left: 0px; display:inline;" src="/img/explore_btn.png" class="fade" alt="#"/>
+                    </span>
+                    </a>
+                    <%if @user.nil?%>
+                    <div style="display: inline-block; width: 119px;"></div>
+                    <%end%>
+                    <%if !@user.nil?%>
+          <a href="/settings" class="main_menu_option_settings">
+                    <span class="main_menu_option_span">
+                        <img src="/img/settings_btn_hover.png" alt="#" class="fade" style="display:inline;" /><img style="position: absolute;  left: 0px; display:inline;" src="/img/settings_btn.png" class="fade" alt="#"/>
+                    </span>
+                    </a>
+                    <div class=tray_container>
+                    <a href="/about/import" class="main_menu_option tray_icon tooltiped" id=download_tray_icon title="A new version of Diveboard plugin is available. You need to download and install this latest version to benefit from the latest features !">
+                    <span class="main_menu_option_span">
+                        <img src="/img/arrowgear.png" width='30px' height='25px' alt="#" style="display:inline;" />
+                    </span>
+                    </a>
+                    <a href="/<%=@user.vanity_url%>/bulk?bulk=computer" class="main_menu_option tray_icon tooltiped" id=computer_tray_icon title="Go to the Dive Computer import page">
+                    <span class="main_menu_option_span">
+                        <img src="/img/watch_icon.png" width='25px' height='25px' alt="#" style="display:inline;" />
+                    </span>
+                    </a>
+                    </div>
+
+                    <%end%>
+                    </div>
+                </div>
+            </div>-->
+
+      <!--[if lte IE 8]>
+      <div id="flash_notifications">
+        WARNING : Your version of Internet Explorer is not supported anymore. Although it may work, please upgrade to version 9 or superior or use a modern browser such as <a href="https://www.google.com/chrome" target="_blank">Google Chrome</a>, <a href="http://www.apple.com/safari/" target="_blank">Safari</a> or <a href="http://www.mozilla.org/en-US/firefox/new/" target="_blank">Firefox</a>.
+      </div>
+      <![endif]-->
+
+      <%flash[:notice] = flash[:notice].split("\n") if flash[:notice].class == String %>
+      <div id="flash_notifications" class="flash_notifications" <% if !flash[:notice]%>style='display:none'<%end%>>
+        WARNING : <%if !flash[:notice].nil? && flash[:notice].count > 1 then%>Several issues have been reported : <br/><%end%>
+        <%flash[:notice].nil? || flash[:notice].each do |l|%><%if flash[:notice].count > 1 then%>&nbsp;&nbsp;&nbsp;- <%end%><%=l%><br/><%end%>
+      </div>
+
+      <%= yield %>
+
+      <!-- Modal Window Junk -->
+      <div id="dialog-global-error" title="<%= it("An error occured", scope: ['layouts', 'main_layout']) %>" style="display:none;">
+        <p class='dialog-text-highlight'><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><span class='dge-text'></span></p>
+        <p class='clear'><%= it("Diveboard Support Team has been notified and a fix for this issue will be issued soon.", scope: ['layouts', 'main_layout']) %> <span class='dge-tagtext'><%= it("If you wish to contact Diveboard team about this issue, please provide the following error tag:", scope: ['layouts', 'main_layout']) %> <span class='dge-tag'></span></span></p>
+      </div>
+
+      <div id="dialog-global-notify" title="<%= it("SUCCESS", scope: ['layouts', 'main_layout']) %>" style="display:none;">
+        <p><span class='dge-text'></span></p>
+      </div>
+
+      <div id="dialog-global-ask-for-vote" title="<%= it("You like Diveboard, tell them !", scope: ['layouts', 'main_layout']) %>" style="display:none;">
+        <p class='clear'><br/>
+          <img src='/img/brands/techcrunch_pixel_transparent.png' style='width: 100px; float: left;margin: 5px 20px 0px 0px'><%= it("We are participating today in the startup contest Techcrunch Disrupt. Support Diveboard by voting for us!", scope: ['layouts', 'main_layout']) %><br/>
+          <br/>
+          <%= it("All it takes is a click!", scope: ['layouts', 'main_layout']) %><br/>
+          <div style='text-align: center; margin: 30px 0px 10px 8px'>
+            <a class='yellow_button call_to_action' href='http://startupalley.techcrunch.com/company/771' target=_blank ><%= it("Vote for Diveboard", scope: ['layouts', 'main_layout']) %></a>
+          </div>
+          <div style='font-style: italic; font-size: 0.9em; margin-bottom: 5px;'><%= it("This popup will only show once. Don't forget to vote before closing it!", scope: ['layouts', 'main_layout']) %></div>
+        </p>
+      </div>
+
+      <%= render :partial => 'layouts/switch_user_dialog'%>
+
+      <!-- Footer starts here -->
+      <div class="push">
+      </div>
+
+      <%= render :partial => 'layouts/footer'  %>
+
+
+
+        </div>
+      </div>
+    <%= yield :after_container if content_for? :after_container %>
+    <%=
+      render :partial => 'layouts/login_popup', :locals=> { :style =>"login_popup_homepage" }
+    %>
+    <!--OG Meta Informations-->
+    <%= render :partial => 'layouts/trackers'  %>
+
+
+    <div id='dialog_basket' style='display:none'><div class='basket_content'></div></div>
+
+    <div id=pluginContainer style='height: 0px; width: 0px'></div>
+    <div id=controlbox class=hidden>
+      <p><%= it("Status:", scope: ['layouts', 'main_layout']) %> <span id=computerState ></span> </p>
+      <p><%= it("Read:", scope: ['layouts', 'main_layout']) %> <span id=nbDivesRead ></span> / <span id=nbDivesTotal ></span> </p>
+      <textarea id=logs cols=90 rows=15 autocomplete="off"></textarea>
+      <textarea id=output cols=30 rows=15 autocomplete="off"></textarea>
+    </div>
+
+    <div id="dialog-computer-detected" title="<%= it("New device connection", scope: ['layouts', 'main_layout']) %>" style="display:none;">
+      <p class='dialog-text-highlight'><%= it("It looks like a dive computer has just been connected.", scope: ['layouts', 'main_layout']) %></p>
+      <p><%= it("Would you like to upload the content of your dive computer now?", scope: ['layouts', 'main_layout']) %></p>
+    </div>
+
+    <%= render :partial => 'layouts/switch_language_dialog'%>
+    <%= render :partial => 'lightbox/lightbox'  %>
+
+    <%= render( :partial => 'v2/modal/login_popup', :locals=> {:status => @signup_popup_status || :force_count} ) if @user.nil? %>
+
+
+    <%if false #  DISABLED !@user && Rails.env != 'staging' then  # not on staging because of autotest %>
+      <%=
+       render :partial => 'login/ask_register.html'
+      %>
+      <script>$(document).ready(function(){
+        try {
+          diveboard_ask_join(true);
+        } catch(err) {
+          track_exception_global(err);
+        }
+      });</script>
+    <%end%>
+
+    <!-- IMPORTANT: THERE SHOULD ONLY BE SCRIPTS AFTER THIS TAG, or beware the lag -->
+    <script>$.cookie.default = {domain: $("meta[name='db-cookie-domain']").attr("content")}</script>
+    <script>diveboard.require('plusone');</script>
+    <%= yield :scripts if content_for? :scripts %>
+
+    <% if @user.nil?%>
+    <script type="text/html" id="inline_popup_text_template">
+      <%= render :partial => 'layouts/login_popup', :locals => {:id => 'login_popup', :style => 'login_inline', :hidden => false, :status => @signup_popup_status || :force_count}%>
+    </script>
+    <%end%>
+
+    <script type="text/javascript"><%if !@user.nil? && !@user.vanity_url.nil? then %>G_user_vanity_url = '<%= @user.vanity_url %>';<%end%></script>
+
+    <script type="text/javascript">
+      (function(d){
+        var f = d.getElementsByTagName('SCRIPT')[0], p = d.createElement('SCRIPT');
+        p.type = 'text/javascript';
+        p.async = true;
+        p.src = '//assets.pinterest.com/js/pinit.js';
+        p["data-pin-build"]="pin_build_api";
+        f.parentNode.insertBefore(p, f);
+      }(document));
+    </script>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.async=true;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+    <!--Google maps cursor disappearing hack -->
+    <img src="//maps.gstatic.com/mapfiles/openhand_8_8.cur" style="position: absolute; top: -1000px; left: -1000px; "/>
+
+    <!--force login if needed-->
+    <% if @user.nil? %>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        if ($.cookie('redirect_url')){
+          request_login(function(){$.removeCookie('redirect_url', { path: '/' });});
+        }
+      });
+    </script>
+    <%else%>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        if ($.cookie('redirect_url'))
+          $.removeCookie('redirect_url', { path: '/' });
+      });
+    </script>
+    <%end%>
+    <% if false && !@user.nil? %>
+      <!-- one sky app is disabled for now -->
+      <script type="text/javascript">
+        OneSkyClientConfig = {
+          'apiKey' : 'ZfF7zS5zb0eS987E7VfaikhtEVxClF1b',
+          'project': '17859', // the number below your platform name
+          'translate': true,
+          // The locale that user is accessing
+          'locale'            : '<%=I18n.locale%>', // we support ISO 639-1
+          /*
+          * [OPTIONAL] Single Sign On settings to sign in your users for inline translation
+          * You may refer to SSO Tutorial
+          */
+          //'ssoId'         : '<%=@user.shaken_id%>', // ID from your system to manage user contributions
+          //'ssoName'           : '<%=@user.nickname%>',
+          //'ssoData'           : '48c37dd76116e825f11cc100188bf063',
+          //'ssoTime'           : '1355371257'
+
+          // [OPTIONAL] More settings that you may be interested in
+          'xdReceiver'            : '/assets/onesky_receiver.html'
+        };
+      </script>
+      <script type="text/javascript" src="//s3.amazonaws.com/oneskyapp.static/onesky-loader.js"></script>
+    <%end%>
+    
+    <%=
+      #render "v2/modal/login_popup"
+    %>
+  </body>
+
+  <script type="text/javascript">
+    $(document).ready(function()
+    {
+      $('#header .signup').click(function()
+      {
+        ask_register();
+      });
+    });
+  </script>
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+  <script src="http://cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.js"></script>
+  <%= yield :javascripts_v1_patch if content_for? :javascripts_v1_patch %>
+  <%= yield :javascripts if content_for? :javascripts %>
+</html>

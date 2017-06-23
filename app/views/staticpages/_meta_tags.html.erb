@@ -1,0 +1,23 @@
+ <title><%= it("About Diveboard: Track and share your scuba diving experiences - Explore new spots and destination", scope: ['staticpages', 'meta_tags']) %></title>
+	<meta name="description" content="<%= it("Diveboard is a scuba diving community enabling divers to track their dives through an online logbook, explore new spots and destinations and share their passion", scope: ['staticpages', 'meta_tags']) %>"/>
+	<META NAME="Title" CONTENT="Diveboard: <%= it("Track and share your scuba diving experiences - Explore new spots and destination", scope: ['staticpages', 'meta_tags']) %>">
+<!-- FB Opengraph Tags -->
+
+<meta property="og:title" content="Diveboard: <%= it("Track and share your scuba diving experiences - Explore new spots and destination", scope: ['staticpages', 'meta_tags']) %>" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="<%=HtmlHelper.find_root_for :canonical%>" />
+<meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+<%I18n.available_locales.each do |locale|%>
+  <link rel='alternate' href='<%=HtmlHelper.find_root_for(locale)%>' hreflang="<%=locale%>" />
+  <%if locale != I18n.locale then%>
+    <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+  <%end%>
+<%end%>
+
+<meta property="og:image" content="<%="#{ROOT_URL}img/OG-thumb.png"%>" />
+<meta property="og:description" content="<%= it("Diveboard is a scuba diving community enabling divers to track their dives through an online logbook, explore new spots and destinations and share their passion", scope: ['staticpages', 'meta_tags']) %>" />
+<meta property="og:site_name" content="Diveboard - <%= it("Track, Share and Explore Scuba Diving", scope: ['staticpages', 'meta_tags']) %>" />
+<meta property="fb:admins" content="680251975" />
+<meta property="fb:admins" content="1077557400" />
+
+<!-- END FB Opengraph Tags -->

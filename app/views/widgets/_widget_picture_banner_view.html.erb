@@ -1,0 +1,11 @@
+<div class="widget_picture_banner">
+  <%if !widget.pictures.blank?%>
+  <div class="slides">
+    <div class="slides_container">
+      <%widget.pictures.each do |p|%>
+        <div><img src="<%=p.large%>"/></div>
+      <%end%>
+    </div>
+  </div>
+  <%end%>
+</div>

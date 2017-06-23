@@ -1,0 +1,157 @@
+.right_align{ float:right;}
+
+.varline_large{
+  display: block;
+  width: 405px;
+  margin-bottom: 5px;
+}
+
+.hidden{
+  display:none;
+}
+
+.green{
+  color: green;
+}
+
+.red{
+  color: red;
+}
+
+.yellow_button{
+  cursor: pointer;
+  text-align: center;
+}
+.yellow_button:hover{
+  box-shadow: 0px 0px 3px #1d1d1d;
+}
+
+/*SPOT MODERATION SECTION*/
+.spot_moderation #spot_moderation_left_pane{width: 400px;
+  display: inline-block;
+  float: left;
+  min-height: 500px;
+}
+.spot_moderation #spot_moderation_right_pane{
+  display: inline-block;
+  width: 450px;
+  min-height: 500px;
+}
+
+.spot_moderation .spot{
+  width: 350px;
+  margin-left: 10px;
+  border: 1px solid #D1D1D1;
+  padding: 5px;
+  border-radius: 5px;
+}
+.spot_moderation .spot:hover{
+  background: #FCDE7E;
+}
+
+.spot_moderation .spot.selected{
+  background: #FCDE7E;
+}
+
+.spot_moderation #merge, .spot_moderation #merge_private, .spot_moderation #merge_destroy{
+  margin-bottom: 4px;
+  text-align: center;
+  padding: 10px;
+  width: 240px;
+  display: inline-block;
+}
+.spot_moderation .merge_header_button{
+  width: 270px;
+  margin-top: 10px;
+}
+
+.spot_moderation .merge_warning{
+  display: inline-block;
+  width: 400px;
+  position: relative;
+  top: -76px;
+  left: 277px;
+}
+.spot_moderation .merge_header{
+  height: 96px;
+}
+.spot_moderation ul.warning li{
+  list-style-type: disc;
+  margin-left: 14px;
+}
+.spot_moderation table.spot_line_details {
+  width: 300px;
+  text-align: center;
+}
+.spot_moderation #edit_master_spot{
+  padding-left: 10px;
+}
+
+.spot_moderation .master_spot_validation{
+  margin-bottom: 20px !important;
+}
+.spot_moderation #master_spot_validated{
+  display: inline;
+}
+.spot_moderation .show_spot{
+ cursor: pointer;
+}
+
+.spot_moderation #reset_master{
+  width: 141px;
+  left: 100px;
+  top: -64px;
+  font-weight: normal;
+  background-image: none;
+  background-color: #D1D1D1;
+  border: 1px solid #D1D1D1;
+  float: right;
+  position: relative;
+}
+
+.spot_mod_history .mod_item{
+  cursor: pointer;
+  margin: 5px;
+}
+.spot_top_menu{ display: inline-block;}
+.spot_top_menu_container{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.spot_mod_history .mod_item b{
+  width: 155px;
+  display: inline-block;
+}
+
+.spot_mod_history .mod_item .before, .spot_mod_history .mod_item .after{
+  display: inline-block;
+  width: 250px; 
+}
+
+.location_moderation #location_list{
+  width: 500px;
+  padding: 10px;
+}
+
+.location_moderation .wiki_text, .location_moderation .dive_details, .location_moderation .spot_details{
+  display: inline-block;
+  padding: 10px;
+  border: solid 1px;
+  width: 450px;
+}
+.location_moderation .left_pane {
+  display: inline-block;
+  float: left;
+  width: 500px;
+}
+.location_moderation #destination{
+  display: inline-block;
+}
+.shop_edit input{width: 350px;}
+.shop_edit .varline{width: 700px; margin-bottom: 15px;}
+.shop_edit form{margin: 15px; width: 500px; display: inline-block;}
+.shop_edit .tag{float: left;}
+.shop_edit #mapholder{float: right; margin-right: 50px; margin-top: 50px;}
+
+
+

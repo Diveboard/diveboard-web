@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    <h1><%= it("We're done sending the newsletter with id %{id}", scope: ['workers_mailer', 'notify_task_finished'], id: @data[:id]) %></h1>
+    <p><%= it("Here are the stats:", scope: ['workers_mailer', 'notify_task_finished']) %>
+    <ul>
+      <li><%= it("Total targets:", scope: ['workers_mailer', 'notify_task_finished']) %> <%=@data[:total]%>
+      <li><%= it("Sent mails:", scope: ['workers_mailer', 'notify_task_finished']) %> <%=@data[:success]%></li>
+      <li><%= it("Skipped recipients:", scope: ['workers_mailer', 'notify_task_finished']) %> <%=@data[:skipped]%></li>
+      <li><%= it("Errors:", scope: ['workers_mailer', 'notify_task_finished']) %> <%=@data[:failed].count%></li>
+      <li><%= it("Duration:", scope: ['workers_mailer', 'notify_task_finished']) %> <%=@data[:duration]%>s</li>
+    <ul>
+    <p><%= it("Have a great day!", scope: ['workers_mailer', 'notify_task_finished']) %></p>
+  </body>
+</html>

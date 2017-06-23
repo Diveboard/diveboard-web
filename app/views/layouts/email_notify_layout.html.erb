@@ -1,0 +1,114 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charsetutf-8" />
+  <meta name="viewport" content="widthdevice-width, minimum-scale1.0, maximum-scale1.0, user-scalable0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+
+</head>
+<body style="margin: 0; padding: 0; background: #fff;-webkit-text-size-adjust:100%;font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;" class="email_notify_layout">
+  <table cellpadding="0" cellspacing="0" border="0" width="100%"  style="position:relative;background:#ddd;">
+    <tbody>
+      <tr>
+        <td>
+          <table  align="center" cellpadding="0" cellspacing="0" border="0" width="670" style="background:#fff;position:relative;border:0;border-left:1px solid #ccc;border-right:1px solid #ccc;">
+            <tbody>
+              <tr style="background-color: #efefef;">
+                <td style="height: 5px;" height="5"></td>
+              </tr>
+              <tr>
+                <td> <a href="<%=ROOT_URL%>" style="border:none;color:#0084b4;text-decoration:none;"><span ></span></a>
+                  <table cellpadding="0" cellspacing="0" border="0" width="670"  style="background:#f2f2f2;table-layout:fixed;">
+                    <tbody>
+                    <tr>
+                    <td  style="width:15px;height:77px;"> &nbsp; </td>
+                    <td height="88" width="88" valign="top" rowspan="2"  style="background:#fff;line-height:100%;"><a href="<%=ROOT_URL%>" style="border:none;color:#0084b4;text-decoration:none;"><img src="<%=ROOT_URL%>img/email_marketing/logo_512_upgrey.png" width="89" height="89" style="border:0;line-height:100%;border:0;" /></a></td>
+                    <td  width="9"> &nbsp; </td>
+                    <td width="10" height="77" > &nbsp; </td>
+                    <td width="455" height="77"  style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;color:#333;">
+                      <table border="0" cellpadding="0" cellspacing="0">
+                        <tbody>
+                          <tr>
+                            <td  style="font-size:<%=if @subtitle.blank? then 20 else 14 end%>px;font-weight:bold;color:#333;"> <span dir="ltr">Hi <%=@recipient.nickname%>,</span> </td>
+                          </tr>
+                          <tr>
+                            <td  style="font-size:14px;color:#666;"> <%=it(@subtitle,scope: ['notify_user', 'notify_like']) || ""%></td>
+                          </tr>
+                        </tbody>
+                      </table> </td>
+                      <td width="10" height="77" > &nbsp; </td>
+                      <td  width="32" style="text-align:right;">
+                        <% if @recipient.has_picture? %>
+                        <a href="<%=@recipient.fullpermalink(:locale) || "#"%>" style="border:none;color:#0084b4;text-decoration:none;">
+                          <img  src="<%=@recipient.picture_small%>" width="64" height="64" alt="diveboard" style="background:#fff;border-radius:5px;border:0;" />
+                        </a>
+                        <% end %>
+                      </td>
+                      <td  style="width:46px;"></td>
+                    </tr>
+                      <tr>
+                        <td  style="background:#fff;border-top:1px solid #ddd;">&nbsp;</td>
+                        <td  style="background:#fff;border-top:1px solid #ddd;">&nbsp;</td>
+                        <td  height="17" style="background:#fff;border-top:1px solid #ddd;"></td>
+                        <td  height="17" colspan="4" style="background:#fff;border-top:1px solid #ddd;">&nbsp;</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+                <td rowspan="3"></td>
+              </tr>
+              <tr>
+                <td  style="background:#fff;">
+                  <table width="670" border="0" cellpadding="0" cellspacing="0"  style="background:#fff;">
+                    <tbody>
+                      <tr>
+                        <td  style="width:85px;"></td>
+                        <td  width="520">
+                          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                            <tbody>
+                              <tr>
+                                <td height="0"></td>
+                              </tr>
+                              <tr>
+                                <td align="center">
+                                  <%=yield%>
+                                </td>
+                              </tr>
+
+                            </tbody>
+                          </table>
+                        </td>
+                        <td  style="width:85px;"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <table bgcolor="#e7e8ea" border="0" cellpadding="0" cellspacing="0" width="670"  style="background-color:#e7e8ea;background-image:url('<%=ROOT_URL%>img/newsletter/newsletter_footer_split.png');background-position:top;background-repeat:no-repeat;border-top:none;background-size: 670px; max-width: 670px;">
+                    <tbody>
+                      <tr>
+                        <td colspan="4" height="22" ></td>
+                      </tr>
+                      <tr>
+                        <td  style="width:85px;"></td>
+                        <td  style="font-size:12px;line-height:17px;color:#777;text-shadow:0 1px 0 #fff;">
+                          <%= render partial: "layouts/unsubscribe.html", locals: {tag: @tag, recipient: @recipient, claim: @claim}%>
+                        </td>
+                        <td  style="width:85px;"></td>
+                      </tr>
+                      <tr>
+                        <td colspan="3"  height="25"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>

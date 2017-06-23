@@ -1,0 +1,66 @@
+<div id="services">
+  <div id="category_title">
+    <h2><%= it("Services",
+            scope: ['shop_pages', 'v2', 'services']) %></h2>
+    <div class="clear"></div>
+  </div>
+
+  <%
+    first = true
+    @shop.all_dive_goods.group_by(&:cat1).each do |cat,g|
+  %>
+  <% if first == true
+      first = false
+    else
+  %>
+    <div class="sep20"></div>
+  <% end %>
+  <div class="product_list">
+    <p class='category'><%=cat%></p>
+    <%
+      i = 0
+      length = g.count
+    %>
+    <%g.each do|good| %>
+    <div class="product <%= 'hided' if i >= 3 %>">
+      <p class="name"><%=good.title%></p>
+      <%if !good.description.blank?%>
+        <div class="description closed" style="display:none;"><%=good.description.gsub("\n","<br>").html_safe%></div>
+      <%end%>
+      <%if params[:vat] == 'exc'
+        price = good.price_before_tax
+      else
+        price = good.price_after_tax
+      end%>
+      <%if !price.nil? %>
+      <div class="price">
+        <img src="<%= HtmlHelper.lbroot "/img/shop/svg/icon_pig.svg" %>" alt="" />
+        <p><%if good.currency == "USD" then %>$<%=price%><%else%><%= "#{price} #{good.currency}" %><%end%></p>
+      </div>
+      <%end%>
+      <div class="book_details">
+      <%if !good.description.blank?%>
+        <a href="javascript:void(0)" class="details"><%= it("View details",
+                                                         scope: ['settings', 'orders']) %></a>
+      <%end%>
+        <div class="book_button" product_id="<%= good.id %>" product_name="<%= good.title %>" product_price="<%= price %>">
+          <p style="padding-left: 18px;">
+            <%= it("Book",
+                scope: ['shop_pages', 'v2', 'services']) %>
+          </p>
+          <img src="<%= HtmlHelper.lbroot "/img/icon_arrow_book_now_bw.svg" %>" alt="" /></div>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <% unless i >= length - 1 %><div class="product_sep <%= 'hided' if i >= 2 %>"></div><% end %>
+    <%
+      i += 1
+      end
+    %>
+    <% if i > 3 %><div class="load_more_button"><%= it("Show more %{category}",
+                                                    scope: ['shop_pages', 'v2', 'services'],
+                                                    category: cat) %></div><% end %>
+  </div>
+  <%end%>
+
+</div>

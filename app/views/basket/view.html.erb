@@ -1,0 +1,128 @@
+<style>
+
+
+</style>
+
+<%if baskets.length == 0 then%>
+  <p>No baskets</p>
+<%end%>
+
+<% basket_index = 0
+baskets.each do |shop_id, basket|
+  basket_index += 1
+  shop = Shop.find(shop_id)
+  shop_api =  shop.to_api(:technical, :caller => @user).to_json
+  basket_currency = basket.total.currency.iso_code%>
+<%if basket_index > 1%><div class='separator' /><%end%>
+<div>
+  <div class='basket_header'>
+    <h2>Orders with <a href='<%=basket.shop.fullpermalink(:locale)%>'><%=basket.shop.name%></a></h2>
+    <%if basket.reference%><p><strong>Ref Order:</strong> <%=basket.reference%></p><%end%>
+    <%if begin basket.basket_payment.status == 'confirmed' rescue nil end then%><p><strong><%= it("Ref payment:", scope: ['basket', 'view']) %></strong> <%=basket.basket_payment.ref_paypal%></p><%end%>
+  </div>
+  <table class='basket_table'>
+    <tr>
+      <th><%= it("Designation", scope: ['basket', 'view']) %></th>
+      <th><%= it("Quantity", scope: ['basket', 'view']) %></th>
+      <th><%= it("Unit price", scope: ['basket', 'view']) %><br/><span class='note'><%if shop.price_ref_incl_tax then%><%= it("(inc. tax)", scope: ['basket', 'view']) %><%else%><%= it("(excl. tax)", scope: ['basket', 'view']) %><%end%></span></th>
+      <th><%= it("Total", scope: ['basket', 'view']) %></th>
+      <td></td>
+      <%if interactive%><td rowspan=4 class='proceed_to_checkout'>
+        <div><%= it("Proceed to checkout for %{shop}", scope: ['basket', 'view'], shop: shop.name) %>:</div>
+        <div><input class='shop_checkout_action' type="image" src="https://www.paypal.com/<%=if I18n.locale == :fr then 'fr_FR' else 'en_US' end%>/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="<%= it("PayPal - The safer, easier way to pay online!", scope: ['basket', 'view']) %>" data-basket_id="<%=basket.id%>"/></div>
+      <div>or</div>
+      <div><button class='grey_button close_dialog'><%= it("continue shopping", scope: ['basket', 'view']) %></button></div>
+    </td><%end%>
+    </tr>
+
+    <%basket.basket_items.each do |item|%>
+      <tr class='item_line'>
+        <td>
+          <p class='title'><a href='<%=shop.fullpermalink(:locale)%>/<%=item.realm%>'><%=item.good_to_sell.title%></a></p>
+          <%if item.deposit_option then%>
+            <div class='desc'>
+              <%= it("Deposit of %{price} to secure booking.", scope: ['basket', 'customer_view'], price: item.line_price_after_tax.format) %><br/>
+              <%= it("Balance of %{price} inc. taxes to be paid directly to %{shop}", scope: ['basket', 'customer_view'], price: item.remaining_after_deposit.format, shop: shop.name) %>.
+            </div>
+          <%end%>
+          <%unless item.details.blank?%>
+            <p class='desc'>For <%=item.details['divers'].length%> diver<%if item.details['divers'].length != 1%>s<%end%>
+            <%if item.details['date_type'] == 'one' %>on the <%=item.details['date_at']%>
+            <%elsif item.details['date_type'] == 'period' %>from the <%=item.details['date_from']%> to the <%=item.details['date_to']%>
+            <%end%>
+            </p>
+          <%end%>
+        </td>
+        <td>
+          <%=item.quantity%>
+        </td>
+        <td>
+          <%if item.price_after_tax.currency.iso_code == basket_currency%>
+          <%=if shop.price_ref_incl_tax then item.price_after_tax else item.price_before_tax end%>
+          <%else%>
+          <%=if shop.price_ref_incl_tax then item.price_after_tax.format else item.price_before_tax.format end%>
+          <%end%>
+        </td>
+        <td>
+          <%if item.line_price_after_tax.currency.iso_code == basket_currency%>
+          <%=if shop.price_ref_incl_tax then item.line_price_after_tax else item.line_price_before_tax end%>
+          <%else%>
+          <%=if shop.price_ref_incl_tax then item.line_price_after_tax.format else item.line_price_before_tax.format end%>
+          <%end%>
+        </td>
+        <%if interactive%>
+        <td>
+          <button class='grey_button_small remove_basket_item' data-item_id='<%=item.id%>'>Remove</button>
+          <button class='grey_button_small buy_button' data-item_id='<%=item.id%>' data-modify_item="<%=item.to_api(:private, :private => true).to_json%>" data-what_to_buy="<%=item.good_to_sell.to_api(:public).to_json%>" data-shop="<%=shop_api%>">Modify</button>
+        </td>
+        <%end%>
+      </tr>
+    <%end%>
+
+    <%if !shop.price_ref_incl_tax then%>
+      <tr>
+        <td><%= it("Sub Total", scope: ['basket', 'view']) %></td>
+        <td/><td/>
+        <td><%=basket.subtotal.format%></td>
+      </tr>
+      <tr>
+        <td><%= it("Sales Taxes", scope: ['basket', 'view']) %></td>
+        <td/><td/>
+        <td><%=basket.tax_amount.format%></td>
+      </tr>
+      <tr class='total_line'>
+        <td><%= it("Total", scope: ['basket', 'view']) %></td>
+        <td/><td/>
+        <td><%=basket.total.format%></td>
+      </tr>
+    <%else%>
+      <tr class='total_line'>
+        <td><%= it("Total", scope: ['basket', 'view']) %></td>
+        <td/><td/>
+        <td><%=basket.total.format%></td>
+      </tr>
+      <tr><td><span class='note'>(Includes <%=basket.tax_amount.format%> sales taxes)</span></td></tr>
+    <%end%>
+
+  </table>
+
+</div>
+<%end%>
+
+
+<%unless @user then%>
+  <div id='login_basket' class='hidden'>
+    <table style='margin: 20px;'>
+      <tr>
+        <td style='padding: 15px; font-size: 14px; line-height: 20px;'>
+          <p><%= it("You must be logged in to complete your order.", scope: ['basket', 'view']) %></p>
+          <br/>
+          <p><%= it("Please sign in to diveboard, or if you don't have an account yet, %{link:sign up}", scope: ['basket', 'view'], link: It.link("/login/register")) %>.</p>
+        </td>
+        <td style='padding: 15px;'>
+          <%= render :partial => 'layouts/login_popup', :locals => {:id => 'login_review', :style => 'login_inline', :hidden => false}%>
+        </td>
+      </tr>
+    </table>
+  </div>
+<%end%>

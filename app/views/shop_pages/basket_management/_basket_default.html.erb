@@ -1,0 +1,25 @@
+<%
+customer = basket.user
+highlight ||= nil
+%>
+
+<iframe class='basket_user_profile' frameborder="0" height="245" width="200" scrolling="no" src="<%=customer.fullpermalink(:locale)%>/widget"></iframe>
+
+<div class='basket_for_shop'>
+  <%if basket.paypal_attention%>
+    <p class='attention_paypal'><strong><%= it("Please check the transaction %{link:on paypal website}", scope: ['basket_management', 'shop_pages', 'basket_confirmed'], link: It.link(Rails.application.config.paypal[:api_3t_url]+"?cmd=_view-a-trans&id="+(basket.paypal_capture_id||basket.paypal_order_id), target: "_blank")) %></strong>.<br/><%= it("This transaction requires your attention to be completed. Once the transaction on paypal is completed, the order will be automatically updated here.", scope: ['basket_management', 'shop_pages', 'basket_default']) %></p>
+  <%end%>
+
+  <%= render :partial => 'basket/shop_view', :locals => {:baskets => {basket.shop_id => basket}, :interactive => false}%>
+</div>
+
+
+<div class='basket_past_detail'>
+  <div class='history'>
+    <h2><%= it("Basket history", scope: ['basket_management', 'shop_pages', 'basket_default']) %></h2>
+    <%= render :partial => 'shop_pages/basket_management/history', :locals => {:basket => basket}%>
+  </div>
+  <div class='exchanges'>
+    <%= render :partial => 'shop_pages/care/customer_history', :locals => {:shop => basket.shop, :customer => customer, :highlight => highlight||basket, :in_reply_to => basket}%>
+  </div>
+</div>

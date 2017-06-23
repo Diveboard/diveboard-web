@@ -1,0 +1,17 @@
+  <div class="main_info" align="left">
+    <div>
+      Not only is Diveboard the #1 Online Logbook, but it's also the best place for scuba divers to look for their next dive trips!<br/><br/>
+      Grab and <b>secure new customers</b> now by activating the <b>online booking</b> solution embedded in diveboard.<br/><br/>
+      List your services, link your paypal account and you're done !<br/>
+    </div><br/>
+    <div style="font-size: 11px;">
+      We only take 5% of the transaction with 12$ minimum (excluding Paypal fees) and only when the sale is finalized and confirmed. We only win when you win.
+    </div>
+    <div><br/>
+      <center><a href="<%if @shop.is_claimed?%><%=@shop.fullpermalink%>/edit/dive<%else%><%=@claim%><%end%>" class="yellow_button">START ACCEPTING BOOKINGS NOW</a></center>
+      <br/>
+      Not sure yet ? Check out how our friends at <a href="http://<%=ROOT_URL%>pro/dive_shack_usa/dive">Dive Shack USA</a> are doing it !<br/>
+      <center><a href="http://<%=ROOT_URL%>pro/dive_shack_usa/dive"><img src="<%=ROOT_URL%>/img/email_marketing/diveshack_book.png" width=400 height=76/></a></center>
+    </div>
+    <br/>
+  </div>

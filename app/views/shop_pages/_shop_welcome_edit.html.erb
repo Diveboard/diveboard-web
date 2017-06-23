@@ -1,0 +1,56 @@
+<%if params[:success] == "true"%>
+<h2><%= it("Congratulations!", scope: ['shop_pages', 'shop_welcome_edit']) %></h2>
+<p style='margin: 0px 10px 10px 10px'>
+<%= it("You are now a manager of this shop!%{br}
+Take a few minutes and read this welcome page to learn about your shop on Diveboard and how to get the most of it.
+Don't worry if you're in a rush, you'll always be able to come back later.", scope: ['shop_pages', 'shop_welcome_edit'], br: It.tag("br")) %>
+</p>
+<%end%>
+<h2><%= it("Shop page management 101", scope: ['shop_pages', 'shop_welcome_edit']) %></h2>
+<p style='margin: 0px 10px 10px 10px'>
+<%= it("The next steps you need to complete to make your business look awesome on Diveboard", scope: ['shop_pages', 'shop_welcome_edit']) %><br/>
+<ul class="dotted_list" style="margin-left: 15px;">
+  <li><a href="#customize"><%= it("Customize your page", scope: ['shop_pages', 'shop_welcome_edit']) %></a></li>
+  <li><a href="#list"><%= it("List your dive packages", scope: ['shop_pages', 'shop_welcome_edit']) %></a></li>
+  <li><a href="#market"><%= it("Increase your visibility", scope: ['shop_pages', 'shop_welcome_edit']) %></a></li>
+  <li><a href="#reputation"><%= it("Manage your reputation", scope: ['shop_pages', 'shop_welcome_edit']) %></a></li>
+</ul>
+</p>
+<h3><a name="customize"><%= it("Customize your page", scope: ['shop_pages', 'shop_welcome_edit']) %></a></h3>
+<p>
+  <img src="/img/shops/welcome/profile.jpg" style="float: left; width: 300px; margin-right: 20px;"/><%= it("The first thing you'll want to do is personalize your page.", scope: ['shop_pages', 'shop_welcome_edit']) %>
+</p>
+  <h4><%= it("Profile tab", scope: ['shop_pages', 'shop_welcome_edit']) %></h4>
+  <p><%= it("The %{b:basic information} about your business (location, name, links to your website...) can be found in the \"PROFILE\" tab accessible through the menu on the left side of the page.
+  Make sure you upload your business' logo, fill as many details as you can (location, internet presence...) and add a few lines about available accomodations or useful tips for travelers interested in checking you out. Don't forget to save when you're done.", scope: ['shop_pages', 'shop_welcome_edit'], b: It.tag("b")) %></p>
+  <h4 style='margin: 10px'><%= it("Home tab", scope: ['shop_pages', 'shop_welcome_edit']) %></h4>
+  <p><%= it("Afterwards you can %{b:customize the home page} with awesome content for your business. Upload a few pictures that we will help you crop to fit the banner's format. Write a few notes about your business, what you excell at... drop a few lines about your location, your equipment, the local dive spots... anything you think may be interesting to potential customers.", scope: ['shop_pages', 'shop_welcome_edit'], b: It.tag("b")) %></p>
+<div style="clear: both;"></div>
+<h3><a name="list"><%= it("List your dive packages", scope: ['shop_pages', 'shop_welcome_edit']) %></a></h3>
+<p>
+<img src="/img/shops/welcome/sell.jpg" style="float: right; width: 300px; margin-left: 20px;"/>
+<%= it("Diveboard is a full featured e-commerce platform. You can %{b:list your dive packages, courses...} and anything else you're selling.
+On the \"DIVE\" tab, we're making your life easier by letting you select the organisations you are affiliated with (PADI, CMAS...) and generate a standard list based on this data. Just input your prices, make sure you're using the appropriate taxes settings and currency and you're set. Don't worry we'll enable potential customers to check the price list in their local currency.", scope: ['shop_pages', 'shop_welcome_edit'], b: It.tag("b")) %></p>
+<p>
+<%= it("To accept %{b:online bookings}, you must link your paypal acount to start accepting payments.
+When users book dives or courses, you'll be notified and you'll have to confirm the booking. When you have confirmed the booking, the customer is billed and the money gets transferred to your account minus the paypal commission. You'll receive an invoice from Diveboard by the end of the month for Diveboard transaction fees.", scope: ['shop_pages', 'shop_welcome_edit'], b: It.tag("b")) %>
+</p>
+<div style="clear: both;"></div>
+<h3><a name="market"><%= it("Increase your visibility", scope: ['shop_pages', 'shop_welcome_edit']) %></a></h3>
+<p>
+<img src="/img/shops/welcome/ads.jpg" style="float: left; width: 300px; margin-right: 20px;"/>
+<%= it("The \"ADS\" tab will let you create %{b:advertisement within Diveboard}. Diveboarders or visitors looking for businesses in a given area will be able to see those ads. The free plan gets one free ad, but if you upgrade so does the number of ads you can display. We'll let you monitor your ad performance to help you tune it.", scope: ['shop_pages', 'shop_welcome_edit'], b: It.tag("b")) %>
+</p>
+<div style="clear: both;"></div>
+<h3><a name="reputation"><%= it("Manage your reputation", scope: ['shop_pages', 'shop_welcome_edit']) %></a></h3>
+<img src="/img/shops/welcome/reviews.jpg" style="float: right; width: 300px; margin-left: 20px;"/>
+<p> <%= it("One of the most important elements on Diveboard is your reputation. Keep a close eye on the review tab on your public page.", scope: ['shop_pages', 'shop_welcome_edit']) %></p>
+<p><%= it("%{b:Tip}: bad reviews can happen, not everything always goes smoothly - if you've subscribed to a premium plan, you'll be able to reply to those reviews.%{br}%{br}
+Make sure to ask your past and future customers to log the dives they made with you and to leave a review.", scope: ['shop_pages', 'shop_welcome_edit'], b: It.tag("b"), br: It.tag("br")) %></p>
+<div style="clear: both;"></div>
+<%if begin shop.subscribed_plan[:title] rescue nil end%>
+<h3><%= it("Diveboard services", scope: ['shop_pages', 'shop_welcome_edit']) %></h3>
+<p><%= it("This shop benefits from the services of the %{b:%{plan}} plan.", scope: ['shop_pages', 'shop_welcome_edit'], b: It.tag("b"), plan: shop.subscribed_plan[:title]) %> <b></b><a href='/login/register_pro/plan?start=1&shop_id=<%=shop.id%>'><%= it("See other options", scope: ['shop_pages', 'shop_welcome_edit']) %></a></p>
+<%end%>
+
+

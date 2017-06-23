@@ -1,0 +1,113 @@
+<div id="dialog-enter-review" title="<%= it("Enter a review for %{shop}", scope: ['shop_pages', 'form_review'], shop: shop.name) %>" style="display:none;">
+  <p class="dialog-text-highlight"><%= it("You have dived with %{shop_name}? Leave a comment about your experience, it will help out your fellow divers who travel to this part of the world. Thanks!", scope: ['shop_pages', 'form_review'], shop_name: shop.name) %></p>
+
+
+    <input type='hidden' id='review_id' value="<%= if review then review.id end %>" />
+    <input type='hidden' id='review_user_id' value="<%= @user.id rescue nil%>" />
+    <input type='hidden' id='review_shop_id' value="<%= shop.id %>" />
+    <h3><%= it("Overall", scope: ['shop_pages', 'form_review']) %></h3>
+    <div class='review_answer'>
+      <div id='recommend_yes' class='list_option select_overall <%=if review && review.recommend then 'active' end%>'><input type='hidden' value='1' ><img src='/img/icons/vote_positive.png' alt='+' class='vote_icon' /> <%= it("I would recommend it", scope: ['shop_pages', 'form_review']) %></div>
+      <div id='recommend_no'  class='list_option select_overall <%=if review && !review.recommend then 'active' end%>'><input type='hidden' value='-1'><img src='/img/icons/vote_negative.png' alt='-' class='vote_icon' /> <%= it("I would disrecommend it", scope: ['shop_pages', 'form_review']) %></div>
+    </div>
+    <h3><%= it("What service did you mainly use?", scope: ['shop_pages', 'form_review']) %></h3>
+    <div class='review_answer review_services'>
+      <div name='autonomous' class='list_option <%= if review && review.service == 'autonomous' then 'active' end %>'><%= it("Autonomous dive", scope: ['shop_pages', 'form_review']) %></div>
+      <div name='guide'      class='list_option <%= if review && review.service == 'guide'      then 'active' end %>'><%= it("Guide", scope: ['shop_pages', 'form_review']) %></div>
+      <div name='fill'       class='list_option <%= if review && review.service == 'fill'       then 'active' end %>'><%= it("Tank fill", scope: ['shop_pages', 'form_review']) %></div>
+      <div name='training'   class='list_option <%= if review && review.service == 'training'   then 'active' end %>'><%= it("Training", scope: ['shop_pages', 'form_review']) %></div>
+      <div name='snorkeling' class='list_option <%= if review && review.service == 'snorkeling' then 'active' end %>'><%= it("Snorkeling", scope: ['shop_pages', 'form_review']) %></div>
+      <div name='other'      class='list_option <%= if review && review.service == 'other'      then 'active' end %>'><%= it("Other", scope: ['shop_pages', 'form_review']) %></div>
+    </div>
+    <h3><%= it("Would you like to say a few words? (optional - 50 characters minimum)", scope: ['shop_pages', 'form_review']) %></h3>
+    <p><%= it("Give your review a title:", scope: ['shop_pages', 'form_review']) %></p>
+    <div class='review_answer'>
+      <input type='text' id='review_form_title' value="<%=if review && !review.title.nil? then h review.title end%>"/>
+    </div>
+    <p><%= it("Your review:", scope: ['shop_pages', 'form_review']) %></p>
+    <div class='review_answer'>
+      <textarea id='review_form_comment'><%=if review && !review.comment.nil? then h review.comment end%></textarea>
+    </div>
+    <h3><%= it("Could you give some more detail? (optional)", scope: ['shop_pages', 'form_review']) %></h3>
+    <div class='review_answer'>
+      <table>
+        <tr>
+          <td><%= it("Organization", scope: ['shop_pages', 'form_review']) %></td>
+          <td>
+            <input type='radio' name='star_orga' title='<%= it("Terrible", scope: ['shop_pages', 'form_review']) %>'  value='1' class='hover-star' <%= if review && review.mark_orga == 1 then 'checked' end %> />
+            <input type='radio' name='star_orga' title='<%= it("Poor", scope: ['shop_pages', 'form_review']) %>'      value='2' class='hover-star' <%= if review && review.mark_orga == 2 then 'checked' end %> />
+            <input type='radio' name='star_orga' title='<%= it("Average", scope: ['shop_pages', 'form_review']) %>'   value='3' class='hover-star' <%= if review && review.mark_orga == 3 then 'checked' end %> />
+            <input type='radio' name='star_orga' title='<%= it("Very good", scope: ['shop_pages', 'form_review']) %>' value='4' class='hover-star' <%= if review && review.mark_orga == 4 then 'checked' end %> />
+            <input type='radio' name='star_orga' title='<%= it("Excellent", scope: ['shop_pages', 'form_review']) %>' value='5' class='hover-star' <%= if review && review.mark_orga == 5 then 'checked' end %> />
+          </td>
+          <td class='tooltip_star'></td>
+        </tr>
+        <tr>
+          <td><%= it("Friendliness", scope: ['shop_pages', 'form_review']) %></td>
+          <td>
+            <input type='radio' name='star_friend' title='<%= it("Terrible", scope: ['shop_pages', 'form_review']) %>'  value='1' class='hover-star' <%= if review && review.mark_friend == 1 then 'checked' end %> />
+            <input type='radio' name='star_friend' title='<%= it("Poor", scope: ['shop_pages', 'form_review']) %>'      value='2' class='hover-star' <%= if review && review.mark_friend == 2 then 'checked' end %> />
+            <input type='radio' name='star_friend' title='<%= it("Average", scope: ['shop_pages', 'form_review']) %>'   value='3' class='hover-star' <%= if review && review.mark_friend == 3 then 'checked' end %> />
+            <input type='radio' name='star_friend' title='<%= it("Very good", scope: ['shop_pages', 'form_review']) %>' value='4' class='hover-star' <%= if review && review.mark_friend == 4 then 'checked' end %> />
+            <input type='radio' name='star_friend' title='<%= it("Excellent", scope: ['shop_pages', 'form_review']) %>' value='5' class='hover-star' <%= if review && review.mark_friend == 5 then 'checked' end %> />
+          </td>
+          <td class='tooltip_star'></td>
+        </tr>
+        <tr>
+          <td><%= it("Security", scope: ['shop_pages', 'form_review']) %></td>
+          <td>
+            <input type='radio' name='star_secu' title='<%= it("Terrible", scope: ['shop_pages', 'form_review']) %>'  value='1' class='hover-star' <%= if review && review.mark_secu == 1 then 'checked' end %> />
+            <input type='radio' name='star_secu' title='<%= it("Poor", scope: ['shop_pages', 'form_review']) %>'      value='2' class='hover-star' <%= if review && review.mark_secu == 2 then 'checked' end %> />
+            <input type='radio' name='star_secu' title='<%= it("Average", scope: ['shop_pages', 'form_review']) %>'   value='3' class='hover-star' <%= if review && review.mark_secu == 3 then 'checked' end %> />
+            <input type='radio' name='star_secu' title='<%= it("Very good", scope: ['shop_pages', 'form_review']) %>' value='4' class='hover-star' <%= if review && review.mark_secu == 4 then 'checked' end %> />
+            <input type='radio' name='star_secu' title='<%= it("Excellent", scope: ['shop_pages', 'form_review']) %>' value='5' class='hover-star' <%= if review && review.mark_secu == 5 then 'checked' end %> />
+          </td>
+          <td class='tooltip_star'></td>
+        </tr>
+        <tr>
+          <td><%= it("Ease of access to water", scope: ['shop_pages', 'form_review']) %></td>
+          <td>
+            <input type='radio' name='star_boat' title='<%= it("Terrible", scope: ['shop_pages', 'form_review']) %>'  value='1' class='hover-star' <%= if review && review.mark_boat == 1 then 'checked' end %> />
+            <input type='radio' name='star_boat' title='<%= it("Poor", scope: ['shop_pages', 'form_review']) %>'      value='2' class='hover-star' <%= if review && review.mark_boat == 2 then 'checked' end %> />
+            <input type='radio' name='star_boat' title='<%= it("Average", scope: ['shop_pages', 'form_review']) %>'   value='3' class='hover-star' <%= if review && review.mark_boat == 3 then 'checked' end %> />
+            <input type='radio' name='star_boat' title='<%= it("Very good", scope: ['shop_pages', 'form_review']) %>' value='4' class='hover-star' <%= if review && review.mark_boat == 4 then 'checked' end %> />
+            <input type='radio' name='star_boat' title='<%= it("Excellent", scope: ['shop_pages', 'form_review']) %>' value='5' class='hover-star' <%= if review && review.mark_boat == 5 then 'checked' end %> />
+          </td>
+          <td class='tooltip_star'></td>
+        </tr>
+        <tr>
+          <td><%= it("Equipment rental", scope: ['shop_pages', 'form_review']) %></td>
+          <td>
+            <input type='radio' name='star_rent' title='<%= it("Terrible", scope: ['shop_pages', 'form_review']) %>'  value='1' class='hover-star' <%= if review && review.mark_rent == 1 then 'checked' end %> />
+            <input type='radio' name='star_rent' title='<%= it("Poor", scope: ['shop_pages', 'form_review']) %>'      value='2' class='hover-star' <%= if review && review.mark_rent == 2 then 'checked' end %> />
+            <input type='radio' name='star_rent' title='<%= it("Average", scope: ['shop_pages', 'form_review']) %>'   value='3' class='hover-star' <%= if review && review.mark_rent == 3 then 'checked' end %> />
+            <input type='radio' name='star_rent' title='<%= it("Very good", scope: ['shop_pages', 'form_review']) %>' value='4' class='hover-star' <%= if review && review.mark_rent == 4 then 'checked' end %> />
+            <input type='radio' name='star_rent' title='<%= it("Excellent", scope: ['shop_pages', 'form_review']) %>' value='5' class='hover-star' <%= if review && review.mark_rent == 5 then 'checked' end %> />
+          </td>
+          <td class='tooltip_star'></td>
+        </tr>
+      </table>
+    </div>
+    <p><input type='checkbox' id='review_anonymous' <%= if review && review.anonymous then 'checked' end %> ><span class='click_toggle_input'><%= it("Stay anonymous (your name won't be shown along with your comment)", scope: ['shop_pages', 'form_review']) %></span></p>
+
+  <div class='diveboard_popup_buttons'>
+    <%if @user.nil? then%><a href='#' class='yellow_button review_popup_login'><%= it("Post review", scope: ['shop_pages', 'form_review']) %></a><%end%>
+    <%if !@user.nil? then%><a href='#' class='yellow_button review_popup_post'><%= it("Post review", scope: ['shop_pages', 'form_review']) %></a><%end%>
+    <%if !@user.nil? && review then%><a href='#' class='yellow_button review_popup_delete'><%= it("Delete review", scope: ['shop_pages', 'form_review']) %></a><%end%>
+    <a href='#' class='<%if !@user.nil? then%>yellow_button<%else%>grey_button<%end%> review_popup_cancel'><%= it("Cancel", scope: ['shop_pages', 'form_review']) %></a>
+  </div>
+
+</div>
+
+<%if @user.nil?%>
+<div id="dialog-login-review" title="<%= it("Enter a review for %{shop}", scope: ['shop_pages', 'form_review'], shop: shop.name) %>" style="display:none;">
+  <p class="dialog-text-highlight"><%= it("Just one step left to complete your review for %{shop_name} !", scope: ['shop_pages', 'form_review'], shop_name: shop.name) %></p>
+
+  <%= render :partial => 'login/login_included_popup', :locals => {:id => 'login_review', :style => 'login_included', :hidden => false}%>
+
+  <div class='diveboard_popup_buttons'>
+    <a href='#' class='grey_button login_cancel'><%= it("Cancel", scope: ['shop_pages', 'form_review']) %></a>
+  </div>
+
+</div>
+<%end%>

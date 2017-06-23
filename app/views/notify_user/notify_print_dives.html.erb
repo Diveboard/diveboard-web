@@ -1,0 +1,4 @@
+  <div class="main_info" align="left">
+    <p><a href="<%=@logbook_url%>"><img src="<%=ROOT_URL%>img/email_marketing/pdf_icon.png" class="left" width=40/></a><%= it("Wowsers ! Your PDF logbook has been generated. Download it now !", scope: ['notify_user', 'notify_print_dives']) %></p>
+    <p><center><a href="<%=@logbook_url%>" class="yellow_button" style="margin-top: 20px; margin-bottom: 10px"><%= it("Download PDF", scope: ['notify_user', 'notify_print_dives']) %></a></center></p>
+  </div>

@@ -1,0 +1,20 @@
+  <div class="diveboard_tips">
+    <h2><%= it("Diveboard tips", scope: ['notify_user', 'diveboard_tips']) %></h2>
+    <p><img src="<%=ROOT_URL%>img/email_marketing/share_tab.png" width=200 class="left"><b><%= it("Did you know it ?", scope: ['notify_user', 'diveboard_tips']) %></b> <br/><br/><%= it("It's easy to share your dives on social networks.%{br}%{br}
+    Each dive has a \"share\" tab where you'll find 1-click access to the main social networks as well as ready-to-share direct links to your dive. %{br}%{br} You'll find also hints on stuff you may want to add to your log in order to make your memories even more vivid.", scope: ['notify_user', 'diveboard_tips'], br: It.tag("br")) %>
+  </div>
+  <div class="diveboard_tips">
+    <h2><%= it("Shots that wow", scope: ['notify_user', 'diveboard_tips']) %></h2>
+    <p><%= it("Since we all love beautiful underwater pics, here's one random pick from the %{link:Gallery} !", scope: ['notify_user', 'diveboard_tips'], link: ROOT_URL + "explore/gallery") %></p>
+  <%
+    offset = (rand*100).round
+    pictures = Picture.unscoped.includes(:picture_album_pictures => :dive).where('dives.privacy=0').offset(offset).limit(1).order('pictures.great_pic DESC, ADDDATE(pictures.created_at, interval pictures.id%7 day) DESC')
+    picture = pictures.first
+
+  %>
+    <p>
+      <a href="<%=picture.fullpermalink(nil, :locale)%>"><img src="<%=picture.medium%>" class="centered framed" width=450/><br/>
+      <%= it("By %{user} in %{country}", scope: ['notify_user', 'diveboard_tips'], user: picture.user.nickname, country: picture.dive.spot.country.name) %>
+      </a>
+    </p>
+  </div>

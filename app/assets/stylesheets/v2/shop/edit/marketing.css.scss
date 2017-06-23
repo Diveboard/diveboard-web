@@ -1,0 +1,62 @@
+@import 'variablesv2';
+.cursor_pointer {cursor: pointer;}
+.marketing_widget
+{
+	max-width: $home-width;
+	margin: 0 auto;
+
+	.container {
+		background-color: white;
+		border: solid 1px #dfdfdf;
+		margin-top: 15px;
+		padding: 15px;
+		.widget_preview {
+			margin-top: 15px;
+			.controls_title {
+				font-weight: 600;
+				margin-bottom: 20px;
+			}
+			.iframe_container, .controls {
+				display: inline-block;
+				vertical-align: top;
+			}
+			.iframe_container {
+				min-width: 400px;
+				margin-left: 20px;
+			}
+			.html_preview {
+  			width: 400px;
+  			height: 100px;
+  				  font-size: 0.93em;
+  		}
+		}
+	}
+}
+
+.marketing_ads
+{
+	max-width: $home-width;
+	margin: 0 auto;
+
+	.container {
+		background-color: white;
+		border: solid 1px #dfdfdf;
+		margin-top: 15px;
+		padding: 15px;
+
+	}
+	.ad_item_create {
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    display: inline-block;
+    a {
+      color: none;
+    }
+  }
+  .ad_item_create:hover {
+    background-color: #3c4245;
+    color: #fdc90c;
+  }
+}

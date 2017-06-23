@@ -1,0 +1,34 @@
+<div class="widget_edit_holder widget_picture_banner" data-widget_type="picture_banner" data-widget_id="<%=widget.id%>" data-album_id="<%=widget.album_id%>">
+  <div class="edit">
+    <div class='main_content_box' id='logo_upload_ctl'>
+      <h2><%= it("Image Banner", scope: ['widgets', 'widget_picture_banner_edit']) %></h2>
+      <p class="dialog-text-highlight"><%= it("Add one or more pictures to your page. If you add many pictures on the same banner they will automatically rotate.%{br}You can change the banner order by dragging the banners.", scope: ['widgets', 'widget_picture_banner_edit'], br: It.tag("br")) %></p>
+
+      <div class='banners_container' <%if widget.pictures.empty?%>style="display:none;"<%end%>>
+        <h3><%= it("Banners:", scope: ['widgets', 'widget_picture_banner_edit']) %></h3>
+        <ul>
+          <%widget.pictures.each do |p|%>
+          <li>
+            <img src="<%=p.large%>" style="margin:5px 22px;" width=800 data-image_id="<%=p.id%>"/>
+            <span class="symbol delete_image_widget_picture_banner">'</span>
+          </li>
+          <%end%>
+        </ul>
+      </div>
+      <div class='upload_container'>
+        <div class="imageuploader">
+          <span class="third_lvl_header"><%= it("Upload New Image (2Mb max):", scope: ['widgets', 'widget_picture_banner_edit']) %></span>
+          <div class="select_file_btn"><%= it("Import a picture", scope: ['widgets', 'widget_picture_banner_edit']) %></div>
+        </div>
+        <div class="picture_table" style="display:none;">
+          <div class="third_lvl_header"><%= it("Select a thumbnail:", scope: ['widgets', 'widget_picture_banner_edit']) %></div>
+          <div class="picturepreview" style='display: inline-block'></div>
+          <div style="display: block; ">
+            <button href="#" class="yellow_button image_confirm" style='margin-left: 25px;'><%= it("Confirm", scope: ['widgets', 'widget_picture_banner_edit']) %></button>
+            <button href="#" class="grey_button_v1 image_cancel" style='margin:10px;'><%= it("Cancel", scope: ['widgets', 'widget_picture_banner_edit']) %></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+<html>
+<body>
+
+<div style='background-color: #222; color: #1D1D1D; max-width: 800px; padding: 20px; font-size: 12px; font-family: "Helvetica, Verdana, Arial, sans-serif"; text-shadow: white 0px 1px;'>
+
+  <div style='margin-top: 20px; margin-bottom: 30px;'>
+  <img src="http://www.diveboard.com/img/logo-alpha.png" alt="DiveBoard">
+  </div>
+
+  <div style=' background-color: #f9c03d; margin-bottom: 0; padding: 10px; font-size: 24px; font-weight: bolder; text-shadow: #FAF183 0px 1px;'><%= it("Password reset", scope: ['password_reset', 'remind_login']) %></div>
+  <div style='background-color: #f4f4f4; margin-top: 0; padding: 30px 10px 10px 10px;'>
+    <p style='margin: 0px 0 20px 0;'><%= it("We just received a request to remind you with your Diveboard login.", scope: ['password_reset', 'remind_login']) %></p>
+	<% if @user.email.nil?%>
+	<p style='margin: 20px 0 20px 0;'><%= it("You are using Facebook Connect to login to diveboard. To log in simply use the \"Sign-in with Facebook\" button on the %{link:login page}.", scope: ['password_reset', 'remind_login'], link: ROOT_URL + "login/register") %></p>
+	<%else%>
+    <p style='margin: 20px 0 20px 0;'><%= it("Your login to Diveboard is : %{email}", scope: ['password_reset', 'remind_login'], email: @user.email) %></p>
+	<%end%>
+    <p style='margin: 20px 0 0px 0;'><%= it("If you didn't make this request, you can safely discard this email.", scope: ['password_reset', 'remind_login']) %></p>
+
+    <p style='margin: 30px 0 5px 0;'><%= it("Happy Diving !", scope: ['password_reset', 'remind_login']) %></p>
+    <p style='margin: 5px 0 5px 0;'><%= it("The Diveboard team", scope: ['password_reset', 'remind_login']) %></p>
+    <p style='margin: 5px 0 0px 0;'><a href='http://www.diveboard.com'>http://www.diveboard.com</a></p>
+
+  </div>
+
+</div>
+</body>
+</html>

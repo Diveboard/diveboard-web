@@ -1,0 +1,64 @@
+<% reviews.each do |r| %>
+<div class="review">
+  <table class="user_profile">
+    <tr>
+      <td><img src="<%=r.user.picture%>" alt="" /></td>
+      <td>
+        <% if !r.user.first_name.nil? %>
+        <p class="user"><%=r.user.first_name %></p>
+        <% else %>
+        <p class="user"><%=r.user.nickname%></p>
+        <% end %>
+        <p class="date">
+          <%if !r.spot.name.nil? && !r.spot.name.strip.empty?%>
+            <%= it("Dived on: %{location_name} - %{depth}, %{duration}min",
+                scope: ['area_pages', 'v2', 'reviews'],
+                location_name: r.spot.name,
+                depth: r.maxdepth_value.round().to_s + r.maxdepth_unit.to_s,
+                duration: r.duration) %>
+          <%else%>
+            <%= it("Dive of: %{depth}, %{duration}min",
+                scope: ['area_pages', 'v2', 'reviews'],
+                depth: r.maxdepth_value.round().to_s + r.maxdepth_unit.to_s,
+                duration: r.duration) %>
+          <%end %>
+          <% if !r.guide.nil? && !r.shop.nil? %>
+            - <%= it("With %{guide_name} from %{shop_name}",
+                  scope: ['area_pages', 'v2', 'reviews'],
+                  guide_name: r.guide,
+                  shop_name: r.shop.name) %>
+          <% elsif !r.guide.nil? && r.shop.nil? %>
+            - <%= it("With %{guide_name}",
+                  scope: ['area_pages', 'v2', 'reviews'],
+                  guide_name: r.guide) %>
+          <% elsif r.guide.nil? && !r.shop.nil? %>
+            - <%= it("With %{shop_name}",
+                  scope: ['area_pages', 'v2', 'reviews'],
+                  shop_name: r.shop.name) %>
+          <% end %>
+          <br>
+          <%= it("Posted on %{date} at %{time}",
+              scope: ['area_pages', 'v2', 'reviews'],
+              date: r.time_in.strftime(it("d/m/y",
+                                       scope: ['date', 'formats'])),
+              time: r.time_in.strftime(it("H:M",
+                                       scope: ['time', 'formats']))) %>
+        </p>
+      </td>
+    </tr>
+  </table>
+  <table class="rating">
+    <%
+      total = r.review_summary
+      if !total.nil?
+    %>
+    <tr>
+      <%=
+        render "v2/shared/score_bullet", :score => total
+      %>
+    </tr>
+    <% end %>
+  </table>
+  <p class="comment"><%= r.notes%></p>
+</div>
+<% end %>

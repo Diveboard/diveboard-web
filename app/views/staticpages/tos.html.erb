@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%=I18n.locale%>">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <!-- FB Opengraph Tags -->
+
+    <meta property="og:title" content="<%= it("Terms of Service: Discover - Discover Diveboard's features", scope: ['staticpages', 'tos']) %>" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="<%=HtmlHelper.find_root_for :canonical%>" />
+    <meta property="og:image" content="<%=ROOT_URL%>img/OG-thumb.png" />
+    <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+    <%I18n.available_locales.each do |locale|%>
+      <link rel='alternate' href='<%=HtmlHelper.find_root_for (locale)%>' hreflang="<%=locale%>" />
+      <%if locale != I18n.locale then%>
+        <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+      <%end%>
+    <%end%>
+
+    <meta property="og:description" content="<%= it("Diveboard is a scuba diving community enabling divers to track their dives through an online logbook, explore new spots and destinations and share their passion", scope: ['staticpages', 'tos']) %>" />
+    <meta property="og:site_name" content="Diveboard: <%= it("Your online scuba logbook", scope: ['staticpages', 'tos']) %>" />
+    <meta property="fb:admins" content="680251975" />
+    <meta property="fb:admins" content="1077557400" />
+    <meta name="db-cookie-domain" content="<%=COOKIES_DOMAIN%>" />
+
+    <!-- END FB Opengraph Tags -->
+    <meta name="description" content="<%= it("Diveboard is a scuba diving community enabling divers to track their dives through an online logbook, explore new spots and destinations and share their passion", scope: ['staticpages', 'tos']) %>"/>
+    <META NAME="Title" CONTENT="<%= it("Terms of Service: Discover - Discover Diveboard's feature", scope: ['staticpages', 'tos']) %>"/>
+    <title><%= it("Terms of Service: Discover - Discover Diveboard's feature", scope: ['staticpages', 'tos']) %></title>
+
+      <link rel="icon" href="<%=ROOT_URL%>img/favicon/favicon.ico" type="image/x-icon" />
+
+      <link rel="stylesheet" type="text/css" href="<%=auto_file_versionning("/styles/global.css")%>" media="all" />
+<!--[if IE]>
+      <link rel="stylesheet" type="text/css" href="<%=auto_file_versionning("/styles/global-ie.css")%>" media="all" />
+<![endif]-->
+
+      <title>Diveboard: <%= it("Your online scuba logbook. Track, share and explore scuba diving through community dive logs", scope: ['staticpages', 'tos']) %></title>
+    <script type="text/javascript" src="/js/jquery-1.5.2.min.js"></script>
+    <script type="text/javascript" src="<%=auto_file_versionning("/js/jquery.autoclear.js")%>"></script>
+
+    <script type="text/javascript" >
+      $(document).ready( function () {
+        $('.autoclear').autoclear();
+      });
+    </script>
+
+  </head>
+  <body>
+    <div id="fb-root"></div>
+    <%= render :partial => 'layouts/top_menu'  %>
+
+    <div id="container">
+
+
+      <!-- The Sidebar starts here! -->
+      <div id="sidebar" class='about_style'>
+        <div class="settings_sidebar">
+          <ul>
+            <li class="active_item"><a href="/about/tos"><%= it("Terms of Service", scope: ['staticpages', 'tos']) %></a></li>
+            <li><a href="/about/privacy"><%= it("Privacy Policy", scope: ['staticpages', 'tos']) %></a></li>
+          </ul>
+        </div>
+      </div>
+      <!-- The Sidebar Ends Here -->
+      <div id="main_content_area" class="about_style tour_pages privacy_pages">
+        <div class="main_content_header single_main_header">
+          <span class="header_title"><h1><%= it("Terms of Service", scope: ['staticpages', 'tos']) %></h1></span>
+          <div  class="header_top_action"> </div>
+        </div>
+        <div class="main_content_box futuramedium font_shadow_black ">
+          <div style="margin-bottom: 15px; text-shadow: none;"><%= it("(Last updated October 24, 2011)", scope: ['staticpages', 'tos']) %></div>
+          <p><%= it("All sections of these Terms of Use that, by their nature, should survive termination will survive termination, including, without limitation, the sections entitled User Content, Indemnity, Disclaimer of Warranty and Limitation of Liability, and General.", scope: ['staticpages', 'tos']) %></p>
+          <h2><%= it("Introduction", scope: ['staticpages', 'tos']) %></h2>
+          <p><%= it("The Diveboard.com website is an online community for tracking, managing, and sharing all of your scuba activities. It is provided to you by Diveboard (“us” or “we” or “our”), in connection with our partners, service providers, sponsors, or other affiliates. So that we may safely and responsibly manage this site for all of our users, your use of this site is subject to certain terms and conditions. The terms and conditions set forth below (“Terms of Use”), as well as the privacy policy set forth at www.diveboard.com/privacy, apply to your use of the services and functionality provided on or through the Diveboard.com site (the “Site”)", scope: ['staticpages', 'tos']) %>
+          <br/>
+          <%= it("By accessing and using the Site, you acknowledge that you have read, understood, and agree to be bound by these Terms of Use and the Privacy Policy. If you do not accept these Terms of Use and the Privacy Policy, you are not authorized to use the Site. We may modify these Terms of Use and the Privacy Policy at any time and such modification will be effective upon posting to the Site.", scope: ['staticpages', 'tos']) %></p>
+          <h2><%= it("Use of the Site", scope: ['staticpages', 'tos']) %></h2>
+          <p><%= it("This Site contains material, such as software, text, graphics, images, video, audio, data and other material (collectively referred to as the “Content”). The Content may be owned by us or may be provided through an arrangement we have with others, including other users of the Site, or our partners, sponsors, or affiliates. The Content is protected by copyright under both United States and foreign laws. Unauthorized use of the Content may violate copyright, trademark, and other laws. You have no rights in or to the Content, and you may not use the Content except as permitted under these Terms of Use. No other use is permitted without prior written consent from us or the owner of the Content. You must retain all copyright and other proprietary notices contained in the original Content on any copy you make of the Content. You may not sell, transfer, assign, license, sublicense, or modify the Content or reproduce, display, publicly perform, make a derivative version of, distribute, or otherwise use the Content in any way for any public or commercial purpose, except to utilize features of the Site that, by their nature, involve publishing or sharing of Content with the public. If you violate any part of these Terms of Use, your permission to access and/or use the Content and Site automatically terminates and you must immediately destroy any copies you have made of the Content.", scope: ['staticpages', 'tos']) %>
+          <br/>
+          <%= it("Various company, product, and service names displayed on the Site may be trademarks or service marks owned by others (the “Third-Party Trademarks”). Nothing on this Site should be construed as granting, by implication, estoppel, or otherwise, any license or right to use any Third-Party Trademark displayed on this Site. The Third-Party Trademarks may not be used to disparage any applicable third-party, any of their products or services, or in any manner in which, in our reasonable judgment, may damage any goodwill in the Third-Party Trademarks.", scope: ['staticpages', 'tos']) %>
+          <br/>
+          <%= it("The Site contains links to, and content and data from, third-party websites (“External Sites”). These links, content, and data are provided solely as a convenience to you and not as an endorsement by us of the content on such External Sites. The content of such External Sites is developed and provided by others.  In addition, the Site contains content posted, stored, or displayed at the direction of users of the Site, for which we cannot accept any responsibility or liability.", scope: ['staticpages', 'tos']) %>
+          <br/>
+          <%= it("The Site is for personal use only and may not be used in connection with any commercial endeavors except those that are specifically approved by us. The following activities are expressly prohibited: (i) collecting usernames and/or email addresses of other users by electronic or other means for the purpose of sending unsolicited email or other communications, (ii) any use of the site, which in our sole judgment, degrades the reliability, speed, or operation of the Site or any underlying hardware or software thereof, (iii) use of web scraping, web harvesting, or web data extraction methods from Diveboard even if the Diveboard account owner gives permission. and (iV) any use of the site which is unlawful or in violation of these Terms of Use.", scope: ['staticpages', 'tos']) %>
+          <br/>
+          <%= it("By using the Site, you represent and warrant that you are 13 years of age or older. Your account may be terminated without warning, if we believe that you are under 13 years of age.", scope: ['staticpages', 'tos']) %>
+          <br/>
+          <%= it("Membership in the Site is subject, in our sole discretion, to termination at any time.", scope: ['staticpages', 'tos']) %></p>
+          <h2><%= it("User Content", scope: ['staticpages', 'tos']) %></h2>
+          <p><%= it("The Site may now or in the future permit the submission of Content at the direction of users of the Site (“User Content”) and the hosting, sharing, and/or publishing of such User Content. You understand that whether or not such User Content is published, we do not guarantee any confidentiality with respect to any submissions.", scope: ['staticpages', 'tos']) %>
+          <br/>
+          <%= it("You shall be solely responsible for User Content you submit and the consequences of our posting or publishing such User Content. In connection with any User Content you submit, you affirm, represent, and/or warrant that: <br/>(i) you own or have the necessary licenses, rights, consents, and permissions to use and authorize us to use all patent, trademark, trade secret, copyright or other proprietary rights in and to any and all User Content to enable inclusion and use of the User Content in the manner contemplated by the Site and these Terms of Use; and <br/>(ii) you have the express consent, release, and/or permission of each and every identifiable individual person in the User Content to use the name or likeness of each and every such identifiable individual person to enable inclusion and use of the User Content in the manner contemplated by the Site and these Terms of Use. By submitting the User Content to us, you hereby grant us a perpetual, worldwide, non-exclusive, royalty-free, sublicenseable and transferable license to use, reproduce, distribute, prepare derivative works of, modify, display, and perform all or any portion of the User Content in connection with our operation of the Site and our (and our successors’) business, including without limitation for promoting and redistributing part or all of the Site (and derivative works thereof) in any media formats and through any media channels. You also hereby grant each user of the Site a non-exclusive license to access your User Content through the Site, if you have permitted such access through your account settings, and to use, reproduce, distribute, prepare derivative works of, display and perform such User Content as permitted through the functionality of the Site and under these Terms of Use. We may maintain copies of any User Content for purposes of backup, security, or maintenance, or as required by law.", scope: ['staticpages', 'tos']) %>
+          <br/>
+          <%= it("In connection with User Content, you further agree that you will not: %{br}(i) submit material that is copyrighted, protected by trade secret or otherwise subject to third party proprietary rights, including privacy and publicity rights, unless you are the owner of such rights or have permission from their rightful owner to post the material and to grant us all of the license rights granted herein; %{br}(ii) publish falsehoods or misrepresentations that could damage us or any third party; %{br}(iii) submit material that is unlawful, obscene, defamatory, libelous, threatening, pornographic, harassing, hateful, racially or ethnically offensive, or encourages conduct that would be considered a criminal offense, give rise to civil liability, violate any law, or is otherwise inappropriate; %{br}(iv) post advertisements or solicitations of business; or %{br}(v) impersonate another person. We do not endorse any User Content or any opinion, recommendation, or advice expressed therein, and we expressly disclaim any and all liability in connection with any User Content. We do not permit copyright infringing activities and infringement of intellectual property rights on this Site, and we will remove all Content and User Content if properly notified that such Content or User Content infringes on another's intellectual property rights. We may remove any Content and User Content without prior notice. We may also terminate your access to the Site, if you are determined to be a repeat infringer. A repeat infringer is anyone who has been notified of infringing activity more than once and/or has had any User Content removed from the Site more than twice. We also reserve the right to decide whether Content or User Content is appropriate and complies with these Terms of Use for violations other than copyright infringement and violations of intellectual property law, such as, but not limited to, pornography, obscene or defamatory material, or excessive length. We may remove such User Content and/or terminate your access for uploading such material in violation of these Terms of Use at any time, without prior notice and at its sole discretion.", scope: ['staticpages', 'tos'], br: It.tag("br")) %>
+          <br/>
+          <%= it("If you are a copyright owner or an agent thereof and believe that any User Content or other Content infringes upon your copyrights, you may submit a notification pursuant to the Digital Millennium Copyright Act (\"DMCA\") by providing our Copyright Agent with the following information in writing (see 17 U.S.C 512(c)(3) for further detail):", scope: ['staticpages', 'tos']) %>
+          <br/>
+          <%= it("(i) A physical or electronic signature of a person authorized to act on behalf of the owner of an exclusive right that is allegedly infringed;", scope: ['staticpages', 'tos']) %><br/>
+          <%= it("(ii) Identification of the copyrighted work claimed to have been infringed, or, if multiple copyrighted works at a single online site are covered by a single notification, a representative list of such works at that site;", scope: ['staticpages', 'tos']) %><br/>
+          <%= it("(iii) Identification of the material that is claimed to be infringing or to be the subject of infringing activity and that is to be removed or access to which is to be disabled and information reasonably sufficient to permit the service provider to locate the material;", scope: ['staticpages', 'tos']) %><br/>
+          <%= it("(iv) Information reasonably sufficient to permit us to contact you, such as an address, telephone number, and, if available, an electronic mail address;", scope: ['staticpages', 'tos']) %><br/>
+          <%= it("(v) A statement that you have a good faith belief that use of the material in the manner complained of is not authorized by the copyright owner, its agent, or the law; and", scope: ['staticpages', 'tos']) %><br/>
+          <%= it("(vi) A statement that the information in the notification is accurate, and under penalty of perjury, that you are authorized to act on behalf of the owner of an exclusive right that is allegedly infringed.", scope: ['staticpages', 'tos']) %><br/>
+          <%= it("Our designated Copyright Agent to receive notifications of claimed infringement and other notices relating to User Content and/or violation of these Terms of Use (e.g., violations of criminal laws) is: Alexander Casassovici, c/o Diveboard, Inc. / Email: support@diveboard.com. For clarity, only DMCA notices and notices relating to complaints in connection with User Content or violations of these Terms of Use should go to the Copyright Agent; any other feedback, comments, requests for technical support, and other communications should be addressed to our standard support contacts as identified on the Site.", scope: ['staticpages', 'tos']) %>
+          </p>
+          <h2><%= it("Indemnity", scope: ['staticpages', 'tos']) %></h2>
+          <p><%= it("You agree to defend, indemnify, and hold us harmless from and against any claims, actions or demands, including, without limitation, reasonable legal and accounting fees, arising or resulting from your breach of these Terms of Use or your uploading of, access to, or use or misuse of the Content or the Site. We shall provide notice to you of any such claim, suit, or proceeding and shall assist you, at your expense, in defending any such claim, suit or proceeding. We reserve the right to assume the exclusive defense and control of any matter which is subject to indemnification under this section. In such case, you agree to cooperate with any reasonable requests assisting our defense of such matter.", scope: ['staticpages', 'tos']) %>
+          <br/>
+          <%= it("Disclaimer of Warranty and Limitation of Liability
+          WE, OUR AFFILIATES, OUR PARTNERS, AND OUR AND THEIR RESPECTIVE OFFICERS, DIRECTORS, EMPLOYEES, AGENTS, SUPPLIERS, OR LICENSORS, MAKE NO WARRANTIES OR REPRESENTATIONS ABOUT THE CONTENT (INCLUDING THE USER CONTENT), INCLUDING BUT NOT LIMITED TO ITS ACCURACY, RELIABILITY, COMPLETENESS, TIMELINESS, OR RELIABILITY.", scope: ['staticpages', 'tos']) %>
+          <br/>
+          <%= it("NEITHER WE NOR OUR AFFILIATES OR PARTNERS SHALL BE SUBJECT TO LIABILITY FOR TRUTH, ACCURACY, OR COMPLETENESS OF ANY INFORMATION CONVEYED TO USERS OF THE SITE OR FOR ERRORS, MISTAKES OR OMISSIONS THEREIN OR FOR ANY DELAYS OR INTERRUPTIONS OF THE DATA OR INFORMATION STREAM FROM WHATEVER CAUSE. YOU AGREE THAT YOU USE THE SITE AND THE CONTENT AT YOUR OWN RISK.", scope: ['staticpages', 'tos']) %>
+          <br/>
+          <%= it("WE MAKE NO WARRANTY THAT THE SITE WILL OPERATE ERROR FREE OR THAT THE SITE, ITS SERVER, OR THE CONTENT ARE FREE OF COMPUTER VIRUSES OR SIMILAR CONTAMINATION OR DESTRUCTIVE FEATURES. IF YOUR USE OF THE SITE OR THE CONTENT RESULTS IN THE NEED FOR SERVICING OR REPLACING EQUIPMENT OR DATA, WE SHALL NOT BE RESPONSIBLE FOR THOSE COSTS.", scope: ['staticpages', 'tos']) %>
+          <br/>
+          <%= it("THE SITE AND CONTENT ARE PROVIDED ON AN “AS IS” AND “AS AVAILABLE” BASIS WITHOUT ANY WARRANTIES OF ANY KIND. WE HEREBY DISCLAIM ALL WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE WARRANTY OF TITLE, MERCHANTABILITY, NON INFRINGEMENT OF THIRD PARTIES’ RIGHTS, AND SCUBA DIVING FOR PARTICULAR PURPOSE.", scope: ['staticpages', 'tos']) %>
+          <br/>
+          <%= it("IN NO EVENT SHALL WE BE LIABLE FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT LIMITATION, INCIDENTAL AND CONSEQUENTIAL DAMAGES, LOST PROFITS, OR DAMAGES RESULTING FROM LOST DATA OR BUSINESS INTERRUPTION) RESULTING FROM THE USE OR INABILITY TO USE THE SITE AND THE CONTENT, WHETHER BASED ON WARRANTY, CONTRACT, TORT (INCLUDING NEGLIGENCE), OR ANY OTHER LEGAL THEORY, EVEN IF A WE HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.", scope: ['staticpages', 'tos']) %>
+          <br/>
+          <%= it("Some states do not allow exclusion of implied warranties or limitation of liability for incidental or consequential damages, so the above limitations or exclusions may not apply to you. IN SUCH STATES, OUR LIABILITY SHALL BE LIMITED TO THE GREATEST EXTENT PERMITTED BY LAW.", scope: ['staticpages', 'tos']) %>
+          </p>
+          <h2><%= it("General", scope: ['staticpages', 'tos']) %></h2>
+          <p><%= it("These Terms of Use, and any rights and licenses granted hereunder, may not be transferred or assigned by you, but may be assigned by us without restriction.", scope: ['staticpages', 'tos']) %>
+          <br/>
+          <%= it("These Terms of Use are governed by the internal substantive laws of France, without respect to its conflict of laws provisions. You expressly agree to submit to the exclusive personal jurisdiction of the state and local§ courts sitting in the City of Paris, France. If any provision of these Terms of Use is found to be invalid by any court having competent jurisdiction, the invalidity of such provision shall not affect the validity of the remaining provisions of the Terms of Use, which shall remain in full force and effect. Failure by us to act on or enforce any provision of the Terms of Use shall not be construed as a waiver of that provision or any other provision in these Terms of Use. No waiver shall be effective against us unless made in writing, and no such waiver shall be construed as a waiver in any other or subsequent instance. Except as expressly agreed by us and you, these Terms of Use constitute the entire agreement between you and us with respect to the subject matter, and supersede all previous or contemporaneous agreements, whether written or oral, between the parties with respect to the subject matter. The section headings are provided merely for convenience and shall not be given any legal import. These Terms of Use will inure to the benefit of our successors, assigns, licensees, and sublicensees.", scope: ['staticpages', 'tos']) %>
+          <br/>
+          <%= it("We may terminate this Agreement, disable your account, and/or put your account on inactive status, in each case at any time with reasonable cause or violation to these terms of service agreement, and with or without notice. We shall have no liability to you or any third party because of such termination or action.", scope: ['staticpages', 'tos']) %></p>
+
+      </div>
+    </div>
+    <%= render :partial => 'layouts/footer'  %>
+  </div>
+  <%= render :partial => 'layouts/login_popup', :locals=> { :style =>"login_popup_homepage", :status => @signup_popup_status || :force_count} %>
+  <%= render :partial => 'layouts/trackers'  %>
+  </body>
+</html>

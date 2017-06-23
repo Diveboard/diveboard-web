@@ -1,0 +1,117 @@
+<%= render :partial => 'admin_css'%>
+
+
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 1 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+<h1>Dashboard</h1>
+<h2 style="margin-top:10px; margin-bottom:10px;font-size:20px">Welcome back <%=@user.nickname%></h2>
+	<div class="about_profile_new_box" style="width:620px;">
+	<span class="second_lvl_header"style="display:block;">TODO</span>
+		<div style="width:300px;display: inline-block;">
+			<div style="font-size:18px; text-align: center;"><%=@spots_to_moderate_total%> spots to moderate</div>
+			<ul style="list-style-type:disc; border-style:solid; border-width:3px; border-color:#ccc; border-radius: 15px; font-size:11px; padding-left:10px">
+				<% @spots_to_moderate.each do |spot|%>
+				<li style="margin-top:5px;"><div style="width:230px;display:inline-block;"><%=truncate("<b>#{spot.name}</b>,#{spot.country.ccode},#{spot.location.name}", :length=>50).html_safe%></div><a  style="display:inline-block;" href="/admin/mod_spot?spot=<%=spot.id%> ">Moderate</a></li>
+				<%end%>
+			</ul>
+		</div>
+
+    <div style="width:300px;display: inline-block;">
+      <%reviews_to_moderate = Review.where('flag_moderate or reported_spam')%>
+      <div style="font-size:18px; text-align: center;">
+                  <a  style="display:inline-block;" href="/admin/reviews "><%=reviews_to_moderate.count%> reviews to moderate</a>
+      </div>
+      <ul style="list-style-type:disc; border-style:solid; border-width:3px; border-color:#ccc; border-radius: 15px; font-size:11px; padding-left:10px">
+        <% reviews_to_moderate[0..4].each do |review|%>
+        <li style="margin-top:5px;">
+          <img style='display: inline-block; margin: 0px; ' src='/img/icons/<%if review.recommend%>vote_positive.png<%else%>vote_negative.png<%end%>'>
+          <div style="width:230px;display:inline-block;"><%=truncate review.title, :legnth => 50%></div>
+        </li>
+        <%end%>
+      </ul>
+    </div>
+
+    <div style="width:300px;display: inline-block;">
+      <%pictures_to_moderate = Picture.joins(:picture_album_pictures => :album).where("albums.kind <> 'wallet'").where('great_pic is null')%>
+      <div style="font-size:18px; text-align: center;">
+                  <a  style="display:inline-block;" href="/admin/pictures?search_great_pic=nil"><%=pictures_to_moderate.count%> pictures to moderate</a>
+      </div>
+      <ul style="list-style-type:disc; border-style:solid; border-width:3px; border-color:#ccc; border-radius: 15px; font-size:11px; padding-left:10px">
+        <li style="margin-top:5px;">
+        <% pictures_to_moderate[0..4].each do |picture|%>
+          <img style='float: none; margin: 0px; width: 50px; height: 50px;' src='<%=picture.thumb%>'>
+        <%end rescue nil%>
+        </li>
+        <li style="margin-top:5px;">
+        <% pictures_to_moderate[5..9].each do |picture|%>
+          <img style='float: none; margin: 0px; width: 50px; height: 50px;' src='<%=picture.thumb%>'>
+        <%end rescue nil%>
+        </li>
+      </ul>
+    </div>
+	</div>
+
+
+
+	<div class="about_profile_new_box" style="width: 1008px;margin-left: -5px;">
+	<span class="second_lvl_header"style="display:block;">Graphs</span>
+  <%= 
+  #render :partial => 'admin/charts' 
+  %>
+  		<h2>Disabled</h2>
+	</div>
+
+
+	<div class="about_profile_new_box" style="width:620px;">
+	<span class="second_lvl_header"style="display:block;">Statistics</span>
+  <%= 
+  	#render :partial => 'admin/statistics' 
+  	%>
+  		<h2>Disabled</h2>
+  </div>
+
+	<div class="about_profile_new_box" style="width:620px;">
+	<span class="second_lvl_header"style="display:block;">Activity</span>
+		<div style="width:300px;display: inline-block;">
+			<div style="font-size:18px; text-align: center;">New users</div>
+			<ul style="list-style-type:disc; border-style:solid; border-width:3px; border-color:#ccc; border-radius: 15px; font-size:11px; padding-left:10px">
+				<% @latest_5_users_created.each do |user|%>
+				<li style="margin-top:5px;"><div style="width:250px;display:inline-block;"><%="<b>#{user.created_at.to_date}</b> #{user.id} #{user.first_name} #{user.last_name} #{user.email} ".html_safe%></div><a style="display:inline-block;" href="/admin/users/<%=user.id%>">View</a></li>
+				<%end%>
+			</ul>
+		</div>
+		<div style="width:300px;display: inline-block;">
+			<div style="font-size:18px; text-align: center;">Last logged</div>
+			<ul style="list-style-type:disc; border-style:solid; border-width:3px; border-color:#ccc; border-radius: 15px; font-size:11px; padding-left:10px">
+				<% @latest_5_users_logged.each do |user|%>
+				<li style="margin-top:5px;"><div style="width:250px;display:inline-block;"><%="<b>#{user.updated_at.to_date}</b> #{user.id} #{user.first_name} #{user.last_name} #{user.email} ".html_safe%></div><a  style="display:inline-block;" href="/admin/users/<%=user.id%>">View</a></li>
+				<%end%>
+			</ul>
+		</div>
+		<div style="width:300px;display: inline-block;">
+			<div style="font-size:18px; text-align: center;">Latest public dives</div>
+			<ul style="list-style-type:disc; border-style:solid; border-width:3px; border-color:#ccc; border-radius: 15px; font-size:11px; padding-left:10px">
+				<% @latest_5_public_dives.each do |dive|%>
+				<li style="margin-top:5px;"><div style="width:250px;display:inline-block;"><%="<b>#{dive.created_at.to_date}</b> #{dive.user.nickname} #{dive.spot.name},#{dive.spot.country.ccode},#{dive.spot.location.name}".html_safe%></div><a  style="display:inline-block;" href="/<%=dive.user.vanity_url%>/<%=dive.id%> ">View</a></li>
+				<%end%>
+        <li>&nbsp;</li>
+        <li style='font-size: small; text-align: center;'><a href='/admin/dives?search_privacy=0'>List all public dives</a></li>
+			</ul>
+		</div>
+		<div style="width:300px;display: inline-block;">
+			<div style="font-size:18px; text-align: center;">Latest created dives</div>
+			<ul style="list-style-type:disc; border-style:solid; border-width:3px; border-color:#ccc; border-radius: 15px; font-size:11px; padding-left:10px">
+				<% @latest_5_dives.each do |dive|%>
+				<li style="margin-top:5px;"><div style="width:250px;display:inline-block;"><%="<b>#{dive.created_at.to_date}</b> #{dive.user.nickname} #{dive.spot.name},#{dive.spot.country.ccode},#{dive.spot.location.name}".html_safe%></div><a  style="display:inline-block;" href="/<%=dive.user.vanity_url%>/<%=dive.id%> ">View</a></li>
+				<%end%>
+        <li>&nbsp;</li>
+        <li style='font-size: small; text-align: center;'><a href='/admin/dives'>List all latest dives</a></li>
+			</ul>
+		</div>
+	</div>
+
+</div>

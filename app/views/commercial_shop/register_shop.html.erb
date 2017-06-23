@@ -1,0 +1,314 @@
+<%content_for :scripts do%>
+<%=javascript_include_tag 'commercial_shop'%>
+<script>$(document).ready(CommercialShopSignup.initialize);</script>
+<script src ="https://www.paypalobjects.com/js/external/dg.js" type="text/javascript"></script>
+<%end%>
+<%content_for :css do%>
+<%=include_stylesheets :commercial_shop%>
+<%end%>
+<div class='unstyle register_shop_header'><%= it("Register with Diveboard for business", scope: ['commercial_shop', 'register_shop']) %></div>
+<div class='register_shop'>
+
+  <%if [:user, :business, :plan, :payment, :payment_option, :confirm_unsubscribe].include?(@step) && (@user && @step != :user) || (@shop && @step != :business) || (@new_shop && @step != :business) || (!@options.blank? && @step != :plan)%>
+    <ol class='register_summary'>
+      <%if @user && @step != :user%>
+        <li><%= it("Your account:", scope: ['commercial_shop', 'register_shop']) %> <%=@user.nickname%> &nbsp;&nbsp;&nbsp;<a href='/logout?r=/login/register_pro/user'><%= it("Logout", scope: ['commercial_shop', 'register_shop']) %></a></li>
+      <%end%>
+      <%if @shop && @step != :business%>
+        <li><%= it("Your business:", scope: ['commercial_shop', 'register_shop']) %> <img src='/img/flags/<%=@shop.country.ccode.downcase%>.gif'/><%=@shop.name%> <%if !@shop.city.blank?%>(@<%=@shop.city%>)<%end%> &nbsp;&nbsp;&nbsp;<a href='/login/register_pro/business'><%= it("Change", scope: ['commercial_shop', 'register_shop']) %></a></li>
+      <%end%>
+      <%if @new_shop && @step != :business%>
+        <li><%= it("Your business:", scope: ['commercial_shop', 'register_shop']) %> <img src='/img/flags/<%=@new_shop.country.ccode.downcase%>.gif'/><%=@new_shop.name%> <%if !@new_shop.city.blank?%>(@<%=@new_shop.city%>)<%end%> &nbsp;&nbsp;&nbsp;<a href='/login/register_pro/business'><%= it("change", scope: ['commercial_shop', 'register_shop']) %></a></li>
+      <%end%>
+      <%if !@options.blank? && @step != :plan%>
+        <li><%= it("Plan selected:", scope: ['commercial_shop', 'register_shop']) %> <%=@options.first.title%> &nbsp;&nbsp;&nbsp;<a href='/login/register_pro/plan'><%= it("Change", scope: ['commercial_shop', 'register_shop']) %></a></li>
+      <%end%>
+    </ol>
+  <%else%>
+    <br/>
+  <%end%>
+
+
+  <%if @step == :user then%>
+    <div class='shop_signup_step step_login'>
+      <button class='sign_in grey_button_small'><%= it("Sign in with an existing account", scope: ['commercial_shop', 'register_shop']) %></button>
+      <h2><span class='symbol' style='color: #f9bf3d; text-shadow:-1px -2px 1px #aaa; font-size: 0.7em;  vertical-align: middle;'>></span> <%= it("Create a personal Diveboard account", scope: ['commercial_shop', 'register_shop']) %></h2>
+      <p class='explain'><%= it("This account is personal and will be used to log into Diveboard. It should not be named after your business.", scope: ['commercial_shop', 'register_shop']) %></p>
+
+      <div class='shop_signup_step step_login'>
+        <table class='user_register_table'>
+          <tr class='urt'>
+            <td>
+              <%= form_for(User.new, :url=>{:action=>'register_post', :controller=>"login"}) do |f|%>
+                <input type='hidden' name='r' value='login/register_pro' />
+                <div class='login_email_field'>
+                  <label><%= it("Your personal e-mail:", scope: ['commercial_shop', 'register_shop']) %></label><% if @user_email.nil?%><%= f.text_field :email,:class => ""%><%else%><%= f.text_field :email,:class => "", :value => @user_email%><%end%><div style="position: absolute; margin-top: -46px; margin-left: 454px;"><img class="ok" src="/img/ok.png" align="absmiddle" style="display:none;"/><img  class="nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/><img  class="search" style="display:none;" align="absmiddle" src="/img/indicator.gif"/></div>
+                </div><br/>
+                <div class='password_fields'>
+                  <label><%= it("Password (5-20chrs):", scope: ['commercial_shop', 'register_shop']) %></label><%= f.password_field :password, :class => "password"%><div style="position: absolute; margin-top: -46px; margin-left: 454px;"><img class="password_ok" src="/img/ok.png" align="absmiddle" style="display:none;"/><img  class="password_nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/></div><br/>
+                  <label><%= it("Confirm Password:", scope: ['commercial_shop', 'register_shop']) %></label><%= f.password_field :password_confirmation, :class => "password_confirmation"%> <div style="position: absolute; margin-top: -46px; margin-left: 454px;"><img class="password_confirm_ok" src="/img/ok.png" align="absmiddle" style="display:none;"/><img  class="password_confirm_nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/></div>
+                </div>
+                <div class='vanity_field'>
+                  <label style="display: block;position: relative;text-align: left;"><%= it("Choose your personal Diveboard URL", scope: ['commercial_shop', 'register_shop']) %></label>
+                  <label style="position: relative; left: 16px;">www.diveboard.com/</label><%if @user_vanity_url.nil?%><%= f.text_field :vanity_url, :class=>" register_input_fix"%><%else%><%= f.text_field :vanity_url, :class=>" register_input_fix", :value => @user_vanity_url%><%end%><div style="position: absolute; margin-top: -46px; margin-left: 454px;"><img class="ok" src="/img/ok.png" align="absmiddle" style="display:none;"/><img  class="nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/><img  class="search" style="display:none;" align="absmiddle" src="/img/indicator.gif"/> </div>
+                </div><br/>
+                <div><label><%= it("Nickname*:", scope: ['commercial_shop', 'register_shop']) %></label><%= f.text_field :nickname, :class=>" register_input_fix"%></div>
+                <span class="register_input_explain"><%= it("* The nickname is how you will be called in Diveboard", scope: ['commercial_shop', 'register_shop']) %></span>
+                <label><%= it("Keep Me in the Loop:", scope: ['commercial_shop', 'register_shop']) %></label><%= check_box_tag :token, true, 'yes'%><br/>
+                <span style="display: inline-block; position: relative; top: -56px; width: 210px; margin-left: -90px; left: 12px;"><%= f.label :recaptcha , 'Please Type the Two Words:'  %></span><div style="display:inline-block; position: relative; top: 5px;"><%= recaptcha_tags :display => {:theme => 'red' },:ajax => true %></div>
+                <button class='yellow_button'><%= it("Create", scope: ['commercial_shop', 'register_shop']) %></button>
+              <%end%>
+            </td>
+            <td><%= it("OR", scope: ['commercial_shop', 'register_shop']) %></td>
+            <td><a href="/login/fb_login/email" class="fbsignup" ><img src='/img/register_3/signup_fb.png' alt='<%= it("sign up with facebook", scope: ['commercial_shop', 'register_shop']) %>'/></a></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  <%end%>
+
+  <%if @step == :business%>
+    <div class='shop_signup_step step_search_shop'>
+      <h2><span class='symbol' style='color: #f9bf3d; text-shadow:-1px -2px 1px #aaa; font-size: 0.7em;  vertical-align: middle;'>></span> <%= it("Tell us a bit more about your business", scope: ['commercial_shop', 'register_shop']) %></h2>
+
+      <%if @shop || @new_shop then
+        shop = @shop || @new_shop%>
+        <h3><%= it("Previously selected shop", scope: ['commercial_shop', 'register_shop']) %></h3>
+        <div class='registered_business_container'>
+        <table class='registered_business_table'>
+          <tr>
+            <td></td>
+            <th><%= it("Location", scope: ['commercial_shop', 'register_shop']) %></th>
+            <th><%= it("URL on diveboard", scope: ['commercial_shop', 'register_shop']) %></th>
+            <th><%= it("Current plan", scope: ['commercial_shop', 'register_shop']) %></th>
+            <th></th>
+          </tr>
+          <tr>
+            <td><%=shop.name%></td>
+            <td><img src='/img/flags/<%=shop.country.ccode.downcase%>.gif'/><%if !shop.city.blank?%> <%=shop.city%><%end%></td>
+            <td><a href='<%=shop.fullpermalink(:locale)%>' target='_blank'><%=shop.fullpermalink(:canonical)%></a></td>
+            <td><%=shop.subscribed_plan[:title]%></td>
+            <td><a class='yellow_button_small' href='/login/register_pro'><%= it("Continue", scope: ['commercial_shop', 'register_shop']) %></a></td>
+          </tr>
+        </table>
+        </div>
+
+
+      <%end%>
+
+      <%owned_shops = @user.shops_owned rescue []
+      if owned_shops.length > 0 then%>
+        <h3>
+        <% if owned_shops == 1%>
+          <%= it("You already have registered this business", scope: ['commercial_shop', 'register_shop']) %>
+        <% else %>
+          <%= it("You already have registered these businesses", scope: ['commercial_shop', 'register_shop']) %>
+        <% end %>
+        </h3>
+        <div class='registered_business_container'>
+        <table class='registered_business_table'>
+          <tr>
+            <td></td>
+            <th><%= it("Location", scope: ['commercial_shop', 'register_shop']) %></th>
+            <th><%= it("URL on diveboard", scope: ['commercial_shop', 'register_shop']) %></th>
+            <th><%= it("Current plan", scope: ['commercial_shop', 'register_shop']) %></th>
+            <th></th>
+          </tr>
+          <%owned_shops.each do |shop|%>
+            <tr>
+              <td><%=shop.name%></td>
+              <td><img src='/img/flags/<%=shop.country.ccode.downcase%>.gif'/><%if !shop.city.blank?%> <%=shop.city%><%end%></td>
+              <td><a href='<%=shop.fullpermalink(:locale)%>' target='_blank'><%=shop.fullpermalink(:canonical)%></a></td>
+              <td><%=shop.subscribed_plan.title%> <%if !shop.subscribed_plan.option_title.blank?%><br/><span class='option_title'>(<%=shop.subscribed_plan.option_title%>)</span><%end%></td>
+              <td><a class='yellow_button_small' href='/login/register_pro?shop_id=<%=shop.id%>'><%= it("Change plan", scope: ['commercial_shop', 'register_shop']) %></a></td>
+            </tr>
+          <%end%>
+        </table>
+        </div>
+      <%end%>
+
+      <h3><%= it("You may already be listed on Diveboard, check it out", scope: ['commercial_shop', 'register_shop']) %></h3>
+      <div class='shop_search'>
+
+        <table class='shop_list'>
+          <tr class='header'>
+            <td colspan=3><span><%= it("Name:", scope: ['commercial_shop', 'register_shop']) %> <input class='shop_search_name'></span><span><%= it("Country/city:", scope: ['commercial_shop', 'register_shop']) %> <input class='shop_search_location'></span></td>
+          </tr>
+          <tr><td class='loading' style='display: none;'><img src='/img/transparent_loader.gif' alt='Loading shop list...' /></td></tr>
+          <tr><td class='shop_list_empty' style='display: none;'><%= it("Sorry, no shops matching found", scope: ['commercial_shop', 'register_shop']) %></td></tr>
+          <tr><td class='shop_list_no_search'><%= it("Please provide the name and/or the location of your shop", scope: ['commercial_shop', 'register_shop']) %></td></tr>
+        </table>
+      </div>
+
+      <script type='text/html' id='shop_search_line'>
+        <tr class='shop_list_row'>
+          <td><$if (registrable) {$><a class='yellow_button_small' href='/login/register_pro?shop_id=<$=id$>'><%= it("Select", scope: ['commercial_shop', 'register_shop']) %></a><$}else{$><%= it("Already claimed", scope: ['commercial_shop', 'register_shop']) %><$}$></td>
+          <td><img src='/img/flags/<$=country_code.toLowerCase()$>.gif'/><$=value$> <$if (city){$>(@<$=city$>)<$}$></td>
+          <td><a href='<$=home$>' target='_blank'><$=home.replace(/http:\/\//,'')$></a></td>
+        </tr>
+      </script>
+
+
+      <h3><%= it("Not yet listed on Diveboard ? Don't worry, just create it!", scope: ['commercial_shop', 'register_shop']) %></h3>
+      <div class='create_shop_container'>
+      <form action='/login/register_pro' method='post' class='create_shop_form'>
+        <input type=hidden name='authenticity_token' value='<%= form_authenticity_token %>'/>
+        <table class='new_shop_form'>
+          <tr>
+            <td><%= it("Business name", scope: ['commercial_shop', 'register_shop']) %><span class='mandatory'>*</span></td>
+            <td colspan=2><input class='mandatory' name='new_shop[name]' value='<%=h @tmp_shop['name'] rescue nil%>'></td>
+          </tr>
+          <tr class='vanity_field'>
+            <td><%= it("Choose your URL on diveboard", scope: ['commercial_shop', 'register_shop']) %><span class='mandatory'>*</span></td>
+            <td>http://www.diveboard.com/pro/</td>
+            <td><input class='mandatory' name='new_shop[vanity]' value='<%=h @tmp_shop['vanity'] rescue nil%>' autocomplete="off"><span class='mandatory' style='margin-right: 5px;'>**</span><img class="ok" src="/img/ok.png" align="absmiddle" style="display:none;"/><img  class="nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/><img  class="search" style="display:none;" align="absmiddle" src="/img/indicator.gif"/><br/><span class='error_text'></span></td>
+          </tr>
+          <tr>
+            <td><%= it("Business type", scope: ['commercial_shop', 'register_shop']) %><span class='mandatory'>*</span></td>
+            <td colspan=2>
+              <select name='new_shop[category]'>
+                <%Shop::ALLOWED_CATEGORIES.each do |val| next if val.blank?%>
+                  <option value='<%=h val%>' <%if begin val == @tmp_shop['category'] rescue false end then%>selected<%end%>><%=val%></option>
+                <%end%>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td><%= it("Country", scope: ['commercial_shop', 'register_shop']) %><span class='mandatory'>*</span></td>
+            <td colspan=2>
+              <div class='autocomplete_country'><input type='hidden' class='short_code' name='new_shop[country_code]' value='<%=h @tmp_shop['country_code'] rescue nil%>'/><input class='mandatory' name="new_shop[country]"  value='<%=h @tmp_shop['country_name'] rescue nil%>'/> <img src="/img/flags/<%=h @tmp_shop['country_code'].downcase || 'blank' rescue 'blank'%>.gif"/></div>
+            </td>
+          </tr>
+          <tr>
+            <td><%= it("City", scope: ['commercial_shop', 'register_shop']) %><span class='mandatory'>*</span></td>
+            <td colspan=2><input class='mandatory' name='new_shop[city]' value='<%=h @tmp_shop['city'] rescue nil%>'></td>
+          </tr>
+          <tr>
+            <td><%= it("Address of your official web page", scope: ['commercial_shop', 'register_shop']) %></td>
+            <td colspan=2><input name='new_shop[web]' value='<%=h @tmp_shop['web'] rescue h "http://"%>'></td>
+          </tr>
+          <tr class='hint'><td colspan=3>*: <%= it("mandatory", scope: ['commercial_shop', 'register_shop']) %></td></tr>
+          <tr class='hint'><td colspan=3>**: <%= it("This URL can be changed on the settings pane, but all direct links to your logbook or dives will break upon change. It must be at least 4 character long. Valid caracters are letters (a-z), digits (0-9), dot (.), hyphen (-), underscore (_).", scope: ['commercial_shop', 'register_shop']) %></td></tr>
+          <tr class='bottom'><td colspan=3><button class='yellow_button' class='submit'><%= it("Create", scope: ['commercial_shop', 'register_shop']) %></button></td></tr>
+        </table>
+      </form>
+      </div>
+    </div>
+  <%end%>
+
+  <%if @step == :plan%>
+    <div class='shop_signup_step step_choose_plan'>
+      <h2><span class='symbol' style='color: #f9bf3d; text-shadow:-1px -2px 1px #aaa; font-size: 0.7em;  vertical-align: middle;'>></span> <%= it("Select the level of service you need", scope: ['commercial_shop', 'register_shop']) %></h2>
+      <% if @user && @shop && @shop.is_private_for?(:caller => @user) then%>
+        <%=render partial: 'plan_table', locals: {shop: @shop, force_current_plan_id: nil}%>
+      <%else%>
+        <%=render partial: 'plan_table', locals: {force_current_plan_id: nil}%>
+      <%end%>
+    </div>
+  <%end%>
+
+  <%if @step == :payment_option%>
+    <div class='shop_signup_step step_choose_pay'>
+      <h2><span class='symbol' style='color: #f9bf3d; text-shadow:-1px -2px 1px #aaa; font-size: 0.7em;  vertical-align: middle;'>></span> <%= it("Choose your preferred offer", scope: ['commercial_shop', 'register_shop']) %></h2>
+      <div class='plan_period_container'>
+        <table class='plan_period_select line_click_select_input'>
+          <%@options.each do |option|%>
+          <tr><td><input type=radio name='option_id' <%if option.preferred%>checked<%end%> value='<%=option.option_name%>'/></td><td><%=option.option_title%></td><td>USD $<%=option.price%><%if option.commercial_note%><br/><span class='commercial_note'><%=option.commercial_note%></span><%end%></td></tr>
+          <%end%>
+        </table>
+      </div>
+
+      <div style='text-align: right; margin: 30px 230px 0px 0px;'>
+        <button class='yellow_button paypal_checkout'><%= it("Proceed to checkout", scope: ['commercial_shop', 'register_shop']) %></button>
+      </div>
+    </div>
+  <%end%>
+
+  <%if @step == :payment%>
+    <div class='shop_signup_step step_choose_pay'>
+      <h2><span class='symbol' style='color: #f9bf3d; text-shadow:-1px -2px 1px #aaa; font-size: 0.7em;  vertical-align: middle;'>></span> <%= it("Check subscription details and proceed to checkout", scope: ['commercial_shop', 'register_shop']) %></h2>
+      <div class='plan_period_container'>
+        <table class='plan_period_select line_click_select_input'>
+          <tr><td></td><td><%=@option.title%></td><td>$<%=@option.price%></td></tr>
+        </table>
+      </div>
+
+      <div style='text-align: right; margin: 30px 230px 0px 0px;'>
+        <button class='yellow_button paypal_checkout'><%= it("Proceed to checkout", scope: ['commercial_shop', 'register_shop']) %></button>
+      </div>
+    </div>
+  <%end%>
+
+  <%if @step == :make_shop_claim%>
+    <div class='shop_signup_step step_choose_claim_method'>
+      <h2><span class='symbol' style='color: #f9bf3d; text-shadow:-1px -2px 1px #aaa; font-size: 0.7em;  vertical-align: middle;'>></span> <%= it("Get ownership of %{shop} on Diveboard", scope: ['commercial_shop', 'register_shop'], shop: @shop.name) %></h2>
+      <p id='form_affiliation_code'><%=it("If you have a promotion code, it's time to use it :", scope: ['commercial_shop', 'register_shop'])%> <input id='affiliation_code'> <button onclick='send_affiliation_code()' class='yellow_button_small'><%=it("Use", scope: ['commercial_shop', 'register_shop'])%></button> <span id='wrong_affiliation_code' style='color:#ff0000; display:none;'><%=it("Wrong promo code", scope: ['commercial_shop', 'register_shop'])%></p>
+      <p id='ok_affiliation_code' style='display:none;'><%=it("Your promotion code has been registered.", scope: ['commercial_shop', 'register_shop'])%></p>
+      <%if !@shop.email.blank? then%>
+        <div class='auto_claim'>
+          <h3><%= it("Two options are available for registering the page:", scope: ['commercial_shop', 'register_shop']) %></h3>
+          <table>
+            <tr style='height: 100px'>
+              <td style='width: 20px;'>1.</td>
+              <td><p><%= it("We will send you a mail to %{email} with a confirmation link that will allow you to complete the claim process.", scope: ['commercial_shop', 'register_shop'], email: content_tag("strong", @shop.email)) %></p></td>
+              <td><a href='/login/register_pro?claim[method]=mail' id='dialog_claim_auto_submit' class='yellow_button claim_shop_send_mail'><%= it("OK, send me the mail!", scope: ['commercial_shop', 'register_shop']) %></a></td>
+            </tr>
+            <tr><td></td><td style='text-align: center;'>- <%= it("OR", scope: ['commercial_shop', 'register_shop']) %> -</td></tr>
+            <tr style='height: 110px'>
+              <td style='width: 20px;'>2.</td>
+              <td><p><%= it("If the email %{shop} is not correct or if you don't have access to this mailbox, then leave us a message and we'll handle your request manually.", scope: ['commercial_shop', 'register_shop'], shop: @shop.email) %></p></td>
+              <td><a class='yellow_button claim_shop_manual_link'><%= it("Leave us a message", scope: ['commercial_shop', 'register_shop']) %></a></td>
+            </tr>
+          </table>
+        </div>
+      <%end%>
+      <div class='manual_claim' <%if !@shop.email.blank? then%>style='display:none;'<%end%>>
+        <p><%= it("Please detail your identity and your role within %{shop}, along with any useful explanation. Your claim will only be approved if we can verify that you are the owner or a representative of %{shop}.", scope: ['commercial_shop', 'register_shop'], shop: @shop.name) %></p>
+        <br/>
+        <%if !@shop.email.blank? then %>
+        <p><%= it("Please note that whenever possible, you should try the %{link:automated process} to have a quicker answer.", scope: ['commercial_shop', 'register_shop'], link: It.link('#', class: "claim_shop_auto_link")) %></p>
+        <%end%>
+        <div>
+          <form action='/login/register_pro'>
+            <input type='hidden' name='claim[method]' value='explain'/>
+            <textarea id='dialog_claim_explanation' name='claim[explanation]'></textarea>
+            <p><button type=submit class='yellow_button'><%= it("Submit claim", scope: ['commercial_shop', 'register_shop']) %></button></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  <%end%>
+  <%if @step == :confirm_claim_mail%>
+    <div class='shop_signup_step step_choose_pay'>
+      <h2><span class='symbol' style='color: #f9bf3d; text-shadow:-1px -2px 1px #aaa; font-size: 0.7em;  vertical-align: middle;'>></span> <%= it("Thanks for registering", scope: ['commercial_shop', 'register_shop']) %></h2>
+      <p style='margin: 10px 0px'><%= it("An e-mail has just been sent to you to %{shop_email}. To complete the registration process, please click on the link in this email.", scope: ['commercial_shop', 'register_shop'], shop_email: content_tag('strong', @claimed_shop.email)) %></p>
+      <p style='margin: 10px 0px'><%= it("Once you validated your claim, you will be able to customize your page", scope: ['commercial_shop', 'register_shop']) %> <a href='<%=@claimed_shop.fullpermalink(:locale)%>'><%=@claimed_shop.fullpermalink(:canonical)%></a></p>
+      <p style='margin: 10px 0px; text-align: right'><a class='grey_button' href='/pro'><%= it("Get me out of here", scope: ['commercial_shop', 'register_shop']) %></a></p>
+    </div>
+  <%end%>
+
+
+  <%if @step == :confirm_claim_ex%>
+    <div class='shop_signup_step step_choose_pay'>
+      <h2><span class='symbol' style='color: #f9bf3d; text-shadow:-1px -2px 1px #aaa; font-size: 0.7em;  vertical-align: middle;'>></span> <%= it("Thanks for registering", scope: ['commercial_shop', 'register_shop']) %></h2>
+      <p style='margin: 10px 0px'><%= it("Your request has been submited. You'll be notified once it is accepted.", scope: ['commercial_shop', 'register_shop']) %></p>
+      <p style='margin: 10px 0px'><%= it("Then, you will be able to customize your page", scope: ['commercial_shop', 'register_shop']) %> <a href='<%=@claimed_shop.fullpermalink(:locale)%>'><%=@claimed_shop.fullpermalink(:canonical)%></a></p>
+      <p style='margin: 10px 0px; text-align: right'><a class='grey_button' href='/pro'>Get me out of here</a></p>
+    </div>
+  <%end%>
+
+
+  <%if @step == :confirm_unsubscribe%>
+    <div class='shop_signup_step step_choose_pay'>
+      <h2><span class='symbol' style='color: #f9bf3d; text-shadow:-1px -2px 1px #aaa; font-size: 0.7em;  vertical-align: middle;'>></span> <%= it("Are you sure you want to unscubscribe?", scope: ['commercial_shop', 'register_shop']) %></h2>
+      <p><%= it("You already have subscribed \"%{plan_title}\" for %{shop_name}. If you continue, your subscription will be cancelled and you won't have access to all the great features of this offer anymore.", scope: ['commercial_shop', 'register_shop'], plan_title: @shop.subscribed_plan(true).title, shop_name: @shop.name) %></p>
+      <div class='confirm_question'><%= it("Are you sure?", scope: ['commercial_shop', 'register_shop']) %></div>
+      <div class='confirm_buttons'>
+        <a href='/login/register_pro?unsubscribe=1' class='yellow_button'><%= it("Yes, please unsubscribe", scope: ['commercial_shop', 'register_shop']) %></a>
+        <a href='/login/register_pro?start=1' class='yellow_button'><%= it("No, leave it as it is", scope: ['commercial_shop', 'register_shop']) %></a>
+      </div>
+    </div>
+  <%end%>
+
+
+</div>

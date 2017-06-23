@@ -1,0 +1,15 @@
+<div class="gallery">
+  <% pictures.each do |picture| %>
+    <div class="card" onclick="LightFrame.displayLive('<%= picture.id %>')">
+      <div class="pic_wrapper">
+        <img class="picture" src='<%=picture.medium%>' alt="" />
+        <img class="zoom" src="<%= HtmlHelper.lbroot "/img/gallery/icon_zoom.svg" %>" alt="" />
+      </div>
+      <div class="description">
+        <p class="title"><%= it("By %{user} in %{country}", scope: ['pictures', 'picture_browser'], user: picture.user.nickname, country: picture.dive.spot.country.name) %></p>
+      </div>
+      <div class="data"><%= picture.id %></div>
+    </div>
+  <% end %>
+  <div class="clear"></div>
+</div>

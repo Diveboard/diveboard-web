@@ -1,0 +1,20 @@
+<%= it("%{claimer} has requested ownership of your page on Diveboard", scope: ['notify_shop', 'notify_claim', 'text'], claimer: @claimer.nickname) %>
+
+
+<%= it("This mail is sent to you because %{claimer} has claimed ownership of \"%{shop_name}\" page on Diveboard, and that your email address is identified as primary contact for %{shop_name}. What you need to do now is to check the claim on Diveboard %{validation_url} and validate or reject it. Once you have validated that claim, %{claimer} will be able to add content to your page on Diveboard", scope: ['notify_shop', 'notify_claim', 'text'], claimer: @claimer.nickname, shop_name: @shop.name.titleize, validation_url: @validation_url) %>
+
+<%=@validation_url%>
+
+
+<%= it("Diveboard aims at answering simple questions for recreational divers : where do I want to dive next ? which shop or club can take me there to dive ?
+Therefore, shops and clubs have dedicated pages to advertise their activities. Up to date and compelling information on these pages can help transform internet users into your next customer !", scope: ['notify_shop', 'notify_claim', 'text']) %>
+
+
+<%= it("Happy Diving !", scope: ['notify_shop', 'notify_claim', 'text']) %>
+--
+<%= it("The Diveboard team", scope: ['notify_shop', 'notify_claim', 'text']) %>
+http://www.diveboard.com
+
+
+
+<%= it("This mail has been sent to you by diveboard because you are reIf you don't want to receive these mails anymore, please send a mail to support@diveboard.com", scope: ['notify_shop', 'notify_claim', 'text']) %>

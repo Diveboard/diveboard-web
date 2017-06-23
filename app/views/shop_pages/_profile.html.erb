@@ -1,0 +1,576 @@
+<script type='text/javascript'>
+
+function content_initialize()
+{
+  logbook_shop_home_initialize();
+}
+
+var G_shop_api = <%= @owner.shop_proxy.to_api(:technical).to_json.html_safe %>;
+var G_user_proxy_id = <%= @owner.id %>;
+
+</script>
+
+
+
+
+<%
+default_tab = :overview
+show_overview = true
+##PREPARE_PLANS
+show_ads = !@real_user.nil? && @real_user.admin_rights >= 4
+
+if !@user.nil? && @user.can_edit?(@owner) then
+  show_overview = true
+elsif !@owner.shop_proxy.about_html.nil? || @owner.favorite_dives.count > 0 then
+  show_overview = true
+else
+  show_overview = false
+end
+
+if @owner.shop_proxy.address || @owner.shop_proxy.phone || @owner.shop_proxy.email || @owner.shop_proxy.openings || @owner.shop_proxy.web || @owner.shop_proxy.facebook || @owner.shop_proxy.twitter || @owner.shop_proxy.google_plus || (!@owner.shop_proxy.lat.nil? && !@owner.shop_proxy.lng.nil?) then
+  show_location = true
+else
+  show_location = false
+end
+
+
+if !@valid_claim.nil? then
+  default_tab = :validclaim
+elsif show_overview then
+  default_tab = :overview
+elsif @owner.shop_proxy.reviews.count > 0 || @owner.shop_proxy.dives.count > 0 then
+  default_tab = :reviews
+elsif show_location
+  default_tab = :location
+else
+  default_tab = :reviews
+end
+%>
+
+
+
+<ul class="main_inner_header_tabs">
+    <li id="tab_info_link" class="tab_link editable_tab <%=if !show_overview then 'tab_edit_only' end%> <%= "active" if default_tab == :overview%>" <%if !show_overview then%>style='display:none;'<%end%>><a href="#" ><%= it("Overview", scope: ['shop_pages', 'profile']) %></a></li>
+    <!--<li id="tab_events_link" class='tab_link editable_tab'><a href="#">Events</a></li>-->
+    <li id="tab_reviews_link" class='tab_link <%= "active" if default_tab == :reviews%>'><a href="#"><%= it("Community & feedback", scope: ['shop_pages', 'profile']) %></a></li>
+    <li id="tab_location_link" class='tab_link editable_tab <%= "active" if default_tab == :location%>' <%if !show_location then%>style='display:none;'<%end%>><a href="#"><%= it("Location", scope: ['shop_pages', 'profile']) %></a></li>
+    <% if !@valid_claim.nil? then%>
+    <li id="tab_validclaim_link" class='tab_link editable_tab <%= "active" if default_tab == :validclaim%>'><a href="#"><%= it("Claim", scope: ['shop_pages', 'profile']) %></a></li>
+    <%end%>
+    <% if show_ads then%>
+    <li id="tab_ads_link" class='tab_link editable_tab'><a href="#"><%= it("Ads", scope: ['shop_pages', 'profile']) %></a></li>
+    <%end%>
+</ul>
+
+
+<div class="shop_content rightbar editable">
+  <div id="tab_box">
+
+    <div class='tab_panel tab_info main_content_box' <%if default_tab != :overview%>style='display:none'<%end%>>
+
+      <% if @owner.shop_proxy.about_html.nil? && @owner.about.nil? then %>
+        <%if @user && @user.can_edit?(@owner) then%>
+          <h2><%= it("Presentation", scope: ['shop_pages', 'profile']) %></h2>
+          <p><%= it("We suggest to include a few words about you, your activity, and the services you provide along with a few images (we love pictures: it's easier to read than text!). And feel free to include any advices that will make a Diveboard user become your next customer!", scope: ['shop_pages', 'profile']) %></p>
+          <br/>
+          <p><%= it("To edit the content of this page and add a presentation of your activity, click on the 'EDIT %{span:S}' link in the header.", scope: ['shop_pages', 'profile'], span: It.tag("span", class: 'symbol')) %></p>
+        <%end%>
+      <% else %>
+        <h2><%= it("Presentation", scope: ['shop_pages', 'profile']) %></h2>
+        <div class='wiki_display'>
+          <%=(HtmlHelper.sanitize @owner.shop_proxy.about_html, :shift_headings => 2 ).html_safe %>
+        </div>
+      <%end%>
+
+      <% unless @owner.full_public_dives.count == 0 then %>
+        <h2><%= it("Dives and Spots We Frequently Go to", scope: ['shop_pages', 'profile']) %></h2>
+
+        <ul class='editable'>
+          <% displayed_dives = []
+          if @owner.favorite_dives.count > 0 then
+            displayed_dives = @owner.favorite_dives
+          else
+            displayed_dives = @owner.full_public_dives
+          end
+          displayed_dives.sort_by{rand}[0..3].each{|dive| %>
+          <li>
+          <div class="frequent_dive_body">
+          <a href="<%=dive.fullpermalink(:locale)%>" onclick='showDive(<%=dive.id%>); return(false);'>
+          <img src="<%=if dive.featured_picture.nil? then dive.static_map_url else dive.featured_picture.thumbnail end%>" class='thumb_fav_dive' alt="#" /></a>
+          <div class="frequent_dive_body_inner">
+            <span><h3 class='unstyle'><a href="<%=dive.fullpermalink(:locale)%>" onclick='showDive(<%=dive.id%>); return(false);'>
+              <img src="<%=dive.spot.country.flag_small%>" title="<%=dive.spot.country.name%>" alt="<%=@owner.location%>" style="top: 1px; left: 3px; display: inline-block; position: relative; margin-right: 5px;"/>
+               <%= dive.spot.name %> (<%=dive.spot.location.name%>)</a></h3></span>
+            <p><%if (@user != @owner && @owner.share_details_notes) || @user.can_edit?(@owner)%><%=dive.notes%><%end%></p>
+          </div>
+          </div>
+          </li>
+          <%}%>
+
+        </ul>
+      <%end%>
+
+      <!--<h2>Featured Recent Events</h2>-->
+      <br/>
+    </div>
+
+    <div class='tab_panel tab_events' <%if default_tab != :events%>style='display:none'<%end%>>
+      <h2><%= it("Events", scope: ['shop_pages', 'profile']) %></h2>
+    </div>
+
+    <div class='tab_panel tab_location' <%if default_tab != :location%>style='display:none'<%end%>>
+      <%unless @owner.shop_proxy.lat.nil? || @owner.shop_proxy.lng.nil? then%>
+      <div id="map_location_holder" style=" width:660px; height: 490px;"> </div>
+      <%end%>
+      <%if @owner.shop_proxy.address || @owner.shop_proxy.openings then%>
+        <div class='main_content_box'>
+          <h2>Contact</h2>
+          <table class='shop_location_table'>
+          <%if !@owner.shop_proxy.address.nil?%>
+            <tr>
+              <td class='col1'>Address</td>
+              <td class='col2'><%=h(@owner.shop_proxy.address).gsub(/\n/, '<br/>').html_safe %></td>
+            </tr>
+          <%end%>
+          <%if !@owner.shop_proxy.openings.nil?%>
+            <tr>
+              <td class='col1'>Opening schedule</td>
+              <td class='col2'><%=h(@owner.shop_proxy.openings).gsub(/\n/, '<br/>').html_safe %></td>
+            </tr>
+          <%end%>
+          </table>
+        </div>
+        <%end%>
+
+      <%if @owner.shop_proxy.web || @owner.shop_proxy.facebook || @owner.shop_proxy.twitter || @owner.shop_proxy.google_plus then %>
+        <div class='main_content_box'>
+        <h2>On the web</h2>
+          <table class='shop_location_table'>
+          <%if !@owner.shop_proxy.web.nil?%>
+            <tr>
+              <td class='col1'><%= it("Official web page", scope: ['shop_pages', 'profile']) %></td>
+              <td class='col2'><a href='<%=@owner.shop_proxy.web%>' target=_blank ><%= @owner.shop_proxy.web %></a></td>
+            </tr>
+          <%end%>
+          <%if !@owner.shop_proxy.facebook.nil?%>
+            <tr>
+              <td class='col1'>Facebook</td>
+              <td class='col2'><a href='<%=@owner.shop_proxy.facebook%>'><%= @owner.shop_proxy.facebook %></a></td>
+            </tr>
+          <%end%>
+          <%if !@owner.shop_proxy.twitter.nil?%>
+            <tr>
+              <td class='col1'>Twitter</td>
+              <td class='col2'><%=h @owner.shop_proxy.twitter %></td>
+            </tr>
+          <%end%>
+          <%if !@owner.shop_proxy.google_plus.nil?%>
+            <tr>
+              <td class='col1'>Google+</td>
+              <td class='col2'><%=h @owner.shop_proxy.google_plus %></td>
+            </tr>
+          <%end%>
+          </table>
+        </div>
+      <%end%>
+
+
+
+      <%if !@owner.shop_proxy.nearby.nil? %>
+        <div class='main_content_box'>
+          <h2><%= it("Accomodation & Services Nearby", scope: ['shop_pages', 'profile']) %></h2>
+          <div class='wiki_display'>
+            <%=(HtmlHelper.sanitize @owner.shop_proxy.nearby, :shift_headings => 2 ).html_safe %>
+          </div>
+        </div>
+      <%end%>
+    </div>
+
+    <div class='tab_panel tab_reviews' <%if default_tab != :reviews%>style='display:none'<%end%>>
+      <div class='main_content_box'>
+        <p><%= it("You went on holiday and dived with a great team ? Recommend them here to your online fellow divers!%{br}
+        No organization or security was poor ? Leave a comment so they know what to improve!", scope: ['shop_pages', 'profile'], br: It.tag("br")) %></p>
+        <br/>
+        <p><%= it("The feedback below comes exclusively from Diveboard users.", scope: ['shop_pages', 'profile']) %></p>
+      <% if Membership.where(:group_id => @owner.id, :role => 'admin').count == 0 then%>
+        <br/>
+        <p><%= it("If you work at this dive shop, you can %{link:claim this page} and add a description of your activity!", scope: ['shop_pages', 'profile'], link: It.link("/login/register_pro?start=1&shop_id=" + @owner.shop_proxy.id)) %></p>
+      <%end%>
+      </div>
+      <div class='tab_reviews_2cols'>
+        <ul class='shop_logged_dives'>
+          <li class='shop_logged_dives_head'><h2><%= it("Dives logged", scope: ['shop_pages', 'profile']) %></h2></li>
+          <% if @owner.shop_proxy.public_dives.count == 0 %>
+            <li><%= it("No dives logged with this club", scope: ['shop_pages', 'profile']) %></li>
+          <%else%>
+            <%@owner.shop_proxy.public_dives[0..4].each do |dive|%>
+
+              <li>
+                <div class="shop_logged_dive_body">
+                <div class="shop_logged_dive_body_inner">
+                  <a href="<%=dive.fullpermalink(:locale)%>">
+                    <img src="<%=if dive.featured_picture.nil? then dive.static_map_url else dive.featured_picture.thumbnail end%>" class='thumb_fav_dive' alt="#" />
+                  </a>
+                  <div><h3 class='unstyle'><a href="<%=dive.fullpermalink(:locale)%>">
+                    <img src="<%=dive.spot.country.flag_small%>" title="<%=dive.spot.country.name%>" alt="<%=@owner.location%>" style="top: -2px; left: 3px; display: inline-block; position: relative; margin-right: 5px;"/>
+                     <%= dive.spot.name %> (<%=dive.spot.location.name%>)</a></h3></div>
+                  <p><%if dive.user.share_details_notes ||  (!@user.nil? && @user.can_edit?(dive)) %><%=dive.notes%><%end%></p>
+                </div>
+                </div>
+              </li>
+            <%end%>
+
+
+
+          <%end%>
+        </ul>
+
+        <ul class='shop_reviews'>
+          <li class='shop_reviews_head'><h2><%= it("Reviews", scope: ['shop_pages', 'profile']) %></h2></li>
+          <% if @owner.shop_proxy.reviews.count == 0 %>
+            <li><%= it("No reviews has been left yet.", scope: ['shop_pages', 'profile']) %></li>
+            <li class='user_has_not_review'>
+              <%= it("Have you dived with %{shop_name}?", scope: ['shop_pages', 'profile'], shop_name: @owner.shop_proxy.name.titleize) %>
+              <div style='text-align:center;margin-top: 10px; margin-bottom: 10px;'><button class='leave_review_shop yellow_button'><%= it("Leave a review!", scope: ['shop_pages', 'profile']) %></button></div>
+            </li>
+          <%else%>
+            <li class='review_global'>
+              <div class='reviews_summary'>
+                <div><img src='/img/icons/vote_positive.png' alt='+' class='vote_icon' /><%= it("%{count} positive reviews", scope: ['shop_pages', 'profile'], nb_review: @owner.shop_proxy.positive_reviews, review: it("review", scope: ['unit'], count: @owner.shop_proxy.positive_reviews)) %></div>
+                <div><img src='/img/icons/vote_negative.png' alt='-' class='vote_icon' /><%= it("%{count} negative reviews", scope: ['shop_pages', 'profile'], count: @owner.shop_proxy.negative_reviews) %></div>
+              </div>
+              <table class='review_marks review_marks_summary'>
+                <% [[:mark_orga, it("Organization", scope: ['shop_pages', 'form_review'])],
+                    [:mark_friend, it("Friendliness", scope: ['shop_pages', 'form_review'])],
+                    [:mark_secu, it("Security", scope: ['shop_pages', 'form_review'])],
+                    [:mark_boat, it("Ease of access to water", scope: ['shop_pages', 'form_review'])],
+                    [:mark_rent, it("Equipment rental", scope: ['shop_pages', 'form_review'])] ].each do |mark|
+                      this_mark = @owner.shop_proxy.send(mark[0])
+                      next if this_mark.nil?
+                %>
+                  <tr>
+                    <td><%=mark[1]%></td>
+                    <td class='col2'>
+                      <% previous_level = [0,nil]
+                      this_title = nil
+                      this_idx = nil
+                      grades = [ [0.5,'Really Terrible'], [1, it("Terrible", scope: ['shop_pages', 'form_review'])], [1.5, it("Terrible", scope: ['shop_pages', 'form_review'])], [2, it("Poor", scope: ['shop_pages', 'form_review'])], [2.5, it("Lower than Average", scope: ['shop_pages', 'form_review'])], [3,it("Average", scope: ['shop_pages', 'form_review'])], [3.5,it("Good", scope: ['shop_pages', 'form_review'])], [4,it("Very Good", scope: ['shop_pages', 'form_review'])], [4.5,it("Very Very Good", scope: ['shop_pages', 'form_review'])], [5,it("Excellent", scope: ['shop_pages', 'form_review'])] ]
+                      #Let's find the correct grade to display
+                      grades.each_with_index do |level, gridx|
+                        if this_mark[:mark] > previous_level[0] && this_mark[:mark] <= level[0] then
+                          this_title = level[1]
+                          this_idx = gridx
+                        end
+                        previous_level = level
+                      end
+                      grades.each_with_index do |level, gridx| %>
+                        <input type='radio' name='star_<%=mark[0]%>_glb' title='<%=this_title%>'  disabled='disabled' class='star {split:2}' <%=if gridx == this_idx then 'checked' end%>/>
+                      <%end%>
+                    </td>
+                    <td class='col3'><%=this_mark[:count]%> review<%='s' unless this_mark[:count]==1%></td>
+                  </tr>
+                <%end%>
+              </table>
+            </li>
+            <% if @user.nil? then %>
+              <li class='user_has_not_review'>
+                Have you dived with <%= @owner.shop_proxy.name.titleize %> ?
+                <div style='text-align:center;margin-top: 10px; margin-bottom: 10px;'><button class='leave_review_shop yellow_button'>Leave a review !</button></div>
+              </li>
+            <% elsif !(review = @user.review_for_shop(@owner.shop_proxy)).nil? then %>
+              <li class='review_body review_own'>
+                <img src='<%=review.user.picture%>' class='review_image_user'/>
+                <span class='eval_date'><%=review.created_at.to_date%></span>
+                <p class='review_title'>
+                  <img src='/img/icons/<%if review.recommend%>vote_positive.png<%else%>vote_negative.png<%end%>'>
+                  <strong>Your <%= 'anonymous' if review.anonymous%> review</strong>
+                  <%unless review.title.blank?%><br/><%=review.title.titleize%><%end%>
+                </p>
+                <p class='review_abstract review_comment_text'><%=truncate review.comment, :length => 165, :separator => ' ' %></p>
+                <p class='review_detail review_comment_text'><%=review.comment%></p>
+
+                <div class='review_abstract' style='clear:both; padding: 5px 10px 10px 0px;'>
+                  <% unless (review.mark_orga.nil? && review.mark_orga.nil? && review.mark_friend.nil? && review.mark_secu.nil? && review.mark_boat.nil? && review.mark_rent.nil?  && (truncate review.comment, :length => 165, :separator => ' ') == review.comment) || (review.title.blank? && review.comment.blank?) then %>
+                  <button class='review_more review_abstract grey_button_small'>View More</button>
+                  <% end %>
+                  <button class='leave_review_shop review_abstract grey_button_small'>Edit your review</button>
+                </div>
+
+                <%if review.title.blank? && review.comment.blank? then%>
+                  <div class='review_abstract'>
+                <%else%>
+                  <div style='clear:both;'> </div>
+                  <div class='review_detail' style='display: none;'>
+                <%end%>
+                  <table class='review_marks'>
+                  <% [[:mark_orga, it("Organization", scope: ['shop_pages', 'form_review'])],
+                      [:mark_friend, it("Friendliness", scope: ['shop_pages', 'form_review'])],
+                      [:mark_secu, it("Security", scope: ['shop_pages', 'form_review'])],
+                      [:mark_boat, it("Ease of access to water", scope: ['shop_pages', 'form_review'])],
+                      [:mark_rent, it("Equipment rental", scope: ['shop_pages', 'form_review'])] ].each do |mark|
+                        this_mark = review.send(mark[0])
+                        next if this_mark.nil?
+                  %>
+                    <tr>
+                      <td><%=mark[1]%></td>
+                      <td>
+                        <% previous_level = [0,nil]
+                        this_title = nil
+                        this_idx = nil
+                        grades = [ [0.5,'Really Terrible'], [1, it("Terrible", scope: ['shop_pages', 'form_review'])], [1.5, it("Terrible", scope: ['shop_pages', 'form_review'])], [2, it("Poor", scope: ['shop_pages', 'form_review'])], [2.5, it("Lower than Average", scope: ['shop_pages', 'form_review'])], [3,it("Average", scope: ['shop_pages', 'form_review'])], [3.5,it("Good", scope: ['shop_pages', 'form_review'])], [4,it("Very Good", scope: ['shop_pages', 'form_review'])], [4.5,it("Very Very Good", scope: ['shop_pages', 'form_review'])], [5,it("Excellent", scope: ['shop_pages', 'form_review'])] ]
+                        #Let's find the correct grade to display
+                        grades.each_with_index do |level, gridx|
+                          if this_mark > previous_level[0] && this_mark <= level[0] then
+                            this_title = level[1]
+                            this_idx = gridx
+                          end
+                          previous_level = level
+                        end
+                        grades.each_with_index do |level, gridx| %>
+                          <input type='radio' name='star_<%=mark[0]%>_own' title='<%=this_title%>'  disabled='disabled' class='star {split:2}' <%=if gridx == this_idx then 'checked' end%>/>
+                        <%end%>
+                      </td>
+                    </tr>
+                  <%end%>
+                  </table>
+                </div>
+                <div class='review_detail' style='clear:both; padding: 5px 10px 10px 10px;'>
+                  <button class='grey_button_small review_less review_detail '>View Less</button>
+                  <button class='leave_review_shop review_detail grey_button_small'>Edit your review</button>
+                </div>
+              </li>
+            <%else%>
+              <li class='user_has_not_review'>
+                Have you dived with <%= @owner.shop_proxy.name.titleize %> ?
+                <div style='text-align:center;margin-top: 10px; margin-bottom: 10px;'><button class='leave_review_shop yellow_button'>Leave a review !</button></div>
+              </li>
+            <%end%>
+
+
+            <!-- Users reviews -->
+            <%@owner.shop_proxy.public_reviews.to_a.reject{|r| r.user==@user}[0..4].each_with_index do |review, idx|
+              #don't display a review that is already displayed in the 'Your review' part
+            %>
+              <li class='review_body'>
+
+                <%#THIS IS FOR GOOGLE STAR INTEGRATION%>
+                <div itemscope itemtype="http://data-vocabulary.org/Review" style='display:none'>
+                  <span itemprop="itemreviewed"><%=@owner.shop_proxy.name%></span>
+                  <span itemprop="reviewer"><% if !review.anonymous then %><%=review.user.nickname%><%else%>Anonymous<%end%></span>
+                  <time itemprop="dtreviewed" datetime="<%=review.created_at.to_date%>"><%=review.created_at.to_date%></time>.
+                  <%unless review.title.nil?%><span itemprop="summary"><%=review.title.titleize%></span><%end%>
+                  <%unless review.comment.nil?%><span itemprop="description"><%=review.comment%></span><%end%>
+                  <span itemprop="rating"><%=review.average_mark%></span>
+                </div>
+
+                <img src='<%=if !review.anonymous then review.user.picture else "/img/no_picture.png" end %>' class='review_image_user'/>
+                <span class='eval_date'><%=review.created_at.to_date%></span>
+                <p class='review_title'>
+                  <img src='/img/icons/<%if review.recommend%>vote_positive.png<%else%>vote_negative.png<%end%>'>
+                  <% if !review.anonymous then%>
+                    <a href='/<%=review.user.vanity_url%>'><%=review.user.nickname%></a>
+                    <img src="<%=review.user.country.flag_small%>" title="<%=review.user.country.name%>" alt="<%=review.user.country.name%>" width='16px' height='11px'/>
+                  <%else%>
+                    <i>Anonymous</i>
+                  <%end%>
+                  <%unless review.title.blank?%><br/><%=review.title.titleize%><%end%>
+                </p>
+                <p class='review_abstract review_comment_text'><%=truncate review.comment, :length => 220, :separator => ' ' %></p>
+                <p class='review_detail review_comment_text'><%=review.comment%></p>
+                <% unless review.mark_orga.nil? && review.mark_orga.nil? && review.mark_friend.nil? && review.mark_secu.nil? && review.mark_boat.nil? && review.mark_rent.nil? && (truncate review.comment, :length => 220, :separator => ' ') == review.comment then %>
+                <button class='review_more review_abstract grey_button_small'>View More</button>
+                <% end %>
+                <div style='clear:both;'> </div>
+                <div class='review_detail clear'>
+                  <table class='review_marks'>
+                  <% [[:mark_orga, it("Organization", scope: ['shop_pages', 'form_review'])],
+                      [:mark_friend, it("Friendliness", scope: ['shop_pages', 'form_review'])],
+                      [:mark_secu, it("Security", scope: ['shop_pages', 'form_review'])],
+                      [:mark_boat, it("Ease of access to water", scope: ['shop_pages', 'form_review'])],
+                      [:mark_rent, it("Equipment rental", scope: ['shop_pages', 'form_review'])] ].each do |mark|
+                        this_mark = review.send(mark[0])
+                        next if this_mark.nil?
+                  %>
+                    <tr>
+                      <td><%=mark[1]%></td>
+                      <td>
+                        <% previous_level = [0,nil]
+                        this_title = nil
+                        this_idx = nil
+                        grades = [ [0.5,'Really Terrible'], [1, it("Terrible", scope: ['shop_pages', 'form_review'])], [1.5, it("Terrible", scope: ['shop_pages', 'form_review'])], [2, it("Poor", scope: ['shop_pages', 'form_review'])], [2.5, it("Lower than Average", scope: ['shop_pages', 'form_review'])], [3,it("Average", scope: ['shop_pages', 'form_review'])], [3.5,it("Good", scope: ['shop_pages', 'form_review'])], [4,it("Very Good", scope: ['shop_pages', 'form_review'])], [4.5,it("Very Very Good", scope: ['shop_pages', 'form_review'])], [5,it("Excellent", scope: ['shop_pages', 'form_review'])] ]
+                        #Let's find the correct grade to display
+                        grades.each_with_index do |level, gridx|
+                          if this_mark > previous_level[0] && this_mark <= level[0] then
+                            this_title = level[1]
+                            this_idx = gridx
+                          end
+                          previous_level = level
+                        end
+                        grades.each_with_index do |level, gridx| %>
+                          <input type='radio' name='star_<%=mark[0]%>_<%=idx%>' title='<%=this_title%>'  disabled='disabled' class='star {split:2}' <%=if gridx == this_idx then 'checked' end%>/>
+                        <%end%>
+                      </td>
+                    </tr>
+                  <%end%>
+                  </table>
+                </div>
+                <a href='#' onclick='report_review_as_spam(<%=review.id%>);return(false)' class='report_inappropriate_link'>Report as inappropriate</a>
+                <button class='grey_button_small review_less review_detail'>View Less</button>
+                <%if !review.reply.blank? %>
+                  <div class='review_reply' style='clear:both;'>
+                    <p><strong><%=@owner.nickname%> left a reply:</strong></p>
+                    <p class='reply_text'><%=review.reply%></p>
+                  </div>
+                <%end%>
+                <%if !@user.nil? && @user.can_edit?(@owner) && @user.admin_rights >= 4 ## PREPARE_PLANS%>
+                  <%if review.reply.blank?%>
+                    <button class='yellow_button_small leave_reply review_reply'>Leave a reply</button>
+                  <%else%>
+                    <button class='grey_button_small leave_reply review_reply'>Edit your reply</button>
+                  <%end%>
+                  <div class='review_reply_editor' style='clear:both; display: none;'>
+                    <input type='hidden' class='review_id' value='<%=review.id%>'>
+                    <textarea class='review_reply_edit' name='reply'><%=review.reply%></textarea>
+                    <div class='button_div'>
+                      <button class='yellow_button_small review_reply_submit' >Submit</button>
+                      <button class='grey_button_small review_reply_cancel' >Cancel</button>
+                    </div>
+                  </div>
+                <%end%>
+                <div style='clear:both'> </div>
+              </li>
+            <%end%>
+          <%end%>
+        </ul>
+
+      </div>
+
+    </div>
+
+
+    <% if !@valid_claim.nil? %>
+    <div class='tab_panel tab_validclaim' <%if default_tab != :validclaim%>style='display:none'<%end%>>
+      <p><%=@valid_claim[:user].nickname%> has requested the rights to administrate the page <%= @owner.shop_proxy.name %> on Diveboard.</p>
+      <br/>
+      <p>If you know this person and you agree that he can write details about your shop, then validate the request.
+        <%if @valid_claim[:group].has_admin?%>If not, then click on 'Reject claim'.
+        <%else%>If not, then you may submit your own claim.<%end%>
+      </p>
+      <div class='claim_miniprofile_header'>
+        <%=@valid_claim[:user].nickname%>
+        <% if !@valid_claim[:user].contact_email.nil? then%><a href='mailto:<%=@valid_claim[:user].contact_email%>'>[<%=@valid_claim[:user].contact_email%>]</a><%end%>
+        <% if !@valid_claim[:user].fb_id.nil? then%>
+        <a class='link_with_arrow' style='float:right' target='_blank' href='http://www.facebook.com/<%=@valid_claim[:user].fb_id%>'>View facebook profile</a>
+        <br style='clear:both'/>
+        <%end%>
+      </div>
+      <div class='claim_miniprofile'>
+        <%= render :partial => 'logbook/mini_profile',  :locals => {:owner => @valid_claim[:user], :clickable => false, :hide_follow => true, :new_window => true, :hide_profile => @dive.nil?, :posts_link => false, :custom_header => false} %>
+        <br style='clear:both'/>
+      </div>
+      <div class='claim_action_buttons'>
+        <input type='hidden' id='shop_validate_claim_string' value="<%=@valid_claim[:claim]%>"/>
+        <input type='hidden' id='shop_validate_claim_nickname' value="<%=h @valid_claim[:user].nickname%>"/>
+        <a class='yellow_button' id='shop_validate_claim' href='#'>Validate claim</a>
+        <button class='yellow_button' href='<%=@owner.fullpermalink(:locale)%>'>Reject claim</button>
+        <%if !@valid_claim[:group].has_admin?%>
+        <button class='yellow_button claim_shop_link' href='#'>Claim this page for yourself</button>
+        <%end%>
+      </div>
+    </div>
+    <%end%>
+
+
+  </div>
+</div>
+
+
+<%=render :partial => 'form_review', :locals => {:review => (@user && @user.review_for_shop(@owner.shop_proxy)), :shop => @owner.shop_proxy}%>
+
+
+<div id="dialog-claim-shop" title="<%= it("Get access", scope: ['shop_pages', 'profile']) %>" style="display:none;">
+  <p class="dialog-text-highlight">Dive shops and clubs can add description of their activities on their Diveboard page. To allow you to make changes to this page, we first need to make sure that you are an representative of <strong><%=@owner.shop_proxy.name%></strong>.</p>
+
+  <%if @user.nil? then%>
+    <p>You first need to be logged in on diveboard. If you have not created your account yet, <a href='/login/register'>sign up</a> on Diveboard : it's very easy !</p>
+  <%elsif @user.is_group? then%>
+    <!-- this should never happen-->
+    <p>A shop or a group cannot claim ownership of another shop. Make sure to log in with your own user.</p>
+  <%else%>
+    <div class='auto_claim' >
+      <br/>
+      <h3>Two options are available for registering the page :</h3>
+      <table>
+        <tr style='height: 100px'>
+          <td style='width: 20px;'>1.</td>
+          <td><p>We will send you a mail to <strong><%=@owner.shop_proxy.email%></strong> with a confirmation link that will allow you to complete the claim process.</p></td>
+          <td><button id='dialog_claim_auto_submit' class='yellow_button claim_shop_send_mail'>OK, send me the mail !</button></td>
+        </tr>
+        <tr>
+          <td style='width: 20px;'>2.</td>
+          <td><p>If the email <%=@owner.shop_proxy.email%> is not correct or if you don't have access to this mailbox, then leave us a message and we'll handle your request manually.</p></td>
+          <td><button class='yellow_button claim_shop_manual_link'>Leave us a message</button></td>
+        </tr>
+      </table>
+    </div>
+    <div class='manual_claim' style='display:none;'>
+      <p>Leave us a message with your identity and your role within <%=@owner.shop_proxy.name%>, along with any useful explanation. Your claim will only be approved if we can verify that you are the owner or a representative of <%=@owner.shop_proxy.name%>.</p>
+      <br/>
+      <%if !@owner.shop_proxy.email.blank? then %>
+      <p>Please note that whenever possible, you should try the <a href='#' class='claim_shop_auto_link'>automated process</a> to have a quicker answer.</p>
+      <%end%>
+      <div>
+        <textarea id='dialog_claim_explanation'></textarea>
+        <p><button class='yellow_button' id='dialog_claim_explanation_submit'>Submit claim</button></p>
+      </div>
+    </div>
+  <%end%>
+</div>
+
+<div id='dialog-report-spam' title="<%= it("Report review as inappropriate", scope: ['shop_pages', 'profile']) %>" style="display:none;">
+  <p class="dialog-text-highlight">Diveboard aims (among many other things !) at helping divers choose their dive center when travelling abroad. Thus, reviews need to be relevant for your fellow divers from all over the world.<br/>
+  If you think a review should be removed, report it to us and we'll decide what to do with the review based on the rules below.</p>
+
+  <p>You may report a review if it breaks one or many of the following rules :</p>
+  <ul class='dotted_list'>
+    <li>Must provide useful information for fellow divers</li>
+    <li>Must be based on first-hand experience (i.e. hearsay, rumors, ...)</li>
+    <li>Should be original (Same review submitted several times by different users are considered as spam)</li>
+    <li>Shop owners must not impersonate customers</li>
+  </ul>
+  <ul class='dotted_list'>
+    <li>Must not be racist, sexist, homophobic, sexually explicit, abusive or otherwise objectionable</li>
+    <li>Must not break the law or condone or encourage unlawful activity. This includes breach of copyright, defamation and contempt of court</li>
+    <li>Must not encourage activities which could endanger the safety or well-being of others</li>
+    <li>Must not advertise products or websites unrelated to the shop</li>
+  </ul>
+  <p>Please note that Diveboard will never remove reviews because they are too good or not good enough.</p>
+</div>
+
+
+<div id='dialog-reply-review' title="<%= it("Reply to a user review", scope: ['shop_pages', 'profile']) %>" style="display:none;">
+  <p class="dialog-text-highlight">You may reply to this review to provide details, answers, or simply to thank the one who left the review ! Your reply will appear on your page below the actual review, and the user who left the review will be notified.</p>
+
+  <div class='review_copy'>
+  </div>
+
+  <textarea class='review_reply_edit'></textarea>
+
+  <button class='yellow_button review_reply_submit'>Submit your reply</button>
+</div>
+
+
+
+<div itemscope itemtype="http://data-vocabulary.org/Review-aggregate">
+  <span itemprop="itemreviewed"><%=@owner.shop_proxy.name%></span>
+  <%if @owner.picture_large != User::NO_PICTURE then%>
+    <img itemprop="photo" src="<%=@owner.picture_large%>"  style='height: 0px;'/>
+  <%end%>
+  <span itemprop="rating" itemscope itemtype="http://data-vocabulary.org/Rating">
+    <span itemprop="average"><%=@owner.shop_proxy.overall_rating%></span>
+    out of <span itemprop="best">5</span>
+  </span>
+  based on <span itemprop="votes"><%=@owner.shop_proxy.public_reviews.count%></span> ratings.
+  <%# TODO: include count of reviews with text <span itemprop="count">5</span> user reviews.%>
+</div>
+

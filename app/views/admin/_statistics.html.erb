@@ -1,0 +1,60 @@
+<%
+begin
+  fragment_file = Rails.cache.send(:read_entry,"views/admin_statistics",{})
+  if params[:force_refresh] || (fragment_file && Time.now - 70.minutes > Time.at(fragment_file.created_at)) then
+    ActionController::Base.new.expire_fragment "admin_statistics"
+  end
+rescue
+  Rails.logger.warn $!.message
+end
+cache "admin_statistics" do %>
+
+<div style="width:300px;display: inline-block; vertical-align: top;">
+  <div style="font-size:18px; text-align: center;">Accounts</div>
+  <ul style="list-style-type:disc; border-style:solid; border-width:3px; border-color:#ccc; border-radius: 15px; font-size:11px; padding-left:10px">
+    <li style="margin-top:5px;">Total users : <div style='float:right'><%=User.where('fb_id is not null or password is not null').count%></div></li>
+    <li style="margin-top:5px;">Facebook users : <div style='float:right'><%=User.where('fb_id is not null').count%></div></li>
+    <li style="margin-top:5px;">Email/pwd users : <div style='float:right'><%=User.where('password is not null').count%></div></li>
+    <li style="margin-top:5px;">Facebook and Email/pwd users : <div style='float:right'><%=User.where('fb_id is not null and password is not null').count%></div></li>
+    <li><hr/></li>
+    <li style="margin-top:5px;">Created during the last 7 days : <div style='float:right'><%=ActiveRecord::Base.connection.select_value('SELECT count(distinct users.id) from users WHERE (fb_id is not null or password is not null) AND created_at > adddate(now(), interval -7 day)')%></div></li>
+    <li style="margin-top:5px;">Created during the last 30 days : <div style='float:right'><%=ActiveRecord::Base.connection.select_value('SELECT count(distinct users.id) from users WHERE (fb_id is not null or password is not null) AND created_at > adddate(now(), interval -30 day)')%></div></li>
+  </ul>
+</div>
+
+<div style="width:300px;display: inline-block;">
+  <div style="font-size:18px; text-align: center; vertical-align: top;">Users</div>
+  <ul style="list-style-type:disc; border-style:solid; border-width:3px; border-color:#ccc; border-radius: 15px; font-size:11px; padding-left:10px">
+    <li style="margin-top:5px;">Users with at least 1 public dive : <div style='float:right'><%=ActiveRecord::Base.connection.select_value('SELECT count(distinct users.id) from users, dives WHERE users.id = dives.user_id and dives.privacy=0')%></div></li>
+    <li style="margin-top:5px;">Users with custom 'about' : <div style='float:right'><%=ActiveRecord::Base.connection.select_value('SELECT count(distinct users.id) from users WHERE about is not null and about != ""')%></div></li>
+    <li style="margin-top:5px;">Users with custom profile picture : <div style='float:right'><%=ActiveRecord::Base.connection.select_value('SELECT count(distinct users.id) from users WHERE pict is not null and pict > 0')%></div></li>
+    <li><hr/></li>
+    <li style="margin-top:5px;">Users having uploaded from computer : <div style='float:right'><%=ActiveRecord::Base.connection.select_value('select count(distinct dives.user_id) from dives, uploaded_profiles as u where dives.uploaded_profile_id = u.id and u.source = \'computer\'')%></div></li>
+    <li style="margin-top:5px;">Users having uploaded pictures : <div style='float:right'><%=ActiveRecord::Base.connection.select_value('select count(distinct(user_id)) from pictures')%></div></li>
+  </ul>
+</div>
+
+<p>&nbsp;</p>
+
+<div style="width:300px;display: inline-block; vertical-align: top;">
+  <div style="font-size:18px; text-align: center;">Dives</div>
+  <ul style="list-style-type:disc; border-style:solid; border-width:3px; border-color:#ccc; border-radius: 15px; font-size:11px; padding-left:10px">
+    <li style="margin-top:5px;">total dives : <div style='float:right'><%=ActiveRecord::Base.connection.select_value('SELECT count(distinct dives.id) from dives WHERE dives.id > 1')%></div></li>
+    <li style="margin-top:5px;">dives with spot : <div style='float:right'><%=ActiveRecord::Base.connection.select_value('SELECT count(distinct dives.id) from dives WHERE dives.id > 1 and spot_id is not null and spot_id > 1')%></div></li>
+    <li style="margin-top:5px;">public dives : <div style='float:right'><%=ActiveRecord::Base.connection.select_value('SELECT count(distinct dives.id) from dives WHERE dives.id > 1 and privacy=0')%></div></li>
+    <li style="margin-top:5px;">public dives with notes : <div style='float:right'><%=ActiveRecord::Base.connection.select_value('SELECT count(distinct dives.id) from dives WHERE privacy=0 and notes is not null and notes != "" ')%></div></li>
+    <li style="margin-top:5px;">public dives with pictures : <div style='float:right'><%=ActiveRecord::Base.connection.select_value('SELECT count(distinct picture_album_id) from picture_album_pictures, dives where picture_album_pictures.picture_album_id=dives.album_id and dives.privacy=0')%></div></li>
+    <li style="margin-top:5px;">public dives with spotted fishes : <div style='float:right'><%=ActiveRecord::Base.connection.select_value('SELECT count(distinct dive_id) from dives_fish, dives where dives_fish.dive_id=dives.id and dives.privacy=0')%></div></li>
+  </ul>
+</div>
+
+<div style="width:300px;display: inline-block;">
+  <div style="font-size:18px; text-align: center; vertical-align: top;">Computers</div>
+    <ul style="list-style-type:disc; border-style:solid; border-width:3px; border-color:#ccc; border-radius: 15px; font-size:11px; padding-left:10px">
+    <% computers = ActiveRecord::Base.connection.select_rows('select u.source_detail as computer, count(distinct dives.user_id) as nb_user, count(distinct(dives.id)) as nb_dive, max(u.created_at) from dives, uploaded_profiles as u where dives.uploaded_profile_id = u.id and u.source = \'computer\' group by u.source_detail order by count(distinct dives.user_id) desc, count(distinct(dives.id)) desc');
+    computers.each { |row| %>
+    <li style="margin-top:5px; clear:both"><%=row[0]%> <div style='float:right'>[<%=row[3].to_date%>] <%=row[1]%> users - <a href='/admin/dives?search_computer=<%=row[0]%>'><%=row[2]%> dives</a></div></li>
+    <%}%>
+  </ul>
+</div>
+<%end%>

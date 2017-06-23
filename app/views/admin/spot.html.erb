@@ -1,0 +1,91 @@
+<%= render :partial => 'admin_css'%>
+
+<style type="text/css">
+.tag {width:120px; display:inline-block !important;}
+.varline {display: block; width: 310px;}
+.field_with_errors { border-color: red; border-width: 1px; border-style:solid; display:inline-block !important;}
+input {display: inline-block !important;}
+.field {display: inline-block !important; }
+</style>
+
+<script type="text/javascript">
+
+$(document).ready( function () {
+	$("#searchbutton").click(search_spots);
+	$("#dedupebutton").click(dedupe_spots);
+	
+});
+
+function search_spots(){
+	$.ajax({
+		url: "/api/search_spot",
+		data: ({
+			name: $("#spotsearch").val(),
+			'authenticity_token': "<%=form_authenticity_token%>"
+			}),
+		type: "POST",
+		dataType: "json",
+		success: function(data) {
+			$("#results").empty();
+			$.each(data, function(key, val){
+				$("#results").append(val.spot.id+", "+val.spot.name+", "+val.spot.location_name+", "+val.spot.region_name+", "+val.spot.country_code+" <a href=\"/admin/spot-edit/"+val.spot.id+"\">EDIT</a><br/>");
+				});
+			
+			}
+		});
+	
+}
+
+
+function dedupe_spots(){
+	$.ajax({
+		url: "/api/dedupe_spot",
+		data: ({
+			keep: $("#spotkeep").val(),
+			remove: $("#spotdelete").val(),
+			'authenticity_token': "<%=form_authenticity_token%>"
+			}),
+		type: "POST",
+		dataType: "json",
+		success: function(data) {
+			$("#dedupresult").empty();
+			$("#dedupresult").text(data.result);
+			if (data.success == true)
+				window.location.reload();
+			}
+		});
+	
+}
+
+</script>
+
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 3 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+	<h1>Spot management</h1>
+	<div class="about_profile_new_box" style="display:inline-block;width:620px;">
+		<span class="second_lvl_header"style="display:block;">Create <a href="/admin/spot-edit">new spot</a></span>		
+	</div>
+	<div class="about_profile_new_box" style="display:inline-block;width:620px;">	
+		<span class="second_lvl_header"style="display:block;">Search spot</span>
+		<input type="text" id="spotsearch" name="spotsearch" size="40"/> <button style="margin-top: 8px;" id="searchbutton">SEARCH</button>
+		<div id="results"></div>
+	</div>
+	<div class="about_profile_new_box" style="display:inline-block;width:620px;">
+		<span class="second_lvl_header"style="display:block;">Spots to moderate</span>
+		<% @moderate_spots.each do |spot|%>
+		<%="#{spot.id}-#{spot.moderate_id}: #{spot.name}, #{spot.country.ccode}   >> "%><a href="/admin/moderate_spot/<%=spot.id%>">Moderate</a><br/>
+		<%end%>
+	</div>
+	<div class="about_profile_new_box" style="display:inline-block;width:620px;">
+		<span class="second_lvl_header"style="display:block;">Tag spots to moderate</span>
+		<div>Spot 1 : <input type="text" id="spotkeep" name="spotkeep" size="40" style="float:none;"/><br/></div>
+		<div>Spot 2 : <input type="text" id="spotdelete" name="spotdelete" size="40" style="float:none;"/><br/></div>
+		<button style="margin-top: 8px;" id="dedupebutton">De-Duplicate</button>
+		<div id="dedupresult"></div>
+	</div>
+</div>
+	

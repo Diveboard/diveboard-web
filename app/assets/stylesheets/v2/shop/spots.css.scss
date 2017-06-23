@@ -1,0 +1,101 @@
+@import 'variablesv2';
+
+#spots
+{
+  padding-bottom: 10px;
+  margin-top: 10px;
+  .container
+  {
+    max-width: $home-width;
+    margin: 0 auto;
+  }
+
+  .map
+  {
+    width: 100%;
+    height: 340px;
+    background-color: $dark-gray-db;
+  }
+
+  .dive_reviews
+  {
+    max-width: $home-width;
+    margin: 0 auto;
+    padding-top: 10px;
+    position: relative;
+
+    @media (max-width: 1024px)
+    {
+      display: none;
+    }
+
+    .dive_review
+    {
+      height: 68px;
+      width: calc(33% - 6px);
+      border: 1px solid $light-gray-db;
+      float: left;
+      margin-right: 10px;
+      background-color: white;
+
+      .user_pic
+      {
+        width: 60px;
+        height: 60px;
+        -webkit-border-radius: 30px;
+        -moz-border-radius: 30px;
+        border-radius: 30px;
+        background-color: $dark-gray-db;
+        margin-top: 4px;
+        margin-left: 4px;
+        float: left;
+        background-size: cover;
+      }
+
+      .review_content
+      {
+        float: left;
+        margin-left: 10px;
+        margin-top: 5px;
+        width: calc(100% - 74px);
+        font-size: 13px;
+
+        .username
+        {
+          white-space: nowrap;
+          float: left;
+          font-size: 14px;
+          color: $navy-blue-db;
+          a {
+              text-decoration: initial;
+              color: $navy-blue-db;
+          }
+        }
+
+        .date
+        {
+          float: right;
+          margin-right: 10px;
+          margin-top: 1px;
+          color: $mid-gray-db;
+        }
+
+        .review
+        {
+          color: $dark-gray-db;
+          width: 260px;
+          height: 38px;
+          overflow: hidden;
+        }
+      }
+    }
+
+    .last
+    {
+      margin-right: 0;
+      float: right;
+      position: absolute;
+      right: 0px;
+    }
+  }
+}

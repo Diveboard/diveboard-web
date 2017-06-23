@@ -1,0 +1,15 @@
+AUTOMATED TESTING
+=================
+
+Selenium scripts for automated functional testing are placed in the repository diveboard-autotests.
+
+
+UNIT TESTING
+============
+
+Command to launch unit tests :
+
+    rake dbtest:units
+
+Note: this command prevents all the initialisation (and reset) of the database. It is defined in lib/tasks/db.rake
+

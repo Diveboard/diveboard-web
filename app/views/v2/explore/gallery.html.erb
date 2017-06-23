@@ -1,0 +1,120 @@
+<%= content_for :meta_tags do%>
+  <title>Great dive pictures from Diveboard community, hand picked every day</title>
+  <meta property="fb:app_id" content="193803977296892" />
+  <meta property="og:type"   content="website" />
+  <meta property="article:publisher" content="https://www.facebook.com/Diveboard" />
+  <meta property="og:description" content="Hand picked selection of the best dive pictures uploaded every day by the Diveboard community. Discover wonderful fish, wrecks, sharks, nudibranchs but also sponges and even some mermaids !" />
+  <meta property="og:url"    content="<%=ROOT_URL + 'explore/gallery' %>" />
+  <meta property="og:title"  content="Great dive pictures from Diveboard community, hand picked every day" />
+  <meta property="og:image"  content="<%=begin pictures.first.large rescue ROOT_URL+"img/logo_50.png" end%>"/>
+<%end%>
+
+<%= content_for :stylesheets do%>
+  <%= stylesheet_link_tag 'gallery' %>
+<%end%>
+
+<%= content_for :javascripts do%>
+  <%= javascript_include_tag 'gallery' %>
+  <script type="text/javascript">
+    function detach_from_gallery(source)
+    {
+      $(source).closest('.card').detach();
+    }
+
+    $(function(){
+      var container = $('.gallery');
+
+      container.imagesLoaded(function(){
+        container.masonry({
+          itemSelector: '.card',
+          isAnimated: true,
+          isFitWidth: true,
+          columnWidth: 340
+        });
+      });
+
+      container.infinitescroll({
+        debug: false,
+        bufferPx: 900,
+        animate: false,
+        navSelector  : '#page-nav',    // selector for the paged navigation
+        nextSelector : '#page-nav a',  // selector for the NEXT link (to page 2)
+        itemSelector : '.card',     // selector for all items you'll retrieve
+        loading: {
+            finishedMsg: '<%= it("No more pages to load.", scope: ['pictures', 'picture_browser']) %>',
+            img: "<%= HtmlHelper.lbroot "/img/transparent_loader.gif" %>",
+            speed: 0,
+            msgText: "<%= it("Loading some more pictures...", scope: ['pictures', 'picture_browser']) %>"
+          }
+        },
+        // trigger Masonry as a callback
+        function( newElements ) {
+          // do not empty lightframe on new elements
+          LightFrame.empty = false;
+
+          // hide new items while they are loading
+          var newElems = $( newElements ).css({ opacity: 0 });
+          // ensure that images load before adding to masonry layout
+          newElems.imagesLoaded(function(){
+            // show elems now they're ready
+            newElems.animate({ opacity: 1 });
+            container.masonry( 'appended', newElems, true );
+            //LightFrame.append('.card .data');
+            var divs = $('.card .data');
+            var ids = [];
+            var i = LightFrame.pictureList.length;
+            var length = divs.length;
+            while (i < length)
+            {
+              ids.push($(divs[i]).html());
+              i++;
+            }
+            LightFrame.addPictures(ids);
+          });
+
+          /*ga('send', {
+            'hitType': 'event',          // Required.
+            'eventCategory': 'interaction',   // Required.
+            'eventAction': 'gallery_scroll',      // Required.
+            'nonInteraction': true
+          });*/
+        });
+
+        <%
+          picture_array = []
+          
+          pictures.each do |picture|
+            picture_array.push(picture.id) 
+          end
+        %>
+
+        LightFrame.init(<%= picture_array.to_json %>);
+    });
+  </script>
+<% end %>
+
+<div class="gallery">
+  <% pictures.each do |picture| %>
+    <div class="card" onclick="LightFrame.displayLive('<%= picture.id %>')">
+      <div class="pic_wrapper">
+        <img class="picture" src='<%=picture.medium%>' alt="" />
+        <img class="zoom" src="<%= HtmlHelper.lbroot "/img/gallery/icon_zoom.svg" %>" alt="" />
+      </div>
+      <div class="description">
+        <p class="title"><%= it("By %{user} in %{country}", scope: ['pictures', 'picture_browser'], user: picture.user.nickname, country: picture.dive.spot.country.name) %></p>
+      </div>
+      <div class="data"><%= picture.id %></div>
+    </div>
+  <% end %>
+  <div class="clear"></div>
+</div>
+
+<div id='page-nav' style="display: none;">
+  <a href='/explore/gallery?append=true&page=<%=page_nb+1%>&area_id=<%=params[:area_id]%>'>next</a>
+</div>
+
+<%= render :partial => 'v2/lightframe/gallery'%>
+<%= if !@user.nil? then render "v2/modal/email" end %>
+<%= 
+#if @user.nil? then render "v2/modal/login_popup", :page => :gallery end 
+  %>

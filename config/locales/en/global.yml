@@ -1,0 +1,125 @@
+---
+en:
+  globals:
+    shop:
+      qa:
+        questions:
+          deco_chambers: "Location of nearest Deco Chamber"
+          staff: Staff
+          boat: Boat
+          shore_dives: "Shore dives"
+          deco_chamber: "Location of nearest Deco Chamber"
+          tanks: Tanks
+          gases: Gases
+          gear: "Gear rented"
+          services: "On site services"
+          payment: "Accepted payment means"
+          best_period: "Best months to go there"
+          hotels: "Hotels nearby"
+          transfers: "Transport to/from hotels"
+          parking: "Private parking available"
+          other_activities: "For non-diver"
+          gear_sales: "Gear Sales"
+          gear_maintenance: "Gear Maintenance"
+        hint:
+          deco_chambers: "How far is the closest decompression chamber ?"
+          staff: "Please present your staff, monitors and their specialties"
+          boat: "What kind of boat do you have ? How many diver / non diver can be on board ? What equipment do you have (oxygen, tea, ....) ?"
+          shore_dives: "Do you do shore dives ? Is it on your house reef ?"
+          deco_chamber: "How far is the closest decompression chamber ?"
+          tanks: "Are you using steel or aluminium tanks ? Of which capacity ?"
+          gases: "Do you provide Nitrox or Trimix ? Any standard mix you provide ?"
+          gear: "Which gear is available for rental (wetsuit, BCD, camera, computer, ...) ? What brands ?"
+          services: "What are the services that you provide ? locker, class rooms, shower, swimmingpool, jacuzzi..."
+          payment: "What payment means do you accept on site ?"
+          best_period: "Is there any specific period where there are exceptional marine life to see ?"
+          hotels: "Which hotels nearby would you recommend"
+          transfers: "Do you do transfers to and from hotels in the area ?"
+          parking: "Is there a dedicated parking for your customers ?"
+          other_activities: "Do you organize activities for non-divers ? What are the great activities in the area for non divers ?"
+          gear_sales: "Are you selling gear on-site ? What type / What brands ? Why should customer buy through you? Are you part of a brand's dealer network ?"
+          gear_maintenance: "Do you perform maintenance on gear on-site ? What kind & What brands ? Do you have brand maintenance certifications ?"
+    divetype:
+      recreational: Recreational
+      training: Training
+      ? "night dive"
+      : "Night dive"
+      ? "deep dive"
+      : "Deep dive"
+      drift: Drift
+      wreck: Wreck
+      cave: Cave
+      reef: Reef
+      photo: Photo
+      research: Research
+      ? "Photo Survey"
+      : "Photo Survey"
+      Shore: Shore
+      Twilight: Twilight
+      Drift: Drift
+      Tech: Tech
+      ? "Ice Diving"
+      : "Ice Diving"
+      ? "Boat Dive"
+      : "Boat Dive"
+      Video: Video
+      Sidemount: Sidemount
+      Recreational: Recreational
+      Reef: Reef
+      Photo: Photo
+    watertype:
+      salt: Salt
+      fresh: Fresh
+    visibility:
+      bad: Bad
+      average: Average
+      good: Good
+      excellent: Excellent
+    gear_categories:
+      BCD: BCD
+      Boots: Boots
+      Camera: Camera
+      Compass: Compass
+      Computer: Computer
+      Cylinder: Cylinder
+      ? "Dive skin"
+      : "Dive skin"
+      ? "Dry suit"
+      : "Dry suit"
+      Fins: Fins
+      Gloves: Gloves
+      Hood: Hood
+      Knife: Knife
+      ? "Lift bag"
+      : "Lift bag"
+      Light: Light
+      Mask: Mask
+      Other: Other
+      Rebreather: Rebreather
+      Regulator: Regulator
+      Scooter: Scooter
+      ? "Wet suit"
+      : "Wet suit"
+    tank_material:
+      aluminium: Aluminium
+      steel: Steel
+      carbon: Carbon
+    current:
+      none: None
+      light: Light
+      medium: Medium
+      strong: Strong
+      extrme: Extreme
+    long:
+      current:
+        light: "Light (up to 1 knot)"
+        mediume: "Medium (up to 2 knots)"
+        strong: "Strong (up to 3 knots)"
+        extreme: "Extreme (over 3 knots)"
+        none: None
+  blog:
+    feed_rss:
+      ? "%{user}'s scuba dive in %{spot_name}"
+      : "%{user}'s scuba dive in %{spot_name}"
+      ? "Dive spot: %{country}, %{location}, %{spot} - Depth: %{dive_maxdepth}m, duration: %{dive_duration}mins - buddies: %{buddies} - species spotted : %{species} - Notes: %{notes}"
+      : "Dive spot: %{country}, %{location}, %{spot} - Depth: %{dive_maxdepth}m, duration: %{dive_duration}mins - buddies: %{buddies} - species spotted : %{species} - Notes: %{notes}"

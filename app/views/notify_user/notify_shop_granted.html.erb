@@ -1,0 +1,4 @@
+<div class="main_info" align="left">
+  <p><%= it("Hey ! You now have the rights to edit the Diveboard page for %{link:%{shop}} !", scope: ['notify_user', 'notify_shop_granted'], link: @shop.fullpermalink(:locale) + "/edit/welcome?success=true", shop: @shop.name) %></p>
+  <p><center style='margin: 20px;'><a href="<%=@shop.fullpermalink(:locale)%>/edit/welcome?success=true" class="yellow_button" style="margin-top: 5px;"><%= it("Customize the page", scope: ['notify_user', 'notify_shop_granted']) %></a></center></p>
+</div>

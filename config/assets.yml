@@ -1,0 +1,56 @@
+embed_assets: on
+template_function: Mustache_template
+template_extension: html.mustache
+compressor_options:
+  java: "echo  1.7"   # tricking jammit to believe java is installed (we don't even need it)
+
+javascripts:
+
+stylesheets:
+  embed:
+    - public/styles/fonts.css
+  common:
+    - public/styles/jquery.qtip-2.0.0-20120618.css    ##- public/js/jquery.qtip-1.0.0-rc3.min.js
+    - public/styles/jquery.handsontable.css ##needs to come b4 jquery-ui 
+    - public/styles/jquery_ui/jquery-ui-1.8.11.custom.css
+    - public/styles/mediaelementplayer.css
+    - public/mod/elrte/css/elrte.full.css
+    - public/styles/global.css
+    - public/styles/blog.css
+    - public/styles/baskets.css
+    - public/styles/sign_up_popup.css
+  divepage:
+    - public/styles/photoswipe.css
+    - public/styles/divepage.css
+    - public/styles/token-input-facebook.css
+    - public/styles/jquery.Jcrop.css
+    - public/styles/jquery.jscrollpane.css
+  shoppage:
+    - public/styles/photoswipe.css
+    - public/styles/divepage.css
+    - public/styles/shoppage.css
+    - public/styles/jquery.Jcrop.css
+    - public/styles/jquery.jscrollpane.css
+  editor:
+    - public/styles/jquery.Jcrop.css
+    - public/styles/ceebox-min.css
+    - public/styles/jquery.contextMenu.css
+    - public/styles/jquery.jscrollpane.css
+  settings:
+
+  tour:
+    - public/styles/tour.css
+    - public/styles/jquery.jscrollpane.css
+  blog:
+    - public/styles/jquery.Jcrop.css
+    - public/styles/jquery.jscrollpane.css
+  widget:
+    - public/styles/widget.css
+    - public/styles/jquery.jscrollpane.css
+  newsletter:
+    - public/styles/newsletter.css
+    - public/styles/jquery.jscrollpane.css
+  search:
+    - public/styles/jquery.jscrollpane.livesearch.css
+  commercial_shop:
+    - public/styles/commercial_shop.css

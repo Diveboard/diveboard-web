@@ -1,0 +1,127 @@
+@import 'variablesv2';
+
+#spot_on
+{
+  max-width: $home-width;
+  margin: 0 auto;
+  @media (max-width: 1110px)
+  {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  @media (max-width: 720px)
+  {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .first_col
+  {
+    width: calc(66.66% - 4px);
+    float: left;
+    @media (max-width: 720px)
+    {
+      width: 100%;
+    }
+  }
+
+  .second_col
+  {
+    width: calc(33.33% - 12px);
+    float: right;
+    @media (max-width: 720px)
+    {
+      width: 100%;
+    }
+    
+    .card
+    {
+      margin-right: 0;
+      width: calc(100%);
+      @media (max-width: 720px)
+      {
+        width: calc(50% - 5px);
+      }
+    }
+  }
+
+  .card
+  {
+    width: calc(50% - 10px);
+    border: 1px solid #c5c6c7;
+    margin-bottom: 20px;
+    float: left;
+    position: relative;
+    background-color: white;
+    @media (max-width: 720px)
+    {
+      width: calc(50% - 5px);
+    }
+
+    .pic_wrapper
+    {
+      overflow: hidden;
+
+      @media (min-width: 721px)
+      {
+        &:hover .picture
+        {
+          transform: scale(1.5);
+          opacity: 0.8;
+        }
+
+        &:hover .zoom 
+        {
+          display: block;
+        }
+      }
+    }
+
+    .zoom
+    {
+      display: none;
+      position: absolute;
+      top: calc(50% - 40px);
+      left: calc(50% - 40px);
+      width: 80px;
+      cursor: pointer;
+    }
+
+    .picture
+    {
+      height: 205px;
+      width: calc(100% - 10px);
+      overflow: hidden;
+      background-size: cover;
+      background-color: $dark-gray-db;
+      background-position: 0px;
+      margin-top:5px;
+      margin-left:5px;
+
+      @media (max-width: 1024px)
+      {
+        height: 150px;
+      }
+      @media (max-width: 720px)
+      {
+        height: 120px;
+      }
+
+      @include centerScaleImg();
+    }
+
+    .title
+    {
+      color: #3c4245;
+      font-size: 14px;
+      padding-left: 7px;
+      margin: 0;
+      line-height: 30px;
+    }
+  }
+
+  .last
+  {
+    float: right;
+  }
+}

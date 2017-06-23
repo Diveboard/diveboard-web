@@ -1,0 +1,10 @@
+<%= it("Hi %{recipient} !", scope: ['notify_user', 'notify_buddy_added', 'text'], recipient: @recipient.nickname) %>
+
+<%= it("Your buddy %{buddy} wanted to let you know that he just logged the dive you did together in %{spot} on %{date}.", scope: ['notify_user', 'notify_buddy_added', 'text'], buddy: @buddy.nickname, spot: @dive.spot.name, date: l(@dive.date.to_time, format: :full)) %>
+
+<%= it("You should check it out here : %{txt_url}", scope: ['notify_user', 'notify_buddy_added', 'text'], txt_url: @dive.fullpermalink(:locale)) %>
+
+<%= it("Happy Diving !", scope: ['notify_user', 'notify_buddy_added', 'text']) %>
+--
+<%= it("The Diveboard team", scope: ['notify_user', 'notify_buddy_added', 'text']) %>
+http://www.diveboard.com

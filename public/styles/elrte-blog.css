@@ -1,0 +1,20 @@
+img{max-width: 500px;
+max-height: auto;
+height: auto;
+padding: 5px;
+background: #ebebeb;
+}
+
+.alignleft {
+  float: left;
+  margin-right: 5px;
+}
+.alignright{
+  float: right;
+  margin-left: 5px;
+}
+.aligncenter {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}

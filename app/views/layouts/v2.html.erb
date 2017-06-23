@@ -1,0 +1,77 @@
+<%
+  render "v2/header/header"
+  render "v2/footer/footer"
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html class="no-js" xmlns="http://www.w3.org/1999/xhtml"
+  xml:lang="<%=I18n.locale%>" lang="<%=I18n.locale%>"
+  xmlns:fb="http://www.facebook.com/2008/fbml"
+  xmlns:og="http://opengraphprotocol.org/schema/">
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# diveboard: http://ogp.me/ns/fb/diveboard#">
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<meta name="csrf-token" content="<%= form_authenticity_token %>" />
+	<meta name="csrf-param" content="authenticity_token" />
+	<meta name="db-cookie-domain" content="<%=COOKIES_DOMAIN%>" />
+
+    <meta property="fb:admins" content="680251975" />
+    <meta property="fb:admins" content="1077557400" />
+	<link rel="dns-prefetch" href="//graph.facebook.com/v2.0/">
+	<%Rails.configuration.balancing_roots.each do |host|%>
+		<link rel="dns-prefetch" href="<%=host%>">
+	<%end%>
+	<%Rails.configuration.google_cloud_buckets[:pictures].each do |host|%>
+		<link rel="dns-prefetch" href="//<%=host%>">
+	<%end%>
+	<link href="https://plus.google.com/+Diveboard" rel="publisher" />
+	<!--OG Meta Informations-->
+	<%= yield :meta_tags if content_for? :meta_tags %>
+	<link rel="icon" href="<%= HtmlHelper.lbroot "img/favicon/favicon.ico" %>" type="image/x-icon" />
+	<!-- STYLESHEETS -->
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+  <link href="http://cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.css" rel='stylesheet' type='text/css'>
+	<%#= stylesheet_link_tag 'new_layout' %>
+  <% if content_for? :for_head %>
+    <%= yield :for_head %>
+  <% end %>
+  <%= stylesheet_link_tag 'global_v2' %>
+	<%= yield :stylesheets if content_for? :stylesheets %>
+	</head>
+	<%if @page_home %>
+	<body class="home-page lang_<%=I18n.locale%>">
+	<%else%>
+	<body class='lang_<%=I18n.locale%>'>
+	<% end %>
+    <%= yield :header %>
+		<div class="content">
+			<%= yield %>
+      <%= yield :footer %>
+		</div>
+	</body>
+
+  <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '<%=FB_APP_ID%>',
+          xfbml      : true,
+          cookie     : true,
+          version    : 'v2.1'
+        });
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/<%=Rails.configuration.map_og_locales[I18n.locale]%>/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+  </script>
+
+	<%= javascript_include_tag "jquery_v2"%>
+	<%= javascript_include_tag "global_v2"%>
+
+  <%= render :partial => 'layouts/trackers'  %>
+  <%= render "v2/modal/login_popup" if @user.nil? %>
+	<%= yield :javascripts if content_for? :javascripts %>
+</html>

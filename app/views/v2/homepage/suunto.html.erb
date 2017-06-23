@@ -1,0 +1,149 @@
+<%= content_for :meta_tags do%>
+	<title>Diveboard, the largest online logbook to find out the perfect scuba diving destination and shops</title>
+  <meta property="fb:app_id" content="193803977296892" />
+  <meta property="og:type"   content="website" />
+  <meta property="article:publisher" content="https://www.facebook.com/Diveboard" />
+  <meta property="og:description" content="Diveboard is a scuba diving community enabling divers to track their dives through an online logbook, explore new spots and destinations and share their passion" />
+  <meta property="og:url"    content="<%=ROOT_URL%>community/contest" />
+  <meta property="og:title"  content="Diveboard connects with Suunto's Movescount: Over 2.000$ prizes to win to celebrate ! Enter the contest !" />
+  <meta property="og:site_name" content="Diveboard - Track, Share and Explore Scuba Diving" />
+  <meta property="og:image" content="<%="#{ROOT_URL}img/OG-thumb.png"%>" />
+<%end%>
+
+<%= content_for :stylesheets do%>
+	<%= stylesheet_link_tag 'homepage' %>
+<%end%>
+
+<%= content_for :javascripts do%>
+  <%= stylesheet_link_tag "contest" %>
+<%end%>
+
+<%= content_for :javascripts do%>
+  <%= javascript_include_tag "homepage" %>
+<%end%>
+
+<%= content_for :javascripts do%>
+  <%= javascript_include_tag "contest" %>
+<%end%>
+
+
+<div id="suunto_cover">
+</div>
+<div id="suunto_cover_up">
+  <div class="container">
+    <div class="title">
+      
+    </div>
+
+  </div>
+</div>
+
+
+<div id="suunto_splash_card_background"></div>
+<div id="suunto_splash_card">
+  <h1><%= it("Diveboard connects with Suunto's Movescount.", scope: ['homepage', 'v2', 'splash_card']) %></h1>
+  <p class="subtitle"><%= it("Enter the contest to celebrate! Over 1.800$ worth of prizes to win !", scope: ['homepage', 'v2', 'splash_card']) %></p>
+  <br/>
+  <p>You can now seamlessly import your dives from Movescount to Diveboard. Now Diveboard works hand in hand with the DM5/Movescount duo Suunto users love.</p>
+  <p><center><img src="http://d1ymk5tizdacjo.cloudfront.net/diveboard/diveboard_mainImage.png" style="  max-width: 500px; width: 70%;"></center></p>
+  <h1 style="margin: 20px;">Celebrate with us and win ! </h1>
+  <p>Enter today and win one of the following prices:
+    <img src="http://www.suunto.com/Global/ProductImages/Suunto-D6i-All-Black/ss018543000_l.png?width=570" style="float: left;width: 160px">
+    <ul style="position: relative; left: 30px;">
+      <li>One <a href="http://www.suunto.com/Products/dive-computers-and-instruments/Suunto-D6i/Suunto-D6i-All-Black-Steel/">Suunto D6i</a> all black dive computer offered by Suunto - MSRP $ 1.265 </li>
+      <li>A set of Diveboard gift cards redeemable at any dive shop accepting booking on Diveboard:
+        <ul style="position: relative; left: 30px;">
+          <li> One 200$ card </li>
+          <li> Five 50$ cards </li>
+          <li> Five 20$ cards </li>
+        </ul>
+      </li>
+</div>
+
+<% if @user.nil? %>
+
+<div id="suunto_contest_login">
+  <div id="category_title">
+    <h2>Login or Sign up to enter the contest</h2>
+    <div class="clear"></div>
+    <p>In order for you to enter the contest you must first sign-in. Don't have an account? Not to worry, signing up is quick and easy.<br/>
+    You can enter the contest until July 31st 12am GMT.</p>
+    <a class="signup" href="javascript:void(0)">Login or Sign up</a>
+  </div>
+
+  <div class="clear"></div>
+</div>
+
+<%else%>
+
+<div id="suunto_contest_login">
+  <div id="category_title" style="card">
+    <h2>Get Ready to win !</h2>
+    <div class="clear"></div>
+    <p>The contest is a simple draw. There are 4 chips you can accumulate to enter the draw. Add more chips to up your odds !<br/>You can enter the contest until July 31st 12am GMT.</p>
+  </div>
+  <div id="category_title" style="card">
+    <h2>Chip 1: Like us !</h2>    <div class="clear"></div>
+    <p>Like Diveboard's Facebook page: <div class="fb-like" data-href="https://www.facebook.com/Diveboard" data-colorscheme="light" data-layout="button" data-show-faces="false"></div></p>
+    <p>Like Suunto's Facebook page: <div class="fb-like" data-href="https://www.facebook.com/Suunto" data-colorscheme="light" data-layout="button" data-show-faces="false"></div></p>
+    <p>Once done, click here to let us check: <div class="yellow_button check_fb_likes" style="display:inline-block;">Verify</div></p>
+    <br/>
+    <p>Chip collected: <span id="chip1"><%=
+      if(Treasure.where(:user_id => @user.id).where(:object_type => "fb-like").count>0)
+        1
+      else
+        0
+      end
+    %></span></p>
+  </div>
+  <div id="category_title" style="card">
+    <h2>Chip 2: Import your Movescount dives</h2>    <div class="clear"></div>
+    <p>Head over to the "bulk upload" section en your Diveboard Logbook an import from Movescount! <br/></p>
+    <p>Chip collected: <%=
+      if(UploadedProfile.where(:user_id => @user.id).where(:source => "movescount").count>0)
+        1
+      else
+        0
+      end
+    %> <br/></p>
+  </div>
+  <div id="category_title" style="card">
+    <h2>Chip 3: Download Diveboard's mobile app</h2>    <div class="clear"></div>
+    <p>Download the app on the iPhone or Android app store and sign-in. If you have the app but the chip is at 0 just launch it again. <br/>
+    Refresh this page to see your chip collected when you're done.</p>
+    <p>Chip collected: <%=
+      if(AuthTokens.where(:user_id => @user.id).where("api_key = 'vr7J6gUuy4ChTUUp2TJybFk' OR api_key = 'xJ9GunZaNwLjP4Dz2jy3rdF'").count>0)
+        1
+      else
+        0
+      end
+    %> <br/></p>
+  </div>
+  <div id="category_title" style="card">
+    <h2>Chip 4: Find the treasure</h2>    <div class="clear"></div>
+    <p><img src="/img/ic_movescount.png" height=50 /> A Movescount logo has been hidden on those 3 shops pages: <br/>
+    <ul>
+      <li><a href="/pro/dive_shack_usa">Dive Shack USA</a></li>
+      <li><a href="/pro/easy_dive">Easy Dive</a></li>
+      <li><a href="/pro/honolulu_dive">Hawaii School Of Diving</a></li>
+    </ul>
+    <br/>
+    Find them all and get an extra chip!
+    </p>
+    <p>Chip collected: <%=
+      if(Treasure.where(:user_id => @user.id).where(:object_type => "shop").count>0)
+        1
+      else
+        0
+      end
+    %> <br/></p>
+  </div>
+
+  <div class="clear"></div>
+</div>
+
+
+<%end%>
+
+
+<%= if !@user.nil? then render "v2/modal/email" end %>

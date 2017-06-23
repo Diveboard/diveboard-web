@@ -1,0 +1,84 @@
+<%= render :partial => 'admin_css'%>
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 'orders' } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+
+
+<h2>Order</h2>
+
+<%
+basket = Basket.find(params[:basket_id])
+if params[:check_status] then
+  basket.check_status!
+  basket = Basket.find(params[:basket_id])
+  %><script>window.history.replaceState("", "", "/admin/orders/<%=basket.id%>");</script><%
+end
+%>
+
+<div style='display: inline-block; vertical-align: top;'>
+<%=render :partial => 'basket/shop_view', :locals => {:baskets => {basket.shop_id => basket}}%>
+</div>
+<div style='display: inline-block; vertical-align: top;'>
+<%=render :partial => 'shop_pages/basket_management/history', :locals => {:basket => basket}%>
+</div>
+
+<hr/>
+
+<div style='display: inline-block'><table>
+<tr><td></td><th>ID</th><th>Date</th></tr>
+<tr><th>Paypal order:</th><td><%=basket.paypal_order_id%></td><td><%=basket.paypal_order_date%></td></tr>
+<tr><th>Paypal capture:</th><td><%=basket.paypal_capture_id%></td><td><%=basket.paypal_capture_date%></td></tr>
+</table></div>
+<a class='yellow_button' href='/admin/orders/<%=basket.id%>?check_status=true'>Check paypal status</a>
+
+<hr/>
+
+<h2>Shop</h2>
+
+<p>Name: <%=basket.shop.name%></p>
+<p>Page: <a href='<%=basket.shop.fullpermalink(:locale)%>' target='_blank'><%=basket.shop.user_proxy.vanity_url%></a></p>
+<p>Paypal ID: <%=basket.shop.paypal_id%>
+  <%if basket.shop.paypal_token.nil? || basket.shop.paypal_secret.nil? then%><span class='symbol' style='color:rgb(51, 255, 51);'>X</span> Not verified
+  <%else%><span class='symbol' style='color:rgb(51, 255, 51);'>.</span> Verified
+  <%end%>
+</p>
+
+<br/>
+<p>Closed baskets:</p>
+<p>Number of baskets delivered: <%=Basket.where(:shop_id => basket.shop_id, :status => 'delivered').count%></p>
+<p>Number of baskets cancelled: <%=Basket.where(:shop_id => basket.shop_id, :status => 'cancelled').count%></p>
+
+<br/>
+<p>Pending baskets:</p>
+<p>Number of baskets awaiting confirmation (paid): <%=Basket.where(:shop_id => basket.shop_id, :status => 'paid').count%></p>
+<p>Number of baskets on hold: <%=Basket.where(:shop_id => basket.shop_id, :status => 'hold').count%></p>
+<p>Number of baskets confirmed: <%=Basket.where(:shop_id => basket.shop_id, :status => 'confirmed').count%></p>
+
+
+
+<h2>User</h2>
+
+<p>Name: <%=basket.user.nickname%></p>
+<p>Page: <a href='<%=basket.user.fullpermalink(:locale)%>' target='_blank'><%=basket.user.vanity_url%></a></p>
+
+<br/>
+<p>Closed baskets:</p>
+<p>Number of baskets delivered: <%=Basket.where(:user_id => basket.user_id, :status => 'delivered').count%></p>
+<p>Number of baskets cancelled: <%=Basket.where(:user_id => basket.user_id, :status => 'cancelled').count%></p>
+
+<br/>
+<p>Pending baskets:</p>
+<p>Number of baskets awaiting confirmation (paid): <%=Basket.where(:user_id => basket.user_id, :status => 'paid').count%></p>
+<p>Number of baskets on hold: <%=Basket.where(:user_id => basket.user_id, :status => 'hold').count%></p>
+<p>Number of baskets confirmed: <%=Basket.where(:user_id => basket.user_id, :status => 'confirmed').count%></p>
+
+
+
+<h2>History</h2>
+
+<%=render :partial => 'shop_pages/care/customer_history', :locals => {:shop => basket.shop, :customer => basket.user, :interactive => false, :in_reply_to => basket}%>
+
+</div>

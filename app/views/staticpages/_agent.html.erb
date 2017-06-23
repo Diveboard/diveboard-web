@@ -1,0 +1,48 @@
+<script type="text/javascript">
+$(".agent_info .platform li a").live('click', function(e){
+  e.preventDefault();
+  var os = $(e.target).attr("os");
+  $(".agent_info .agent_details").hide();
+  $(".agent_info #agent_"+os).show();
+  $(".agent_info .platform li a").removeClass("selected");
+  $(e.target).addClass("selected");
+});
+</script>
+
+<div class="agent_info">
+  <p class="title"><%= it("uploadyourdives", scope: ['staticpages', 'agent']) %></p>
+  <p><img src="/img/diveboard_agent.png" align="left" width="100"/><%= it("explainagent", scope: ['staticpages', 'agent']) %><br/>
+  <%if location == :dive%>
+  <br/><%= it("savedive", scope: ['staticpages', 'agent']).html_safe %><br/><br/>
+  <%elsif location == :bulk%>
+  <br/><%= it("bulkimport", scope: ['staticpages', 'agent']) %>
+  <br/><br/>
+  <%end%>
+  <br/>
+  <%= it("downloadagent", scope: ['staticpages', 'agent']) %>
+  <br/>
+  <%if !location.nil? &&  (location == :dive || location == :bulk)%>
+  <br/>
+  <em><%= it("oldplugin1", scope: ['staticpages', 'agent']) %> <a href="#" onclick="wizard_computerplugin_load();"><%= it("oldplugin2", scope: ['staticpages', 'agent']) %></a></em>
+  <%end%>
+  </p>
+  <hr/>
+  <ul class="platform"><li><b><%= it("selectplatform", scope: ['staticpages', 'agent']) %></b></li><li><a href="#" os="windows" class="selected">Windows</a></li><li><a href="#" os="OSX">OSX</a></li><li><a href="#" os="Linux">Linux</a></li></ul>
+  <div id="agent_windows" class="agent_details">
+    <p><%= it("win_instruction_1", scope: ['staticpages', 'agent']) %> : <br/>
+        <center><a href="https://packages.diveboard.com/win/setup.exe">setup.exe</a><br/></center>
+        <%= it("win_instruction_2", scope: ['staticpages', 'agent']) %>
+    </p>
+  </div>
+  <div id="agent_OSX" class="hidden agent_details">
+    <p><%= it("osx_instruction_1", scope: ['staticpages', 'agent']) %> : <br/>
+        <center><a href="https://packages.diveboard.com/osx/diveboard-agent.dmg">diveboard-agent.dmg</a></center><br/>
+        <%= it("osx_instruction_2_html", scope: ['staticpages', 'agent']) %> <br/>
+        <%= it("osx_instruction_suunto", scope: ['staticpages', 'agent']) %>: <a href="#">driver</a><br>
+        <%= it("osx_instruction_mares", scope: ['staticpages', 'agent']) %>: <a href="#">driver</a><br>
+    </p>
+  </div>
+  <div id="agent_Linux" class="hidden agent_details">
+    <%= it("linux_instruction_html", scope: ['staticpages', 'agent'], link: It.link("https://packages.diveboard.com/tgz/") )%>
+  </div>
+</div>

@@ -1,0 +1,38 @@
+
+
+
+
+  <div><%=it("This is the homepage for %{something}", something: "me" )%></div>
+
+  <div><%=it("This isThis isThis isThis isThis is a %{link:simple test}", link: It.link("#", style: 'color: #0f0') )%></div>
+
+  <div><%=it("This is the homepage for %{user}", user: link_to(@user.nickname, @user.fullpermalink) )%></div>
+
+  <div><%=it("This is a paragraph %{br} this is another one", br: It.tag('br') )%></div>
+
+
+
+  fr:
+    units:
+      minute:
+        zero: '%{count} minute'
+        one: '%{count} minute'
+        other: '%{count} minutes'
+
+
+  <%=I18n.t 'minute', scope: ['units'], count: 0%>
+
+
+      <div style='min-height: 40px; background: #f70'>  <os-p key="diveinfo.buddy_editor.add_one_of_your_past_dive_buddies"><%=t 'diveinfo.buddy_editor.add_one_of_your_past_dive_buddies'%></os-p>
+        <%= render partial: 'layouts/toto', locals: {nb_iter: 7}
+        %>
+      </div>
+
+
+
+
+
+JS
+===
+
+I18n.t(["js","wizard","This will delete the %{count} selected dives. Are you sure ?"], {count: list_of_dives.length})

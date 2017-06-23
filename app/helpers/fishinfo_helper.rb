@@ -1,0 +1,2 @@
+module FishinfoHelper
+end

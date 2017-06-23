@@ -1,0 +1,85 @@
+<%
+  if params[:content] == :picture
+    lb_display_style = "display: block; height: 100%; margin-bottom: 99px;  position: relative;"
+  else
+    lb_display_style = "display:none"
+  end
+%>
+<div id="lightbox" style="<%=lb_display_style%>">
+</div>
+<div id="lightbox_controls" style="<%=lb_display_style%>">
+  <div id="lightbox_top_controls">
+    <a href="#" id="lightbox_close"></a>
+    <a href="#" id="lightbox_zoom" class="lightbox_zoom_fit"></a>
+    <a href="#" id="lightbox_search" class="lightbox"></a>
+  </div>
+  <div id="lightbox_top_left_controls">
+        <div class="like_buttons">
+          <div class="fb_like_button"></div>
+          <div class="plusone_like_button"></div>
+          <div class="twitter_like_button"></div>
+          <div class="pinterest_like_button"></div>
+        </div>
+  </div>
+  <div id="lightbox_bottom_controls">
+    <div class="top_lightbox_controls">
+      <div id="yellow_pointer" style="display:none"></div>
+      <div class="fish_count">(<span>0</span>)</div>
+      <div class="comments_count">(<span>0</span>)</div>
+      <div class="info_button"></div>
+      <div class="symbol like_button">K</div>
+      <div class="picture_title"></div>
+    </div>
+    <div class="lightbox_pic_list">
+      <ul>
+      </ul>
+    </div>
+    <div class="lightbox_picker_controls">
+      <a href="#" id="lightbox_picker_back"><img src="<%=HtmlHelper.lbroot "/img/lightbox/picker_back.png"%>"></a>
+      <a href="#" id="lightbox_picker_next"><img src="<%=HtmlHelper.lbroot "/img/lightbox/picker_next.png"%>"></a>
+    </div>
+  </div>
+  <div class="ligbtbox_pic_zoomed"></div>
+  <div id="info_box">
+    <div class="left_box_fish left_box" style="display:none;">
+      <div class="info_box_top"><a href="#" onclick="toggle_fish_info();"><img src="/img/lightbox/info_close.png" /></a></div>
+      <div class="info_box_content info_box_content_click">
+        <div>
+        </div>
+      </div>
+    </div>
+    <div class="right_box" style="display:none;">
+      <!--<a href="#" onclick="close_info_right_pane();" class="close_button"><img src="/img/lightbox/info_close.png" /></a>-->
+      <span></span>
+    </div>
+    <div class="left_box_comments left_box" style="display:none;">
+      <div class="info_box_top"><a href="#" onclick="toggle_comments_info();"><img src="<%=HtmlHelper.lbroot "/img/lightbox/info_close.png" %>" /></a></div>
+      <div class="info_box_content info_box_content_click">
+        <!-- <div class="lightbox_comments"> -->
+        <% if !@dive.nil? && @dive.id != 1 && @dive.privacy ==0 then %>
+        <%= render :partial => 'disqus/comments_box', :locals => {subject: @dive, with_seo: false}%>
+        <%end%>
+      <!-- </div> -->
+      </div>
+    </div>
+    <div class="left_box left_box_picture" style="display: none;">
+      <div class="info_box_top"><a href="#" onclick="toggle_picture_info();"><img src="<%=HtmlHelper.lbroot "/img/lightbox/info_close.png"%>" /></a></div>
+      <div class="info_box_content info_box_content_noclick">
+        <p class="title"><%= it("PICTURE BY:", scope: ['lightbox', 'lightbox']) %></p>
+        <% if !@owner.blank?%>
+        <%= render :partial => 'logbook/mini_profile',  :locals => {:owner => @owner, :clickable => false, :hide_profile => false, :posts_link => true, :custom_header => false}%>
+        <% end %>
+        <p class="title"><%= it("TAKEN IN:", scope: ['lightbox', 'lightbox']) %></p>
+        <div class="info_box_spot"></div>
+        <p class="title box_exif"><%= it("EXIF DATA:", scope: ['lightbox', 'lightbox']) %></p>
+        <div class="info_box_exif box_exif"></div>
+      </div>
+    </div>
+    <div class="left_box left_box_like" style="display: none;">
+      <div class="info_box_top"><a href="#" onclick="toggle_like_info();"><img src="<%=HtmlHelper.lbroot "/img/lightbox/info_close.png"%>" /></a></div>
+      <div class="info_box_content info_box_content_click">
+        <div class="permalink_field"><%= it("Permalink:", scope: ['lightbox', 'lightbox']) %> <input type="text" value="" class="share_link_input" onclick="$(this).select();"></div>
+      </div>
+    </div>
+  </div>
+</div>

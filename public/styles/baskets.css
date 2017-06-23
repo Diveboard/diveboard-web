@@ -1,0 +1,213 @@
+/** inquiries and buy **/
+.inquiry_button {position: absolute; top: 121px; right: -9px;}
+.inquiry_button .envelope {position: relative; left: -5px; top: 1px;}
+#dialog_general_inquiry .inquiry_table td { padding: 5px;}
+#dialog_general_inquiry .inquiry_table tr:nth-child(2) {vertical-align: top}
+#dialog_general_inquiry .message_text {width: 500px; height: 120px; resize: vertical; padding: 5px;}
+#dialog_general_inquiry .real_life_callback1 {margin: 7px 0px 17px 0px;}
+#dialog_general_inquiry .real_life_callback2 {text-align: center; font-weight: bold;}
+.panel_settings_3 .history_item #dialog_general_inquiry .message_text {width: 265px; margin: 0px; height: 80px;}
+
+.dialog_buy_class input, .dialog_buy_class textarea {border: solid 1px #BEBEBE; margin-right: 5px; color: #1d1d1d; -moz-border-radius: 5px; border-radius: 5px; padding: 2px 5px; resize: none;}
+.dialog_buy_class .question {margin-top: 15px; font-size: 13px;}
+.dialog_buy_class .question:nth-child(1) {margin-top: 0px;}
+.dialog_buy_class .question .note {font-size: 11px; font-style: italic;}
+.dialog_buy_class .text_ans {margin: 3px 0px 0px 0px; width: 665px; height: 55px; padding: 5px;}
+.dialog_buy_class input.radio {margin-right: 10px;}
+.dialog_buy_class .date_ans {margin: 10px 0px;}
+.dialog_buy_class .date_ans td {padding: 5px;min-width: 250px}
+.dialog_buy_class .form_date_choice {margin: 15px 0px 0px 100px;}
+.dialog_buy_class .form_date_choice>span {margin-right: 50px;}
+.dialog_buy_class .form_date_type {margin: 10px 0px 20px 100px;}
+.dialog_buy_class .form_date_type input {width: 80px;}
+.dialog_buy_class .nb_divers_input {width:30px;}
+.dialog_buy_class .quantity {width:30px;}
+
+.diver_detail_list {margin: 10px 10px 10px 30px;}
+.diver_detail_list li { margin: 3px 0px;}
+.diver_detail_list .diver_detail.template {display: none;}
+.diver_detail_list .diver_detail .em {font-style: italic;}
+
+.message_shop_table {border:1px solid #DDD; margin-bottom: 32px;}
+.message_shop_table .message_line {background-color: #eee; border-top: solid 2px #f8f8f8; border-bottom:1px solid #DDD;}
+.message_shop_table .message_line:hover {background-color: #ddd}
+.message_shop_table .message_line>div {display: inline-block; vertical-align: top;}
+.message_shop_table .message_line>div:nth-child(1) {width: 80px; padding-top: 7px; text-align: center;}
+.message_shop_table .message_line>div:nth-child(2) {width: 40px;}
+.message_shop_table .message_line>div:nth-child(3) {width: 600px;}
+.message_shop_table .message_line>div:nth-child(4) {width: 300px; margin-left: -300px; text-align: right}
+.message_shop_table .message_line>div:nth-child(5) {width: 40px;}
+.message_shop_table .message_line>div:nth-child(6) {width: 105px; text-align: center; margin-top: 14px;}
+.message_shop_table .message_line .user_picture {width: 36px; border-radius: 2px; box-shadow: 1px 1px 1px #fff; margin-top: 4px;}
+.message_shop_table .message_line .user_name {font-size: 12px; margin-top: 3px; color: #777;}
+.message_shop_table .message_line .user_name .em {font-size: 14px; text-shadow: 1px 0px 1px #fff; margin-top: 3px; color: #000;}
+.message_shop_table .message_line .timezone {font-size: 10px; color: #777;}
+.message_shop_table .message_line .topic  {margin-top: 5px; margin-bottom: 7px;}
+
+.signature_table {border:1px solid #DDD; margin-bottom: 32px;}
+.signature_table .message_line {background-color: #eee; border-top: solid 2px #f8f8f8; border-bottom:1px solid #DDD;}
+.signature_table .message_line:hover {background-color: #ddd}
+.signature_table .message_line>div {display: inline-block; vertical-align: top;}
+.signature_table .message_line>div:nth-child(1) {width: 80px; padding-top: 7px; text-align: center; margin-top: 7px;}
+.signature_table .message_line>div:nth-child(2) {width: 40px;}
+.signature_table .message_line>div:nth-child(3) {width: 600px;}
+.signature_table .message_line>div:nth-child(4) {width: 290px; margin-left: -300px; text-align: right; padding-right: 10px;}
+.signature_table .message_line>div:nth-child(5) {width: 40px; margin-top: 6px; text-align: center;}
+.signature_table .message_line>div:nth-child(6) {width: 65px; text-align: center; margin-top: 6px; padding-left: 20px; padding-right: 20px;}
+.signature_table .message_line>div:nth-child(7) {width: 65px; text-align: center; margin-top: 6px; padding-left: 20px; padding-right: 20px; display: none;}
+.signature_table hr {border-bottom: 1px solid #fff;}
+.signature_table .message_line .user_picture {width: 36px; border-radius: 2px; box-shadow: 1px 1px 1px #fff; margin-top: 4px;}
+.signature_table .message_line .user_name {font-size: 12px; margin-top: 3px; color: #777;}
+.signature_table .message_line .user_name .em {font-size: 14px; text-shadow: 1px 0px 1px #fff; margin-top: 3px; color: #000;}
+.signature_table .message_line .timezone {font-size: 10px; color: #777;}
+.signature_table .message_line .topic  {margin-top: 5px; margin-bottom: 7px;}
+
+
+p.message_shop_table_void, p.customer_shop_table_void, p.basket_shop_table_void {margin: 20px 0px 50px; font-style: italic; text-align: center;}
+p.message_shop_table_loading, p.customer_shop_table_loading, p.basket_shop_table_loading {text-align:center; margin-bottom: 25px; margin-top: -29px;}
+
+.panel_settings_4 .message_shop_table .message_line>div:nth-child(3) {width: 370px;}
+
+.basket_shop_table {border:1px solid #DDD; margin-bottom: 32px;}
+.basket_shop_table .basket_line {background-color: #eee; border-top: solid 2px #f8f8f8; border-bottom:1px solid #DDD;}
+.basket_shop_table .basket_line:hover {background-color: #ddd}
+.basket_shop_table .basket_line>div {display: inline-block; vertical-align: top;}
+.basket_shop_table .basket_line>div:nth-child(1) {width: 80px; padding-top: 7px; text-align: center;}
+.basket_shop_table .basket_line>div:nth-child(2) {width: 40px;}
+.basket_shop_table .basket_line>div:nth-child(3) {width: 410px;}
+.basket_shop_table .basket_line>div:nth-child(4) {width: 240px; text-align: right}
+.basket_shop_table .basket_line>div:nth-child(5) {width: 105px; text-align: center; margin-top: 24px;}
+.basket_shop_table .basket_line .user_picture {width: 36px; border-radius: 2px; box-shadow: 1px 1px 1px #fff; margin-top: 4px;}
+.basket_shop_table .basket_line .user_name {font-size: 12px; margin-top: 3px; color: #777;}
+.basket_shop_table .basket_line .user_name .em {font-size: 14px; text-shadow: 1px 0px 1px #fff; margin-top: 3px; color: #000;}
+.basket_shop_table .basket_line .em {font-size: 14px; text-shadow: 1px 0px 1px #fff; margin-top: 3px; color: #000;}
+.basket_shop_table .basket_line .timezone {font-size: 10px; color: #777;}
+.basket_shop_table .basket_line .topic  {margin-top: 5px; margin-bottom: 7px;}
+.basket_shop_table .basket_line .detail  {margin-top: 5px; margin-bottom: 7px; color: #666;}
+.basket_shop_table .basket_line .date_details {font-size: 0.89em; color: #333;}
+.basket_shop_table .basket_line .detail2  {margin-top: 5px; margin-bottom: 3px; color: #666; font-size: 11px; font-style: italic;}
+
+.panel_settings_3 .basket_shop_table {margin: 0px -15px;}
+.panel_settings_3 .basket_shop_table .basket_line>div:nth-child(3) {width: 290px;}
+.panel_settings_3 .basket_shop_table .basket_line>div:nth-child(4) {width: 130px;}
+
+table.shop_message_to_customer {margin-bottom: 25px}
+table.shop_message_to_customer th {width: 110px;}
+table.shop_message_to_customer .message_text {width: 500px; height: 100px; resize: vertical;}
+
+#dialog_basket .basket_table {table-layout: fixed; border-collapse: collapse; font-size: 12px; empty-cells: show; margin-bottom: 25px;}
+#dialog_basket .basket_table .note {font-size: 12px; font-style: italic;}
+#dialog_basket .basket_table th { border-bottom: 2px solid #6678b1; font-size: 14px;}
+#dialog_basket .basket_table th:nth-child(1) { width: 330px;}
+#dialog_basket .basket_table th:nth-child(2) { width: 75px;}
+#dialog_basket .basket_table th:nth-child(3) { width: 75px;}
+#dialog_basket .basket_table th:nth-child(4) { width: 75px;}
+#dialog_basket .basket_table td:nth-child(5) { width: 110px;}
+#dialog_basket .basket_table tr.item_line td { border-bottom: 1px solid #ccc; }
+#dialog_basket .basket_table tr.item_line:last-of-type td { border-bottom: 2px solid #6678b1; }
+#dialog_basket .basket_table tr.total_line { font-weight: bold;}
+#dialog_basket .basket_table tr.item_line .title {margin: 14px 0px 10px 0px; text-shadow: 1px 1px 0px #fff; font-weight: bold;}
+#dialog_basket .basket_table tr.item_line .title a {color: #333;}
+#dialog_basket .basket_table tr.item_line .title a:hover {color: #ff6200;}
+#dialog_basket .basket_table tr.item_line .desc {margin: 0px 0px 10px 10px; }
+#dialog_basket .basket_table td { text-align: center;}
+#dialog_basket .basket_table td:nth-child(1) { text-align: left;}
+#dialog_basket h2 {font-family: FuturaMedium, "FuturaMedium", Helvetica, Verdana, Arial, sans-serif}
+#dialog_basket .proceed_to_checkout {padding-left: 25px; text-transform: uppercase; font-size: 1.2em; font-family: 'Futura',Helvetica, Verdana, Arial, sans-serif; word-spacing: 0;}
+#dialog_basket .proceed_to_checkout div:nth-child(2) {margin: 20px;}
+#dialog_basket .proceed_to_checkout div:nth-child(3) {margin: 10px;}
+#dialog_basket .separator {height: 1px; border: none; border-top: 1px dashed #333; margin: 0px 100px 20px 100px;}
+
+.basket_for_shop {min-height: 380px;margin-top: 10px;}
+.basket_for_shop .basket_header {position: absolute; left: 631px; top: 40px; width: 218px; text-align: right;}
+.basket_for_shop .basket_header p {margin-top: 5px;}
+.basket_for_shop .basket_table{margin-left: 20px; text-align: center; margin-bottom: 30px;}
+.basket_for_shop .basket_table th {font-weight: normal; padding: ;}
+.basket_for_shop .basket_table td{vertical-align: top}
+.basket_for_shop .basket_table td:nth-child(1){width: 400px; text-align: left; padding-left: 8px;}
+.basket_for_shop .basket_table td:nth-child(2){width: 60px; padding-top: 14px;}
+.basket_for_shop .basket_table td:nth-child(3){width: 60px; padding-top: 14px;}
+.basket_for_shop .basket_table td:nth-child(4){width: 60px; padding-top: 14px;}
+.basket_for_shop .basket_table td:nth-child(5){width: 60px; padding-top: 14px;}
+
+.basket_for_shop .item_title { margin:14px 0px 10px 0px; text-shadow: 1px 1px 0px #fff;font-weight: bold;}
+.basket_for_shop .desc {margin-left: 10px;}
+.basket_for_shop .staffing {margin: 0px 25px;}
+.basket_for_shop .requests {margin: 10px;}
+.basket_for_shop .requests em {margin-top: 10px; margin-bottom:1px; display: block; color: #777; font-size: 12px;}
+.basket_for_shop .total_line td {padding-top: 14px; text-shadow: 1px 1px 0px #fff;font-weight: bold; font-size: 14px;}
+.basket_for_shop .attention_paypal {width: 547px; border: 1px solid #f00; background-color: #fcc; margin: 20px; padding: 8px 20px 6px 20px; line-height: 20px;}
+.basket_for_shop .note_from_shop {padding: 10px 12px; background: #ddd; border-radius: 3px; width: 585px; margin: 12px;}
+
+
+
+.basket_for_customer {min-height: 352px;margin-top: 10px;}
+.basket_for_customer .basket_refs p {margin-right:15px; display: inline-block;}
+.basket_for_customer .basket_table{margin-left: 20px; text-align: center; margin-bottom: 30px;}
+.basket_for_customer .basket_table th {font-weight: normal; padding: ;}
+.basket_for_customer .basket_table td{vertical-align: top}
+.basket_for_customer .basket_table td:nth-child(1){width: 400px; text-align: left; padding-left: 8px;}
+.basket_for_customer .basket_table td:nth-child(2){width: 60px; padding-top: 14px;}
+.basket_for_customer .basket_table td:nth-child(3){width: 60px; padding-top: 14px;}
+.basket_for_customer .basket_table td:nth-child(4){width: 60px; padding-top: 14px;}
+.basket_for_customer .basket_table td:nth-child(5){width: 60px; padding-top: 14px;}
+
+.basket_for_customer .item_title { margin:14px 0px 10px 0px; text-shadow: 1px 1px 0px #fff;font-weight: bold;}
+.basket_for_customer .desc {margin-left: 10px;}
+.basket_for_customer .staffing {margin: 0px 25px;}
+.basket_for_customer .requests {margin: 10px;}
+.basket_for_customer .requests em {margin-top: 10px; margin-bottom:1px; display: block; color: #777; font-size: 12px;}
+.basket_for_customer .total_line td {padding-top: 14px; text-shadow: 1px 1px 0px #fff;font-weight: bold; font-size: 14px;}
+.basket_for_customer .attention_paypal {width: 547px; border: 1px solid #f00; background-color: #fcc; margin: 20px; padding: 8px 20px 6px 20px; line-height: 20px;}
+.basket_for_customer .note_from_shop {padding: 10px 20px; background: #ddd; border-radius: 3px;}
+
+.message_history_controls {margin: 0px 0px 20px 30px;}
+.message_history_controls .mark_all_read {float: right; margin-right: 30px;}
+.message_history {margin: 20px;}
+.message_history .history_item {
+  border: 1px solid #bbb; margin: 8px; position: relative; background-color: #eee; border-radius:7px; padding: 1px 7px 8px 7px; min-height: 50px; overflow: hidden;
+  background-image: -o-linear-gradient(bottom, #ddd 0%, #f7f7f7 10px, #f7f7f7 15%, #fff 100%);
+  background-image: -ms-linear-gradient(bottom, #ddd 0%, #f7f7f7 10px, #f7f7f7 15%, #fff 100%);
+  background-image: -moz-linear-gradient(bottom, #ddd 0%, #f7f7f7 10px, #f7f7f7 15%, #fff 100%);
+  background-image: -webkit-linear-gradient(bottom, #ddd 0%, #f7f7f7 10px, #f7f7f7 15%, #fff 100%);
+  background-image: linear-gradient(bottom, #ddd 0%, #f7f7f7 10px, #f7f7f7 15%, #fff 100%);
+  background-color: #f7f7f7;
+}
+.message_history .message_received {margin-left: 30%;}
+.message_history .message_received.unread {background-image: -webkit-linear-gradient(bottom, #efe356 0%, #f7f7f7 10px, #f7f7f7 15%, #fff 100%); border:1px solid #f9bf3d;}
+.message_history .message_received.unread button.mark_as_unread {display: none;}
+.message_history .message_received.read button.mark_as_read {display: none;}
+.message_history .message_received .tmp_load {display: none; width: 20px; height: 20px; position: relative; top: 5px;}
+.message_history .message_received.status_change .tmp_load {display: inline;}
+.message_history .message_received.status_change button.mark_as_unread {display: none;}
+.message_history .message_received.status_change button.mark_as_read {display: none;}
+.message_history .history_basket {}
+.message_history .history_review {}
+.message_history .message_sent { margin-right: 30%;}
+.message_history .message_sent .topic {}
+.message_history .message_sent .content {}
+.message_history .message_sent .user_image {margin-bottom: -2px;}
+.message_history .history_review .user_image {display: inline-block; vertical-align: top; margin: 0px 5px 5px -2px;}
+.message_history .history_review .content {text-align: center;margin: -30px 30px 7px 40px;}
+.message_history .history_dive {min-height: 90px;}
+.message_history .history_dive .user_image {display: inline-block; vertical-align: top; margin: 0px 5px 5px -2px;}
+.message_history .history_dive .content {text-align: center;margin: -30px 30px 7px 140px;}
+.message_history .history_dive.with_content .content {text-align: left;}
+.message_history .history_dive.with_profile .content {margin-right: 200px;}
+.message_history .history_dive .history_profile {right: 8px; position: absolute; top: -13px; height: 113px; width: 190px;}
+.message_history .history_dive .timestamp {position: absolute; bottom: 7px;}
+
+.message_history .group {margin: 25px 0px; background: #ddd; padding: 0px 0px; border: 1px dashed #999; border-radius: 8px;}
+.message_history .note {color: #666; position: absolute; bottom: 1px;  right: 2px; font-style: italic; font-size: 11px;}
+.message_history .user_image {width: 36px; border-radius: 2px; box-shadow: 1px 1px 1px #fff; margin-left: 10px;}
+.message_history .timestamp {color: #666; font-style: italic; font-size: 10px; margin-bottom: 2px}
+.message_history .topic {margin: 3px 0px 12px 0px; font-size: 12px;}
+.message_history .content {color: #333; margin: 12px 7px;}
+.message_history .action {position: absolute; top: 1px; right: 4px; white-space: nowrap;}
+.message_history .action a {color: #aaa;}
+.message_history .action a:hover {color: #ff6200;}
+.message_history .highlighted {border:3px solid #ff801d !important; margin-top: 20px; margin-bottom:20px;}
+
+.panel_settings_3 .option_cancel {text-align: right;}
+.panel_settings_4 .exchanges {margin-top: 25px;}
+

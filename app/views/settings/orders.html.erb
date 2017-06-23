@@ -1,0 +1,548 @@
+<!-- SETTINGS PAGE-->
+
+<script src="//maps.google.com/maps/api/js?sensor=false"></script>
+<%= javascript_include_tag 'divepage', defer: true %>
+<%= javascript_include_tag 'settings', defer: true %>
+<%content_for :css do%>
+<%= include_stylesheets :divepage, :settings %>
+<%end%>
+
+<style>
+#main_content_area {
+  height: auto;
+}
+</style>
+
+
+<script type="text/javascript">
+var current_menu = <%=@menu_id%>;
+var auth_token = $("meta[name='csrf-token']").attr("content");
+var G_user_api = <%=@user.to_api(:private).to_json.html_safe%>;
+var G_config_translate_labels = <%=config_translate_labels().to_json.html_safe%>;
+
+$(document).ready(function () {
+  $('.autoclear').autoclear();
+  String.prototype.strip = function( exp ){ return this.replace(exp?exp:/\s/g,""); };
+  var auth_token = $("meta[name='csrf-token']").attr("content");
+
+  //menu clicks
+
+  $("#menu_3").click(function(ev){ev.preventDefault();
+    if (current_menu != 3) set_menu(3);
+    else {
+      diveboard.mask_file(true);
+      window.location = "/settings/orders";
+    }
+  });
+  $("#menu_4").click(function(ev){ev.preventDefault();
+    if (current_menu != 4) set_menu(4);
+    else {
+      diveboard.mask_file(true);
+      window.location = "/settings/messages";
+    }
+  });
+
+  set_menu(<%=@menu_id%>);
+});
+
+
+function set_menu(num){
+  var item = $(".settings_sidebar").find("li.menu_item_"+num);
+  $(".active_item").removeClass("active_item");
+  item.addClass("active_item");
+  $(".panel_settings").hide();
+  $(".panel_settings_"+num).show();
+  current_menu = num;
+}
+
+//////////////////////
+//Orders management
+//////////////////////
+function init_orders_bindings(){
+  $(".fake_link").live('click', function(e){
+    e.preventDefault();
+  });
+
+  $(".basket_shop_table .basket_line").live('click', function(){
+    diveboard.mask_file(true);
+    var basket_id = $(this).data('basket_id');
+    window.location = "/settings/orders/"+basket_id;
+  });
+
+  $(".message_shop_table .message_line").live('click', function(){
+    diveboard.mask_file(true);
+    var message_id = $(this).data('message_id');
+    window.location = "/settings/messages/"+message_id;
+  });
+
+
+
+  $("#dialog_general_inquiry .submit_inquiry").live("click", function(){
+    var dlg = $(this).closest("#dialog_general_inquiry");
+
+    var message = dlg.find('.message_text').val();
+    if (!message || message.length<10) {
+      diveboard.notify("Message validation", "Your message must be at least 10 characters long.");
+      return;
+    }
+
+    diveboard.mask_file(true);
+    dlg.dialog('close');
+
+    var data_to_send = {
+      topic: dlg.find('.topic_text').val(),
+      message: dlg.find('.message_text').val(),
+      from: {id: G_user_api.id},
+      to: {id: dlg.data('to_id')}
+    };
+
+    if (dlg.data('in_reply_to_id') && dlg.data('in_reply_to_type')) {
+      data_to_send.in_reply_to_type = dlg.data('in_reply_to_type');
+      data_to_send.in_reply_to_id = dlg.data('in_reply_to_id');
+    }
+
+    diveboard.api_call("message", data_to_send, function(){
+      dlg.find('.message_text').val("");
+      dlg.find('.topic_text').val(null);
+      var message = dlg.find(".ok_text").clone().removeClass('hidden').appendTo("<div/>").parent().html(); //getting the elements HTML
+      diveboard.notify(dlg.attr('title'), message, function(){
+        window.location.reload();
+      });
+    }, function(){
+      diveboard.unmask_file();
+    }, 'public');
+
+  });
+
+  $("#dialog_general_inquiry .cancel_inquiry").live("click", function(){
+    $(this).closest('.reply_message').hide();
+    $(this).closest('.message_history').parent().find('.message_history_controls').show();
+  });
+
+  $(".message_history_controls .reply_to").live('click', function(ev){
+    ev.preventDefault();
+    var button = $(this);
+    var ref_id = $(this).data('reply_to_id');
+    var ref_type = $(this).data('reply_to_type');
+    var controls = $(this).closest('.message_history_controls');
+    var top_container = controls.parent();
+
+    var form = top_container.find('#dialog_general_inquiry');
+    form.data('in_reply_to_type', ref_type);
+    form.data('in_reply_to_id', ref_id);
+
+    top_container.find('.reply_message').show('fold');
+    controls.hide();
+  });
+
+  $(".message_history_controls .mark_all_read").live('click', function(){
+    var data_to_send = [];
+    var list_elements = $(".message_received.unread").not(".status_change");
+    list_elements.each(function(i,e){
+      var msg_id = $(e).find(".mark_as_read").data('msgid');
+      if (msg_id) data_to_send.push({'id':msg_id,'status':'read'});
+    });
+
+    if (data_to_send.length == 0) return;
+
+    list_elements.addClass('status_change');
+
+    diveboard.api_call("message", data_to_send, function(data){
+        console.log(data);
+        if (data && data.result) {
+          for (var i in data.result){
+            var message = data.result[i];
+            var msg_box = $(".message_received .mark_as_read[data-msgid='"+message.id+"']").closest('.message_received');
+            msg_box.removeClass('read').removeClass('unread').removeClass('status_change');
+            if (message.status == 'new')
+              msg_box.addClass('unread');
+            else
+              msg_box.addClass('read');
+          }
+        }
+        list_elements.removeClass('status_change');
+        Header.update_ajax();
+      }, function(){
+        list_elements.removeClass('status_change');
+      }, 'public'
+    );
+  });
+
+  $(".history_item .mark_as_read").live('click', function(){
+    var msgid = $(this).data('msgid');
+    var msg_container = $(this).closest('.history_item');
+    msg_container.addClass('status_change');
+    diveboard.api_call("message", {
+        'id': msgid,
+        'status': 'read'
+      }, function(data){
+        if (data && data.result && data.result.status == 'read') {
+          msg_container.addClass('read');
+          msg_container.removeClass('unread');
+        }
+        msg_container.removeClass('status_change');
+        Header.update_ajax();
+      }, function(){
+        msg_container.removeClass('status_change');
+      }, 'public'
+    );
+  });
+
+  $(".history_item .mark_as_unread").live('click', function(){
+    var msgid = $(this).data('msgid');
+    var msg_container = $(this).closest('.history_item');
+    msg_container.addClass('status_change');
+    diveboard.api_call("message", {
+        'id': msgid,
+        'status': 'new'
+      }, function(data){
+        if (data && data.result && data.result.status == 'new') {
+          msg_container.addClass('unread');
+          msg_container.removeClass('read');
+        }
+        msg_container.removeClass('status_change');
+        Header.update_ajax();
+      }, function(){
+        msg_container.removeClass('status_change');
+      }, 'public'
+    );
+  });
+  $(".message_shop_table_filter").live('change', function(){
+    var json_filter = JSON.stringify($(this).val());
+    var start_id = 0;
+
+    $(".message_shop_table .message_line").detach();
+    $(".message_shop_table").hide();
+    $(".message_shop_table_void").hide();
+    $(".message_shop_table_next").hide();
+    $(".message_shop_table_previous").hide();
+    $(".message_shop_table_loading").show();
+
+    $.ajax({
+      url: '/api/V2/search/message',
+      type: 'POST',
+      data: {
+        start_id: start_id,
+        limit: 20,
+        arg: json_filter,
+        order: "created_at DESC",
+        flavour: 'private,detailed',
+        'authenticity_token': auth_token
+      },
+      success: function(data){
+        if (data.success){
+          G_messages_current_filter = json_filter;
+          G_messages_previous=[start_id];
+          G_messages = data;
+          init_content_list();
+        }
+      }
+    });
+  });
+
+
+  $(".message_shop_table_next").live('click', function(){
+    var json_filter = JSON.stringify($(".message_shop_table_filter").val());
+    var start_id = G_messages.next_start_id;
+
+    if (!start_id) return;
+
+    $(".message_shop_table .message_line").detach();
+    $(".message_shop_table_next").hide();
+    $(".message_shop_table_previous").hide();
+    $(".message_shop_table_loading").show();
+
+    $.ajax({
+      url: '/api/V2/search/message',
+      type: 'POST',
+      data: {
+        start_id: start_id,
+        limit: 20,
+        arg: json_filter,
+        order: "created_at DESC",
+        flavour: 'private,detailed',
+        'authenticity_token': auth_token
+      },
+      success: function(data){
+        if (data.success){
+          G_messages_previous.push(start_id);
+          G_messages = data;
+          init_content_list();
+        }
+      }
+    });
+  });
+
+  $(".message_shop_table_previous").live('click', function(){
+    if (G_messages_previous.length <= 1) return;
+    var json_filter = JSON.stringify($(".message_shop_table_filter").val());
+    var start_id = G_messages_previous[G_messages_previous.length-2];
+
+    $(".message_shop_table .message_line").detach();
+    $(".message_shop_table_next").hide();
+    $(".message_shop_table_previous").hide();
+    $(".message_shop_table_loading").show();
+
+    $.ajax({
+      url: '/api/V2/search/message',
+      type: 'POST',
+      data: {
+        start_id: start_id,
+        limit: 20,
+        arg: json_filter,
+        order: "created_at DESC",
+        flavour: 'private,detailed',
+        'authenticity_token': auth_token
+      },
+      success: function(data){
+        if (data.success){
+          G_messages_previous.pop();
+          G_messages = data;
+          init_content_list();
+        }
+      }
+    });
+  });
+
+  $(".option_cancel .cancel_order").live('click', function(){
+    var basket_id = $(this).data('basket_id');
+
+    diveboard.propose("Cancel order", "Are you sure you want to cancel this order ? This cannot be undone.", {
+      "Yes": function(){
+          diveboard.mask_file(true);
+          $.ajax({
+            url: "/api/basket/manage/reject",
+            type: "POST",
+            data: {
+              basket_id: basket_id,
+              'authenticity_token': auth_token
+            },
+            success: function(data){
+              if (data && data.success){
+                window.location = window.location.href;
+              } else {
+                diveboard.notify("Cancel Order", "A technical error occured while cancelling this order. Please try again, and contact us through the 'Help' link if it fails again.", function(){
+                    diveboard.unmask_file();
+                });
+              }
+            },
+            error: function(){
+              diveboard.notify("Cancel Order", "A technical error occured while cancelling this order. Please try again, and contact us through the 'Help' link if it fails again.", function(){
+                  diveboard.unmask_file();
+              });
+            }
+          });
+        },
+      "No": function(){}
+    });
+
+  });
+
+}
+
+function init_content_list(){
+  if (typeof G_messages != 'undefined') {
+    $(".message_shop_table .message_line").detach();
+    $(".message_shop_table").hide();
+    $(".message_shop_table_void").hide();
+    $(".message_shop_table_next").hide();
+    $(".message_shop_table_previous").hide();
+    $(".message_shop_table_loading").hide();
+    $.each(G_messages.result, function(i,message){
+      $(".message_shop_table").append( tmpl('message_shop_table_line', message) );
+    });
+    if (G_messages.result.length == 0) $(".message_shop_table_void").show();
+    else $(".message_shop_table").show();
+  }
+
+  if (typeof G_baskets != 'undefined') {
+    $(".basket_shop_table .basket_line").detach();
+    $(".basket_shop_table").hide();
+    $(".basket_shop_table_void").hide();
+    $(".basket_shop_table_next").hide();
+    $(".basket_shop_table_previous").hide();
+    $(".basket_shop_table_loading").hide();
+    $.each(G_baskets.result, function(i,basket){
+      $(".basket_shop_table").append( tmpl('basket_shop_table_line', basket) );
+    });
+    if (G_baskets.result.length == 0) $(".basket_shop_table_void").show();
+    else $(".basket_shop_table").show();
+  }
+}
+
+$(document).ready(function(){
+  init_orders_bindings();
+  init_content_list();
+});
+
+</script>
+
+<!-- The Sidebar starts here! -->
+<div id="sidebar" class='about_style'>
+  <div class="settings_sidebar">
+    <ul>
+      <li class='menu_item_3'><a href="/settings/orders" id="menu_3"><%= it("Orders", scope: ['settings', 'orders']) %></a></li>
+      <li class='menu_item_4'><a href="/settings/messages" id="menu_4"><%= it("Messages", scope: ['settings', 'orders']) %></a></li>
+    </ul>
+  </div>
+</div>
+<!-- The Sidebar Ends Here -->
+
+
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" class='about_style'>
+
+    <div id="Orders" class='tab_panel panel_settings panel_settings_3' style="display:none;">
+      <div class="main_content_header main_padded_top">
+        <span class="header_title"><%= it("Orders", scope: ['settings', 'orders']) %></span>
+        <div  class="header_top_action">
+        </div>
+      </div>
+      <div class="main_content_box">
+        <%if @menu_id == 3 && @basket then%>
+          <div class='basket_for_customer'>
+            <%= render :partial => 'basket/customer_view', :locals => {:baskets => {@basket.shop_id => @basket}, :interactive => false}%>
+          </div>
+
+          <%if @basket.status == 'paid'%>
+          <p class='option_cancel'><%= it("Your order is awaiting the vendor confirmation.", scope: ['settings', 'orders']) %> <button class='grey_button cancel_order' data-basket_id='<%=@basket.reference%>'><%= it("Cancel order", scope: ['settings', 'orders']) %></button></p>
+          <%end%>
+
+          <div class='basket_past_detail'>
+            <%
+            #<div class='history'>
+            #  <h2>Basket history</h2>
+            # render :partial => 'shop_pages/basket_management/history', :locals => {:basket => basket}
+            #</div>
+            %>
+            <div class='exchanges'>
+              <%= render :partial => 'settings/shop_history', :locals => {:shop => @basket.shop, :customer => @user, :highlight => @message, :me => :customer, :reload_url => "/settings/orders/#{@basket.reference}", :in_reply_to => @basket}%>
+            </div>
+          </div>
+        <%else%>
+          <%baskets = Basket.search_for_api({:filter => {:user_id => @user.id, :status => ["paid","confirmed","hold","delivered", "cancelled"] }, :order => 'paypal_order_date desc'}, [:private,:detailed,:items], {:caller => @user})%>
+          <script>
+            G_baskets = <%=baskets.to_json.html_safe%>;
+            G_baskets_previous = [];
+          </script>
+
+          <div class='basket_shop_table'>
+            <script id='basket_shop_table_line' type="text/html">
+              <div class='basket_line cursor_pointer' data-basket_id='<$=reference$>'>
+                <div>
+                  <div><$=new Date(paypal_order_date).strftime("%Y-%m-%d")$></div>
+                  <div><$=new Date(paypal_order_date).strftime("%H:%M")$> <span class='timezone'><$=new Date(paypal_order_date).strftime("%Z")$></span></div>
+                </div>
+                <div><img src="<$=shop_picture$>" class='user_picture'/></div>
+                <div>
+                  <div class='user_name'><span class='em'><$=shop_name$></span></div>
+                  <div class='detail'>
+                    <$for (var i in basket_items) { item = basket_items[i]$><$if (i>0){$> ; <$}$><$=item.quantity$>x <$=item.title$><$if (item.details.date_type=='one') {$> <span class='date_details'>(<$=item.details.date_at$>)</span><$}else if (item.details.date_type=='period') {$> <span class='date_details'>(<$=item.details.date_to$> - <$=item.details.date_to$>)</span><$}$><$}$>
+                  </div>
+                  <div class='detail2'><%= it("Ref:", scope: ['settings', 'orders']) %> <$=reference$></div>
+                </div>
+                <div>
+                  <div class='em'><$=total_formated$></div>
+                  <div class='detail'><%= it("Status:", scope: ['settings', 'orders']) %> <$=diveboard.config_translate('basket_status',status)$></div>
+                </div>
+                <div><a href='#' class='fake_link'><%= it("View details", scope: ['settings', 'orders']) %></a></div>
+              </div>
+            </script>
+          </div>
+
+          <p class='basket_shop_table_void' <%if baskets[:count]>0%>style='display:none'<%end%>><%= it("You have made no orders yet on Diveboard.", scope: ['settings', 'orders']) %></p>
+          <p class='basket_shop_table_loading' style='display:none'><img src='/img/transparent_loader.gif' height='66px' width='66px'/></p>
+
+          <button class='basket_shop_table_previous' style='display:none'><%= it("Previous", scope: ['settings', 'orders']) %></button>
+          <button class='basket_shop_table_next' <%if baskets[:next_start_id].nil?%>style='display:none'<%end%>><%= it("Next", scope: ['settings', 'orders']) %></button>
+
+          <hr class='basket_shop_table_void'/>
+          <hr class='basket_shop_table_loading'/>
+        <%end%>
+      </div>
+    </div>
+
+    <div id="Messages" class='tab_panel panel_settings panel_settings_4' style="display:none;">
+      <%if @menu_id == 4 && @message then%>
+        <% shop = if @message.from_group.nil? then @message.to.shop_proxy else @message.from_group.shop_proxy end%>
+        <div class="main_content_header main_padded_top">
+          <span class="header_title"><%= it("Past exchanges with %{shop_name}", scope: ['settings', 'orders'], shop_name: shop.name.titleize) %></span>
+          <div  class="header_top_action">
+          </div>
+        </div>
+        <div class='exchanges'>
+          <%= render :partial => 'settings/shop_history', :locals => {:shop => shop, :customer => @user, :highlight => @message, :me => :customer, :reload_url => "/settings/messages/#{@message.shaken_id}", :no_title => true}%>
+        </div>
+      <%else%>
+        <div class="main_content_header main_padded_top">
+          <span class="header_title"><%= it("Messages with dive shops", scope: ['settings', 'orders']) %></span>
+          <div  class="header_top_action">
+          </div>
+        </div>
+        <%messages = InternalMessage.search_for_api({:filter => {:to_id => @user.id, :status => 'new'}, :order=>'created_at desc'}, [:private,:detailed], {:caller => @user})%>
+        <script>
+          G_messages = <%=messages.to_json.html_safe%>;
+          G_messages_previous = [];
+        </script>
+
+        <div style='margin: 20px 0px 20px 9px'>
+          <div style='display: inline-block'><%= it("Filter by status:", scope: ['settings', 'orders']) %> </div>
+          <div class='dropdown right white message_shop_table_filter'>
+            <div class='options'>
+              <div class='option' data-value='{"to_id":<%=@user.id%>,"status":"new"}'><%= it("New", scope: ['settings', 'orders']) %></div>
+              <div class='option' data-value='{"to_id":<%=@user.id%>}'><%= it("Received", scope: ['settings', 'orders']) %></div>
+              <div class='option' data-value='{"from_id":<%=@user.id%>}'><%= it("Sent", scope: ['settings', 'orders']) %></div>
+            </div>
+          </div>
+        </div>
+
+        <div class='message_shop_table'>
+        <script id='message_shop_table_line' type="text/html">
+          <div class='message_line cursor_pointer' data-message_id='<$=shaken_id$>'>
+            <div>
+              <div><$=new Date(created_at).strftime("%Y-%m-%d")$></div>
+              <div><$=new Date(created_at).strftime("%H:%M")$> <span class='timezone'><$=new Date(created_at).strftime("%Z")$></span></div>
+            </div>
+            <div><img src="<$=from_picture$>" class='user_picture'/></div>
+            <div>
+              <div class='user_name'><%= it("From:", scope: ['settings', 'orders']) %> <span class='em'><$=from_nickname$></span><$if (from_group_nickname){$> <%= it("as", scope: ['settings', 'orders']) %> <$=from_group_nickname$><$}$></div>
+              <div class='topic'><$=topic$></div>
+            </div>
+            <div>
+              <div class='user_name'><%= it("To:", scope: ['settings', 'orders']) %> <span class='em'><$=to_nickname$></span></div>
+            </div>
+
+            <div><img src="<$=to_picture$>" class='user_picture'/></div>
+            <div><a href='#' class='fake_link'><%= it("View message", scope: ['settings', 'orders']) %></a></div>
+          </div>
+        </script>
+        </div>
+
+        <p class='message_shop_table_void' <%if messages[:count]>0%>style='display:none'<%end%>><%= it("No messages for the current filter.", scope: ['settings', 'orders']) %></p>
+        <p class='message_shop_table_loading' style='text-align:center; display:none'><img src='/img/transparent_loader.gif' height='66px' width='66px'/></p>
+
+        <button class='message_shop_table_previous' style='display:none'><%= it("Previous", scope: ['settings', 'orders']) %></button>
+        <button class='message_shop_table_next' <%if messages[:next_start_id].nil?%>style='display:none'<%end%>><%= it("Next", scope: ['settings', 'orders']) %></button>
+
+
+        <hr class='message_shop_table_void'/>
+        <hr class='message_shop_table_loading'/>
+
+      <%end%>
+    </div>
+
+  </div>
+
+</div>
+
+<div id='file_mask'><img src='/img/transparent_loader_3.gif' height='66px' width='66px' class='file_spinning' alt='#' /></div>
+
+<%if @message%>
+<script>
+$(document).ready(function(){
+  var element = $(".highlighted")[0];
+  if (element)
+    window.scroll(0,element.offsetTop-100);
+});
+</script>
+<%end%>

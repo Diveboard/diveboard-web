@@ -1,0 +1,8 @@
+<div class="main_info" align="left">
+	<!-- TODO: check date format -->
+  <p><img src="<%=@buddy.picture_large%>" class="left" width=40/><%= it("Your buddy %{name} just logged the %{link:dive} you did together in %{strong}%{spot}%{c_strong} on %{strong}%{date}%{c_strong}", scope: ['notify_user', 'notify_buddy_added'], name: @buddy.nickname, link: @dive.fullpermalink(:locale), strong: "<strong>".html_safe, spot: @dive.spot.name, c_strong: "</strong>".html_safe, date: l(@dive.date.to_time, format: :full)) %>
+  </p>
+  <br/>
+  <p style='margin: 5px 0 5px 0; clear: both; text-align: center;'><%= it("Check it out and start sharing your memories!", scope: ['notify_user', 'notify_buddy_added']) %><br/>
+    <a href='<%= @dive.fullpermalink(:locale) %>' class="yellow_button" style="margin-top: 20px;"><%= it("View dive", scope: ['notify_user', 'notify_buddy_added']) %></a></p>
+</div>

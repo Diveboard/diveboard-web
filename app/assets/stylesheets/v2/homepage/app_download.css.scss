@@ -1,0 +1,134 @@
+@import 'variablesv2';
+
+#app_download
+{
+  width: 100%;
+  @media (max-width: 1250px)
+  {
+    width: calc(100% - 40px);
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  @media (max-width: 790px)
+  {
+    width: calc(100% - 20px);
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .app_container
+  {
+    max-width: $home-width;
+    height: 100%;
+    margin: 0 auto;
+    position: relative;
+    padding-bottom: 40px;
+    @media (max-width: 960px)
+    {
+      padding-bottom: 20px;
+    }
+
+    h3
+    {
+      font-size: 32px;
+      font-weight: normal;
+      color: #333333;
+      padding-top: 60px;
+      @media (max-width: 1024px)
+      {
+        padding-top: 30px;
+      }
+      @media (max-width: 790px)
+      {
+        font-size: 23px;
+      }
+    }
+
+    .subtitle
+    {
+      color: #8a8e8f;
+      font-size: 21px;
+      padding-top: 20px;
+      padding-bottom: 20px;
+      width: 49%;
+      @media (max-width: 960px)
+      {
+        padding-bottom: 10px;
+        padding-top: 10px;
+        font-size: 18px;
+      }
+      @media (max-width: 790px)
+      {
+        font-size: 14px;
+        width: 100%;
+      }
+    }
+
+    .store
+    {
+      display: block;
+      background-color: #3c4245;
+      width: 280px;
+      height: 57px;
+      -webkit-border-radius: 3px;
+      -moz-border-radius: 3px;
+      border-radius: 3px;
+      color: white;
+      padding-top: 13px;
+      margin-top: 15px;
+      text-decoration: none;
+
+      @media (max-width: 960px)
+      {
+        height: 51px;
+        padding-top: 9px;
+      }
+      @media (max-width: 790px)
+      {
+        margin-left: calc(50% - 140px);
+      }
+
+      table
+      {
+        border-collapse: collapse;
+        margin-left: 20px;
+      }
+
+      p
+      {
+        padding-left: 30px;
+      }
+    }
+
+    a:hover, a:active
+    {
+      background-color: #FDC90C;
+    }
+
+    .screen
+    {
+      position: absolute;
+      bottom: 0;
+      height: 95%;
+      right: 210px;
+      @media (max-width: 960px)
+      {
+        right: 40px;
+      }
+      @media (max-width: 790px)
+      {
+        display: none;
+      }
+    }
+
+    .mobile_picture
+    {
+      display: none;
+      margin-left: calc(50% - 79px);
+      @media (max-width: 790px)
+      {
+        display: block;
+      }
+    }
+  }
+}

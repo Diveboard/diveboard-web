@@ -1,0 +1,50 @@
+#Replace the following example ids with your own
+
+google_config:
+  x-goog-project-id: 82584081796
+
+#Client ID for web applications
+web_applications:
+  client_id: 82584081796-iosf3bu5dtm46s622bsog8eigfmmulsk.apps.googleusercontent.com
+  client_secret: HaKUSkWCywi4WIm0naFMnAfT
+  redirect_uris: 'http://localhost'
+  js_origins: 'http://localhost:3000'
+
+#refresh_token: replace this line with a refresh token from google, read below on how to get one
+refresh_token: 1/m-_dF9nP4PCnEQLpbDidcd2pN_8OH9YKucVhxYDNVCA
+
+
+#You need to acquire a refresh token from google so that the google_storage gem
+#can acquire access tokens whenever it needs to make new requests
+
+# 1. Make sure you've signed up for Google Storage and filled in the above client ID details
+#    for your web application first
+#
+# 2. Depending on how much access you want to grant to your application run
+#    ONE of the following from your applications root directory. If you intend to be able to create and
+#    destroy objects and buckets and also be able to set permissions then use full_control
+#
+#           rake gs:grant:read_only
+#           rake gs:grant:read_write
+#           rake gs:grant:full_control
+#
+# 3. Step 2 will generate a URL for you. Copy and paste the URL into a browser and you should be prompted
+#    by google to authorize the request by logging into your browser using the google email account you setup
+#    your google storage account with
+#
+# 4. When you 'allow access' you'll be redirected back to the redirect URL you setup in your client ID
+#    Your redirect URL should now include an authorization code. It'll look something like this:
+#    http://localhost:3000/example?code=4/WvlklnjtybhRJpaKpmDYrzIhAzyx
+#
+# 5. Copy that code from your URL and run the following rake task from your application directory
+#
+#           rake gs:refresh_token['paste_your_auth_code_here']
+#  Example: rake gs:refresh_token['4/WvlklnjtybhRJpaKpmDYrzIhAzyx']
+#
+# 6. If everything worked you should see something that looks like the following:
+#
+#           refresh_token: 1/x4X-U57snRMkLIWWYHWLCXPbfcnyGsdfx04sWAiG_1k
+#
+# 7. Copy and paste the refresh_token into this file. Your application should now be able to make calls to your
+#    Google Storage API
+

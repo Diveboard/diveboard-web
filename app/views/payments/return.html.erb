@@ -1,0 +1,22 @@
+<!--<script src ="https://www.paypalobjects.com/js/external/dg.js" type="text/javascript"></script>-->
+<script type="text/javascript" charset="utf-8">
+<%if @alert_failed%>alert('<%= it("The payment failed. Please check your Paypal account before", scope: ['payments', 'return']) %>');<%end%>
+if (top && top.opener && top.opener.top) {
+  window.close();
+  <%if reload then%>
+    top.opener.top.window.location.reload();
+  <%else%>
+     top.opener.top.window.$("#file_mask").hide().css("background-color","#000000");
+     top.opener.top.window.$("body>div[id=PPDGFrame]").detach();
+  <%end%>
+} else if (top.window) {
+  <%if reload%>
+    top.window.location.reload();
+  <%else%>
+     top.window.$("#file_mask").hide().css("background-color","#000000");
+     top.window.$("body>div[id='PPDGFrame']").detach();
+  <%end%>
+} else {
+  alert('<%= it("Please close the window and reload to continue", scope: ['payments', 'return']) %>');
+}
+</script>

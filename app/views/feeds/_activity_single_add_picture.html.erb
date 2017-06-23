@@ -1,0 +1,61 @@
+<%
+  dive = activity.dive
+  user = activity.user
+  picture = activity.picture
+%>
+<li class='feed_item'>
+  <a class='feed_abstract' href='<%=dive.fullpermalink(:locale)%>#pictures'>
+    <div class='feed_abstract_img'><img src='<%=picture.thumbnail%>'/></div>
+    <div class='feed_abstract_title'><%= it("%{user} has added a new picture", scope: ['feeds', 'activity_single_add_picture'], user: user.nickname) %></div>
+    <div class='feed_abstract_when'>
+      <%if !activity.when['days'].nil? then%><%= it("%{count} days ago", scope: ['feeds'], count: activity.when['days']) %>
+      <%elsif !activity.when['hours'].nil? then%><%= it("%{count} hours ago", scope: ['feeds'], count: activity.when['hours']) %>
+      <%elsif !activity.when['minutes'].nil? then%> <%= it("%{count} minutes ago", scope: ['feeds'], count: activity.when['minutes']) %>
+      <%elsif !activity.when['seconds'].nil? then%><%= it("%{count} seconds ago", scope: ['feeds'], count: activity.when['seconds']) %>
+      <%end%>
+    </div>
+  </a>
+  <div class=feed_popup>
+    <img class=feed_popup_arrow src='<%=HtmlHelper.lbroot "/img/feeds/popup_arrow.png"%>'/>
+    <a href='<%=dive.fullpermalink(:locale)%>#pictures' style='color:#333'>
+    <div class=feed_popup_main>
+      <img class='feed_popup_title_thumbimg' src='<%=user.picture%>' />
+      <div class='feed_popup_smalltitle'>
+          <%if dive.spot_id != 1 then%>
+            <%= it("%{bold:%{user}}%{br}has added %{count} pictures on his dive in %{spot}, %{area} on %{date}",
+                    scope: ['feeds', 'activity_multiple_add_picture'],
+                    spot: dive.spot.name,
+                    area: dive.spot.area_name,
+                    user: user.nickname,
+                    date: dive.date,
+                    bold: It.tag("strong", style: "#333 !important"),
+                    br: It.tag("br"),
+                    count: 1
+                  ) %>
+          <%else%>
+            <%= it("%{bold:%{user}}%{br}has added %{count} pictures on his dive on %{date}",
+                    scope: ['feeds', 'activity_multiple_add_picture'],
+                    date: activity.dive.date,
+                    user: user.nickname,
+                    bold: It.tag("strong", style: "#333 !important"),
+                    br: It.tag("br"),
+                    count: 1
+                  ) %>
+          <%end%>
+
+      </div>
+
+
+      <div class='feed_popup_details'><img class='feed_popup_title_img' src='<%=picture.thumbnail%>' /></div>
+      <div class='feed_popup_link'><span style='color:#ff6200'><%= it("View in logbook", scope: ['feeds']) %></span>
+      <div class='feed_popup_when'>
+        <%if !activity.when['days'].nil? then%><%= it("%{count} days ago", scope: ['feeds'], count: activity.when['days']) %>
+        <%elsif !activity.when['hours'].nil? then%><%= it("%{count} hours ago", scope: ['feeds'], count: activity.when['hours']) %>
+        <%elsif !activity.when['minutes'].nil? then%> <%= it("%{count} minutes ago", scope: ['feeds'], count: activity.when['minutes']) %>
+        <%elsif !activity.when['seconds'].nil? then%><%= it("%{count} seconds ago", scope: ['feeds'], count: activity.when['seconds']) %>
+        <%end%>
+      </div></div>
+    </div>
+    </a>
+  </div>
+</li>

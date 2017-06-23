@@ -1,0 +1,31 @@
+<%= content_for :javascripts do%>
+  <script type="text/javascript">
+    $(document).ready(function()
+      {
+        process_modal = new LightModal('process_modal');
+
+        $('.share_email_button').click(function()
+          {
+            process_modal.display('processing');
+          });
+      });
+  </script>
+<% end %>
+
+<div id="process_modal" class="processModal modal">
+  <div class="modal_content">
+  </div>
+
+  <div class="modal_slides">
+    
+    <div modal_class="modal_content_processing" modal_id="processing">
+      <div class="modal_body">
+        <div class="description">
+          <img src="<%= HtmlHelper.lbroot "/img/transparent_loader.gif" %>" alt="" /><br>
+          Processing please wait
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

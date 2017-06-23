@@ -1,0 +1,192 @@
+<%= content_for :javascripts do%>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=<%=GOOGLE_MAPS_API %>&sensor=false"></script>
+	<script type="text/javascript">
+		// When the window has finished loading create our google map below
+        google.maps.event.addDomListener(window, 'load', init);
+        
+        function init() {
+          var map_center;
+            // Basic options for a simple Google Map
+            // For more options see: https://developers.google.com/maps/documentation/javascript/reference#MapOptions
+            var mapOptions = {
+                // How zoomed in you want the map to start at (always required)
+                zoom: 9,
+
+                draggable: false,
+                scrollwheel: false,
+  							disableDoubleClickZoom: true,
+  							mapTypeId: google.maps.MapTypeId.TERRAIN,
+  							disableDefaultUI: true,
+                // The latitude and longitude to center the map (always required)
+                center: new google.maps.LatLng(<%= @area.geonames_core.latitude %>, <%= @area.geonames_core.longitude %>),
+               
+            };
+
+            // Get the HTML DOM element that will contain your map 
+            // We are using a div with id="map" seen below in the <body>
+            var mapElement = document.getElementById('map');
+
+            // Create the Google Map using out element and options defined above
+            var map = new google.maps.Map(mapElement, mapOptions);
+            map_center = map.getCenter();
+
+            <%
+            	i = 0;
+            	@shops.each do |s|
+            %>
+        	var marker<%= i %> = new google.maps.Marker({
+			      position: new google.maps.LatLng(<%= s.lat %>, <%= s.lng %>),
+			      map: map,
+			      title: '<%= s.name %>'
+			  });
+
+        	var contentString;
+	    	var infowindow;
+	    	
+			google.maps.event.addListener(marker<%= i %>, 'click', function() {
+				if (infowindow)
+					infowindow.close();
+				contentString = '<a href="/pro/<%= s.vanity_url %>" style="text-decoration: none;"><div class="marker_title"><%=s.name %></div></a>';
+				infowindow = new google.maps.InfoWindow({
+				    content: contentString
+				});
+				infowindow.open(map,marker<%= i %>);
+				
+			});
+
+	        <%
+	        	i += 1
+	        	end
+			%>
+
+      google.maps.event.addDomListener(window, 'resize', function() {
+        map.setCenter(map_center);
+      });
+
+        }
+
+
+	</script>
+<%end%>
+
+<div id="shops">
+	<div class="container">
+		<div id="category_title">
+			<h2>
+        <%= it("Shops",
+            scope: ['area_pages', 'v2', 'shops']) %>
+      </h2>
+      <% if @shops_more > 4 %>
+  			<a class="see_all_button button" href="#shopsModal">
+          <%= it("See all",
+              scope: ['homepage', 'v2', 'latest_photos']) %>
+        </a>
+      <% end %>
+			<div class="clear"></div>
+		</div>
+		<%
+			shop_count = 0;
+			@shops.each do |s|
+		%>
+    <%= link_to({:controller => :shop_pages, :action => :index, :vanity_url => s.vanity_url}) do %>
+		<div class="shop<%= if shop_count % 2 == 1 then " second" end %>">
+      <div class="picture" style="background-image: url('<%= s.picture %>')"></div>
+			<div class="shop_info">
+        <p class="shop_name"><%= s.name %></p>
+				<table class="rating">
+					<% if !s.reviews.empty? && !s.rating.nil?
+						total = s.rating;
+					%>
+						<tr>
+							<%
+								count = 0
+								while count < 5 do
+									if total >= 1
+										total -= 1
+							%>
+								<td><div class="outter-bullet"><div class="inner-bullet-full"></div></div></td>
+							<%
+									elsif total >= 0.5
+										total -= 0.5
+							%>
+								<td><div class="outter-bullet"><div class="inner-bullet-half"></div></div></td>
+							<%
+									else
+							%>
+								<td><div class="outter-bullet"></div></td>
+							<%
+									end
+									count += 1
+								end
+							%>
+							<td>
+                <p>
+                  (<%= it("%{count} reviews",
+                       scope: ['homepage', 'v2', 'featured_destinations'],
+                       count: s.reviews.count) %>)
+                </p>
+              </td>
+						</tr>
+					<% else %>
+						<tr>
+							<td>
+                <p style="padding:0;">
+                  <%= it("No reviews yet",
+                      scope: ['area_pages', 'v2', 'shops']) %>
+                </p>
+              </td>
+						</tr>
+					<% end %>
+				</table>
+				<% if s.public_dive_goods.count != 0 && !s.price_range[:min].nil? %>
+				<table class="price">
+					<tr>
+						<td><img class="icon" src="/img/areas/cash-icon.png" alt="" /></td>
+            <% # TODO replace price %>
+						<td>
+              <p>
+                <%= it("From %{starting_price}",
+                    scope: ['area_pages', 'v2', 'shops'],
+                    starting_price: s.price_range[:min].total.to_s + ' ' + s.price_range[:min].currency) %>
+              </p>
+            </td>
+					</tr>
+				</table>
+				<% end %>
+        <div class="book">
+          <p>
+            <%= it("Book now",
+                scope: ['shop_pages', 'shop_dive_view']) %>
+          </p>
+          <img src="<%= HtmlHelper.lbroot "/img/icon_arrow_book_now_bw.svg" %>" alt="" />
+        </div>
+			</div>
+			<div class="clear"></div>
+		</div>
+    <% end %>
+		<%
+			shop_count += 1
+			end
+		%>
+		<div class="clear"></div>
+	</div>
+
+	<div id="map"></div>
+</div>
+
+<div id="shopsModal" class="modal">
+  <div class="modal_content">
+    <a href="#close" class="close"></a>
+    <div id="shops_modal">
+      <div class="container">
+        <div id='shops-page-nav' style="display: none;">
+          <a href='<%= URI.escape @area.permalink%>?append=true&type=shop&page=<%=@shops_page_nb+1 %>'>next</a>
+        </div>    
+      </div>
+      <div class="load_more_button">
+        <%= it("Load more shops",
+            scope: ['area_pages', 'v2', 'shops']) %>
+      </div>
+    </div>
+  </div>
+</div>

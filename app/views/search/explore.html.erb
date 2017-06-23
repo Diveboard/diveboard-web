@@ -1,0 +1,161 @@
+<script type="text/javascript" src="//maps.google.com/maps/api/js?libraries=geometry&sensor=false&v=3.7&language=<%=I18n.locale%>"></script>
+<!--<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>-->
+<%= javascript_include_tag 'explore', defer: true%>
+
+<link type="text/css" href="<%=auto_file_versionning("/styles/jquery.jscrollpane.livesearch.css")%>" rel="stylesheet" media="all" />
+
+<style>
+  #container {margin-top: 47px;}
+</style>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  initialize({
+    root_url: "<%=ROOT_URL%>",
+    locale_root_url: "<%=root_url%>",
+    maxZoomLevel: 15,
+    initial_location: <%=initial_location.to_json.html_safe%>
+  });
+});
+
+var G_user_id = <%= @user.id rescue 'null' %>;
+var G_balanced_roots = <%= begin Rails.configuration.explore_balancing_roots rescue Rails.configuration.balancing_roots rescue [root_url] end .to_json.html_safe%>;
+
+</script>
+
+    <div id="container_search" class='container_search'>
+
+      <div id='xp_panel_1'>
+        <div id='xp_p1_head'>
+          <div id="xp_p1_close" style="display:none;">close</div>
+          <img id='xp_p1h_icon' src='/img/explore/icon_earth.png' alt='@'/>
+          <span id='xp_p1h_explore'/><%= it("EXPLORE", scope: ['search', 'explore']) %></span>
+          <input id='xp_p1_search' title='<%= it("Enter a destination", scope: ['search', 'explore']) %>' />
+          <input id='xp_p1_search_button' type='image' src='/img/explore/visor_icon.png' width='19px' height='19px' />
+          <div id='xp_p1_search_result' class='xp_scrollable' style='display:none'><ul id='xp_p1_search_result_list'>
+          </ul></div>
+        </div>
+        <div id='xp_p1_content'>
+          <div id='xp_p1_tabs' class='xp_links_container'>
+            <span id='xp_p1_countries_link' class='xp_panel_tab_link'><%= it("COUNTRIES", scope: ['search', 'explore']) %></span>
+            <span id='xp_p1_spots_link' class='xp_panel_tab_link selected'><%= it("SPOTS", scope: ['search', 'explore']) %></span>
+            <span id='xp_p1_shops_link' class='xp_panel_tab_link'><%= it("SHOPS", scope: ['search', 'explore']) %></span>
+            <span id='xp_p1_dives_link' class='xp_panel_tab_link'><%= it("DIVES", scope: ['search', 'explore']) %></span>
+          </div>
+          <div id='xp_p1_db_wait'>
+            <p><%= it("Please wait while loading the data", scope: ['search', 'explore']) %></p>
+            <p id='xp_p1_db_progress'></p>
+            <img src="/img/transparent_loader_2.gif" height='66px' width='66px' style="margin-left:100px; margin-top:50px" alt='#' />
+          </div>
+          <div id='xp_p1_list' class='xp_result_list xp_scrollable'>
+            <div id='xp_p1_tab' class='xp_result_tab'>
+              <ul class='xp_panel_list'>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id='xp_panel_2' <%if panel2.nil? then%>style='display:none'<%end%>>
+        <div id='xp_p2_head'>
+          <div id='xp_p2h_icon' title='<%= it("Close panel", scope: ['search', 'explore']) %>' class='tooltiped-wz'><span class='symbol'>×</span></div>
+          <div id='xp_p2h_back' title='<%= it("Go back in history", scope: ['search', 'explore']) %>' class='tooltiped-wz' style='display:none'><span class='symbol'>(</span></div>
+          <div id='xp_p2h_forward' title='<%= it("Go forward in history", scope: ['search', 'explore']) %>' class='tooltiped-wz' style='display:none'><span class='symbol'>)</span></div>
+          <div id='xp_p2h_head_container'>
+            <div id='xp_p2h_head_hack'><!--hack to center vertically in middle--> </div>
+            <h1 id='xp_p2h_head'/><%=
+              if panel2.class.to_s == 'User' then panel2.nickname
+              elsif panel2.class.to_s == 'Dive' then panel2.user.nickname + " @ " + panel2.spot.name
+              elsif ['Country', 'Region', 'Location', 'Spot', 'Shop'].include? panel2.class.to_s  then panel2.name
+              end
+            %></h1>
+          </div>
+          <div id='xp_p2h_follow'><a href="#" class="follow_link" data-db-follow-what='' data-db-follow-id='' >
+            <span class='text_waiting'><img src='/img/indicator.gif' alt='...'/></span>
+            <span class='text_follow tooltiped' title='<%= it("Be notified when new stuff on this subject happens on diveboard", scope: ['search', 'explore']) %>'><%= it("FOLLOW", scope: ['search', 'explore']) %> <span class="symbol">+</span></span>
+            <span class='text_unfollow'>
+              <span class='text_nohover'><%= it("FOLLOWING", scope: ['search', 'explore']) %> <span class="symbol">.</span></span>
+              <span class='text_hover tooltiped' title='<%= it("Stop being notified when new stuff on this subject happens on Diveboard", scope: ['search', 'explore']) %>'><%= it("UN-FOLLOW", scope: ['search', 'explore']) %> <span class="symbol">×</span></span>
+            </span>
+          </a></div>
+          <%if !panel2.nil? then%>
+          <script>
+          $(document).ready(function() {
+            setup_follow_button('<%=panel2.class.to_s.downcase%>_id', <%=panel2.id%>);
+          });
+          </script>
+          <%end%>
+
+        </div>
+        <div id='xp_p2_content' class='xp_scrollable'>
+          <%
+            pic_url = nil
+            if panel2.class.to_s == 'User' then pic_url = panel2.picture_large
+            elsif panel2.class.to_s == 'Shop' then pic_url = panel2.logo_url
+            elsif panel2.class.to_s == 'Dive' && ! panel2.featured_picture.nil? then pic_url = panel2.featured_picture.large
+            elsif ['Country', 'Region', 'Location', 'Spot'].include? panel2.class.to_s  then
+              pic_url = panel2.picture.large rescue nil
+            end
+          %>
+          <div id='xp_p2_img'  <%if pic_url.nil? then%>style='display:none'<%end%>>
+            <div id='xp_p2_img_container'>
+            <img src='<%=pic_url%>' alt='Item picture' />
+            </div>
+            <!--<div id='xp_p2_img_fold' class='symbol'>}</div>-->
+          </div>
+          <div id='xp_p2_tabs' class='xp_links_container'>
+            <span id="xp_p2_like" class='dynamic_like'>
+              <div class='platform'>
+                <div class="g-plusone" data-size="medium" data-href="<%=panel2.fullpermalink(:canonical)||(ROOT_URL+'explore') rescue (ROOT_URL+'explore')%>"></div>
+              </div>
+              <div class='platform'>
+                <fb:like href="<%=panel2.fullpermalink(:canonical)||(ROOT_URL+'explore') rescue (ROOT_URL+'explore')%>" width="90" layout="button_count" show_faces="false" send="false"></fb:like>
+              </div>
+              <div class='platform'></div>
+            </span>
+            <span id='xp_p2_info_link' class='xp_panel_tab_link selected'><%= it("INFO", scope: ['search', 'explore']) %></span>
+            <span id='xp_p2_dives_link' class='xp_panel_tab_link' <%if panel2.class.to_s == 'Dive' then%>style='display:none'<%end%>><%= it("DIVES", scope: ['search', 'explore']) %></span>
+            <span id='xp_p2_divers_link' class='xp_panel_tab_link' <%if ['Shop', 'User', 'Country', 'Region', 'Location'].include? panel2.class.to_s then%>style='display:none'<%end%>><%= it("DIVERS", scope: ['search', 'explore']) %></span>
+            <span id='xp_p2_pictures_link' class='xp_panel_tab_link' <%if !['User', 'Dive', 'Spot', 'Country'].include?(panel2.class.to_s) || panel2.pictures.count==0 then%>style='display:none'<%end%>><%= it("PICTURES", scope: ['search', 'explore']) %></span>
+          </div>
+          <div id='xp_p2_pages_out'>
+            <div id='xp_p2_pages'>
+            <%=
+              if panel2.class.to_s == 'User' then render :partial => 'explore/xp2_diver.jst.ejs', :locals => {user:panel2.to_api(:search_full_server).except(:class)}
+              elsif panel2.class.to_s == 'Dive' then render :partial => 'explore/xp2_dive.jst.ejs', :locals => {dive: panel2.to_api(:search_full_server).except(:class)}
+              elsif panel2.class.to_s == 'Spot' then render :partial => 'explore/xp2_spotinfo.jst.ejs', :locals => {spot: panel2.to_api(:search_full_server).except(:class)}
+              elsif panel2.class.to_s == 'Shop' then render :partial => 'explore/xp2_shop.jst.ejs', :locals => {shop: panel2.to_api(:search_full_server)}
+              elsif ['Country', 'Region', 'Location'].include? panel2.class.to_s  then render :partial => 'explore/xp2_zone.jst.ejs', :locals => {:zone => panel2.to_api(:search_full_server)}
+              end
+            %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="show_responisve_menu" style="display:none; float:left;">
+        <!--click-->
+      </div>
+      <div id="map_canvas">
+      </div>
+
+      <!--<div id='search_permalink_block'>Permalink : <input id=permalink size=68 readonly=true /></div>-->
+      <div id='xp_panel_1_mob' style="display:none;">
+        <div id='xp_p1_content_mob'>
+          <div id='xp_p1_tabs' class='xp_links_container'>
+            <span id='xp_p1_countries_link' class='xp_panel_tab_link'><%= it("COUNTRIES", scope: ['search', 'explore']) %></span>
+            <span id='xp_p1_spots_link' class='xp_panel_tab_link selected'><%= it("SPOTS", scope: ['search', 'explore']) %></span>
+            <span id='xp_p1_shops_link' class='xp_panel_tab_link'><%= it("SHOPS", scope: ['search', 'explore']) %></span>
+            <span id='xp_p1_dives_link' class='xp_panel_tab_link'><%= it("DIVES", scope: ['search', 'explore']) %></span>
+          </div>
+        
+          <div id='xp_p1_list' class='xp_result_list xp_scrollable'>
+            <div id='xp_p1_tab' class='xp_result_tab' style="width:95%">
+              <ul class='xp_panel_list'>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <img id="search_in_progress_icon" style="display: none; " src="/img/indicator.gif">
+
+</div>

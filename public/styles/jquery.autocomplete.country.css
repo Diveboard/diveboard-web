@@ -1,0 +1,7 @@
+#spot-country {
+	background: 5px 5px no-repeat;
+	padding:3px 3px 3px 27px;
+}
+#spot-country_hidden {
+    visibility: hidden;
+}

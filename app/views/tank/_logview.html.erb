@@ -1,0 +1,12 @@
+<div class="log_tank triple_box">
+  <ul>
+  <li class="tank_number"><%=idx%>. <strong style="margin-right:0px !important;"><%=tank.gas_name%></strong></li>
+  <li class="tank_data"><%if !tank.volume.nil?%><%if tank.multitank==2%>2x<%end%><%=(tank.volume_n si).round%><%if si%>L<%else%>cuft<%end%> <%end%><%=tank.material.titleize%> 
+    <%if tank.p_start? || tank.p_end?%>  &nbsp;&nbsp;&nbsp; <%if tank.p_start?%> <%=(tank.p_start_n si).round%><%else%>?<%end%>&nbsp;&#8594;&nbsp;<%if tank.p_end?%><%=(tank.p_end_n si).round%><%else%>?<%end%>&nbsp;<%if si%>bar<%else%>psi<%end%></li><%end%>
+  <%if tank.time_start? && idx >1 %><li "tank_start"><%= it("Started at:", scope: ['tank', 'logview']) %> <%=(tank.time_start/60).round%> <%= it("mins", scope: ['tank', 'logview']) %></li><%end%>
+  <li>&nbsp;</li>
+  <%if tank.tankprofile != {} %><li "tank_depth"><%= it("Average depth", scope: ['tank', 'logview']) %>: <%=unit_distance(tank.tankprofile[:average_depth], true, 1)%></li><%end%>
+  <%if !tank.SAC_n(si).nil?%><li class="tank_metrics"><span title="<%= it("Surface Air Consumption", scope: ['tank', 'logview']) %>" class="tooltiped-js"><%= it("SAC", scope: ['tank', 'logview']) %></span>: <%=tank.SAC_n(si)%> <%if si%><%= it("bar/min", scope: ['tank', 'logview']) %><%else%><%= it("PSI/min", scope: ['tank', 'logview']) %><%end%></li><%end%>
+  <%if !tank.RMV_n(si).nil?%><li class="tank_metrics"><span title="<%= it("Respiratory Minute volume", scope: ['tank', 'logview']) %>" class="tooltiped-js"><%= it("RMV", scope: ['tank', 'logview']) %></span>: <%=tank.RMV_n(si)%> <%if si%><%= it("L/min", scope: ['tank', 'logview']) %><%else%><%= it("cuft/min", scope: ['tank', 'logview']) %><%end%></li><%end%>
+  </ul>
+</div>

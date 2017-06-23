@@ -1,0 +1,58 @@
+<script>
+  G_root_url = <%=ROOT_URL.to_json.html_safe%>;
+  G_locale_root_url = <%=root_url.to_json.html_safe%>;
+</script>
+
+<div class="marketing_widget section" id="marketing_widget_edit">
+
+  <div id="category_title">
+    <h2><%= it("Widgets", scope: ['shop_pages', 'shop_marketing_edit']) %></h2>
+    <div class="clear"></div>
+  </div>
+
+  <div class='widget_holder shop_widget_editor' data-widget_class='WidgetWidgetsEditor'>
+    <div class="container">
+      <p><%= it("These widgets will help you %{b:secure new customers} by providing a %{b:trusted source of recommendation} to advertise on your own website. Reviews collected on Diveboard are left by real divers and are moderated to make sure they provide a real value for divers looking for a dive center.", scope: ['shop_pages', 'shop_marketing_edit'], b: It.tag("b")) %></p>
+    </div>
+    <div class="container">
+      <h3><%= it("Ratings", scope: ['shop_pages', 'shop_marketing_edit']) %></h3>
+
+      <p><%= it("This widget will show your customers-to-be how well you perform on key topics. It brings valuable and trusted reassurance to divers who don't know you yet.", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+
+
+
+      <div class='widget_preview shop_medium'>
+        <div class='iframe_container'>
+          <iframe frameborder="0" height="156" width='220' scrolling="no" src="<%=root_url%>api/widget/shop_medium/<%=@shop.shaken_id%>" class='widget_preview_iframe'></iframe>
+        </div>
+        <div class='controls'>
+          <p class='controls_title'><%= it("Parameters:", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+          <p><%= it("Width:", scope: ['shop_pages', 'shop_marketing_edit']) %> <input class='width' value='220' type=number max=285 min=195 /> <%= it("pixels", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+          <p class='controls_title'><%= it("HTML code to embed on your page:", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+          <textarea class='html_preview'></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <h3><%= it("Detailed reviews", scope: ['shop_pages', 'shop_marketing_edit']) %></h3>
+
+      <p><%= it("A bigger widget to embed on your page to show how well your customers like your place.", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+
+      <div class='widget_preview shop_large'>
+        <div class='iframe_container'>
+          <iframe frameborder="0" height='<%=168+60*5%>' width='320' scrolling="no" src="<%=root_url%>api/widget/shop_reviews/<%=@shop.shaken_id%>?n=7" class='widget_preview_iframe' onload='this.height=this.contentWindow.document.body.scrollHeight + "px"'></iframe>
+        </div>
+        <div class='controls'>
+          <p class='controls_title'><%= it("Parameters:", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+          <p><%= it("Width:", scope: ['shop_pages', 'shop_marketing_edit']) %> <input class='width' value='320' type=number max=385 min=280 /> <%= it("pixels", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+          <p><%= it("Number max of reviews:", scope: ['shop_pages', 'shop_marketing_edit']) %> <input class='nbreviews' value='5' type=number max=7 min=3 /></p>
+          <p class='controls_title'><%= it("HTML code to embed on your page:", scope: ['shop_pages', 'shop_marketing_edit']) %></p>
+          <textarea class='html_preview'></textarea>
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+</div>

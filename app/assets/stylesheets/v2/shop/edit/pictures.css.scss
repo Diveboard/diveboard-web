@@ -1,0 +1,414 @@
+@import 'variablesv2';
+
+.pictures
+{
+  max-width: $home-width;
+  margin: 0 auto;
+}
+
+.picture_dropzone
+{
+  margin: 0; padding: 0;
+
+  .dz-message
+  {
+    width: 100%;
+    height: 100px;
+    text-align: center;
+    line-height: 100px;
+    border: 2px dashed $light-gray-db;
+    color: $dark-gray-db;
+    cursor: pointer;
+  }
+}
+
+#dropzone_content
+{
+  .file-row
+  {
+    padding: 10px;
+    padding-bottom: 0px;
+    background-color: white;
+    border: 1px solid $light-gray-db;
+    margin-top: 10px;
+    float: left;
+    margin-left: 10px;
+    width: 180px;
+    height: 210px;
+    position: relative;
+    cursor: pointer;
+    list-style-type: none;
+  }
+
+  .ui-state-highlight
+  {
+    width: 198px;
+    height: 218px;
+    list-style-type: none;
+    float: left;
+    margin-top: 10px;
+    margin-left: 10px;
+    border: 2px dashed $light-gray-db;
+  }
+
+  .preview
+  {
+    img
+    {
+      width: 180px;
+      height: 180px;
+    }
+  }
+
+  .delete
+  {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    font-weight: 600;
+    text-align: center;
+    line-height: 30px;
+    display: none;
+    opacity: 0;
+
+    &::after
+    {
+      content: 'X';
+    }
+  }
+
+  .set
+  {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: all 100ms;
+    opacity: 0;
+    display: none;
+    .set_as
+    {
+      display: inline-block;
+      width: 60px;
+      height: 60px;
+      background: rgba(1,1,1,0.7);
+      vertical-align: top;
+      margin-right: 10px;
+      p
+      {
+        position: relative;
+        bottom: 5px;
+        font-size: 0.8rem;
+        color: white;
+        text-align: center;
+      }
+      img
+      {
+        width: 35px;
+        height: 35px;
+        margin: 5px auto;
+        display: block;
+      }
+    }
+    .cover
+    {
+      img
+      {
+        width: 50px;
+        height: 35px;
+      }
+    }
+    .clicked
+    {
+      background: $yellow-db;
+    }
+    
+  }
+
+  .data
+  {
+    height: 20px;
+    width: 100%;
+    padding-bottom: 5px;
+
+    p
+    {
+      color: $dark-gray-db;
+      font-size: 14px;
+      font-style: italic;
+      text-align: center;
+      line-height: 20px;
+      width: 100%;
+      position: absolute;
+    }
+
+    .progress
+    {
+      position: absolute;
+      width: calc(100% - 21px);
+    }
+
+    .progress-bar
+    {
+      width: 0%;
+      height: 20px;
+      display: block;
+      background-color: green;
+      transition: all 100ms;
+      background-image: url('https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/256/line.png');
+      background-size: 7px 25px;
+    }
+  }
+  .dz-processing .status_wait, .dz-success .progress-bar{
+    opacity: 0.0;
+    transition: all 2000ms;
+  }
+  .dz-success .status_success{
+    opacity: 1 !important;
+    transition: all 3500ms;
+  }
+
+  .file-row:hover
+  {
+    .delete
+    {
+      opacity: 1;
+    }
+   
+    .set
+    {
+      opacity: 1;
+    }
+    
+  }
+}
+
+.dz-started
+{
+  .dz-message
+  {
+    //display: none;
+  }
+}
+
+#dropzone_template
+{
+  display: none;
+}
+
+.logo_upload
+{
+  width: 100%;
+
+  .logo_preview
+  {
+    position: relative;
+    padding: 10px;
+    background-color: white;
+    border: 1px solid $light-gray-db;
+    float: left;
+    width: 180px;
+    height: 180px;
+
+    .delete
+    {
+      width: 30px;
+      height: 30px;
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      font-weight: 600;
+      text-align: center;
+      line-height: 30px;
+      opacity: 0;
+      cursor: pointer;
+
+      &::after
+      {
+        content: 'X';
+      }
+    }
+
+    @include centerImg();
+
+
+      .delete
+      {
+        opacity: 1;
+      }
+  }
+
+  .load
+  {
+    img
+    {
+      display: none;
+    }
+
+    background-image: url('/img/transparent_loader.gif');
+    background-repeat: no-repeat;
+    background-position: 50%;
+  }
+
+  .preview
+  {
+    float: left;
+    margin-left: 10px;
+
+    p
+    {
+      color: $dark-gray-db;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    img
+    {
+      max-width: 748px;
+    }
+  }
+
+  .light-blue-button
+  {
+    float: left;
+    margin-left: 10px;
+  }
+
+  .dz-max-files-reached
+  {
+    display: none;
+  }
+
+  .buttons
+  {
+    float: left;
+    margin-left: 20px;
+  }
+}
+
+.banner_upload
+{
+  width: 100%;
+
+  .load
+  {
+    img
+    {
+      display: none;
+    }
+
+    background-image: url('/img/transparent_loader.gif');
+    background-repeat: no-repeat;
+    background-position: 50%;
+  }
+
+  .preview
+  {
+    float: left;
+    margin-top: 10px;
+
+    p
+    {
+      color: $dark-gray-db;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    img
+    {
+      max-width: 960px;
+    }
+  }
+
+  .light-blue-button
+  {
+    float: left;
+    margin-top: 10px;
+  }
+
+  .dz-max-files-reached
+  {
+    display: none;
+  }
+
+  .buttons
+  {
+    float: left;
+    margin-left: 20px;
+    margin-top: 20px;
+  }
+}
+
+.banner_list
+{
+  list-style-type: none;
+
+  li
+  {
+    position: relative;
+    padding: 10px;
+    background-color: white;
+    margin-bottom: 10px;
+    width: calc(100% - 20px);
+    border: 1px solid $light-gray-db;
+
+    img
+    {
+      width: 100%;
+    }
+
+    .delete
+    {
+      width: 30px;
+      height: 30px;
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      font-weight: 600;
+      text-align: center;
+      line-height: 30px;
+      opacity: 0;
+      cursor: pointer;
+
+      &::after
+      {
+        content: 'X';
+      }
+    }
+
+    &:hover
+    {
+      .delete
+      {
+        opacity: 1;
+      }
+    }
+  }
+
+  .load
+  {
+    height: 260px;
+    background-image: url('/img/transparent_loader.gif');
+    background-repeat: no-repeat;
+    background-position: 50%;
+
+    .delete
+    {
+      display: none;
+    }
+
+    img
+    {
+      display: none;
+    }
+  }
+}

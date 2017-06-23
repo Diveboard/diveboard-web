@@ -1,0 +1,108 @@
+<%
+log_time = Time.now
+%>
+<script type="text/javascript">
+
+function content_initialize() {
+  $('.folding_header a').live('click', function(e){
+    e.stopPropagation();
+  });
+  $('.folding_header').live('click', function(e){
+    var element = $(this).closest('.folding_element').toggleClass('folded', 300);
+  });
+  
+  ga('set', 'contentGroup1', <%if @user && @user == @owner%>'logbook_own_trip'<%else%>'logbook_other_trip'<%end%>);
+  console.log("ContentGroup1 Page category --> " + <%if @user && @user == @owner%>'logbook_own_trip'<%else%>'logbook_other_trip'<%end%>);
+  ga('set', 'dimension1', <%if @user && @user == @owner%>'logbook_own_trip'<%else%>'logbook_other_trip'<%end%>);
+  ga('send', 'pageview');
+}
+
+</script>
+
+
+<!-- ###################  HTML  ############### -->
+<div class="main_content_header logbook_header">
+    <div class='head_picture'>
+      <img src='<%= @owner.picture_large%>' alt='user picture'>
+    </div>
+    <div class='head_title'><div class='head_title_valign'><ul>
+      <li>
+          <span class="header_title">
+          <%= it("%{owner_nickname}%{superscript:'}%{smaller:s trip} %{tripname}", scope: ['logbook', 'trip_view'], superscript: It.tag("span", style: "color: #555 ; font-size: 23px; position: relative; top:-7px;"), smaller: It.tag("span", style: "color: #555 ; font-size: 23px"), owner_nickname: @owner.nickname, tripname: @trip.name.titleize) %>
+          </span>
+      </li>
+      <li>
+      </li>
+    </ul></div></div>
+    <div  class="header_top_action">
+    <ul class="plain_links">
+    </ul>
+    </div>
+</div>
+
+<div id="trip_view" class="logbook_profile rightbar" style='min-height: 250px;'>
+  <%
+  privacy = 0
+  privacy = [0,1,nil] if !@user.nil? && @trip.user_id == @user.id
+  Dive.unscoped.where(:user_id => @trip.user_id, :trip_id => @trip.id, :privacy => privacy).order('time_in ASC').each do |dive| %>
+
+  <div class='folding_element <%if dive.public_notes.nil? && dive.pictures.count == 0 then%>folded<%end%>'>
+
+    <div class='folding_header'>
+      <div class='folding_icon'> </div>
+      <a style="float:right; margin: 10px 10px 10px 10px" class="link_with_arrow" href="<%=dive.fullpermalink(:locale)%>"><%= it("View in logbook", scope: ['logbook', 'trip_view']) %></a>
+      <h2><%=dive.date%> - <%=dive.label%></h2>
+      <p>
+        <%= unit_distance(dive.maxdepth, true, 1)%>  - <%= it("min", scope: ['units'], count: dive.duration) %>
+        <!-- TODO: check, ensure_url ? -->
+        <% if !dive.diveshop.nil? && (!dive.diveshop["name"].blank? || !dive.guide.blank?)%>
+          <%if !dive.guide.blank? && dive.diveshop['name'].nil?%>
+             - <%= it("Dived with %{dive_guide}", scope: ['logbook', 'trip_view'], dive_guide: dive.guide.titleize) %>
+          <%elsif !dive.guide.blank? && !dive.diveshop['name'].nil?%>
+            <%if dive.diveshop["url"].blank? %>
+              - <%= it("Dived with %{guide} from %{diveshop}", scope: ['logbook', 'trip_view'], guide: dive.guide.titleize, diveshop: dive.diveshop["name"]) %>
+            <%elsif !dive.shop.nil? && !dive.shop.user_proxy.nil? %>
+              - <%= it("Dived with %{guide} from %{diveshop}", scope: ['logbook', 'trip_view'], guide: dive.guide.titleize, diveshop: link_to(dive.diveshop["name"].titleize, dive.shop.fullpermalink(:locale))) %>
+            <%else%>
+              - <%= it("Dived with %{guide} from %{diveshop}", scope: ['logbook', 'trip_view'], guide: dive.guide.titleize, diveshop: link_to(dive.diveshop["name"].titleize, ensure_url(dive.diveshop["url"]), target: "_blank")) %>
+            <%end%>
+          <%else%>
+            <%if dive.diveshop["url"].blank? %>
+              - <%= it("Dived with %{diveshop}", scope: ['logbook', 'trip_view'], diveshop: dive.diveshop["name"]) %>
+            <%elsif !dive.shop.nil? && !dive.shop.user_proxy.nil? %>
+              - <%= it("Dived with %{diveshop}", scope: ['logbook', 'trip_view'], diveshop: link_to(dive.diveshop["name"].titleize, dive.shop.fullpermalink(:locale))) %>
+            <%else%>
+              - <%= it("Dived with %{diveshop}", scope: ['logbook', 'trip_view'], diveshop: link_to(dive.diveshop["name"].titleize, ensure_url(dive.diveshop["url"]), target: "_blank")) %>
+            <%end%>
+          <%end%>
+        <%end%>
+        </li></ul>
+      </p>
+    </div>
+
+    <div class='folding_content'>
+    <!-- TODO: distances ? -->
+      <div style='float:right'><embed type="image/svg+xml" src="<%=dive.profile_svg_url 'xsmall_blue', (if @user.nil? || @user.preferred_units["distance"] == "m" then 'm' else 'i' end)%>" ></embed></div>
+      <p style='margin:10px;'>
+        <%=dive.public_notes%>
+      </p>
+      <p style='margin:10px;'>
+        <%dive.pictures.each do |picture|%>
+          <a href='<%=@owner.fullpermalink(:locale)%>/pictures/<%=picture.id%>'><img width='70px' height='70px' src='<%=picture.thumb%>' alt='<%= it("Picture taken during the dive", scope: ['logbook', 'trip_view']) %>' /></a>
+        <%end%>
+      </p>
+      <div style='clear:both'> </div>
+    </div>
+
+  </div>
+
+  <% end %>
+</div>
+
+<!-- Modal Window Junk -->
+<div id="mask" style="display:none;">
+  <img src="/img/transparent_loader_3.gif" height='66px' width='66px' style="margin-left:50%; margin-top:25%" alt="#" />
+</div>
+<div id="boxes">
+</div>
+<!-- END Modal Window Junk -->

@@ -1,0 +1,756 @@
+---
+zh-CN:
+  js:
+    blog:
+      CANCEL: 取消
+      ? "CONFIRM DELETE"
+      : 确认删除
+      ? "Cannot save a post with no title.<br/>Please type something and try again."
+      : 无法保存没有标题的贴子。<br/>请输入一些内容后再试一次吧。
+      ? "Cannot save an empty post.<br/>Please type something and try again."
+      : 无法保存空的贴子。<br/>请输入一些内容后再试一次吧。
+      ? "Confirm delete post %{id}"
+      : "确认删除贴子%{id}"
+      ? "Could not contact server - please check your internet connection"
+      : 无法连接服务器-请检查您的网络连接
+      ? "Could not flag post - please send us an email support@diveboard.com"
+      : 无法标记贴子-请发送邮件到support@diveboard.com
+      ? "Create a new Category"
+      : 创建新的类别
+      ? "ERROR: cannot delete"
+      : "错误: 无法删除"
+      ? "Error: missing text"
+      : "错误: 缺少文本"
+      ? "Error: missing title"
+      : "错误: 缺少标题"
+      ? "Post could not be saved"
+      : 无法保存贴子
+      ? "Report an issue with post %{id}"
+      : "报告一个与贴子%{id}有关的问题"
+      SUCCESS: 成功
+      ? "Sorry, since this post has already comments, you can't delete it. Please use the flag function and explain why you would want to see it deleted, a moderator will then try its best to help."
+      : 抱歉，因为这篇文章已经评论，您无法删除它。请使用标记功能并解释为什么您会想删除它，之后版主将尽其所能帮助您。
+      ? "Watch out, this action is final and there is no turning back"
+      : 注意，该操作已是最后一步，确定后无法返回
+      ? "Your request has been successfully transmitted"
+      : 您的请求已成功发送
+    bulk_page:
+      ? "No dives found"
+      : 没有发现潜水
+      ? "We could not find any usable dives in the uploaded file, please try again"
+      : 我们在上传的文件中未找到任何可用的潜水记录，请再试一次
+    commercial_shop:
+      ? "A technical error occured while initialising the payment process with Paypal."
+      : 初始化用Paypal付款的支付过程时发生了一个技术性错误。
+      ? "Technical error"
+      : 技术性错误
+    divepage:
+      ? "A technical error occured while changing the privacy. Please try again after having reloaded the page."
+      : 更改隐私时出现一个技术性错误。请在重新加载该页后再试。
+      ? "Make this dive public..."
+      : 公开这次潜水......
+      ? "This dive is currently DRAFT<br/><br/>You must first complete this dive before making it public. Please edit and assign a valid spot before."
+      : 该潜水还是草案<br/><br/>您必须完成此潜水后方可将它公开。请先编辑并指定一个有效的潜水点。
+    explore:
+      ? "%{count} dives"
+      :
+        other: "%{count}次潜水"
+      ? "<b>%{count}</b> negative review"
+      :
+        other: "<b>%{count}</b>条负面评论"
+      ? "<b>%{count}</b> positive review"
+      :
+        other: "<b>%{count}</b>条正面评论"
+      Loading...: 正在加载...
+      ? "No dives have been recorded dives on diveboard here..."
+      : "这里没有在 diveboard 上记录的潜水..."
+      ? "We don't know any dive shop there. Contact us if you would like to add one here!"
+      : "我们尚不知道那里有潜水商店。如果您想要在这里添加一个，请联系我们 ！"
+    fileuploader:
+      ? "Drop files here to upload"
+      : 将文件拖到这里以上传
+      ? "Upload a file"
+      : 上传文件
+    form_review:
+      ? "A technical error occured while deleting the dive. Please make sure your internet connection is up and try again."
+      : "删除潜水时发生了技术性错误。请确保您的 internet 连接，再试一次。"
+      ? "A technical error occured while saving the dive. Please make sure your internet connection is up and try again."
+      : "保存潜水时发生了技术性错误。请确保您的 internet 连接，再试一次。"
+      ? "A technical error occured."
+      : 发生了技术性错误。
+      ? "Enter a review"
+      : 输入评价
+      ? "Missing info"
+      : 缺少的信息
+      Review: 评价
+      ? "The data could not be completely updated"
+      : 数据不能完全更新
+      ? "You cannot delete this review."
+      : 您不能删除这条评价。
+      ? "You have already left a review. Please edit the existing one if you want to change your comments."
+      : 您已经评价过一次。如果您想更改您的意见，请编辑现有的这个。
+      ? "You need to tell us what <b>Overall opinion</b> you have.<br/>Please make up your mind wether you'd recommend this dive shop and try again."
+      : 您需要告诉我们什么<b>全部意见</b>您持有的。<br/>请确定您是否要推荐该潜水商店，然后重试。
+      ? "You need to tell us what <b>service</b> you've used.<br/>Please select one and try again."
+      : 您需要告诉我们什么<b>服务</b>您曾使用过的。<br/>请选择其中一个，然后重试。
+      ? "Your review has been correctly deleted."
+      : 您的评论已被正确地删除。
+      ? "Your review has been correctly saved. Thanks !"
+      : 您的评论已正确保存。谢谢您！
+    global:
+      ? "A technical error happened while trying to connect to Facebook."
+      : "试图连接到 Facebook 时，发生了技术错误。"
+      ? "A technical error occured"
+      : 发生了技术错误
+      ? "A technical error occured while initialising the payment process with Paypal."
+      : 初始化用Paypal付款的支付过程时发生了一个技术性错误。
+      ? "A technical error occured while loging you on Diveboard."
+      : "当您登陆 Diveboard时出现技术性错误。"
+      ? "A technical error occured."
+      : 发生了技术错误。
+      ? "An error occured while submitting the login request. Please try again."
+      : 提交登录请求时出错。请再试一次。
+      ? "Authorize Facebook"
+      : "授权 Facebook"
+      Cancel: 取消
+      ? "Could not get the adequate Facebook permissions: "
+      : "无法获取足够的 Facebook 权限:"
+      ? "Diveboard Login"
+      : "Diveboard 登录"
+      ? "FB Login cancelled"
+      : Facebook登录取消
+      ? "Facebook login was cancelled by user"
+      : "Facebook 登录已被用户取消"
+      ? "Form validation error"
+      : 表单验证出错
+      ? "Missing permissions"
+      : 缺少权限
+      ? "Pick a picture from your gallery"
+      : 从您的相册中选择照片
+      ? "Please provide a certification detail for each diver.<br/><br/>To register people who don't dive, just enter 'None' or 'Non diver'."
+      : 请为每个潜水者提供一个认证详细信息。<br/><br/>要注册不潜水的人，只需输入“无”或“非潜水员”。
+      ? "Scroll down to load more"
+      : 向下滚动以加载更多
+      ? "Sign-in required"
+      : 登陆所需
+      ? "Sorry, amounts must be positive integers... I know it's not imaginative, but it really has to be."
+      : 对不起，数量必须是正整数。我知道它不是凭空想象，但真的必须是正整数。
+      ? "Sorry, bookings must be done %{count} days in advance.<br/><br/>Please change the dates or contact the dive center directly."
+      : "对不起，预订必须提前%{count}天完成。<br/><br/>请更改日期，或直接联系潜水中心。"
+      ? "Sorry, the number of divers must be a positive integer... Even if you have a lot of buyancy, you cannot count as -1 diver. And your kid should be counted as 1, not 0.57."
+      : "对不起，潜水员的数量必须是一个正整数。即使您有很多的浮力，您也不能被算作-1个潜水员。您的孩子也应该算作 1，而不是0.57。"
+      ? "The date 'From' must be before the date 'Until'."
+      : 开始日期必须在结束日期之前。
+      ? "The files are being uploaded, if you leave now the upload will be cancelled."
+      : 文件正在上传，如果您现在离开，上传将被取消。
+      ? "Unsufficient privileges"
+      : 不完整的特权
+      ? "You must enter valid dates. Please check again the date you have entered."
+      : 您必须输入有效的日期。请再检查一次您输入的日期。
+      ? "You must enter valid dates. Please check again the dates you have entered."
+      : 您必须输入有效的日期。请再检查一次您输入的日期。
+      ? "You need to authorize the Diveboard application with additional permissions over your Facebook account to proceed:"
+      : "您需要在您的 Facebook 帐户继续授权 Diveboard 应用程序具有额外的权限："
+      ? "You need to sign in to continue"
+      : 您需要登录以继续
+      ? "{file} has invalid extension. Only {extensions} are allowed."
+      : "{file}具有无效的扩展名。只有{extensions}被允许。"
+      ? "{file} is empty, please select files again without it."
+      : "{file}是空的，请选择除它之外的文件。"
+      ? "{file} is too large, maximum file size is {sizeLimit}."
+      : "{file}太大了，文件最大允许{sizeLimit}。"
+      ? "{file} is too small, minimum file size is {minSizeLimit}."
+      : "{file}太小了，文件最小必须{minSizeLimit}。"
+    lightbox:
+      ? " by "
+      : 由
+      Camera: 相机
+      Lens: 镜头
+      ? "No available description for this species. Feel free to submit one on"
+      : 对于该物种，没有可用的描述。欢迎提交一份关于它的
+      ? "No fish have been identified on this picture yet"
+      : 这张照片中的鱼尚未被识别
+      Picture: 照片
+      ? "Source:"
+      : 来源：
+    logbook:
+      LOGBOOK: 潜水日志本
+    settings:
+      ? "Your url will be"
+      : "您的 url 是"
+    shop_home:
+      ? "A mail has been sent with a link to validate the claim."
+      : 带有可验证该声明的链接的邮件已发送给您。
+      ? "A technical error occured and the request could not be processed. Please try again or leave us a message for your claim."
+      : 出现技术错误，无法处理请求。请再试一次，或为您的声明给我们留言。
+      ? "A technical error occured while cropping the picture"
+      : 裁剪图片时发生技术性错误
+      ? "A technical error occured while reporting the review. You should retry after reloading the page. If it still fails, you may send us a mail to <a href='mailto:support@diveboard.com'>support@diveboard.com</a>"
+      : "报告该评价时发生一项技术错误。您需要重新加载页面后再试。如果仍然失败，您可以发送邮件到<a href='mailto:support@diveboard.com'>support@diveboard.com</a>"
+      ? "A technical error occured while saving the dive. Please make sure your internet connection iIf it still doesn't work, leave us a message for your claim."
+      : 保存潜水时发生技术错误。请确保您的网络连接，如果仍然不行，请为您的声明给我们留言。
+      ? "A technical error occured while saving the dive. Please make sure your internet connection is up and try again."
+      : 保存潜水时技术出错。请确保您的网络连接，再试一次。
+      ? "A technical error occured."
+      : 发生了技术错误。
+      ? "Ad title"
+      : 广告标题
+      Content: 内容
+      ? "Create new ad"
+      : 创建新的广告
+      ? "Get access"
+      : 获取访问
+      ? "Please check the external url provided : it should normally be at least 3 caracters long."
+      : "请检查提供的外部 url： 它通常应至少有 3个字符。"
+      ? "Report inappropriate review"
+      : 报告不适当评价
+      ? "Technical error : a user identifier must be provided."
+      : "技术性错误： 必须提供用户标识符。"
+      ? "The content cannot be more than 90 caracters long."
+      : 内容长度不能超过90个字符。
+      ? "The content must be at least 10 caracters long."
+      : "内容必须含至少10 个字符。"
+      ? "The data could not be completely updated"
+      : 数据不能完全更新
+      ? "The files are being uploaded, if you leave now the upload will be cancelled."
+      : 文件正在上传，如果您现在离开，上传将被取消。
+      ? "The request could not be processed. Please try again or leave us a message for your claim."
+      : 无法处理该请求。请再试一次，或就您的声明给我们留言。
+      ? "The review has been marked as inappropriate and will be checked by Diveboard team. Thanks for your submission."
+      : "该评论已被标记为不恰当，并将由 Diveboard 团队审查。感谢您提交的内容。"
+      ? "The title cannot be more than 25 caracters long."
+      : "标题不能超过 25 个字符。"
+      ? "The title must be at least 10 caracters long."
+      : "标题必须至少含 10 个字符。"
+      ? "The validation has been correctly taken into account. %{nickname} now has the right to edit the page <a href='%{permalink}/edit/welcome?success=true' target=_blank>%{permalink}</a>"
+      : "验证已被正确考虑中。%{nickname}现在有权编辑页面<a href='%{permalink}/edit/welcome?success=true' target=_blank>%{permalink}</a>"
+      ? "The validation has failed."
+      : 验证已失败。
+      Validation: 验证
+      ? "You have attempted to leave this page.  If you have made any changes to the fields without clicking the Save button, your changes will be lost.  Are you sure you want to exit this page?"
+      : 您试图要离开此页。如果您对该字段进行了更改，而不单击保存按钮的话，您的更改将会丢失。确定要退出此页吗?
+      ? "You have reached the maximum of %{max}. Please delete or put on hold an existing ad to create a new one."
+      : "您已经达到最大%{max}。请删除或暂时搁置现有的广告，以创建新 的广告。"
+      ? "You must select or upload a picture to create an ad."
+      : 您必须选择或上传一张图片来创建广告。
+      ? "Your request has been transmitted to Diveboard support. You should get some feedback within the next few days !"
+      : "您的请求已发送到 Diveboard 支持。在接下来的几天内，您就会得到反馈！"
+      ? "{file} has invalid extension. Only {extensions} are allowed."
+      : "{file}具有无效的扩展名。只有{extensions}被允许。"
+      ? "{file} is empty, please select files again without it."
+      : "{file}是空的，请选择除它之外的文件。"
+      ? "{file} is too large, maximum file size is {sizeLimit}."
+      : "{file}太大了，文件最大允许{sizeLimit}。"
+      ? "{file} is too small, minimum file size is {minSizeLimit}."
+      : "{file}太小了，文件最小必须{minSizeLimit}。"
+    shop_page:
+      ? "A technical error happened while trying to connect to Facebook."
+      : "试图连接到 Facebook 时，发生了技术错误。"
+      ? "A technical error occured while cropping the picture"
+      : 裁剪图片时发生技术性错误
+      ? "A technical error occured while saving the changes"
+      : 保存所做的更改时发生了技术性错误
+      ? "A technical error occured while saving the data. Please make sure your internet connection is up and try again."
+      : 保存数据时出现一个技术性错误。请确保您的网络连接，再试一次。
+      ? "A technical error occured while saving the dive. Please make sure your internet connection is up and try again."
+      : 保存潜水时出现技术性错误。请确保您的网络连接，再试一次。
+      ? "A technical error occured."
+      : 发生了技术性错误。
+      Category: 类别
+      ? "Could not complete action"
+      : 无法完成操作
+      Delete: 删除
+      Description: 描述
+      Down: 向下
+      ? "Error signing dive"
+      : 错误潜水签名
+      ? "Message validation"
+      : 消息验证
+      Move: 移动
+      ? "Paypal ID"
+      : "Paypal ID"
+      ? "Please fill in the Paypal ID field."
+      : "请填写Paypal ID 字段。"
+      Price: 价格
+      ? "Server did not answer"
+      : 服务器没有响应
+      ? "Tax (%)"
+      : "税率 (%)"
+      ? "The change could not be completed. Please save your changes, reload the page and retry."
+      : "无法完成更改。请保存您的更改、 重新加载该页面，然后重试。"
+      ? "The data could not be completely updated"
+      : 数据不能完全更新
+      Title: 标题
+      ? "Total price"
+      : 总价格
+      ? "Unlink Paypal account"
+      : 取消链接的Paypal帐户
+      ? "Unlinking your paypal account will disable all Paypal sells. Are you sure ?"
+      : "取消您的贝宝帐户，将禁用所有的 Paypal 卖。是否确定？"
+      Up: 向上
+      ? "You need to select at least one dive"
+      : 您需要选择至少一个潜水日志
+      ? "Your message must be at least 10 characters long."
+      : "您的邮件必须至少有 10 个字符。"
+      ? "Your paypal ID does not look valid. Please check again."
+      : "您的Paypal ID 似乎无效，请再核对一下。"
+      ? "Your topic must be at least 5 characters long."
+      : "您的主题必须至少含 5 个字符。"
+    shop_page_widgets:
+      ? "A technical error occured while cropping the picture"
+      : 裁剪图片时发生技术性错误
+      ? "A technical error occured while saving the data. Please make sure your internet connection is up and try again."
+      : 保存数据时出现技术性错误。请确保您的网络连接，再试一次。
+      ? "A technical error occured while saving the dive. Please make sure your internet connection is up and try again."
+      : 保存潜水时出现技术性错误。请确保您的网络连接，再试一次。
+      ? "A technical error occured."
+      : 发生了技术性错误。
+      Category: 类别
+      Delete: 删除
+      Description: 描述
+      Down: 向下
+      Move: 移动
+      Price: 价格
+      ? "Tax (%)"
+      : "税率 (%)"
+      ? "The data could not be completely updated"
+      : 数据不能完全更新
+      Title: 标题
+      ? "Total price"
+      : 总价格
+      Up: 向上
+    species_picker:
+      ? "A technical error happened"
+      : 发生了技术性错误
+      ? "A technical error happened while creating the dive from the uploaded profile."
+      : 从上传的档案中创建潜水时发生了技术性错误。
+      ? "Add species"
+      : 添加物种
+      Cancel: 取消
+      ? "Check <a href='#' class='tooltipped-species' onclick='return false;'>biological information</a>"
+      : "检查<a href='#' class='tooltipped-species' onclick='return false;'>生物信息</a>"
+      Error: 错误
+      ? "Missing species"
+      : 丢失物种
+      ? "Search %{family}"
+      : "搜索%{family}"
+      ? "Something went wrong: %{error} please open a support ticket if appropriate"
+      : "有地方出错了：%{error}如果可以，请打开一个支持信息"
+      ? "Source:"
+      : 来源：
+      ? "Species has been successfully added to database.<br/><br/><b>In about one minute</b><br/><br/>(While import tasks finish up) you should be able to search and add this species using the top search field with 'all' scope."
+      : "物种已被成功添加到数据库。<br/> <br/><b>大约一分钟后</b><br/><br/>（虽然导入任务完成） 您应该能够通过顶部的搜索框使用“全部”范围来搜索并添加这个物种。"
+      Success: 成功
+      ? "The search term must be at least 3 characters"
+      : "搜索词必须至少 3 个字符"
+      ? "To add a missing species proceed as follow:"
+      : |-
+          添加缺失的物种步骤如下： <br/> <ul> <li style='margin-top: 3px;'> 1.前往<a href='http://eol.org' target='_blank'>EOL</a> </li> <li style='margin-top: 3px;'> 2。搜索您正在寻找的物种</li><li style='margin-top: 3px;'> 3。在物种页面（即 http://eol.org/pages/222383/overview） 获取物种 id （这里是 222383)</li> <li style='margin-top: 3px;'> 4。在此处添加： <input onchange='missing_species_id = $("#missing_species_id").val();' type='number' id='missing_species_id'> </input> </li> <li style='margin-top: 3px;'> 5.点击下面的'添加物种' 按钮</li><li style='margin-top: 3px;'> 6。喝杯咖啡休息一下，如果该物种有一个大家族，可能会需要几分钟</li>
+          </ul>
+      ancestors: 祖先
+      children: 儿童
+      siblings: 兄弟姐妹
+      ranks:
+        family: 族
+        genus: 属
+        class: 类
+        order: 订单
+        phylum: 系
+        species: 物种
+        unclassified: 未分类
+      ? "Rank:"
+      : 等级：
+    spreadsheet_importer:
+      ? "%02"
+      : "%02"
+      ? "%He"
+      : "%He"
+      ? "%N2"
+      : "%N2"
+      ? "Alex <alex@xxx.xx>, Pascal"
+      : "Alex <alex@xxx.xx>，Pascal"
+      Altitude: 海拔
+      ? "Bottom Temp"
+      : 底部温度
+      Buddies: 好友
+      California: 加利福尼亚州
+      Cancel: 取消
+      Comments: 评论
+      Country: 国家
+      Current: 水流
+      Date: 日期
+      Depth: 深度
+      ? "Dive #"
+      : "潜水 #"
+      Divemaster: 潜水长
+      Duration: 持续时间
+      ? "Imperial (ft, &deg;F, psi, cuft)"
+      : 英制（ft，°F，psi，cuft）
+      Import: 导入
+      James: James
+      Location: 位置
+      ? "Metric (m, &deg;C, bar, L)"
+      : "度量（m， °C，bar， L ）"
+      ? "No whales but plenty nudis !"
+      : 没有鲸鱼，但是有很多裸鳃目！
+      ? "Pressure end"
+      : 压力结束
+      ? "Pressure start"
+      : 压力开始
+      ? "Reloading the dive list"
+      : 重新加载潜水列表
+      ? "Select units:"
+      : 选择单位：
+      ? "Spot name"
+      : 地点名称
+      ? "Spreadheet dive importer"
+      : 潜水电子表格导入器
+      ? "Surface Temp"
+      : 表面温度
+      ? "Tank material"
+      : 气罐材料
+      ? "Tank size"
+      : 气罐尺寸
+      ? "Time in"
+      : 时间
+      ? "Trip Name"
+      : 旅行名称
+      ? "Type (Night dive, Deep dive...)"
+      : "类型 （夜潜、 深潜......）"
+      ? "Type to show the list of options"
+      : 显示选项列表的类型
+      ? "United States"
+      : 美国
+      ? "Update successful"
+      : 更新成功
+      ? "Update successful with errors"
+      : 更新成功，但有错误
+      Visibility: 能见度
+      ? "Water type"
+      : 水型
+      Weights: 重量
+      ? "Whale point"
+      : 鲸点
+      ? "update failed"
+      : 更新失败
+    user_home:
+      ? "A technical error occured while checking the validity of the email. Please try again."
+      : 检查电子邮箱的有效性时发生了一个技术性错误。请再试一次。
+      ? "A technical error occured while cropping the picture"
+      : 裁剪图片时发生技术性错误
+      ? "A technical error occured while saving the dive. Please make sure your internet connection is up and try again."
+      : 保存潜水时技术出错。请确保您的网络连接，再试一次。
+      ? "A technical error occured."
+      : 发生了技术性错误。
+      ? "An invitation mail has been sent. We hope to hear of your friend soon!"
+      : 已发送电子邮件邀请函。我们希望很快得到来自您朋友的声音听！
+      ? "Delete document"
+      : 删除文档
+      ? "Diveboard is an online scuba logbook, and THE place where to find your next place to dive"
+      : "Diveboard 是您的在线潜水日志本，您可以在这里寻找下一个潜水目的地"
+      ? "Due to some technical error, the document has not been deleted. You may want to try again after reloading the page."
+      : 由于一些技术性错误，该文档尚未被删除。您可能需要重新加载页面后再试。
+      ? "Due to some technical error, your data has not been saved. You may want to try again after reloading the page."
+      : 由于一些技术性错误，您的数据尚未保存。您可能需要重新加载页面后再试。
+      ? "Enter Certification Title Here"
+      : 在此处输入证书标题
+      ? "Error saving your data"
+      : 保存您的数据时出错
+      Invitation: 邀请
+      ? "Invite your friends to Diveboard"
+      : "邀请您的朋友去 Diveboard"
+      Loading...: 正在加载...
+      ? "No"
+      : 否
+      Organization: 组织
+      ? "Some data could not be saved:"
+      : 一些数据无法保存：
+      ? "Some technical mischief happened: the mail has NOT been sent."
+      : 发生了一些技术错误：邮件尚未发送成功。
+      ? "The data could not be completely updated"
+      : 数据不能完全更新
+      ? "The files are being uploaded, if you leave now the upload will be cancelled."
+      : 文件正在上传，如果您现在离开，上传将被取消。
+      ? "This is already affected to another user"
+      : 这已经影响到其他用户
+      ? "This will definitely delete the document from Diveboard. Are you sure?"
+      : "该操作会将该文档从 Diveboard 中删除。是否确定？"
+      ? "Wrong tag id"
+      : "错误的 id 标记"
+      ? "Yes"
+      : 是
+      ? "You have attempted to leave this page.  If you have made any changes to the fields without clicking the Save button, your changes will be lost.  Are you sure you want to exit this page?"
+      : 您试图要离开此页。如果您对该字段进行了更改，而不单击保存按钮的话，您的更改将会丢失。确定要退出此页吗?
+      ? "Your %{count} invitations have been sent by mail. We hope to hear of your friends soon !"
+      : "您的%{count}个邀请已通过邮件发送出去。我们希望能很快听到来自您朋友的声音！"
+      mins: 分钟
+      ? "{file} has invalid extension. Only {extensions} are allowed."
+      : "{file}具有无效的扩展名。只有{extensions}被允许。"
+      ? "{file} is empty, please select files again without it."
+      : "{file}是空的，请选择除它之外的文件。"
+      ? "{file} is too large, maximum file size is {sizeLimit}."
+      : "{file}太大了，文件最大允许{sizeLimit}。"
+      ? "{file} is too small, minimum file size is {minSizeLimit}."
+      : "{file}太小了，文件最小必须{minSizeLimit}。"
+    wizard:
+      ? "%{count} dives were successfully pushed to your Facebook Timeline"
+      : "%{count}次潜水已成功被推上您的 Facebook 时间轴"
+      ? "A technical error happened while connecting to Flicker."
+      : "连接到Flicker 时，发生了技术错误。"
+      ? "A technical error happened while connecting to Picasa."
+      : "连接到 Picasa 时发生了技术错误。"
+      ? "A technical error happened while creating the dive from the uploaded profile."
+      : 从上传的档案中创建潜水时发生了技术性错误。
+      ? "A technical error happened while saving your gear."
+      : 保存您的装备时，发生了技术错误。
+      ? "A technical error happened while trying to connect to Facebook."
+      : "试图连接到 Facebook 时，发生了技术错误。"
+      ? "A technical error happened while trying to connect to Picasa."
+      : "尝试连接到 Picasa 时发生了技术错误。"
+      ? "A technical error happened while trying to connect to video provider."
+      : 试图连接到视频提供商时发生了技术错误。
+      ? "A technical error happened while updating the dives."
+      : 更新潜水时，发生了技术错误。
+      ? "A technical error occured during the update of dives."
+      : 潜水的更新过程中出现技术错误。
+      ? "A technical error occured while initialising the payment process with Paypal."
+      : 初始化用Paypal付款的支付过程时发生了一个技术性错误。
+      ? "A technical error occured while saving the dive. Please make sure your internet connection is up and try again."
+      : 保存潜水时技术出错。请确保您的网络连接，再试一次。
+      ? "A technical error occured."
+      : 发生了技术性错误。
+      ? "A technical error occured. Most probably, your dive hasn't been deleted."
+      : 发生了技术性错误。很有可能您的潜水还没有被删除。
+      ? "Add to Timeline"
+      : 添加到时间轴
+      ? "Adding pictures and videos"
+      : 添加图片和视频
+      ? "Amphorae's Cave, Cyprus"
+      : Amphorae的洞穴，塞浦路斯
+      ? "At least one of your dives is private (red lock). Private dives cannot be published to Timeline. You should either unselect them or make them public."
+      : 您的潜水中至少有一个是设为私密的（红锁）。私密潜水不能发布到时间轴，请取消选择它们，或将它们设为公开。
+      ? "Basic data are missing on the OVERVIEW pane.<br/>Please check the fields highlighted in red on the OVERVIEW pane before proceeding."
+      : "在 [总览] 窗格的基本数据丢失。<br/>进行下一步之前，请检查[总览] 窗格中以红色突出显示的字段。"
+      Cancel: 取消
+      ? "Cannot save data"
+      : 无法保存数据
+      ? "Could not get the adequate permissions to publish this action on your timeline"
+      : 无法获取足够的权限来将这一操作发布到您的时间轴
+      ? "Could not publish to timeline"
+      : 不能发布到时间轴
+      Del: 删除
+      ? "Dive not public"
+      : 非公开潜水
+      ? "Dives successfully updated"
+      : 潜水更新成功
+      ? "Dives successfully updated except for dive(s) with id(s)"
+      : "潜水成功更新（除了id 的潜水）"
+      ? "Dives successfully updated except for dive(s) with id(s) %{ids} which could not be made public.<br/>This usually means spot information is missing."
+      : "潜水成功更新（除了id为%{ids}的潜水 ，无法将之设为公开。<br/>这通常意味着地点信息丢失。）"
+      ? "Due to a technical error, your changes on the spot could not be saved."
+      : 由于技术错误，无法保存您对地点的更改。
+      ? "Duplicates warning"
+      : 重复警告
+      ? "E.g. Hawai 2011"
+      : "例如：夏威夷 2011"
+      ? "ERROR: Cannot Save. Please correct the fields highlighted in red"
+      : "错误: 无法保存。请更正以红色突出显示的字段"
+      ? "Error loading image"
+      : 加载图像出错
+      ? "Example : White River, Cyprus"
+      : "示例： 白水河、 塞浦路斯"
+      ? "Facebook needs you authenticated to allow for user search"
+      : "Facebook 需要您进行身份验证并授权允许用户搜索"
+      Failed: 失败
+      ? "Favorite pic #%{n}"
+      : "最喜欢的照片 #%{n}"
+      ? "Favorite pic #1"
+      : "最喜欢的照片 #1"
+      ? "Generation of your logbook has <b>started</b>.<br/>In a few minutes, you'll get an email at '%{email}' to let you know it's ready for download."
+      : "您的潜水日志本已生成<b>已开始</b>。<br/>几分钟内，您的'%{email}'就会收到邮件，告诉您已准备好供您下载。"
+      ? "I own it"
+      : 它是我的
+      ? "Image with url :<br/>%{url}<br/>could not be loaded"
+      : "图像的 url：<br/>%{url}<br/>加载失败"
+      ? "Import dives"
+      : 导入潜水
+      Manufacturer: 制造商
+      ? "Missing shop"
+      : 缺少商店
+      Model: 型号：
+      ? "No dives"
+      : 没有潜水
+      ? "No new dive to publish"
+      : 没有发布新的潜水
+      ? "Nothing to process"
+      : 没有内容需要处理
+      OK: 同意
+      ? "Permission required"
+      : 所需的权限
+      ? "Private dives present in selection"
+      : 当前选定内容中的私密潜水
+      ? "Profile upload"
+      : 上传档案
+      ? "Published on Facebook"
+      : "发布到 Facebook"
+      ? "Reading the profiles from your computer..."
+      : 正在从您的计算机读取档案...
+      ? "Remove Buddy"
+      : 删除好友
+      ? "Request Logbook Signature"
+      : 请求日志签名
+      ? "Request Signature"
+      : 请求签名
+      Retry: 请重试
+      ? "Select photos from your computer"
+      : 从您的计算机选择照片
+      ? "Select your computer model.."
+      : 选择您的计算机型号。
+      ? "Sending data to Diveboard..."
+      : "正在将数据发送到 Diveboard..."
+      ? "Some selected dives were already been published on your timeline. In order to prevent the creation of duplicates you can"
+      : 一些选定的潜水已经发布到您的时间轴。为防止重复发布，您可以
+      ? "Some spot data were input incorrectly, please correct them before proceeding"
+      : 一些地点数据输入不正确，请在下一步之前更正它们
+      ? "Something went wrong while getting the detailed information about the dive spot. You may want to try again."
+      : 获取潜水点详细信息时出错。您可能需要再试一次。
+      ? "Something went wrong... You may not have rights over this picture"
+      : 似乎出错了......您可能没有这张照片的操作权限
+      ? "Sorry, due to API restriction, we cannot import pictures from albums private or with limited access."
+      : "抱歉，由于 API 限制，我们无法从私密相册或具有有限访问权限的相册导入图片。"
+      ? "Sorry, the file you uploaded was not recognised. Diveboard currently only supports UDCF, DAN DL7, Uwatec ASD, Suunto SDE or Cressi txt files.<br/><br/><b>Scubapro/Uwatec SmartTrak users:</b><br/>Please note that if you're using <b>SmartTrak version 2.08</b> you need to upgrade to 2.0801 from <a href='http://www.scubapro.com' target='_blank'>scubapro.com</a>."
+      : "抱歉，您上传的文件无法识别。目前，Diveboard 只支持 UDCF、 DAN DL7、 Uwatec ASD、Suunto SDE 或 Cressi 的 txt 文件。<br/> <br/> <b>Scubapro/Uwatec SmartTrak 用户：</b><br/>请注意，如果您正在使用<b>SmartTrak 2.08 版</b>您需要从<a href='http://www.scubapro.com' target='_blank'>scubapro.com</a> 升级到2.0801。"
+      ? "Sorry, you do not have the rights on this album"
+      : 抱歉，您没有该相册的操作权限
+      ? "Sorry, you do not have the rights on this picture"
+      : 抱歉，您没有这张照片的操作权限
+      ? "Sorry, you must choose a name from the list"
+      : 抱歉，您必须从列表中选择一个名称
+      ? "Sorry, {file} has invalid extension. Only {extensions} are allowed."
+      : "抱歉，{file}具有无效的扩展名。只有{extensions}被允许。"
+      ? "Sorry, {file} is empty, please select files again without it."
+      : "抱歉，{file}是空的，请选择除它之外的文件。"
+      ? "Sorry, {file} is too large. The maximum file size is {sizeLimit}."
+      : "抱歉，{file}太大了，文件最大允许{sizeLimit}。"
+      ? "Sorry, {file} is too small. The minimum file size is {minSizeLimit}."
+      : "抱歉，{file}太小了，文件最小必须{minSizeLimit}。"
+      ? "Spot parameters"
+      : 地点参数
+      ? "Start to type a Facebook username..."
+      : "开始输入一个 Facebook 用户名......"
+      Success: 成功
+      ? "Success with warning"
+      : 带警告的成功
+      ? "Tag species in media"
+      : 在多媒体中标记物种
+      ? "The URL you provided does not seem valid. Please check and retry."
+      : "您提供的 URL 似乎无效。请检查后重试。"
+      ? "The dive could not be completely updated :"
+      : 潜水不能完全更新：
+      ? "The files are being uploaded, if you leave now the upload will be cancelled."
+      : 文件正在上传，如果您现在离开，上传将被取消。
+      ? "The following dives could not be published:"
+      : 以下的潜水无法发布：
+      ? "The generation of the PDF failed."
+      : "生成PDF 失败。"
+      ? "The profile could not be uploaded to Diveboard"
+      : "档案无法上传到 Diveboard"
+      ? "This will delete the %{count} selected dives. Are you sure ?"
+      : "此操作将删除所选的%{count}次潜水。是否确定？"
+      ? "To add more species to this selection head to the \"Species\" Tab"
+      : 若要添加更多的物种，请前往"物种"选项卡
+      ? "Unsufficient privileges"
+      : 不完整的特权
+      ? "We can't publish this dive to your timeline since it's currenlty private. Please make it public first."
+      : 我们无法将这次潜水发布到您的时间轴，因为它目前是私密状态。请将它设为公开后再试。
+      ? "You cancelled Facebook login - we cannot search facebook"
+      : "您取消了 Facebook 登录 — — 我们无法搜索 facebook"
+      ? "You have attempted to leave this page.  If you have made any changes to the fields without clicking the Save button, your changes will be lost.  Are you sure you want to exit this page?"
+      : 您试图要离开此页。如果您对该字段进行了更改，而不单击保存按钮的话，您的更改将会丢失。确定要退出此页吗?
+      ? "You have reached the default limit of %{count}Mb of upload per month. These files cannot be uploaded. Please downsize your files, or ask for a bigger storage."
+      : "您的上传已达到默认限制值：%{count}Mb/每月。因此，不能继续上传这些文件。请缩小您的文件，或请求更大的存储空间。"
+      ? "You have reached the default limit of %{count}Mb per dive. These files cannot be uploaded. Please downsize your files, or remove some pictures/videos from this dive, or ask for a bigger storage."
+      : "您已达到默认限制值：%{count}Mb/每次潜水。因此，不能继续上传这些文件。请缩小您的文件，或从这次潜水中删除一些图片或视频，或者请求更大的存储空间。"
+      ? "You have reached your quota of %{count}Gb. These files cannot be uploaded. Please remove image or video content from this dive or another."
+      : "您已达到您的配额：%{count}Gb。因此，不能继续上传这些文件。请从这次潜水或其他潜水中删除一些图像或视频。"
+      ? "You have requested signature for %{count} dives. Signature requests already sent won't be renewed. Dives without a dive shop won't be submitted."
+      : "您已为%{count}次潜水请求签名。已发送签名请求将不再重复发送。未注明潜水商店的潜水将不能被提交。"
+      ? "You must select a type for this piece of gear"
+      : 您必须选择该装备的类型
+      ? "You must select at least one dive to delete"
+      : 您必须选择至少一个潜水来删除
+      ? "You must select at least one dive to export"
+      : 您必须选择至少一次潜水以导出
+      ? "You must select at least one dive to print"
+      : 您必须选择至少一次潜水来打印
+      ? "You must select at least one dive to push to timeline"
+      : 您必须选择至少一次潜水以推到时间轴
+      ? "You must select at least one dive to update privacy"
+      : 您必须选择至少一次潜水来更新隐私
+      ? "You need to select the dive center you dived with in order to allow your dive to be signed"
+      : 您需要选择您所使用的潜水中心以使您的潜水获得签名
+      ? "Your dive could not be pushed on your timeline:"
+      : 您的潜水无法被推至您的时间轴：
+      ? "Your dives could not be published to your Timeline due to missing Facebook permissions"
+      : "由于缺少 Facebook 权限，您的潜水无法发布到您的时间轴。"
+      ? "Your dives could not be pushed on your timeline"
+      : 您的潜水无法被推至您的时间轴
+      ? "has profile"
+      : 有档案
+      media: 多媒体
+      mins: 分钟
+      via: 通过
+      ? "via Diveboard"
+      : "通过 Diveboard"
+      ? "via Facebook"
+      : 通过Facebook
+      ? "via email"
+      : 通过邮箱
+      ? "{file} has invalid extension. Only {extensions} are allowed."
+      : "{file}具有无效的扩展名。只有{extensions}被允许。"
+      ? "{file} is empty, please select files again without it."
+      : "{file}是空的，请选择除它之外的文件。"
+      ? "{file} is too large, maximum file size is {sizeLimit}."
+      : "{file}太大了，文件最大允许{sizeLimit}。"
+      ? "{file} is too small, minimum file size is {minSizeLimit}."
+      : "{file}太小了，文件最小必须{minSizeLimit}。"
+    xp2_dive:
+      ? "Coordinates:"
+      : 坐标：
+      ? "Country:"
+      : 国家：
+      ? "Deepest dive :"
+      : "最深的潜水:"
+      ? "Dives on Diveboard :"
+      : "在 Diveboard 上的潜水："
+      ? "Location:"
+      : 位置：
+      ? "Longest dive :"
+      : "时间最长的潜水:"
+      ? "Name:"
+      : 名称：
+      Profile: 档案
+      ? "Region:"
+      : 区域：
+      ? "They dived with %{guide}"
+      : "他们与%{guide}一起潜水的"
+      ? "They dived with %{guide} from %{shop_url: shop_name}"
+      : "他们与%{shop_url: shop_name}的%{guide}一起潜水的"
+      ? "They dived with %{shop_url: shop_name}"
+      : "他们与%{shop_url: shop_name}一起潜水的"
+      ? "This dive was logged by"
+      : 这次潜水的上传者是
+      ? "Total number of dives :"
+      : 总潜水次数：
+      ? "View %{nickname}'s logbook"
+      : "查看%{nickname}的日志"
+      ? "View the full dive entry in %{nickname}'s logbook"
+      : "查看%{nickname}的日志本中的全部潜水条目"
+      ? "along with"
+      : 与
+      ? "Book now"
+      : 马上预定
+  time:
+    formats:
+      full: "%A%B %d,%Y"
+      medium: "%d%b %Y %H:%M"

@@ -1,0 +1,20 @@
+<%= it("Hello %{user},", scope: ['password_reset', 'registration_ok', 'text'], user: @user.nickname) %>
+
+<%= it("Welcome to Diveboard !", scope: ['password_reset', 'registration_ok', 'text']) %>
+
+
+<%= it("Now that you're a registered user, you'll be able to create your logbook, track your dive and share your experiences.", scope: ['password_reset', 'registration_ok', 'text']) %>
+
+<%= it("Head over to your logbook at %{url} and start logging dives now.", scope: ['password_reset', 'registration_ok', 'text'], url: @logbook_url) %>
+
+<%if !@user.email.nil?%><%= it("As a reminder, your login is your email : %{email}", scope: ['password_reset', 'registration_ok', 'text'], email: @user.email) %>
+
+<%end%><%if !@user.fb_id.nil?%><%= it("Since you already connected your account to Facebook, you can use the \"Facebook Login\" button.", scope: ['password_reset', 'registration_ok', 'text']) %>
+
+<%end%>
+
+<%= it("Happy Diving !", scope: ['password_reset', 'registration_ok', 'text']) %>
+--
+<%= it("The Diveboard team", scope: ['password_reset', 'registration_ok', 'text']) %>
+http://www.diveboard.com
+

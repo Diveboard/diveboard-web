@@ -1,0 +1,628 @@
+<html>
+<head>
+  <%= include_stylesheets :common, :media => :all %>
+  <%= javascript_include_tag 'jquery' %>
+  <%= javascript_include_tag 'basic' %>
+</head>
+<body>
+
+<% if @user.nil?%>
+
+<%= render( :partial => 'login/sign_up_popup', :locals=> {:status => :force_private} ) %>
+<%else%>
+
+<%
+require 'yaml'
+computer_yml = YAML.load_file "#{Rails.root}/config/computer.yml"
+%>
+<script>
+G_uploader_list_favorites = <%= computer_yml['Favorites'].to_json.html_safe %>;
+G_uploader_list_emulators = <%= computer_yml['Dislikes'].to_json.html_safe %>;
+G_prevent_scan = true;
+G_stalled_count = 0;
+G_not_notified_count = 0;
+G_test_count = 1;
+G_background_test = null;
+G_last_log = "";
+G_last_percent = "";
+G_status_interval = null;
+G_W_model = "Model not set";
+G_user_id = <%=@user.id%>;
+L_action_requested = 'extract';
+
+var auth_token = $("meta[name='csrf-token']").attr("content");
+
+
+$(document).ready(function(){
+});
+
+
+
+
+function test_log(text){
+  $("#test_logs").append(Date());
+  $("#test_logs").append("  -  ");
+  $("#test_logs").append(text);
+  $("#test_logs").append("\n");
+}
+
+function test_log_exception(e){
+  try {
+    if (e && e.message)
+      test_log("Exception: " +e.message);
+    if (e && e.stack)
+      test_log("Stack: " +e.stack);
+    if (e && e.errors)
+      test_log("Errors: "+e.errors.join(", "));
+  } catch(e){
+    if (console && console.log) console.log(e);
+  }
+}
+
+function run_test(description, this_test){
+  try {
+    G_stalled_count = 0;
+    var current_test = $("<tr><td class='cnt'></td><td class='desc'></td><td class='result'></td><td class='message'></td></tr>");
+    current_test.find(".cnt").text(G_test_count++);
+    current_test.find(".desc").text(description);
+    current_test.find(".result").text("Running");
+    $("#result_table").append(current_test);
+    update_reporting();
+    this_test();
+    update_reporting();
+    current_test.find(".result").text("OK");
+  } catch(e){
+    update_reporting();
+    current_test.find(".result").text("Failed");
+    current_test.find(".message").html(e.message);
+    throw e
+  }
+}
+
+function run_test_with_callback(description, this_test){
+  try {
+    G_stalled_count = 0;
+    var current_test = $("<tr><td class='cnt'></td><td class='desc'></td><td class='result'></td><td class='message'></td></tr>");
+    current_test.find(".cnt").text(G_test_count++);
+    current_test.find(".desc").text(description);
+    current_test.find(".result").text("Running");
+    $("#result_table").append(current_test);
+    update_reporting();
+    this_test();
+    update_reporting();
+    G_background_test = current_test;
+  } catch(e){
+    update_reporting();
+    current_test.find(".result").text("Failed");
+    current_test.find(".message").html(e.message);
+    throw e
+  }
+}
+
+function end_test_with_callback(success, message) {
+  update_reporting();
+  if (!G_background_test)
+    return;
+
+  if (success)
+    G_background_test.find(".result").text("OK");
+  else
+    G_background_test.find(".result").text("Failed");
+
+  if (message)
+    G_background_test.find(".message").html(message);
+  G_background_test = null;
+}
+
+
+function update_reporting(){
+  try {
+    $("#plugin_logs").text(plugin().logs);
+    $("#plugin_status").text(JSON.stringify(plugin().status));
+  } catch(e){
+    var logs = $("#plugin_logs").text();
+    $("#plugin_logs").text(logs+"\nError while writing plugin().logs in DOM");
+  }
+}
+
+
+function end_of_test(success, message){
+  test_log("End of test ("+success+") :"+message);
+  $("#test_view").hide();
+
+  var current_test = $("<tr><td class='cnt'></td><td class='desc'></td><td class='result'></td><td class='message'></td></tr>");
+  current_test.find(".cnt").text("");
+  current_test.find(".desc").text("Global result");
+  if (success)
+    current_test.find(".result").text("Success");
+  else
+    current_test.find(".result").text("Failure");
+
+  run_test_with_callback("Sending results to Diveboard",function(){});
+  send_log(function(){$("#result_table").append(current_test)});
+}
+
+function send_log(callback){
+  update_reporting();
+  $.ajax({
+    url: "/api/put_logs",
+    data: {
+      'authenticity_token': auth_token,
+      data: $("#result_part").html(),
+      page: "THIS COMES FROM THE TEST PAGE",
+      platform: navigator.platform,
+      browser: navigator.appVersion,
+      plugin: $("#plugin_version").text()
+    },
+    type: "POST",
+    dataType: "json",
+    error: function(){
+      end_test_with_callback(false, "Error while sending the logs to Diveboard");
+      if (callback) callback();
+    },
+    success: function(){
+      end_test_with_callback(true);
+      if (callback) callback();
+    }
+  });
+}
+
+
+
+
+////
+////
+////  THE ACTUAL TESTS
+////
+////
+
+
+function test_step1(){
+  $("#result_part").show();
+  try {
+    test_log("Initializing plugin");
+    initialize_test_plugin();
+  } catch(e) {
+    test_log_exception(e)
+  }
+
+  try {
+    $("#step1").hide();
+    run_test("Plugin initialization", test_find_plugin);
+    run_test("Plugin API access", test_plugin_functions);
+    run_test("Plugin version", test_plugin_version);
+    run_test("Listing supported computers", test_list_support);
+    run_test("Listing available ports", test_list_ports);
+    $("#step2").show();
+    if (!plugin().dump) $("#wizard_plugin_force_dump").hide();
+  } catch(e){
+    test_log_exception(e)
+    end_of_test(false, e.message);
+  }
+}
+
+function test_step2(action){
+  try {
+    $("#test_view").hide();
+    L_action_requested = action;
+    run_test_with_callback("Dives download", test_upload_dives);
+    G_status_interval = setInterval(test_status, 1000);
+  } catch(e){
+    test_log_exception(e)
+    end_of_test(false, e.message);
+  }
+}
+
+function test_step3(){
+  try {
+    if (G_status_interval) clearInterval(G_status_interval);
+    var udcf = $("#udcf").text();
+    run_test("Validating extracted data format", function(){
+      if (udcf.length <= 10) throw {message: "Data is not long enough"}
+      if (L_action_requested == 'extract') {
+        if (!udcf.match("<profile")) throw {message: "profile tag is not found in extracted data"};
+        if (!udcf.match("<DIVE")) throw {message: "DIVE tag is not found in extracted data"};
+        if (!udcf.match("</SAMPLES>")) throw {message: "SAMPLES tag is not found in extracted data"};
+        run_test_with_callback("Uploading profile to diveboard servers", test_upload_server);
+      }
+      if (L_action_requested == 'dump') {
+        if (!udcf.match(/^([0-9A-F][0-9A-F])*$/)) throw {message: "Hexadecimal values not valid"};
+        end_of_test(true, "Memory dump succeeded")
+      }
+    });
+  } catch (e) {
+    test_log_exception(e)
+    end_of_test(false, e.message);
+  }
+}
+
+function test_step4(){
+  end_of_test(true, "Test suite passed correctly");
+}
+
+function initialize_test_plugin(){
+  G_prevent_scan = true;
+  if (plugin()) plugin().setLogLevel("DEBUG");
+  if (plugin()) $("#step2").show();
+  $("#platform").text(navigator.platform);
+  $("#browser").text(navigator.appVersion);
+  if (plugin() && plugin().clearLog) plugin().clearLog();
+}
+
+function test_find_plugin(){
+  var error = [];
+  var PLUGIN = document.getElementById("plugin");
+
+  if (PLUGIN){
+    $("#plugin_found").text('Found');
+    $("#plugin_name").text(PLUGIN.name);
+    $("#plugin_version").text(PLUGIN.version);
+  } else {
+    $("#plugin_found").text('Not found');
+    $("#plugin_name").text("");
+    $("#plugin_version").text("");
+    error.push("PLUGIN is false")
+  }
+
+  if (plugin()){
+    $("#plugin_ok").text('OK');
+  } else {
+    $("#plugin_ok").text('KO');
+    error.push("plugin() is false")
+  }
+
+  if (error.length > 0) throw {message: "Failure in test_find_plugin", errors: error}
+}
+
+function test_plugin_version(){
+  try {
+    var date_plugin = Date.parse(plugin().version.substr(17));
+  } catch(e){
+    test_log_exception(e);
+    throw {message: "Error while checking if plugin is up to date"};
+  }
+
+  if (date_plugin < 1350000000000)
+    throw {message: "You need to download and install the <a href='/about/import'>latest version of the plugin</a>"}
+}
+
+function test_plugin_functions(){
+  if (plugin().echo("123") != "123") throw {message: "Plugin echo function do not work correctly"};
+
+  try {
+    plugin_addEvent('progress', function(x){
+      $("#event_working").text("OK");
+      test_log("Event PROGRESS received ("+x+")");
+      G_stalled_count = 0;
+    });
+    plugin_addEvent('loaded', function(x){
+      $("#event_working").text("OK");
+      test_log("Event LOADED received");
+      if (G_status_interval) clearInterval(G_status_interval);
+      L_stored_data = x;
+      $("#udcf").text(x);
+      end_test_with_callback(true);
+      test_step3();
+    });
+    plugin_addEvent('error', function(x){
+      $("#event_working").text("OK");
+      test_log("Event ERROR received ("+x+")");
+      if (G_status_interval) clearInterval(G_status_interval);
+      end_test_with_callback(false, x);
+      end_of_test(false, x);
+    });
+    plugin_addEvent('fired', function(x){
+      $("#event_working").text("OK");
+      test_log("Event FIRED received ("+x+")");
+    });
+
+  } catch(e){
+    test_log_exception(e);
+    throw {message: "Error while setting up events"};
+  }
+
+  try {
+    test_log('Firing test event');
+    plugin().fireEvent("123");
+  } catch(e){
+    test_log('Warning: fireEvent failed');
+  } //Would not work with older versions of plugins
+
+}
+
+function test_list_support(){
+  try {
+    var supported = plugin().support;
+    supported.sort(function(a,b){if (a.label==b.label) return 0; else if (a.label > b.label) return 1; else return -1;})
+    var select = $('#wizard_computer_select2 option').first().detach();
+    $('#wizard_computer_select2').html('');
+    $('#wizard_computer_select2').append(select);
+
+    for (var i in supported){
+      var computer = supported[i];
+      var found = false;
+      for (var k in G_uploader_list_favorites)
+        if (G_uploader_list_favorites[k] == computer.label)
+          found = true
+      if (found)
+        $('#wizard_computer_select2').append('<option value="'+computer.key_code+'">'+computer.label+"</option>");
+    }
+
+    $('#wizard_computer_select2').append('<option value="XXX">--------------------</option>');
+
+    for (var i in supported){
+      var computer = supported[i];
+      var emulator = false;
+      for (var k in G_uploader_list_emulators)
+        if (G_uploader_list_emulators[k] == computer.label)
+          emulator = true
+      if (!emulator)
+        $('#wizard_computer_select2').append('<option value="'+computer.key_code+'">'+computer.label+"</option>");
+    }
+
+    $('#wizard_computer_select2').append('<option value="XXX">--------------------</option>');
+
+    for (var i in supported){
+      var computer = supported[i];
+      var found = false;
+      for (var k in G_uploader_list_emulators)
+        if (G_uploader_list_emulators[k] == computer.label)
+          found = true
+      if (found)
+        $('#wizard_computer_select2').append('<option value="'+computer.key_code+'">'+computer.label+"</option>");
+    }
+
+
+  }
+  catch (e) {
+    test_log_exception(e)
+    throw {message: "Error while listing the supported computers"};
+  }
+}
+
+function test_list_ports(){
+  try
+  {
+    $("#wizard_plugin_port").empty();
+
+    var ports = plugin().allports();
+    var p_count = 0;
+
+    for (var key in ports)
+    {
+      var label;
+      if (key != ports[key]) label = key.replace(/[^A-Za-z0-9]/g, "")+": "+ports[key];
+      else label = ports[key];
+      $("#wizard_plugin_port").append("<option value='"+key+"'>"+label+"</option>");
+      p_count++;
+    }
+    if (p_count == 0) {
+      for (var k = 0; k<25; k++)
+        $("#wizard_plugin_port").append("<option value='\\\\.\\COM"+k+"'>COM "+k+"</option>");
+    }
+  }
+  catch (e) {
+    test_log_exception(e)
+    throw {message: "Error while listing the available ports"};
+  }
+}
+
+function test_upload_dives(){
+  try
+  {
+    var port = document.getElementById("wizard_plugin_port").value;
+    var model = $("#wizard_computer_select2 option:selected").text();
+    var computer = document.getElementById("wizard_computer_select2").value;
+
+    G_W_model = model;
+    test_log("Computer selected :"+model);
+    test_log("Backend selected :"+computer);
+    test_log("Port selected :"+port);
+
+    if (L_action_requested == 'dump')
+      plugin().dump(port, computer);
+    else
+      plugin().extract(port, computer);
+  }
+  catch (e) {
+    test_log_exception(e);
+    throw {message: "Error while starting the upload"};
+  }
+}
+
+function test_upload_server(){
+  g_send_plugin_data_xhr = $.ajax({
+    url: "/api/computerupload.json",
+    data: {
+      'authenticity_token': auth_token,
+      xmlFormSend: $("#udcf").text(),
+      logFormSend: plugin().logs,
+      verFormSend: plugin().version,
+      nbrFormSend: plugin().nbDivesRead,
+      nbtFormSend: plugin().nbDivesTotal,
+      computer_model: G_W_model,
+      user_id: G_user_id
+    },
+    type: "POST",
+    dataType: "json",
+    error: function(data) {
+      test_log(data.status);
+      end_test_with_callback(false, "Connecting to DB servers failed");
+      end_of_test(false, "Decoding of dives data failed while contacting server");
+    },
+    success: function(data) {
+      if (data.success) {
+        test_log("Dives correctly read on server : "+data["nbdives"]);
+        end_test_with_callback(true, ""+data["nbdives"]+" dives read");
+        test_step4();
+      } else {
+        test_log(JSON.stringify(data));
+        test_log(data.error_tag);
+        end_test_with_callback(false, "Decoding of dives data failed on server");
+        end_of_test(false, "Decoding of dives data failed on server");
+      }
+    }
+  });
+}
+
+
+function test_status(){
+  if (typeof plugin() == 'undefined'){
+    if (G_status_interval) clearInterval(G_status_interval);
+    end_test_with_callback(false, "Plugin has crashed");
+    end_of_test(false, "Plugin has crashed");
+    return;
+  }
+
+  try {
+    var logs = plugin().logs;
+    $("#plugin_logs").text(logs);
+  } catch(e){
+    var logs = $("#plugin_logs").text();
+    $("#plugin_logs").text(logs+"\nError while writing plugin().logs in DOM");
+  }
+
+  try {
+    var status = plugin().status;
+    if (status.state == "COMPUTER_NOT_STARTED")
+      $("#computer_status_state").text("Test has not started");
+    else if (status.state == "COMPUTER_RUNNING")
+      $("#computer_status_state").text("Dive computer is uploading... please wait");
+    else if (status.state == "COMPUTER_FINISHED")
+      $("#computer_status_state").text("Test is finished");
+    else {
+      test_log("Plugin returned status : "+status.state)
+      $("#computer_status_state").text("Not sure what the plugin is doing right now...");
+    }
+
+    G_last_status = status;
+    var logs = plugin().logs.split("\n");
+    var last_log = logs[logs.length-2]; // it's not -1 because there's always a \n at the end of the last line
+    G_stalled_count += 1;
+    if (last_log != G_last_log) G_stalled_count = 0;
+    if (status.percent != G_last_percent) G_stalled_count = 0;
+    G_last_log = last_log;
+    G_last_percent = status.percent;
+
+    if (G_background_test &&  status.state != "COMPUTER_RUNNING" ) {
+      if (G_not_notified_count < 5) {
+        G_not_notified_count += 1;
+      } else {
+        if (G_status_interval) clearInterval(G_status_interval);
+        end_test_with_callback(false, "Plugin has stopped without notifying");
+        end_of_test(false, "Plugin has stopped without notifying");
+      }
+    } else {
+        G_not_notified_count = 0;
+    }
+    if (G_background_test && G_stalled_count > 30) {
+      if (G_status_interval) clearInterval(G_status_interval);
+      end_test_with_callback(false, "Plugin stalled");
+      end_of_test(false, "Plugin got stalled");
+    }
+  } catch(e){}
+}
+
+
+</script>
+
+<div id="main_content_area" class='about_style' style="height:auto !important;">
+  <div id='test_view' style='min-height: 300px;'>
+
+    <div id='step1' class='steps'>
+      <h2><%= it("Diveboard plugin test page", scope: ['staticpages', 'test_computer']) %></h2>
+      <br/>
+      <p><%= it("This page is dedicated for %{b:remotely debugging} the Diveboard plugin which interfaces with dive computers.", scope: ['staticpages', 'test_computer'], b: It.tag("b")) %></p>
+      <br/>
+      <p><%= it("It will gather technical details on your web browser and on your dive computer (but nothing personal!), which will be sent to Diveboard for further analysis.", scope: ['staticpages', 'test_computer']) %></p>
+      <br/>
+      <p><%= it("This test may take from 2 to 10 minutes.", scope: ['staticpages', 'test_computer']) %></p>
+      <br/>
+      <p><%= it("If you no longer see any activity with your computer and that the logs at the bottom of the page haven't shown anything new for 5 minutes, then hit the button \"Click here if it's frozen\" : it will send us the partial results of the test with hopefully enough detail to be able to help you out.", scope: ['staticpages', 'test_computer']) %></p>
+      <br/>
+      <p><%= it("%{b:When you are ready, please connect your computer and then click on \"Start Test\".} You will first have to select your computer and then you will see the results of each steps for the test.", scope: ['staticpages', 'test_computer'], b: It.tag("b")) %></p>
+      <br/>
+      <button class='yellow_button' onclick='test_step1()'><%= it("Start test!", scope: ['staticpages', 'test_computer']) %></button>
+    </div>
+
+    <div id='step2' class='hidden steps' >
+      <br/>
+      <p><%= it("Please select your computer", scope: ['staticpages', 'test_computer']) %></p>
+      <br/>
+      <select id="wizard_computer_select2" autocomplete="off">
+      <option value='XXX'><%= it("Select your computer model...", scope: ['staticpages', 'test_computer']) %></option>
+      <% computer_yml["Favorites"].each { |key| %><option value='<%=computer_yml["Computers"][key]["driver"]%>'><%= key %></option><% } %>
+      <option value='XXX'>--------------------</option>
+      <% computer_yml["Computers"].keys.sort.each { |key| %><option value='<%=computer_yml["Computers"][key]["driver"]%>'><%= key %></option><% } %>
+      <option value='XXX'>--------------------</option>
+      <% computer_yml["Emulators"].keys.sort.each { |key| %><option value='<%=computer_yml["Emulators"][key]["driver"]%>'><%= key %></option><% } %>
+      </select></p>
+      <p><%= it("Select the com port:", scope: ['staticpages', 'test_computer']) %><select id=wizard_plugin_port autocomplete="off"> </select></p>
+      <div id="wizard_computer_instructions2" class='hidden wizard_instructions'>
+        <label><%= it("How to connect your computer:", scope: ['staticpages', 'test_computer']) %></label>
+        <% computer_yml["Computers"].each_key { |computer_name| %>
+        <div class="Instructions_<%= computer_name.gsub(/[^A-Za-z0-9]/,"") %>">
+        <ol>
+        <% computer_yml["Computers"][computer_name]["instructions"].each {|instruction| %>
+        <li><%= instruction.html_safe %></li>
+        <% } %>
+        </ol>
+        <% if (computer_yml["Computers"][computer_name]["cable"]) %>
+          <p class=wizard_note><%= it("Note: the cable can be purchased on %{link:Amazon.com}", scope: ['staticpages', 'test_computer'], link: It.link(computer_yml["Computers"][computer_name]["cable"], target: '_blank')) %></p>
+        <% end %>
+        </div>
+        <% } %>
+
+        <% computer_yml["Emulators"].each_key { |computer_name| %>
+        <div class="Instructions_<%= computer_name.gsub(/[^A-Za-z0-9]/,"") %>">
+        <ol>
+        <% computer_yml["Emulators"][computer_name]["instructions"].each {|instruction| %>
+        <li><%= instruction.html_safe %></li>
+        <% } %>
+        </ol>
+        </div>
+        <% } %>
+      </div>
+
+      <p style="margin-top: 10px;"> <%= it("When you are ready, go ahead:", scope: ['staticpages', 'test_computer']) %> <input  class="yellow_button" value="Upload dives" id="wizard_plugin_force_extract" onclick='test_step2("extract")' type="button">  <input  class="yellow_button" value="Dump memory" id="wizard_plugin_force_dump" onclick='test_step2("dump")' type="button"> </p>
+    </div>
+
+  </div>
+
+  <div class='result_sending'>
+  </div>
+
+  <hr/>
+
+  <div id="result_part" style='display:none;'>
+    <h2><%= it("Test progression", scope: ['staticpages', 'test_computer']) %></h2>
+    <br/>
+    <table id='result_table'>
+      <tr><td><%= it("Id.", scope: ['staticpages', 'test_computer']) %></td><td><%= it("Test", scope: ['staticpages', 'test_computer']) %></td><td><%= it("Result", scope: ['staticpages', 'test_computer']) %></td></tr>
+    </table>
+    <button class='yellow_button' onclick='end_of_test(false, "End of tests requested by user")'><%= it("Click here if it's frozen!!!!", scope: ['staticpages', 'test_computer']) %></button>
+
+    <hr style='margin-top: 400px'/>
+
+    <h2><%= it("Test logs", scope: ['staticpages', 'test_computer']) %></h2>
+    <pre id='test_logs'></pre>
+    <h2><%= it("System info", scope: ['staticpages', 'test_computer']) %></h2>
+    <div><%= it("platform:", scope: ['staticpages', 'test_computer']) %> <span id='platform'></span></div>
+    <div><%= it("browser:", scope: ['staticpages', 'test_computer']) %> <span id='browser'></span></div>
+    <h2><%= it("Plugin detection", scope: ['staticpages', 'test_computer']) %></h2>
+    <p><span id='plugin_found'></span> <span id='plugin_name'></span> <span id='plugin_version'></span> <span id='plugin_ok'></span></p>
+    <p><%= it("Events handling:", scope: ['staticpages', 'test_computer']) %> <span id='event_working'><%= it("None received yet...", scope: ['staticpages', 'test_computer']) %></span></p>
+    <h2><%= it("Plugin logs", scope: ['staticpages', 'test_computer']) %></h2>
+    <pre id='plugin_status'></pre>
+    <pre id='plugin_logs'></pre>
+    <pre id='udcf'></pre>
+  </div>
+
+</div>
+
+
+
+<div id=pluginContainer style='height: 0px; width: 0px'></div>
+<%end%>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<div id="sidebar">
+	<div class="settings_sidebar">
+		<ul>
+			<li <%if item==1 %>class="active_item"<%end%> ><a href="/admin" id="menu_1">Dashboard</a></li>
+			<li <%if item==2 %>class="active_item"<%end%> ><a href="/admin/users" id="menu_2">Users</a></li>
+			<li <%if item==3 %>class="active_item"<%end%> ><a href="/admin/mod_spot" id="menu_3">Spots</a>
+              <% todo=Spot.where("flag_moderate_private_to_public IS TRUE").count; if todo>0 then%>[<%=todo%>]<%end%></li>
+			<li <%if item==9 %>class="active_item"<%end%> ><a href="/admin/shops" id="menu_9">Shops</a>
+							<% todo=Shop.where(:flag_moderate_private_to_public => true).count; if todo>0 then%>[<%=todo%>]<%end%></li>
+      <li <%if item=='orders' %>class="active_item"<%end%> ><a href="/admin/orders" id="menu_orders">Orders</a></li>
+			<li <%if item==4 %>class="active_item"<%end%> ><a href="/admin/dives" id="menu_4">Dives</a></li>
+			<li <%if item==8 %>class="active_item"<%end%> ><a href="/admin/pictures?search_great_pic=nil" id="menu_8">Pictures</a>
+              <% todo=Picture.joins(:picture_album_pictures => :album).where("albums.kind <> 'wallet'").where('great_pic is null').count; if todo>0 then%>[<%=todo%>]<%end%></li>
+			<li <%if item==7 %>class="active_item"<%end%> ><a href="/admin/reviews" id="menu_7">Reviews</a>
+              <% todo=Review.where('flag_moderate or reported_spam').count; if todo>0 then%>[<%=todo%>]<%end%></li>
+      <li <%if item==10 %>class="active_item"<%end%> ><a href="/admin/blogposts" id="menu_10">Blog Posts</a>
+              <% todo=BlogPost.where(:flag_moderate_private_to_public => true).count; if todo>0 then%>[<%=todo%>]<%end%></li>
+      <li <%if item==11 %>class="active_item"<%end%> ><a href="/admin/newsletter" id="menu_11">Newsletter</a></li>
+			<li <%if item==6 %>class="active_item"<%end%> ><a href="/admin/species" id="menu_6">Species</a></li>
+			<li <%if item==5 %>class="active_item"<%end%> ><a href="/admin/monitoring" id="menu_5">Monitoring</a></li>
+      <li <%if item==12 %>class="active_item"<%end%> ><a href="/admin/charts" id="menu_12">Charts</a></li>
+		</ul> 	
+	</div>
+</div>

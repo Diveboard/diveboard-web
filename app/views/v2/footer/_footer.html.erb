@@ -1,0 +1,23 @@
+<%= content_for :stylesheets do %>
+  <%= stylesheet_link_tag 'footer' %>
+<% end %>
+
+<%= content_for :footer do %>
+  <%= begin
+      render :partial => 'v2/footer/affiliation'
+        rescue MissingTemplate
+      end
+  %>
+
+  <%= begin
+      render :partial => 'v2/footer/links'
+        rescue MissingTemplate
+      end
+  %>
+
+  <%= begin
+      render :partial => 'v2/footer/footer_part'
+        rescue MissingTemplate
+      end
+  %>
+<% end %>

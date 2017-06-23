@@ -1,0 +1,5 @@
+<% widget = WidgetProfile.find(shop.id) %>
+<div id='widget_<%=widget.class.name.underscore%>_<%=widget.id%>' class='widget_holder widget_<%=widget.class.name.underscore%>' data-widget_class='<%=widget.class.name%>' data-widget_id='<%=widget.id%>' data-mode='<%=params[:content]%>'>
+  <%=render :partial => "widgets/#{widget.class.name.underscore}_#{params[:content]}", :locals=> {:widget => widget, :shop => shop}%>
+
+</div>

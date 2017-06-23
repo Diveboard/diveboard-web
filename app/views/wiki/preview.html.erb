@@ -1,0 +1,17 @@
+<div class="spot_page" style="height: 100%;">
+	<div class="spot_header" style="height: 100%;">
+		<div class="spot_top_left" style="height: 100%; display: inline;">
+				<div id="head" class="main_content_header logbook_header" style="margin:0 !important;">
+					<h1><ul>
+						<li><%= it("Preview of page %{pagename}", scope: ['wiki', 'preview'], pagename: content_tag("span", class: "header_title", @pagename)) %></li>
+					</ul></h1>
+				</div>
+				<div class="spot_wiki_tab" style="height: 100%; padding-bottom:50px; width:985px;">
+					<div class="spot_wiki_data" style="height: 100%; width:960px;">
+						<%=wiki_links_update @content%>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

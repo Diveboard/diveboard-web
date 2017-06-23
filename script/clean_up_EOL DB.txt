@@ -1,0 +1,5 @@
+//get all the ids that do have a worms or fishbase data
+//SELECT `id` FROM eolsnames WHERE `taxon` LIKE '%WORMS%' or `taxon` LIKE '%FishBase%';
+
+DELETE FROM eolcnames WHERE `eolsname_id` IN (SELECT `id` FROM eolsnames WHERE `taxon` NOT LIKE '%WORMS%' AND `taxon` NOT LIKE '%FishBase%');
+DELETE FROM eolsnames WHERE `taxon` NOT LIKE '%WORMS%' AND `taxon` NOT LIKE '%FishBase%';

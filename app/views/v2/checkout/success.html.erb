@@ -1,0 +1,23 @@
+<%= content_for :meta_tags do%>
+	<title>Payment Success</title>
+
+<%end%>
+
+<%= content_for :stylesheets do%>
+	<%= stylesheet_link_tag 'checkout'%>
+<%end%>
+<div class="checkout-success">
+	<div class="high-five">
+		<span class="line"></span>
+		<span>HIGH</span>
+		<img src="<%= HtmlHelper.lbroot "/img/global/high_five_basket.svg" %>">
+		<span>FIVE</span>
+		<span class="line"></span>
+	</div>
+	<div class="payment-confirm">
+		Payment confirmed
+	</div>
+	<div class="payment-message">
+		Thank you for making this booking with <%= @checkout_basket.shop_name %>. You will get a confirmation directly from <%= @checkout_basket.shop_name %> to confirm their availability and to organize the last details of your order. You can go on <a href="/settings/orders">this page</a> to follow your order.
+	</div>
+</div>

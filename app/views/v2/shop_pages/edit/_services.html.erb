@@ -1,0 +1,277 @@
+<%= content_for :javascripts do%>
+<script>
+  currency = "<%= @shop.currency %>";
+  var service_stack_item = 0;
+  deleted_goods = [];
+  updated_goods = [];
+
+  function service_delete(delete_button)
+  {
+    var grid = $('.services-stack').data('gridstack');
+    var elem = $(delete_button).closest('.grid-stack-item');
+
+    if ($(elem).attr('id') != undefined)
+      deleted_goods[$(elem).attr('id')] = 1;
+    grid.remove_widget($(delete_button).closest('.grid-stack-item'));
+  }
+
+  function update_service_price(elem)
+  {
+    var price = $(elem).find('.price input').val();
+    var tax = $(elem).find('.tax input').val();
+    var tax_price = (tax * price) / 100.0;
+    var total_price =  parseFloat(price) + parseFloat(tax_price);
+    $(elem).find('.good_total_price').html(Math.round(total_price * 100) / 100);
+  }
+  <% currency = Money::Currency.available.detect{|w| w[:iso_code] == @shop.currency} %>
+  function service_add_new()
+  {
+    var grid = $('.services-stack').data('gridstack');
+    var size = $('.services .grid-stack-item').length - 1 ;
+    var currency = currency_array[$('.currency_select').val()];
+    var new_elem = 
+    $('<div></div>').attr('class', 'grid-stack-item new-item').attr('data-gs-x', 0).attr('data-gs-y', 0).attr('data-gs-width', 1).attr('data-gs-height', 1).attr('data-gs-no-resize', true).append($('<div></div>').attr('class', 'grid-stack-item-content').append($('<div></div>').attr('class', 'category').append('<select><option value="Courses">Courses</option><option value="Dives">Dives</option><option value="Rental">Rental</option><option value="Liveaboard">Liveaboard</option><option value="Accomodation">Accomodation</option><option value="Trips">Trips</option></select>')).append('<div class="title"><input type="text" placeholder="Product Title" value=""/></div><div class="description"><p class="desc_preview"></p><a href="javascript:void(0)" active="0" class="toggle_description">Edit description</a><a href="javascript:void(0)" class="toggle_description_close">Confirm</a><div class="edit_description"><textarea placeholder="Description" type="text"></textarea></div></div><div class="price"><p><strong>Price</strong></p><span class="currency_symbol"><%=currency[:symbol]%></span><input type="number" step="any" value="0.0"/></div><div class="tax"><p><strong>Tax</strong></p><span class="currency_symbol">%</span><input type="number" step="any" value="0.0"/></div><div class="total_price"><p><strong>Total Price</strong></p><p style="float:right"><span class="good_total_price">0.0</span> <span class="currency_symbol">'+ currency + '</span></p></div><div class="delete"></div>')
+    );
+
+    grid.add_widget(new_elem);
+    new_elem.find('.delete').click(function()
+      {
+        service_delete(this);
+      });
+    new_elem.find('.price input').bind('input change', function()
+      {
+        update_service_price($(this).closest('.grid-stack-item-content'));
+      });
+    new_elem.find('.tax input').bind('input change', function()
+      {
+        update_service_price($(this).closest('.grid-stack-item-content'));
+      });
+    new_elem.find('.toggle_description').click(function()
+      {
+        init_toggle_description(this);
+      });
+    return false;
+  }
+
+  function open_edit_description(elem)
+  {
+    $(elem).attr('active', 1);
+    var parent = $(elem).closest('.description');
+    $(parent).find('.desc_preview').hide();
+    $(parent).find('.edit_description').show();
+    $(parent).closest('.grid-stack-item').css('height', '150px');
+    $(parent).closest('.grid-stack-item').css('z-index', '100');
+    $(elem).hide();
+    $(parent).find('.toggle_description_close').show();
+    $(parent).find('.edit_description textarea').focus();
+    $(parent).find('.edit_description textarea').blur(function()
+      {
+        close_edit_description(elem);
+      });
+  }
+
+  function close_edit_description(elem)
+  {
+    $(elem).attr('active', 0);
+    var parent = $(elem).closest('.description');
+    $(parent).find('.desc_preview').html($(parent).find('.edit_description textarea').val().substr(0,90)+" ...");
+    $(parent).find('.desc_preview').show();
+    $(parent).find('.edit_description').hide();
+    $(parent).closest('.grid-stack-item').css('height', '70px');
+    $(parent).closest('.grid-stack-item').css('z-index', '1');
+    $(elem).show();
+    $(parent).find('.toggle_description_close').hide();
+  }
+
+  function init_toggle_description(elem)
+  {
+    if ($(elem).attr('active') == 0)
+      open_edit_description(elem);
+    else
+      close_edit_description(elem);
+  }
+
+  $(document).ready(function()
+  {
+    var options = {
+      cell_height: 70,
+      vertical_margin: 10,
+      width: 1
+    };
+    $('.services-stack').gridstack(options);
+    $('.services-stack .delete').click(function()
+    {
+      service_delete(this);
+    });
+    $('#services_edit .yellow_button.add').click(function()
+    {
+      service_add_new(this);
+    });
+
+    $('.currency_select').change(function(){
+      $('.currency_symbol').html(currency_array[$('.currency_select').val()]);
+    });
+    $('.price input').bind('input change', function(){
+      update_service_price($(this).closest('.grid-stack-item-content'));
+    });
+    $('.tax input').bind('input change', function(){
+      update_service_price($(this).closest('.grid-stack-item-content'));
+    });
+    $('#services_edit .grid-stack-item-content input').bind('change', function()
+      {
+        if ($(this).closest('.grid-stack-item').attr('id') != undefined)
+        {
+          updated_goods[$(this).closest('.grid-stack-item').attr('id')] = 1;
+          console.log('changed');
+        }
+      });
+    $('#services_edit .grid-stack-item-content select').bind('change', function()
+      {
+        if ($(this).closest('.grid-stack-item').attr('id') != undefined)
+        {
+          updated_goods[$(this).closest('.grid-stack-item').attr('id')] = 1;
+          console.log('changed');
+        }
+      });
+    $('#services_edit .grid-stack-item-content textarea').bind('change', function()
+      {
+        if ($(this).closest('.grid-stack-item').attr('id') != undefined)
+        {
+          updated_goods[$(this).closest('.grid-stack-item').attr('id')] = 1;
+          console.log('changed');
+        }
+      });
+
+    var unlink_paypal_modal = new LightModal('unlink_paypal_modal');
+    unlink_paypal_modal.trigger['unlink'] = function()
+    {
+      unlink_paypal_modal.display('processing');
+      var arg = {
+          'id': $('#shop_id').val(),
+          'paypal_id': null
+        };
+      var data = {
+        'authenticity_token': auth_token,
+        'arg': JSON.stringify(arg)
+      };
+      $.ajax({
+        url: '/api/V2/shop',
+        type: "POST",
+        data: data,
+        success: function(data)
+        {
+          window.location.href = '/pro/<%= @shop.vanity_url %>/edit/services';
+        }
+      });
+    };
+    $('.paypal_unlink_button').click(function()
+    {
+       unlink_paypal_modal.display('initial');
+    });
+
+    $('.toggle_description').click(function()
+      {
+        init_toggle_description(this);
+      });
+  });
+</script>
+<%end%>
+
+
+<div class="services section" id="services_edit">
+  <div id="category_title">
+    <h2>Services</h2>
+    <div class="clear"></div>
+  </div>
+  <div class="container">
+    <div class='currency_select_block'>
+      <div style='display: inline-block; vertical-align: top; line-height: 35px; margin-right: 10px;'><%= it("Currency:", scope: ['shop_pages', 'shop_dive_edit']) %></div>
+      <select class="currency_select">
+        <option value=''>----</option>
+        <optgroup label="PayPal supported currencies">
+          <%
+            currencies = Money::Currency.table.map {|item| item[1]}
+
+            currency_array = Hash.new 
+          %>
+          <% supported_currencies = Money::Currency.supported %>
+          <% supported_currencies.reject.sort do |a,b| a[:priority] <=> b[:priority] end .each do |currency|%>
+            <option value='<%=currency[:iso_code]%>' <%= @shop.currency == currency[:iso_code] ? "selected" : ""%>><%=currency[:name]%> (<%=currency[:symbol]%>)</option>
+          <%end%>
+        </optgroup>
+        <optgroup label="All currencies">
+          <%currencies.sort do |a,b| a[:name] <=> b[:name] end .each do |currency|
+            currency_array[currency[:iso_code]] = currency[:symbol]
+          %>
+            <option value='<%=currency[:iso_code]%>' <%= @shop.currency == currency[:iso_code] ? "selected" : ""%>><%=currency[:name]%> (<%=currency[:symbol]%>)</option>
+          <%end%>
+        </optgroup>
+      </select>
+      <p style='display:inline-block'>
+        Choosing a paypal supported currency will allow you to be paid by paypal.
+      </p>
+      <p class="category_title">PayPal Account</p>
+      <%if @shop.paypal_id.blank? || @shop.paypal_token.blank? || @shop.paypal_secret.blank? then%>
+        <p class="description">
+          In order to be able to sell on Diveboard, you need to link this page with your Paypal account. Just click on the button below and you will be redirected on paypal where you will have to login and accept the permissions requested.
+          <br><br>
+          Once you have accepted the permission request, be sure to wait until you are redirected to Diveboard, or we won't be able to confirm your account.
+        </p>
+        <a href="/api/paypal/permission_start?shop_id=<%=@shop.id%>" class="yellow_button link_paypal">Link with PayPal</a>
+      <% else %>
+        <p style='margin: 5px 10px 20px 10px; float: left;'>You have linked this page with the Paypal account:&nbsp;&nbsp;&nbsp;<strong><i><%= @shop.paypal_id %></i></strong></p>
+          <a class='transparent_dark_gray_button paypal_unlink_button' style='margin-left: 25px; float: right;'>Unlink account</a>
+          <a class='yellow_button' style='height: 32px; padding-left: 20px; padding-right: 20px; float: right;' href='/api/paypal/permission_start?shop_id=<%=@shop.id%>'>Change account</a>
+        </p>
+        <div class="clear"></div>
+      <% end %>
+    </div>
+    <h1 style="margin-top: 20px; margin-bottom:10px;margin-right:60px; display: inline-block">Diving Pricelist</h1>
+    <div class="yellow_button add">Add Service</div>
+    <div class="goods">
+      <div class="grid-stack services-stack">
+      <% if !@shop.all_dive_goods.empty? %>
+        <% i = 0 %>
+        <% @shop.all_dive_goods.each do |good| %>
+        <% money = Money.new(good.total, good.currency) 
+        %>
+        <div class="grid-stack-item" id="item-<%= good.id %>" order_num="<%= good.order_num %>" data-gs-x="0" data-gs-y="<%=i%>" data-gs-width="1" data-gs-height="1" data-gs-no-resize="true">
+          <div class="grid-stack-item-content">
+            <div class="category">
+              <select>
+                <option value="Courses" <%= "selected" if good.cat1 == "Courses" %>>Courses</option>
+                <option value="Dives" <%= "selected" if good.cat1 == "Dives" %>>Dives</option>
+                <option value="Rental" <%= "selected" if good.cat1 == "Rental" %>>Rental</option>
+                <option value="Liveaboard" <%= "selected" if good.cat1 == "Liveaboard" %>>Liveaboard</option>
+                <option value="Accomodation" <%= "selected" if good.cat1 == "Accomodation" %>>Accomodation</option>
+                <option value="Trips" <%= "selected" if good.cat1 == "Trips" %>>Trips</option>
+              </select>
+            </div>
+            <div class="title"><input type="text" placeholder="Product Title" value="<%=good.title%>"/></div>
+            <div class="description">
+              <p class="desc_preview"><%= good.description %></p>
+              <a href="javascript:void(0)" active="0" class="toggle_description">Edit description</a>
+              <a href="javascript:void(0)" class="toggle_description_close">Confirm</a>
+              <div class="edit_description">
+                <textarea type="text" placeholder="Description"><%if !good.description.nil? then %><%=good.description%><%end%></textarea>
+              </div>
+            </div>
+            <div class="price"><p><strong>Price</strong></p><span class="currency_symbol"><%=money.currency.symbol%></span><input type="number" step="any" value="<%=good.price%>"/></div>
+            <div class="tax"><p><strong>Tax</strong></p><span class="currency_symbol">%</span><input type="number" step="any" value="<%=good.tax%>"/></div>
+            <div class="total_price"><p><strong>Total Price</strong></p><p style="float:right"><span class="good_total_price"><%=good.total%></span> <span class="currency_symbol"><%=money.currency.symbol%></span></p></div>
+            <div class="delete"></div>
+          </div>
+        </div>
+        <% i = i + 1 %>
+        <%end%>
+      <%end%>
+      </div>
+    </div>
+  </div>
+  <div class="clear"></div>
+</div>
+<%= content_for :javascripts do%>
+<script>
+  currency_array = $.parseJSON('<%= raw currency_array.to_json %>');
+</script>
+<%end%>

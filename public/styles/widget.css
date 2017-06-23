@@ -1,0 +1,330 @@
+@font-face {
+    font-family: 'SourceSansPro';
+    font-style: normal;
+    font-weight: 600;
+    src: url(/img/fonts/sourcesanspro-semibold-webfont.eot?1412888029);
+    src: url('/img/fonts/embed/sourcesanspro-semibold-webfont.eot?3#iefix') format('embedded-opentype'), url(/img/fonts/embed/sourcesanspro-semibold-webfont.woff?1412888029) format('woff'), url(/img/fonts/sourcesanspro-semibold-webfont.ttf?1412888029) format('truetype'), url('/img/fonts/sourcesanspro-semibold-webfont.svg#source_sans_problack') format('svg');
+}
+
+@font-face {
+    font-family: 'SourceSansPro';
+    font-style: normal;
+    font-weight: 400;
+    src: url(/img/fonts/sourcesanspro-regular-webfont.eot?1412888029);
+    src: url('/img/fonts/sourcesanspro-regular-webfont.eot?3#iefix') format('embedded-opentype'), url(/img/fonts/embed/sourcesanspro-regular-webfont.woff?1412888029) format('woff'), url(/img/fonts/sourcesanspro-regular-webfont.ttf?1412888029) format('truetype'), url('/img/fonts/sourcesanspro-regular-webfont.svg#source_sans_problack') format('svg');
+}
+
+@font-face {
+    font-family: 'SourceSansPro';
+    font-style: italic;
+    font-weight: 400;
+    src: url(/img/fonts/sourcesanspro-it-webfont.eot?1412888029);
+    src: url('/img/fonts/sourcesanspro-it-webfont.eot?3#iefix') format('embedded-opentype'), url(/img/fonts/sourcesanspro-it-webfont.woff?1412888029) format('woff'), url(/img/fonts/sourcesanspro-it-webfont.ttf?1412888029) format('truetype'), url('/img/fonts/sourcesanspro-it-webfont.svg#source_sans_problack') format('svg');
+}
+
+@font-face {
+    font-family: 'SourceSansPro';
+    font-style: normal;
+    font-weight: 300;
+    src: url(/img/fonts/sourcesanspro-light-webfont.eot?1412888029);
+    src: url('/img/fonts/sourcesanspro-light-webfont.eot?3#iefix') format('embedded-opentype'), url(/img/fonts/embed/sourcesanspro-light-webfont.woff?1412888029) format('woff'), url(/img/fonts/sourcesanspro-light-webfont.ttf?1412888029) format('truetype'), url('/img/fonts/sourcesanspro-light-webfont.svg#source_sans_problack') format('svg');
+}
+
+html {
+    font-size: 14px;
+}
+
+body {
+    width: 200px;
+    height: 245px;
+    background-color: transparent;
+    background-image: none;
+}
+
+body {
+    font-family: SourceSansPro,Helvetica,Verdana,Arial,sans-serif;
+    color: #1d1d1d;
+}
+
+a,
+a img {
+    border: none;
+}
+
+a {
+    text-decoration: none;
+    color: #ff6200;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.widget .main_content_header {
+    z-index: 1000;
+    top: 10px;
+    left: 0;
+    width: 200px;
+    height: 24px;
+    background-size: 200px 32px;
+}
+
+.widget .head_picture {
+    left: -10px;
+    width: 50px;
+    height: 50px;
+}
+
+.widget .head_picture img {
+    z-index: 1000;
+    width: 42px;
+    height: 42px;
+}
+
+.widget .head_title {
+    z-index: 500;
+    margin-top: -3px;
+    margin-left: -7px;
+}
+
+.widget .main_content_header .head_title_valign {
+    height: auto;
+}
+
+.widget .main_content_header .head_title_valign h1 {
+    font-size: 17px;
+}
+
+.widget .profile {
+    display: inline-block;
+    position: relative;
+    top: -24px;
+    left: 0;
+    width: 190px;
+    height: auto;
+    height: 220px;
+    padding: 5px;
+    border-right: none;
+    background: white;
+}
+
+.widget .profile .profile {
+    text-align: left;
+}
+
+.widget .profile .profile img {
+    border: none;
+}
+
+.widget .profile .profile_user_name img {
+    top: -4px;
+    postion: relative;
+}
+
+.widget .profile .profile_user_name {
+}
+
+.widget .profile .profile_user_name h1 {
+    display: inline-block;
+    position: relative;
+    width: 194px;
+    height: 15px;
+    margin-top: 16px;
+    padding-left: 2px;
+    max-width: 194px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.widget .profile_user_badge {
+    display: inline-block;
+    width: 170px;
+    height: 15px;
+    max-width: 170px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.widget .profile_user_destinations {
+    display: inline-block;
+    width: 197px;
+    height: 62px;
+    margin-top: -7px;
+    overflow: hidden;
+}
+
+.widget .profile_user_qualifications {
+    display: inline-block;
+    width: 197px;
+    height: 45px;
+    margin-top: -6px;
+    overflow: hidden;
+}
+
+.widget .see_profile {
+    position: absolute;
+    bottom: 17px;
+    width: 188px;
+}
+
+.widget .see_profile a {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.widget .by_diveboard {
+    display: inline-block;
+    position: absolute;
+    bottom: 0;
+    width: 200px;
+    height: 17px;
+    background-color: rgb(25,25,27);
+    background-image: url(/img/embed/header/header_logo.png?1422552050);
+    background-repeat: no-repeat;
+    background-size: 100px 23px;
+    background-position-x: 48px;
+}
+
+.widget .logbook_header {
+    display: inline-block;
+    width: 200px;
+    height: 245px;
+}
+
+.jspContainer {
+    position: relative;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    overflow: hidden;
+    background-image: url(../img/scroll_box_bg.png?1422552050);
+}
+
+.jspPane {
+    position: absolute;
+}
+
+.jspVerticalBar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 26px;
+    height: 100%;
+    margin-right: 10px;
+}
+
+.jspHorizontalBar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 16px;
+    background: red;
+}
+
+.jspVerticalBar *,
+.jspHorizontalBar * {
+    margin: 0;
+    padding: 0;
+}
+
+.jspCap {
+    display: none;
+}
+
+.jspHorizontalBar .jspCap {
+    float: left;
+}
+
+.jspTrack {
+    position: relative;
+}
+
+.jspDrag {
+    position: relative;
+    top: 0;
+    left: 0;
+    background-image: url(../img/scroll_bar.png?1422552050);
+    background-position: center center;
+    background-repeat: repeat-y;
+    cursor: pointer;
+}
+
+.jspHorizontalBar .jspTrack,
+.jspHorizontalBar .jspDrag {
+    float: left;
+    height: 100%;
+}
+
+.jspArrow {
+    display: block;
+    text-indent: -20000px;
+    cursor: pointer;
+}
+
+.jspArrow.jspDisabled {
+    cursor: default;
+}
+
+.jspVerticalBar .jspArrow {
+    height: 26px;
+}
+
+.jspHorizontalBar .jspArrow {
+    float: left;
+    width: 26px;
+    height: 100%;
+}
+
+.jspVerticalBar .jspArrow:focus {
+    outline: none;
+}
+
+.jspCorner {
+    float: left;
+    height: 100%;
+    background: #eeeef4;
+}
+
+.jspArrowDown {
+    background-image: url(../img/scroll_down_btn.png?1422552050);
+}
+
+.jspArrowUp {
+    background-image: url(../img/scroll_up_btn.png?1422552050);
+}
+
+* html .jspCorner {
+    margin: 0 -3px 0 0;
+}
+
+#sidebar_manager_container .jspContainer {
+    background-image: url(../img/scroll_box_bg.png?1422552050);
+}
+
+.scroll-pane {
+    outline: none;
+}
+
+.divers_comments_text {
+    outline: none;
+}
+
+.divers_comments_text .jspContainer {
+    background-image: none;
+}
+
+.divers_comments_text .jspCorner {
+    background: #eee;
+}
+
+.divers_comments_text .jspVerticalBar {
+    width: 5px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    border-style: none;
+    background-color: #fff;
+}

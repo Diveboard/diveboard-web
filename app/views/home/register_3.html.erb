@@ -1,0 +1,361 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%=I18n.locale%>">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <!-- FB Opengraph Tags -->
+
+    <meta property="og:title" content="<%= it("Sign-up for Diveboard: Your online scuba logbook", scope: ['home', 'register_3']) %>" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://www.diveboard.com/login/register" />
+    <meta property="og:image" content="http://www.diveboard.com/img/OG-thumb.png" />
+    <meta property="og:description" content="<%= it("Sign up for diveboard and start looging and sharing your dives now.", scope: ['home', 'register_3']) %>" />
+    <meta property="og:site_name" content="<%= it("Diveboard: Your online scuba logbook", scope: ['home', 'register_3']) %>" />
+    <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+    <%I18n.available_locales.each do |locale|%>
+      <link rel='alternate' href='<%=HtmlHelper.find_root_for locale%>register' hreflang="<%=locale%>" />
+      <%if locale != I18n.locale then%>
+        <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+      <%end%>
+    <%end%>
+    <meta property="fb:admins" content="680251975" />
+    <meta property="fb:admins" content="1077557400" />
+
+    <!-- END FB Opengraph Tags -->
+    <meta name="description" content="<%= it("Sign up for diveboard and start looging and sharing your dives now.", scope: ['home', 'register_3']) %>"/>
+    <META NAME="Title" CONTENT="<%= it("Sign-up for Diveboard: Your online scuba logbook", scope: ['home', 'register_3']) %>"/>
+    <title><%= it("Diveboard: Your online scuba logbook. Track, share and explore scuba diving through community dive logs", scope: ['home', 'register_3']) %></title>
+
+    <link rel="icon" href="<%=ROOT_URL%>img/favicon/favicon.ico" type="image/x-icon" />
+    <%= include_stylesheets :common, :media => :all %>
+<!--[if IE]>
+    <link rel="stylesheet" type="text/css" href="<%=auto_file_versionning("/styles/global-ie.css")%>" media="all" />
+<![endif]-->
+    <%=javascript_include_tag "jquery" %>
+    <%=javascript_include_tag 'basic' %>
+    <%=javascript_include_tag 'common0' %>
+    <%=javascript_include_tag 'common1' %>
+
+    <script>
+      window.fbAsyncInit = function() {
+       FB.init({
+        appId  : '<%=FB_APP_ID%>',
+        status : true, // check login status
+        cookie : true, // enable cookies to allow the server to access the session
+        xfbml  : true, // parse XFBML
+        channelURL : '//<%=root_url.gsub(/^.*:\/\//,"")%>channel.html', // channel.html file
+        oauth  : true, // enable OAuth 2.0
+        version: 'v2.0'
+      });
+      };
+      (function(d){
+         var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+         js = d.createElement('script'); js.id = id; js.async = true;
+         js.src = "//connect.facebook.net/<%=Rails.configuration.map_og_locales[I18n.locale]%>/sdk.js";
+         d.getElementsByTagName('head')[0].appendChild(js);
+       }(document));
+    </script>
+
+    <script type="text/javascript" >
+      $(document).ready( function () {
+        $('.autoclear').autoclear();
+      });
+    </script>
+    <script type="text/javascript">
+    var auth_token ="";
+    $(document).ready(function () {
+        $('.autoclear').autoclear();
+        String.prototype.strip = function( exp ){ return this.replace(exp?exp:/\s/g,""); };
+        auth_token = "<%= form_authenticity_token %>";
+
+    //  Recaptcha.create('6Ldsb8USAAAAALT7s8WEbC5xhgcSFvM5u266OlrV', document.getElementById('dynamic_recaptcha1'),RecaptchaOptions);
+
+    //  Recaptcha.create('6Ldsb8USAAAAALT7s8WEbC5xhgcSFvM5u266OlrV', document.getElementById('dynamic_recaptcha2'),RecaptchaOptions);
+
+      $("#user_vanity_url").keyup(check_vanity_url);
+      $(".user_email_jq").keyup(check_login_email);
+      $("#user_password_confirmation, #user_password").keyup(check_password);
+    });
+
+    var xhr;
+    var right_checker;
+    function check_vanity_url(){
+      if(xhr) xhr.abort();
+
+      //$("#username").val($("#username").val().toLowerCase());
+      right_checker = this;
+      var username = $("#user_vanity_url").val().strip().toLowerCase();
+      if (username == ""){
+        //same name - no need to check....
+        //$("#username_info").html("Your url will be ....);
+        $("#username_search").hide();
+        $("#username_ok").hide();
+        $("#username_nok").show();
+        //vanity_url_ok =true;
+      }else{
+        username_match = username.match(/[A-Za-z\.0-9\-\_]*/);
+        if( username_match != null && username_match[0] == username){
+          $("#username_ok").hide();
+          $("#username_nok").hide();
+          $("#username_search").show();
+          if(right_checker == this){
+
+            xhr = $.ajax({
+              url:"/api/check_vanity_url",
+              data:({
+                  vanity: username,
+                    'authenticity_token': auth_token
+                }),
+              type:"POST",
+              dataType:"json",
+              success:function(data){
+                if (data.available){
+                  //$("#username_info").html("Your url will be .....);
+                  $("#username_search").hide();
+                  $("#username_nok").hide();
+                  $("#username_ok").show();
+
+                  //vanity_url_ok =true;
+                }
+                else{
+                    //$("#username_info").html("This username is unavailable, please try another one");
+                    $("#username_search").hide();
+                    $("#username_ok").hide();
+                    $("#username_nok").show();
+                    //vanity_url_ok = false;
+                }
+
+              }
+            });
+          }
+        }else{
+          //$("#username_info").html("Username can only have characters, figures and dots in it");
+          $("#username_search").hide();
+          $("#username_ok").hide();
+          $("#username_nok").show();
+          //vanity_url_ok = false;
+        }
+
+      }
+
+    }
+
+    var xhr2;
+    var right_checker2;
+    function check_login_email(){
+      if(xhr2) xhr2.abort();
+
+      //$("#username").val($("#username").val().toLowerCase());
+      right_checker2 = this;
+      var email = $(".user_email_jq").val().replace(/^\ */, "").toLowerCase();
+      if (email == ""){
+        //same name - no need to check....
+        $("#email_search").hide();
+        $("#email_ok").hide();
+        $("#email_nok").hide();
+      }else{
+        $("#email_ok").hide();
+        $("#email_nok").hide();
+        $("#email_search").show();
+        if(right_checker2 == this){
+
+          xhr2 = $.ajax({
+            url:"/api/check_email",
+            data:({
+                email: email,
+                  'authenticity_token': auth_token
+              }),
+            type:"POST",
+            dataType:"json",
+            success:function(data){
+              if (data.success && data.available){
+                $("#email_search").hide();
+                $("#email_ok").show();
+                $("#email_nok").hide();
+              }
+              else{
+                  $("#email_search").hide();
+                  $("#email_ok").hide();
+                  $("#email_nok").show();
+              }
+
+            }
+          });
+        }
+      }
+    }
+
+    function check_password(){
+      if ($("#user_password").val().length == 0) {
+      } else if ($("#user_password").val().length < 5 || $("#user_password").val().length > 20) {
+        $("#password_ok").hide();
+        $("#password_nok").show();
+      } else {
+        $("#password_ok").show();
+        $("#password_nok").hide();
+      }
+
+      if ($("#user_password_confirmation").val().length == 0){
+        $("#password_confirm_ok").hide();
+        $("#password_confirm_nok").hide();
+      } else if ($("#user_password_confirmation").val() != $("#user_password").val()) {
+        $("#password_confirm_ok").hide();
+        $("#password_confirm_nok").show();
+      } else {
+        $("#password_confirm_ok").show();
+        $("#password_confirm_nok").hide();
+      }
+    }
+
+    </script>
+
+  </head>
+  <body>
+    <div id="fb-root"></div>
+    <%= render :partial => 'layouts/top_menu'  %>
+
+    <div id="container">
+
+
+      <div id="sidebar" class="futurarealmedium about_style">
+        <div id="register_sidebar">
+          <h1><%= it("JOIN US!", scope: ['home', 'register_3']) %></h1>
+          <span class="spacer"></span>
+          <p><%= it("Diveboard is your place to log your scuba memories on the web.%{br}Join an ever growing community of scuba divers sharing their passion.", scope: ['home', 'register_3'], br: It.tag("br")) %></p>
+        </div>
+      </div>
+
+      <div id="main_content_area_home" class='about_style'>
+        <% if params["help"].nil?%>
+        <div id="register" class="futurarealmedium">
+          <%= form_for(@user, :url=>{:action=>'register_post', :controller=>"login"}) do |f|%>
+          <div class="main_content_header single_main_header">
+            <span class="vcard"></span><span class="register_title1"><%= it("Create a New Account", scope: ['home', 'register_3']) %></span>
+            <span class="spacer"><p>or</p></span>
+            <a href="/login/fb_login/email" class="fbsignup" ></a>
+          </div>
+          <div class="main_content_box futuralight">
+            <% if flash[:notice]%>
+            <div id="flash_notifications">
+              <%= it("WARNING:", scope: ['home', 'register_3']) %> <%=flash[:notice]%><br/>
+            </div>
+            <%end%>
+            <div id="register_user_info">
+              <label><%= it("Email:", scope: ['home', 'register_3']) %></label><% if @user_email.nil?%><%= f.text_field :email,:class => "register_main_input user_email_jq"%><%else%><%= f.text_field :email,:class => "register_main_input user_email_jq", :value => @user_email%><%end%><div style="position: absolute; margin-top: -49px; margin-left: 604px;"><img id="email_ok" src="/img/ok.png" align="absmiddle" style="display:none;"/><img  id="email_nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/><img  id="email_search" style="display:none;" align="absmiddle" src="/img/indicator.gif"/></div><br/>
+              <label><%= it("Password (5-20chrs):", scope: ['home', 'register_3']) %></label><%= f.password_field :password, :class => "register_main_input"%><div style="position: absolute; margin-top: -50px; margin-left: 604px;"><img id="password_ok" src="/img/ok.png" align="absmiddle" style="display:none;"/><img  id="password_nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/></div><br/>
+              <label><%= it("Confirm Password:", scope: ['home', 'register_3']) %></label><%= f.password_field :password_confirmation, :class => "register_main_input"%> <div style="position: absolute; margin-top: -50px; margin-left: 604px;"><img id="password_confirm_ok" src="/img/ok.png" align="absmiddle" style="display:none;"/><img  id="password_confirm_nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/></div>
+              <label style="display: block;position: relative;text-align: left;">Choose your Diveboard URL</label>
+              <label style="position: relative; left: 16px;">www.diveboard.com/</label><%if @user_vanity_url.nil?%><%= f.text_field :vanity_url, :class=>"register_main_input register_input_fix"%><%else%><%= f.text_field :vanity_url, :class=>"register_main_input register_input_fix", :value => @user_vanity_url%><%end%><div style="position: absolute; margin-top: -38px; margin-left: 604px;"><img id="username_ok" src="/img/ok.png" align="absmiddle" style="display:none;"/><img  id="username_nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/><img  id="username_search" style="display:none;" align="absmiddle" src="/img/indicator.gif"/> </div><br/>
+              <label><%= it("Nickname*:", scope: ['home', 'register_3']) %></label><%= f.text_field :nickname, :class=>"register_main_input register_input_fix"%>
+              <span class="register_input_explain"><%= it("* The nickname is how you will be called in Diveboard", scope: ['home', 'register_3']) %></span>
+              <label><%= it("Keep Me in the Loop:", scope: ['home', 'register_3']) %></label><%= check_box_tag :token, true, 'yes'%><br/>
+              <span style="display:inline-block; position: relative; top: -56px;"><%= f.label :recaptcha , it("Please Type the Two Words:", scope: ['home', 'register_3'])  %></span><div style="display:inline-block; position: relative; top: 5px;"><%= recaptcha_tags :display => {:theme => 'red' },:ajax => true %></div>
+            </div>
+          </div>
+          <div class="main_content_box futuralight">
+            <div id="register_button">
+              <%= f.submit "Register", :class => "edit_save_register_btn"%>
+            </div>
+          </div>
+          <%end%>
+        </div>
+
+        <%elsif params["help"]=="pwdreset"%>
+        <div id="pwd_reset">
+          <div class="main_content_header single_main_header">
+            <span class="header_title"><%= it("Password Reset for %{email}", scope: ['home', 'register_3'], email: @email) %></span>
+          </div>
+          <%= form_for(User.new, :url=>{:action=>'pwd_reset', :controller=>"login"}) do |f|%>
+          <div class="main_content_box">
+            <% if flash[:notice]%>
+            <div id="flash_notifications">
+              <%= it("WARNING :", scope: ['home', 'register_3']) %> <%=flash[:notice]%><br/>
+            </div>
+            <%end%>
+
+
+            <div id="register_user_info">
+            <%= it("New Pwd (5-20 chrs):", scope: ['home', 'register_3']) %> <%= f.password_field :password,:class => "register_main_input"%><br/>
+            <%= it("Pwd (check):", scope: ['home', 'register_3']) %> <%= f.password_field :password_confirmation,:class => "register_main_input"%><br/>
+            <%= hidden_field_tag 'token', @token%>
+            <%= hidden_field_tag 'email', @email%>
+            </div>
+          </div>
+          <div class="main_content_box">
+            <div id="register_button">
+              <%= f.submit "Reset my Password", :class => "edit_save_register_btn"%>
+            </div>
+          </div>
+          <%end%>
+        </div>
+        <%elsif params["help"]=="pwd"%>
+        <div id="lost_pwd">
+          <div class="main_content_header single_main_header">
+            <span class="header_title"><%= it("Lost password", scope: ['home', 'register_3']) %></span>
+          </div>
+          <%= form_for(User.new, :url=>{:action=>'forgot', :controller=>"home"}) do |f|%>
+          <div class="main_content_box">
+            <% if flash[:notice]%>
+            <div id="flash_notifications">
+              <%= it("WARNING:", scope: ['home', 'register_3']) %> <%=flash[:notice]%><br/>
+            </div>
+            <%end%>
+            <%= it("Set a new password for:", scope: ['home', 'register_3']) %><br/>
+            <div id="register_user_info">
+            <label><%= it("Email:", scope: ['home', 'register_3']) %></label><%= f.text_field :email,:class => "register_main_input"%>
+            </div>
+          </div>
+          <div class="main_content_box">
+            <div id="register_captcha">
+              <span style="display:inline-block;margin-bottom: 110px;"><%= f.label :recaptcha , it("Please Type the Two Words:", scope: ['home', 'register_3'])  %></span><div style="display:inline-block;"><div id="dynamic_recaptcha1"><%= recaptcha_tags :display => {:theme => 'red' },:ajax => true %></div></div>
+            </div>
+          </div>
+          <div class="main_content_box">
+            <div id="register_button">
+            <%= f.submit it("Reset my Password", scope: ['home', 'register_3']), :class => "edit_save_register_btn"%>
+            </div>
+          </div>
+          <%end%>
+
+        </div>
+        <%elsif params["help"]=="email"%>
+        <div id="lost_email">
+          <div class="main_content_header single_main_header">
+            <span class="header_title"><%= it("Lost email", scope: ['home', 'register_3']) %></span>
+          </div>
+          <%= form_for(User.new, :url=>{:action=>'forgot_email', :controller=>"home"}) do |f|%>
+          <div class="main_content_box">
+            <% if flash[:notice]%>
+            <div id="flash_notifications">
+              <%= it("WARNING:", scope: ['home', 'register_3']) %> <%=flash[:notice]%><br/>
+            </div>
+            <%end%>
+            <%= it("If you remember your personal url, we'll be able to email you with your login.%{br}
+            For instance, if your logbook is located at http://www.diveboard.com/%{strong:ksso}, your personal url will be \"%{strong:ksso}\".", scope: ['home', 'register_3'], br: It.tag("br"), strong: It.tag("strong")) %><br/>
+            <div id="register_user_info">
+              <label>http://www.diveboard.com/</label><%= f.text_field :vanity_url,:class => "register_main_input", :style=>"width:230px; background: url(/img/register_main_input_s.png) no-repeat top left;"%><br/>
+            </div>
+            <%= it("If you don't, send us an email we'll try to sort things out for you:", scope: ['home', 'register_3']) %> <a href="mailto:support@diveboard.com">support@diveboard.com</a>
+          </div>
+          <div class="main_content_box">
+            <div id="register_captcha">
+              <span style="display:inline-block;margin-bottom: 110px;"><%= f.label :recaptcha , it("Please Type the Two Words:", scope: ['home', 'register_3']) %></span><div style="display:inline-block;"><div id="dynamic_recaptcha2"></div><%= recaptcha_tags :display => {:theme => 'red' },:ajax => true %></div>
+            </div>
+          </div>
+          <div class="main_content_box">
+            <div id="register_button">
+              <%= f.submit it("Remind me my login", scope: ['home', 'register_3']), :class => "edit_save_register_btn"%>
+
+            </div>
+          </div>
+          <%end%>
+        </div>
+        <%end%>
+      </div>
+
+      <%= render :partial => 'layouts/footer'  %>
+    </div>
+    <%= render :partial => 'layouts/trackers'  %>
+    <%= render( :partial => 'login/sign_up_popup', :locals=> {:status => @signup_popup_status || :not_needed} )%>
+  </body>
+</html>

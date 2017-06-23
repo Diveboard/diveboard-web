@@ -1,0 +1,15 @@
+<$
+var url = "#";
+if (typeof redirect_url != 'undefined' && redirect_url)
+  url = redirect_url;
+else if (typeof external_url != 'undefined' && external_url)
+  url = external_url;
+else
+  url = shop_permalink;
+$>
+
+<a class="ad_item" href='<$=url$>' target='_blank'>
+  <img class='ad_item_pic' src="<$=thumbnail$>">
+  <span class='ad_item_head'><$=title$></span>
+  <p class='ad_item_content'><$=text$></p>
+</a>

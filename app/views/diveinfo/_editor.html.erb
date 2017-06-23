@@ -1,0 +1,876 @@
+<%= javascript_include_tag 'editor'%>
+<%content_for :css do%>
+<%= include_stylesheets :editor %>
+<%end%>
+<script src ="https://www.paypalobjects.com/js/external/dg.js" type="text/javascript"></script>
+
+
+<script>
+var G_wizard_user_gear = <%= @owner.user_gears[0..-1].map{|t| js=t.as_json['user_gear']; js['class']=t.class.to_s; js  }.to_json.html_safe %>;
+var G_private_dive = <%= (@dive.to_api :private, :caller => @owner).to_json.html_safe %>;
+var G_private_user = <%= (@owner.to_api :private, :caller => @owner).to_json.html_safe %>;
+var G_config = {
+  default_storage_per_dive: <%= Rails.application.config.default_storage_per_dive %>,
+  default_storage_per_month: <%= Rails.application.config.default_storage_per_month %>
+};
+<%start_t = Time.now %>
+var G_user_identified_species= <%=  @owner.my_species.to_json.html_safe%>;
+<%Rails.logger.debug "done fishing: #{Time.now - start_t}s"%>
+</script>
+
+<div id="formedit_dive" class="editable_form rightbar" <%if !hidden then%>style='display: block'<%end%>>
+
+  <input id="dive-id" type="hidden" value="<%= @dive.id%>"/>
+  <div class="editable_form" id="wizard_editable_controls1" style="display: block;">
+	<ul>
+    	<li><a href="#" class="wizard_save"><%= it("SAVE", scope: ['diveinfo', 'editor']) %><span class="symbol">/</span></a></li>
+		<li><a class="wizard_cancel" href="#"><%= it("CANCEL", scope: ['diveinfo', 'editor']) %><span class="symbol">×</span></a></li>
+    <%if !@dive.new_record? then%>
+    <li><a href="#" class="delete_dive"><%= it("DELETE", scope: ['diveinfo', 'editor']) %><span class="symbol">-</span></a></li>
+    <%end%>
+	</ul>
+  </div>
+
+  <div class='tab_panel tab_overview'>
+    <div class=box_row_w>
+      <div class="triple_box_w"  id=edit_dive_details>
+        <h3><%= it("Description", scope: ['diveinfo', 'editor']) %></h3>
+        <p><%= it("You can fill in these elements manually, or you can import a profile from a computer or a file", scope: ['diveinfo', 'editor']) %></p>
+        <p><strong><%= it("Dive number:", scope: ['diveinfo', 'editor']) %></strong> <input type="number" id="wizard-dive-number" min=0 class="editable_input wizard_input_10 wizard_round wizard_10_number" maxlength=4 value="<%=@dive.number%>"/></p></p>
+        <p><img src="<%=HtmlHelper.lbroot "/img/date_icon.png"%>" width='13px' height='14px' alt="#"/><strong><%= it("Date:", scope: ['diveinfo', 'editor']) %></strong> <input id='wizard-date' type="text" class="editable_input wizard_input_50" value="<%=@dive.date unless @dive.new_record?%>"/></p>
+        <p><img src='<%=HtmlHelper.lbroot "/img/time_icon.png"%>' width='13px' height='13px' alt='#'/><strong><%= it("Time in:", scope: ['diveinfo', 'editor']) %></strong> <span style='white-space:nowrap'><input type="number" id='wizard-time-in-hrs' min=0 class="editable_input wizard_input_10 wizard_round wizard_10_number" maxlength=2 value="<%=@dive.time_hrs unless @dive.new_record?%>"/>H <input type="number" id='wizard-time-in-mins' min=0 class="editable_input wizard_input_10 wizard_round wizard_10_number" maxlength=2 value="<%=@dive.time_mins unless @dive.new_record?%>"/>M</span></p>
+        <p><img src="<%=HtmlHelper.lbroot "/img/depth_icon.png"%>" width='13px' height='14px' alt="#"/><strong><%= it("Max depth:", scope: ['diveinfo', 'editor']) %></strong> <input type="number" id="wizard-max-depth" min=0 class="editable_input wizard_input_25 wizard_round wizard_10_number" maxlength=8 value="<%=@dive.maxdepth_value unless @dive.new_record? %>"/> <%=It.it(@dive.maxdepth_unit||@user.preferred_units['distance'], scope: ['units', 'distance'], count: nil)%><input id="wizard-max-depth-unit" type=hidden value="<%=@dive.maxdepth_unit || @user.preferred_units['distance']%>"/></p>
+        <p><img src='<%=HtmlHelper.lbroot "/img/time_icon.png"%>' width='13px' height='13px' alt='#'/><strong><%= it("Duration:", scope: ['diveinfo', 'editor']) %></strong> <input type="number" id="wizard-duration-mins" min=0 class="editable_input wizard_input_10 wizard_round wizard_10_number" maxlength=3 value="<%=@dive.duration unless @dive.new_record?%>"/><%= it("min", scope: ['diveinfo', 'editor']) %></p>
+        <p><img src='<%=HtmlHelper.lbroot "/img/time_icon.png"%>' width='13px' height='13px' alt='#'/><strong><%= it("Surface Interval", scope: ['diveinfo', 'editor'])%>:</strong> <span style='white-space:nowrap'><input type="number" id='wizard-surface-interval' min=0 class="editable_input wizard_input_10 wizard_round wizard_10_number" maxlength=4 value="<%=@dive.surface_interval unless @dive.new_record?%>"/>mins</p>
+
+        <p style='display: inline-block'><img src='<%=HtmlHelper.lbroot "/img/reg_icon.png"%>' width='14px' height='15px' alt='#'/><strong><%= it("Safety stops:", scope: ['diveinfo', 'editor']) %></strong>
+        </p>
+        <table id='profile_table'>
+        <%
+        begin
+          stops = JSON.parse(@dive.safetystops_unit_value)
+          stops.each{ |depth, time, unit| %>
+            <tr class='stop_def'><td></td><td><input type="number" min=0 class="stop_depth editable_input wizard_input_10 wizard_10_number" maxlength=3 value="<%=depth%>"/><%=It.it(unit||@user.preferred_units['distance'], scope:['units', 'distance'], count: nil)%><input type='hidden' class='stop_depth_unit' value='<%=unit||@user.preferred_units['distance']%>'><input type="number" min=0 class="stop_time wizard_input_10 wizard_10_number" maxlength=3 value='<%=time%>'/><%= it("mins", scope: ['diveinfo', 'editor']) %> <a href="#" onclick="$(this).parent().parent().remove();return false;"><%= it("Del", scope: ['diveinfo', 'editor']) %></a></td></tr>
+          <%
+          }
+        rescue
+        %>
+        <tr class='stop_def'><td></td><td><input type="number" min=0 class="stop_depth editable_input wizard_input_10 wizard_10_number" maxlength=3 value="<%= if @owner.nil? || @owner.preferred_units["distance"] == "m" then 3 else 10 end%>" onfocus="if(this.value == <%= if @owner.nil? || @owner.preferred_units["distance"] == "m" then 3 else 10 end%>) {this.value = '';}" onblur="if (this.value == '') {this.value = <%= if @owner.nil? || @owner.preferred_units["distance"] == "m" then 3 else 10 end%>;}"/><%=It.it(@user.preferred_units['distance'], scope:['units', 'distance'], count: nil)%><input type='hidden' class='stop_unit' value='<%=@user.preferred_units['distance']%>'><input type="number" min=0 class="stop_time wizard_input_10 wizard_10_number"/><%= it("mins", scope: ['diveinfo', 'editor']) %></td></tr>
+        <%end%>
+        <tr id='stop_def_tmpl' style='display:none' class='stop_def'><td></td><td><input type="number" min=0 class="stop_depth editable_input wizard_input_10 wizard_10_number" maxlength=3 value=""/><%=It.it(@user.preferred_units['distance'], scope:['units', 'distance'], count: nil)%><input type='hidden' class='stop_depth_unit' value='<%=@user.preferred_units['distance']%>'><input type="number" min=0 class="stop_time wizard_input_10 wizard_10_number" maxlength=3 value=''/><%= it("mins", scope: ['diveinfo', 'editor']) %> <a href="#" onclick="$(this).parent().parent().remove();return false;"><%= it("Del", scope: ['diveinfo', 'editor']) %></a></td></tr>
+        </table>
+        <p><a href='#' id='addsafetystops'><%= it("Add safety stop", scope: ['diveinfo', 'editor']) %></a></p>
+      </div>
+      <div id='edit_comment_div' class='double_box_w'>
+        <h3><%= it("Notes", scope: ['diveinfo', 'editor']) %></h3>
+        <div class='wizard_divers_comments' style='position: initial'>
+          <textarea id=wizard-dive-notes class='editable_input'><%= if !@dive.notes.nil? then @dive.notes.html_safe end %></textarea>
+        </div>
+        <div class=spacer> </div>
+      </div>
+    </div>
+    <div>
+    <div id='wizard_trip_name' class='main_content_box'>
+      <h3><%= it("Trip name:", scope: ['diveinfo', 'editor']) %></h3>
+      <p><%= it("This dive belongs to the trip named:", scope: ['diveinfo', 'editor']) %> <input class='editable_input wizard_input_100' id="wizard-trip" value='<%=CGI.escapeHTML(@dive.trip_name || '')%>'/></p>
+    </div>
+    <div id='wizard_dive_review' class='main_content_box'>
+      <h3><%= it("Dive reviews:", scope: ['diveinfo', 'editor']) %></h3>
+      <div class='editable_input'>
+      <table>
+        <tr id='wizard_star_overall'>
+          <td><%= it("Overall review", scope: ['diveinfo', 'editor']) %></td>
+          <td>
+            <input type='radio' name='overall' title='<%= it("Terrible", scope: ['diveinfo', 'editor']) %>'  value='1' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'overall').first.mark == 1 then 'checked' end rescue nil %> />
+            <input type='radio' name='overall' title='<%= it("Poor", scope: ['diveinfo', 'editor']) %>'      value='2' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'overall').first.mark == 2 then 'checked' end rescue nil %> />
+            <input type='radio' name='overall' title='<%= it("Average", scope: ['diveinfo', 'editor']) %>'   value='3' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'overall').first.mark == 3 then 'checked' end rescue nil %> />
+            <input type='radio' name='overall' title='<%= it("Very good", scope: ['diveinfo', 'editor']) %>' value='4' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'overall').first.mark == 4 then 'checked' end rescue nil %> />
+            <input type='radio' name='overall' title='<%= it("Excellent", scope: ['diveinfo', 'editor']) %>' value='5' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'overall').first.mark == 5 then 'checked' end rescue nil %> />
+          </td>
+          <td class='tooltip_star'></td>
+        </tr>
+        <tr>
+          <td><%= it("Dive difficulty", scope: ['diveinfo', 'editor']) %></td>
+          <td>
+            <input type='radio' name='difficulty' title='<%= it("Trivial", scope: ['diveinfo', 'editor']) %>'  value='1' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'difficulty').first.mark == 1 then 'checked' end rescue nil %> />
+            <input type='radio' name='difficulty' title='<%= it("Simple", scope: ['diveinfo', 'editor']) %>'      value='2' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'difficulty').first.mark == 2 then 'checked' end rescue nil %> />
+            <input type='radio' name='difficulty' title='<%= it("Somewhat simple", scope: ['diveinfo', 'editor']) %>'   value='3' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'difficulty').first.mark == 3 then 'checked' end rescue nil %> />
+            <input type='radio' name='difficulty' title='<%= it("Tricky", scope: ['diveinfo', 'editor']) %>' value='4' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'difficulty').first.mark == 4 then 'checked' end rescue nil %> />
+            <input type='radio' name='difficulty' title='<%= it("Hardcore", scope: ['diveinfo', 'editor']) %>' value='5' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'difficulty').first.mark == 5 then 'checked' end rescue nil %> />
+          </td>
+          <td class='tooltip_star'></td>
+        </tr>
+        <tr>
+          <td><%= it("Marine life quality", scope: ['diveinfo', 'editor']) %></td>
+          <td>
+            <input type='radio' name='marine' title='<%= it("Terrible", scope: ['diveinfo', 'editor']) %>'  value='1' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'marine').first.mark == 1 then 'checked' end rescue nil %> />
+            <input type='radio' name='marine' title='<%= it("Poor", scope: ['diveinfo', 'editor']) %>'      value='2' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'marine').first.mark == 2 then 'checked' end rescue nil %> />
+            <input type='radio' name='marine' title='<%= it("Average", scope: ['diveinfo', 'editor']) %>'   value='3' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'marine').first.mark == 3 then 'checked' end rescue nil %> />
+            <input type='radio' name='marine' title='<%= it("Very good", scope: ['diveinfo', 'editor']) %>' value='4' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'marine').first.mark == 4 then 'checked' end rescue nil %> />
+            <input type='radio' name='marine' title='<%= it("Excellent", scope: ['diveinfo', 'editor']) %>' value='5' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'marine').first.mark == 5 then 'checked' end rescue nil %> />
+          </td>
+          <td class='tooltip_star'></td>
+        </tr>
+        <tr <% if @dive.dive_reviews.where(:name=>'wreck').size() == 0%>style="display:none"<%end%> id='wizard_star_wreck'>
+          <td><%= it("Wreck", scope: ['diveinfo', 'editor']) %></td>
+          <td>
+            <input type='radio' name='wreck' title='<%= it("Terrible", scope: ['diveinfo', 'editor']) %>'  value='1' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'wreck').first.mark == 1 then 'checked' end rescue nil %> />
+            <input type='radio' name='wreck' title='<%= it("Poor", scope: ['diveinfo', 'editor']) %>'      value='2' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'wreck').first.mark == 2 then 'checked' end rescue nil %> />
+            <input type='radio' name='wreck' title='<%= it("Average", scope: ['diveinfo', 'editor']) %>'   value='3' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'wreck').first.mark == 3 then 'checked' end rescue nil %> />
+            <input type='radio' name='wreck' title='<%= it("Very good", scope: ['diveinfo', 'editor']) %>' value='4' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'wreck').first.mark == 4 then 'checked' end rescue nil %> />
+            <input type='radio' name='wreck' title='<%= it("Excellent", scope: ['diveinfo', 'editor']) %>' value='5' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'wreck').first.mark == 5 then 'checked' end rescue nil %> />
+          </td>
+          <td class='tooltip_star'></td>
+        </tr>
+        <tr <% if @dive.dive_reviews.where(:name=>'bigfish').size() == 0%>style="display:none"<%end%> id='wizard_star_bigfish'>
+          <td><%= it("Big fish", scope: ['diveinfo', 'editor']) %></td>
+          <td>
+            <input type='radio' name='bigfish' title='<%= it("Terrible", scope: ['diveinfo', 'editor']) %>'  value='1' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'bigfish').first.mark == 1 then 'checked' end rescue nil %> />
+            <input type='radio' name='bigfish' title='<%= it("Poor", scope: ['diveinfo', 'editor']) %>'      value='2' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'bigfish').first.mark == 2 then 'checked' end rescue nil %> />
+            <input type='radio' name='bigfish' title='<%= it("Average", scope: ['diveinfo', 'editor']) %>'   value='3' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'bigfish').first.mark == 3 then 'checked' end rescue nil %> />
+            <input type='radio' name='bigfish' title='<%= it("Very good", scope: ['diveinfo', 'editor']) %>' value='4' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'bigfish').first.mark == 4 then 'checked' end rescue nil %> />
+            <input type='radio' name='bigfish' title='<%= it("Excellent", scope: ['diveinfo', 'editor']) %>' value='5' class='hover-star' <%= if @dive.dive_reviews.where(:name=>'bigfish').first.mark == 5 then 'checked' end rescue nil %> />
+          </td>
+          <td class='tooltip_star'></td>
+        </tr>
+      </table>
+      <div id="wizard-criteria">
+        <%= it("Add a new criteria", scope: ['diveinfo', 'editor']) %>
+        <select id="wizard-review" class="editable_input">
+          <option value=""></option>
+          <% if @dive.dive_reviews.where(:name=>'wreck').size() == 0%><option value="wreck"> <%= it("Wreck", scope: ['diveinfo', 'editor']) %></option><%end%>
+          <% if @dive.dive_reviews.where(:name=>'bigfish').size() == 0%><option value="bigfish"> <%= it("Big fish", scope: ['diveinfo', 'editor']) %></option><%end%>
+        </select>
+      </div>
+      </div>
+    </div>
+    <div id='wizard_dive_activity' class='main_content_box'>
+        <h3><%= it("Dive type and activities:", scope: ['diveinfo', 'editor']) %></h3>
+        <% all_types = @dive.divetype %>
+        <div class="wizard_divetype_column">
+        <p><input type="checkbox" class="editable_input wizard_divetype" <%= if !all_types.find_index('recreational').nil? then all_types.slice!(all_types.find_index('recreational')); 'checked' end %> value="recreational"><%= it("Recreational", scope: ['globals', 'divetype']) %></p>
+        <p><input type="checkbox" class="editable_input wizard_divetype" <%= if !all_types.find_index('training').nil? then all_types.slice!(all_types.find_index('training')); 'checked' end %> value="training"><%= it("training", scope: ['globals', 'divetype']) %></p>
+        <p><input type="checkbox" class="editable_input wizard_divetype" <%= if !all_types.find_index('night dive').nil? then all_types.slice!(all_types.find_index('night dive')); 'checked' end %> value="night dive"><%= it("night dive", scope: ['globals', 'divetype']) %></p>
+        <p><input type="checkbox" class="editable_input wizard_divetype" <%= if !all_types.find_index('deep dive').nil? then all_types.slice!(all_types.find_index('deep dive')); 'checked' end %> value="deep dive"><%= it("deep dive", scope: ['globals', 'divetype']) %></p>
+        <p><input type="checkbox" class="editable_input wizard_divetype" <%= if !all_types.find_index('drift').nil? then all_types.slice!(all_types.find_index('drift')); 'checked' end %> value="drift"><%= it("drift", scope: ['globals', 'divetype']) %></p>
+        </div>
+        <div class="wizard_divetype_column">
+        <p><input type="checkbox" class="editable_input wizard_divetype" <%= if !all_types.find_index('wreck').nil? then all_types.slice!(all_types.find_index('wreck')); 'checked' end %> value="wreck"><%= it("wreck", scope: ['globals', 'divetype']) %></p>
+        <p><input type="checkbox" class="editable_input wizard_divetype" <%= if !all_types.find_index('cave').nil? then all_types.slice!(all_types.find_index('cave')); 'checked' end %> value="cave"><%= it("cave", scope: ['globals', 'divetype']) %></p>
+        <p><input type="checkbox" class="editable_input wizard_divetype" <%= if !all_types.find_index('reef').nil? then all_types.slice!(all_types.find_index('reef')); 'checked' end %> value="reef"><%= it("reef", scope: ['globals', 'divetype']) %></p>
+        </div>
+        <div class="wizard_divetype_column wizard_divetype_large">
+        <p><input type="checkbox" class="editable_input wizard_divetype" <%= if !all_types.find_index('photo').nil? then all_types.slice!(all_types.find_index('photo')); 'checked' end %> value="photo"><%= it("photo", scope: ['globals', 'divetype']) %></p>
+        <p><input type="checkbox" class="editable_input wizard_divetype" <%= if !all_types.find_index('research').nil? then all_types.slice!(all_types.find_index('research')); 'checked' end %> value="research"><%= it("research", scope: ['globals', 'divetype']) %></p>
+        <p><%= it("Other (comma separated):", scope: ['diveinfo', 'editor']) %> <input type=text id="wizard_divetype_other" class='editable_input wizard_input_100' value="<%= all_types.join(', ') %>"></p>
+        </div>
+    </div>
+
+    <div class='main_content_box' style='clear: both'>
+    <h3><%= it("Advanced parameters", scope: ['diveinfo', 'editor']) %></h3>
+      <div class='box_row_w wizard_advanced_params'>
+        <div>
+          <div class="double_box_h">
+            <p><img src='<%=HtmlHelper.lbroot "/img/temp_icon.png"%>' class='icon' width='15px' height='15px' alt='#'/><strong><%= it("Surface temp:", scope: ['diveinfo', 'editor']) %></strong> <input type="number" id="wizard-surface-temperature" class="editable_input wizard_input_10 wizard_round wizard_10_number" maxlength=4 value="<%=@dive.temp_surface_value%>" /> <%=It.it(@dive.temp_surface_unit||@user.preferred_units['temperature'], scope: ['units', 'temperature'], count: nil)%><input id="wizard-surface-temperature-unit" type=hidden value="<%=@dive.temp_surface_unit || @user.preferred_units['temperature']%>"/></p>
+            <p><img src='<%=HtmlHelper.lbroot "/img/temp_icon.png"%>' class='icon' width='15px' height='15px' alt='#'/><strong><%= it("Bottom temp:", scope: ['diveinfo', 'editor']) %></strong> <input type="number" id="wizard-bottom-temperature" class="editable_input wizard_input_10 wizard_round wizard_10_number" maxlength=4 value="<%=@dive.temp_bottom_value%>" /> <%=It.it(@dive.temp_bottom_unit||@user.preferred_units['temperature'], scope: ['units', 'temperature'], count: nil)%><input id="wizard-bottom-temperature-unit" type=hidden value="<%=@dive.temp_bottom_unit || @user.preferred_units['temperature']%>"/></p>
+            <p><img src='<%=HtmlHelper.lbroot "/img/weight_icon.png"%>' class='icon' width='15px' height='10px' alt='#'/><strong><%= it("Weights:", scope: ['diveinfo', 'editor']) %></strong> <input type=number id='wizard-weights' min=0 class="editable_input wizard_input_10 wizard_round wizard_10_number" maxlength=4 value="<%=@dive.weights_value%>" /> <%=It.it(@dive.weights_unit||@user.preferred_units['weight'], scope: ['units', 'weight'], count: nil)%><input id="wizard-weights-unit" type=hidden value="<%=@dive.weights_unit || @user.preferred_units['weight']%>"/></p>
+          </div>
+          <div class="double_box_h">
+            <p><img src="<%=HtmlHelper.lbroot "/img/black_search_btn.png"%>" class='icon' alt='#' width="15" height="15"/><strong><%= it("Water visibility:", scope: ['diveinfo', 'editor']) %></strong> <select id="wizard-visibility" class="editable_input">
+              <option value=""></option>
+              <option value="bad" <%if @dive.visibility == "bad"%>SELECTED<%end%>> <%= it("Bad (under 5m / 15ft)", scope: ['diveinfo', 'editor']) %></option>
+              <option value="average"<%if @dive.visibility == "average"%>SELECTED<%end%> > <%= it("Average (5-10m / 15-30ft)", scope: ['diveinfo', 'editor']) %></option>
+              <option value="good" <%if @dive.visibility == "good"%>SELECTED<%end%>> <%= it("Good (10-25m / 40-75ft)", scope: ['diveinfo', 'editor']) %></option>
+              <option value="excellent"<%if @dive.visibility == "excellent"%>SELECTED<%end%>> <%= it("Excellent (over 25m / 75ft)", scope: ['diveinfo', 'editor']) %></option>
+            </select></p>
+            <p><img src="<%=HtmlHelper.lbroot "/img/water_icon.png"%>" class='icon' alt='#' width="15" height="15"/><strong><%= it("Current:", scope: ['diveinfo', 'editor']) %></strong> <select id="wizard-current" class="editable_input">
+              <option value=""></option>
+              <option value="none" <%if @dive.current == "none"%>SELECTED<%end%>> <%= it("None", scope: ['diveinfo', 'editor']) %> </option>
+              <option value="light"<%if @dive.current == "light"%>SELECTED<%end%>> <%= it("Light (up to 1 knot)", scope: ['diveinfo', 'editor']) %></option>
+              <option value="medium" <%if @dive.current == "medium"%>SELECTED<%end%>> <%= it("Medium (up to 2 knots)", scope: ['diveinfo', 'editor']) %></option>
+              <option value="strong"<%if @dive.current == "strong"%>SELECTED<%end%>> <%= it("Strong (up to 3 knots)", scope: ['diveinfo', 'editor']) %></option>
+              <option value="extreme"<%if @dive.current == "extreme"%>SELECTED<%end%>> <%= it("Extreme (over 3 knots)", scope: ['diveinfo', 'editor']) %></option>
+            </select></p>
+            <p><img src='<%=HtmlHelper.lbroot "/img/mountain_icon.png"%>' class='icon' width='15px' height='15px' alt='^' /><strong><%= it("Altitude:", scope: ['diveinfo', 'editor']) %></strong> <input id="altitude" class="editable_input" type="number" value="<%=(unit_distance(@dive.altitude,false,4).to_f/10).round*10 if @dive.altitude%>" style="width:50px;"/> <%=unit_distance(nil,true);%></p>
+            <p><img src='<%=HtmlHelper.lbroot "/img/water_icon.png"%>' class='icon' width='15px' height='15px' alt='^' /><strong><%= it("Water type:", scope: ['diveinfo', 'editor']) %></strong> <select id="water" class="editable_input" style="width:65px !important;"><option></option><option value="salt" <%if @dive.water=="salt"%>SELECTED<%end%>><%=it('salt', scope: ['globals', 'watertype'])%></option><option value="fresh" <%if @dive.water=="fresh"%>SELECTED<%end%>><%= it("fresh", scope: ['globals', 'watertype']) %></option></select></p>
+            <div class=spacer> </div>
+          </div>
+        </div>
+      </div>
+	    </div>
+    </div>
+
+
+    <div class='main_content_box' style='clear: both'>
+      <h3><%= it("Tanks & gas mix", scope: ['diveinfo', 'editor']) %></h3>
+      <div class="tank_container editable_input">
+        <%@dive.tanks.each_with_index do |tank, idx|%>
+          <%= render :partial => 'tank/wizedit', :locals => {:idx => (idx+1), :tank => tank, :si => @owner.unitSI?}%>
+        <%end%>
+      </div>
+      <button type="button" class="yellow_button" onclick='$(".tank_container").append($("#empty_tank .scuba_tank").clone().show()); renumber_tanks(); return false;' id="add_tank"><%= it("add tank", scope: ['diveinfo', 'editor']) %></button>
+        <div id="empty_tank" style="display:none;">
+        <% new_tank = nil
+          if @owner.unitSI? then
+            new_tank = Tank.new :volume => 12, :p_start => 200, :p_end => 50, :gas => 'air', :material => 'steel', :o2 => 21, :he => 0, :n2 => 79
+          else
+            new_tank = Tank.new :volume => 9.6, :p_start => 206.85, :p_end => 34.5, :gas => 'air', :material => 'aluminium', :o2 => 21, :he => 0, :n2 => 79
+          end
+        %>
+        <%=render :partial => 'tank/wizedit', :locals => {:idx => 1, :tank => new_tank, :si => @owner.unitSI?}%>
+      </div>
+    </div>
+
+
+  </div>
+
+  <div class='tab_panel tab_map'>
+    <%= render :partial => 'diveinfo/location_editor' %>
+  </div>
+
+
+  <div class='tab_panel tab_pictures no_padding'>
+    <div class="main_content_box">
+        <input id="favorite-picture-id" type="hidden" value=""/>
+        <div class="wizard-expl-text"> <label><%= it("Add more public", scope: ['diveinfo', 'editor']) %> <%= it("%{strong:pictures} or %{strong:videos}", scope: ['diveinfo', 'editor'], strong: It.tag("strong", class: "tooltiped-wz", title: it("Supported services : Flickr, Picasa, Facebook, direct url", scope: ['diveinfo', 'editor']), style:"text-decoration: underline;")) %></label></div>
+
+        <div class='wizard-picture-add'>
+          <div class='wizard-picture-dragtxt'><%= it("Drag your pictures or videos here", scope: ['diveinfo', 'editor']) %></div>
+          <div id='wizard_action_picture_list'>
+            <div id='wizard_resize_picture_list' style='display:none'><label><%= it("Resizing:", scope: ['diveinfo', 'editor']) %></label></div>
+            <div id='wizard_upload_picture_list' style='display:none'><label><%= it("Currently uploading:", scope: ['diveinfo', 'editor']) %></label></div>
+            <div id='wizard_cancel_picture_list' style='display:none'><a id='wizard_cancel_picture_link' class='yellow_button'><%= it("Cancel remaining uploads", scope: ['diveinfo', 'editor']) %></a></div>
+          </div>
+          <div class='wizard-picture-prefertxt'><%= it("Or if you prefer...", scope: ['diveinfo', 'editor']) %> </div>
+          <div class='wizard-picture-other'>
+            <div id='wizard_upload_picture_btn'></div>
+            <div class='wizard-picture-other2'><%= it("or", scope: ['diveinfo', 'editor']) %></div>
+            <div class='wizard-picture-other3'><label><%= it("Upload an image from the internet:", scope: ['diveinfo', 'editor']) %></label> <input id="wizard_pict_url" class="wizard_input_100" type="text"/> <a href="#" class="yellow_button" id="wizard_add_pict_button">ADD</a>
+              <p class='wizard-picture-other3-hint'><%= it("(Copy and paste the URL of the image direcly from the navigation bar of your browser)", scope: ['diveinfo', 'editor']) %></p>
+              <p class='wizard-picture-other3-hint diveboard-resizer-selector' style="display:none;">
+                <%= it("Adjust upload quality/speed:", scope: ['diveinfo', 'editor']) %> <br/>
+                <select>
+                  <option value="full"><%= it("original size", scope: ['diveinfo', 'editor']) %></option>
+                  <option value="high"><%= it("resize to 1600x1200: for slower connections", scope: ['diveinfo', 'editor']) %></option>
+                  <option value="low"><%= it("resize to 640x480: for very slow connections", scope: ['diveinfo', 'editor']) %></option>
+                </select>
+              </p>
+            </div>
+          </div>
+          <div class='wizard-picture-notsupported' style='display:none;'><%= it("Your browser does not support %{spanresize:live resizing of pictures}, %{spanmultiple:selection of multiple files}, %{spandrag:Drag'n'Drop to upload files}. Please consider using a fully compatible HTML5 browser like %{linkchrome:Chrome} or %{linkfirefox:Firefox} for a better experience.", scope: ['diveinfo', 'editor'], spanresize: It.tag("span", class: 'wzpic-feature wzpic-feature-resize'), spanmultiple: It.tag("span", class: 'wzpic-feature wzpic-feature-multiple'), spandrag: It.tag("span", class: 'wzpic-feature wzpic-feature-dragdrop'), linkchrome: It.link("http://www.google.com/chrome", target:"_blank"), linkfirefox: It.link("http://www.mozilla.org/firefox", target:"_blank")) %></div>
+        </div>
+
+        <div id='wizard-picture-mode'>
+          <%= it("Gallery display style:", scope: ['diveinfo', 'editor']) %>
+          <div class='toggle_buttons'><div class='toggle_button_left toggle_button_active' id='wizard-picture-toggle-gallery'><%= it("Organize", scope: ['diveinfo', 'editor']) %></div><div class='toggle_button_right' id='wizard-picture-toggle-list'><%= it("Comment & tag", scope: ['diveinfo', 'editor']) %></div></div>
+        </div>
+      <div id='galleria-wizard-container'>
+        <div id='galleria-wizard-bin'>
+          <i><%= it("Drag the images from the gallery and drop them here to remove them from the gallery", scope: ['diveinfo', 'editor']) %></i>
+        </div>
+        <div id="galleria-wizard">
+        </div>
+      </div>
+
+      <div id='wizard-picture-list' class='hidden'>
+      </div>
+
+      <div id='galleria-wizard-loading' style='display:inline-block'>
+        <img src="<%=HtmlHelper.lbroot "/img/transparent_loader_2.gif"%>" height='66px' width='66px' style="margin-left:40%;" alt="#" />
+      </div>
+
+      <div id=cee_wizard class=hidden >
+      </div>
+      <div id=cee_wizard_textnotes class=hidden >
+        <%= it("Title or notes:", scope: ['diveinfo', 'editor']) %>
+      </div>
+      <div id=cee_wizard_texttags class=hidden >
+        <%= it("Species spotted in this picture:", scope: ['diveinfo', 'editor']) %>
+      </div>
+      <div class='hidden'>
+        <div id='wizard-picture-list-model' class='wpl_bloc'>
+          <img class='thumb_img' />
+          <div>
+            <p><%= it("Title or notes:", scope: ['diveinfo', 'editor']) %></p>
+            <textarea class='picture_notes'></textarea>
+            <p><%= it("Species spotted in this picture:", scope: ['diveinfo', 'editor']) %><span class="selected_species"><%= it("None", scope: ['diveinfo', 'editor']) %></span></p>
+            <p class='selected_species_list' data='[]'></p>
+            <p><a href="#" class='picture_minipicker'><%= it("Tag species", scope: ['diveinfo', 'editor']) %></a></p>
+          </div>
+        </div>
+      </div>
+
+      <% available_storage_plans = @owner.available_storage_plans%>
+      <div class='wizard-picture-paypal'><%= it("By default, you can upload directly to Diveboard up to %{size} Mb of pictures or videos per month for free. If you would like to upload more pictures, you can choose to use one of the storage plans below. For this option, the corresponding fee amounts to the cost of the storage of the media along with its thumbnails.", scope: ['diveinfo', 'editor'], size: (Rails.application.config.default_storage_per_month.to_f/1.megabyte).round) %></div>
+      <%if @owner.quota_type == 'per_user' then%><div>
+      <% if @owner.quota_expire.nil? %>
+      <%= it("You have subscribed for %{nb}", scope: ['diveinfo', 'editor'], nb: (@owner.quota_limit.to_f/(1.gigabyte)).round) %>Gb
+      <% else %>
+      <%= it("You have subscribed for %{nb} until the %{expire}", scope: ['diveinfo', 'editor'], nb: (@owner.quota_limit.to_f/(1.gigabyte)).round, expire: @owner.quota_expire) %>
+      <%end%>. <%= it("You are currently using %{nb}Gb.", scope: ['diveinfo', 'editor'], nb: (@owner.storage_used[:dive_pictures].to_f/1.gigabyte).round(2).to_f) %> <%if !@owner.available_discount.nil? && !available_storage_plans.nil? && available_storage_plans.count > 0 then%><%= it("If you upgrade you will get a discount of %{price} USD.", scope: ['diveinfo', 'editor'], price: @owner.available_discount) %><%end%></div><%end%>
+      <div class='paypal_option'>
+      <%if !available_storage_plans.nil? && available_storage_plans.count > 0 then%>
+        <%= it("Upgrade storage:", scope: ['diveinfo', 'editor']) %>
+        <select id='storage_subscribe'>
+          <%available_storage_plans.each do |plan_name, plan|%>
+            <% next if @owner.quota_type == 'per_user' && plan[:quota] <= @owner.quota_limit %>
+            <option value="<%=plan_name%>"><%=(plan[:quota]/1.gigabyte).round%>Gb: <%=plan[:price]%>USD <%=It.it('year', scope: ['units'], count: plan[:duration])%></option>
+          <%end%>
+        </select>
+        Donation: <input type="number" name="Donation" id="storage_subscribe_donation" value="0"><br>
+        <input id='storage_subscribe_action' type="image" src="https://www.paypal.com/<%=if I18n.locale == :fr then 'fr_FR' else 'en_US' end%>/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="<%= It.it("PayPal - The safer, easier way to pay online!", scope: ['diveinfo', 'editor']) %>">
+      <%else%>
+        <%if !@owner.last_storage_payment.nil? && !@owner.last_storage_payment.confirmed? then %>
+          <%= it("A payment is currently being processed. If you still see this message in a few hours, please check your paypal account and contact support.", scope: ['diveinfo', 'editor']) %>
+        <%else%>
+         <%= it("No other storage options are currently available for you. If you would like to change your storage option, please contact support.", scope: ['diveinfo', 'editor']) %>
+        <%end%>
+      <%end%>
+      </div>
+
+
+    </div>
+  </div>
+
+  <div class='tab_panel tab_profile'>
+    <%= render "diveinfo/uploader", :location => :dive %>
+  </div>
+
+	<div class='tab_ppl tab_panel'>
+    <div id='wz_people_dive_shop' class='main_content_box editable_input' style='clear: both'>
+	    <h3><%= it("Dive Center & Logbook signing", scope: ['diveinfo', 'editor']) %></h3>
+      <br/>
+      <%= render :partial => 'diveinfo/shop_selector', :locals => { :diveshop => @dive.diveshop, :guide => @dive.guide, :shop_signature => @dive.shop_signature} %>
+		</div>
+
+		<div class='main_content_box' style='clear: both' id="add_buddy_box">
+	    <h3><%= it("Dive Buddies:", scope: ['diveinfo', 'editor']) %> <span id="buddy_count" class='editable_input'><%if @dive.buddies.count.nil? || @dive.buddies.count ==0 then%> <%= it("none", scope: ['diveinfo', 'editor']) %> <%else%> <%=@dive.buddies.count%> <%end %></span></h3>
+			<%= render :partial => 'diveinfo/buddy_editor', :locals => { :buddies => @dive.buddies} %>
+		</div>
+	</div>
+	
+	<div class='tab_panel tab_species'>
+    <h2><%= it("Search and add marine species to your dive", scope: ['diveinfo', 'editor']) %></h2>
+    <%= render :partial => 'species_picker/species_picker', :locals => {:selection => @dive.species, :lat => @dive.spot.lat, :lng => @dive.spot.lng}%>
+  </div>
+
+	<div class='tab_gear tab_panel'>
+    <%= render :partial => 'diveinfo/gear_editor' %>
+  </div>
+
+  <div class='tab_dan tab_panel'>
+    <div class="main_content_box">
+      <p class='wizard-expl-text'><%= it("The %{link:Project Dive Exploration} is an observational research study designed to %{strong:collect dive profile data} on recreational dives and to compile information on the behavioral and health aspects of divers. Using Dive profiles recorded by dive computers, the study analyzes data for the %{strong}risk of decompression illness}.%{br}
+      You can find more about the project on %{dan:DAN's website}.", scope: ['diveinfo', 'editor'], link: It.link("http://www.diversalertnetwork.org/research/projects/pde/index.asp", target: "_blank"), dan: It.link("http://www.diversalertnetwork.org/research/projects/pde/index.asp", target: "_blank"), strong: It.tag("strong"), br: It.tag("br")) %></p>
+      <a href='http://www.diversalertnetwork.org/' target='_blank' class=dan_icon><img src="<%=HtmlHelper.lbroot "/img/danlogo.png"%>" width='195px' height='60px' /></a>
+      <p class='wizard-expl-text2'><%= it("Dive profile data are of limited value without information about %{strong:the diver and the medical outcome} of the dives. The form below helps DAN to capture this information.", scope: ['diveinfo', 'editor'], strong: It.tag("strong")) %></p>
+      <p class='wizard-expl-text2'><%= it("This information remains %{strong:private} on Diveboard and is only disclosed to DAN for the purpose of this study.", scope: ['diveinfo', 'editor'], strong: It.tag("strong")) %></p>
+      <div class='dan_form_status'>
+        <p class='dan_updating'><%= it("You are editing a form that has already been sent to DAN.", scope: ['diveinfo', 'editor']) %></p>
+        <p class='dan_not_complete dan_progress_bar_p'><%= it("Mandatory field completion rate:", scope: ['diveinfo', 'editor']) %> <div class='dan_not_complete' id="dan_progress_bar"></div> <p class='dan_not_complete dan_progress_bar_p'> <span id='dan_complete_percent'>0</span>%</p>
+        <span class='dan_not_complete'><br/><%= it("Once all mandatory fields are filled-in you will have the ability to send the form to DAN.", scope: ['diveinfo', 'editor']) %></span>
+        <p class='dan_not_complete'><strong><%= it("Missing fields:", scope: ['diveinfo', 'editor']) %></strong></p>
+        <p class='dan_itemize dan_not_complete_tabs_item dan_not_complete_tabs_duration'><%= it("%{u:Dive duration}: please add the duration of the dive on the '%{link:Overview}' tab", scope: ['diveinfo', 'editor'], u: It.tag("u"), link: It.link("#", class: "tab_gear_link", onclick:"show_overview_tab(); return(false);")) %></p>
+        <p class='dan_itemize dan_not_complete_tabs_item dan_not_complete_tabs_gases'><%= it("%{u:Tank used}: please add the type of gas used on the '%{link:Overview}' tab", scope: ['diveinfo', 'editor'], u: It.tag("u"), link: It.link("#", class: "tab_gear_link", onclick:"show_overview_tab(); return(false);")) %></p>
+        <p class='dan_itemize dan_not_complete_tabs_item dan_not_complete_tabs_dress'><%= it("%{u:Kind of suit used}: please add a dive skin, a wet suit or a dry suit item on the '%{link:Gear}' tab", scope: ['diveinfo', 'editor'], u: It.tag("u"), link: It.link("#", class: 'tab_gear_link', onclick: 'show_gear_tab(); return(false);')) %></p>
+        <p class='dan_itemize dan_not_complete_form'><u><span id="dan_complete_missing" ></span></u>: <%= it("missing in the form below", scope: ['diveinfo', 'editor']) %></p>
+        <p class=hidden><%= it("From other tabs but not mandatory: visibility and current, apparatus", scope: ['diveinfo', 'editor']) %></p>
+        <p class='dan_complete'><input type="checkbox" id='send_to_dan' /> <%= it("Send this form to DAN when saving this dive", scope: ['diveinfo', 'editor']) %></p>
+        <p class='dan_complete_hero'><%= it("You are a super-hero! You completed all the fields! Congratulations!", scope: ['diveinfo', 'editor']) %></p>
+        <p class='dan_sent'><%= it("The data for this dive has been sent to DAN. Thanks for your cooperation!", scope: ['diveinfo', 'editor']) %><br/><a href='#' class='yellow_button' id='dan_allow_update'><%= it("Let me update this form", scope: ['diveinfo', 'editor']) %></a></p>
+        <p class='dan_updating dan_reset'><a class='yellow_button' href='#' id='dan_reset_update'><%= it("Reset data to the previous values sent to DAN", scope: ['diveinfo', 'editor']) %></a></p>
+      </div>
+      <div class='dan_form'>
+        <h3><%= it("Specific information on the dive", scope: ['diveinfo', 'editor']) %></h3>
+
+        <div class='dan_form_dive'>
+
+          <h4><%= it("Before the dive", scope: ['diveinfo', 'editor']) %></h4>
+          <ul>
+            <li>
+              <span class='dan_question'><%= it("How did you plan the dive?", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_required'>(required)</span>
+              <span class='dan_answer'><select name='dive_plan' class='editable_input dan_field dan_noempty dan_hero'>
+                <option value=''></option>
+                <option value='1'><%= it("None", scope: ['diveinfo', 'editor']) %></option>
+                <option value='2'><%= it("Table", scope: ['diveinfo', 'editor']) %></option>
+                <option value='3'><%= it("Computer", scope: ['diveinfo', 'editor']) %></option>
+                <option value='4'><%= it("Another diver", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Dive table used for planning", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><select name='dive_plan_table' class='editable_input dan_field'>
+                <option value=''></option>
+                <option value='1'><%= it("PADI", scope: ['diveinfo', 'editor']) %></option>
+                <option value='2'><%= it("NAUI", scope: ['diveinfo', 'editor']) %></option>
+                <option value='3'><%= it("BSAC", scope: ['diveinfo', 'editor']) %></option>
+                <option value='4'><%= it("Buehlman", scope: ['diveinfo', 'editor']) %></option>
+                <option value='5'><%= it("DCIEM", scope: ['diveinfo', 'editor']) %></option>
+                <option value='6'><%= it("US Navy", scope: ['diveinfo', 'editor']) %></option>
+                <option value='7'><%= it("CSMD", scope: ['diveinfo', 'editor']) %></option>
+                <option value='8'><%= it("COMEX", scope: ['diveinfo', 'editor']) %></option>
+                <option value='9'><%= it("MN90", scope: ['diveinfo', 'editor']) %></option>
+                <option value='9'><%= it("Other", scope: ['diveinfo', 'editor']) %></option>
+                <option value='10'><%= it("None", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("State of rest before the dive", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><select name='rest' class='editable_input dan_field dan_hero'>
+                <option value=''></option>
+                <option value='1'><%= it("Rested", scope: ['diveinfo', 'editor']) %></option>
+                <option value='2'><%= it("Tired", scope: ['diveinfo', 'editor']) %></option>
+                <option value='3'><%= it("Exhausted", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Number of alcoholic drinks before dive", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input type=number name='drinks' min=0 class='editable_input dan_field dan_hero'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Exercise before the dive", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><select name='exercice' class='editable_input dan_field'>
+                <option value=''></option>
+                <option value='1'><%= it("None", scope: ['diveinfo', 'editor']) %></option>
+                <option value='2'><%= it("Light", scope: ['diveinfo', 'editor']) %></option>
+                <option value='3'><%= it("Moderate", scope: ['diveinfo', 'editor']) %></option>
+                <option value='4'><%= it("Severe", scope: ['diveinfo', 'editor']) %></option>
+                <option value='5'><%= it("Exhausting", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+            <li>
+              <span class='dan_question_large'><%= it("Medication taken before dive", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><textarea name='med_dive' class='editable_input dan_field'></textarea>
+              <span class='dan_help tooltiped-wz' title='<%= it("Use a separate line for each medication", scope: ['diveinfo', 'editor']) %>'>?</span></span>
+            </li>
+            </ul>
+            <h4><%= it("During the dive", scope: ['diveinfo', 'editor']) %></h4>
+            <ul>
+            <li>
+              <span class='dan_question'><%= it("Purpose for this dive", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><select name='purpose' class='editable_input dan_field dan_hero'>
+                <option value=''></option>
+                <option value='1'><%= it("Sightseeing", scope: ['diveinfo', 'editor']) %></option>
+                <option value='2'><%= it("Learning", scope: ['diveinfo', 'editor']) %></option>
+                <option value='3'><%= it("Teaching", scope: ['diveinfo', 'editor']) %></option>
+                <option value='4'><%= it("Research", scope: ['diveinfo', 'editor']) %></option>
+                <option value='5'><%= it("Photography", scope: ['diveinfo', 'editor']) %></option>
+                <option value='6'><%= it("Spearfishing", scope: ['diveinfo', 'editor']) %></option>
+                <option value='7'><%= it("Proficiency", scope: ['diveinfo', 'editor']) %></option>
+                <option value='8'><%= it("Work", scope: ['diveinfo', 'editor']) %></option>
+                <option value='9'><%= it("Other", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Program", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><select name='program' class='editable_input dan_field dan_hero'>
+                <option value=''></option>
+                <option value='1'><%= it("Recreation", scope: ['diveinfo', 'editor']) %></option>
+                <option value='2'><%= it("Training", scope: ['diveinfo', 'editor']) %></option>
+                <option value='3'><%= it("Scientific", scope: ['diveinfo', 'editor']) %></option>
+                <option value='4'><%= it("Medical", scope: ['diveinfo', 'editor']) %></option>
+                <option value='5'><%= it("Commercial", scope: ['diveinfo', 'editor']) %></option>
+                <option value='6'><%= it("Military", scope: ['diveinfo', 'editor']) %></option>
+                <option value='7'><%= it("Competitive", scope: ['diveinfo', 'editor']) %></option>
+                <option value='8'><%= it("Other", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Environment", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_required'><%= it("(required)", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><select name='environment' class='editable_input dan_field dan_noempty dan_hero'>
+                <option value=''></option>
+                <option value='1'><%= it("Ocean / Sea", scope: ['diveinfo', 'editor']) %></option>
+                <option value='2'><%= it("Lake / Quarry", scope: ['diveinfo', 'editor']) %></option>
+                <option value='3'><%= it("River / Spring", scope: ['diveinfo', 'editor']) %></option>
+                <option value='4'><%= it("Cave / Cavern", scope: ['diveinfo', 'editor']) %></option>
+                <option value='5'><%= it("Pool", scope: ['diveinfo', 'editor']) %></option>
+                <option value='6'><%= it("Chamber", scope: ['diveinfo', 'editor']) %></option>
+                <option value='7'><%= it("Under Ice", scope: ['diveinfo', 'editor']) %></option>
+                <option value='8'><%= it("Other", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Platform", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_required'><%= it("(required)", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><select name='platform' class='editable_input dan_field dan_noempty dan_hero'>
+                <option value=''></option>
+                <option value='1'><%= it("Beach / Shore", scope: ['diveinfo', 'editor']) %></option>
+                <option value='2'><%= it("Pier", scope: ['diveinfo', 'editor']) %></option>
+                <option value='3'><%= it("Small boat", scope: ['diveinfo', 'editor']) %></option>
+                <option value='4'><%= it("Charter boat", scope: ['diveinfo', 'editor']) %></option>
+                <option value='5'><%= it("Live-aboard", scope: ['diveinfo', 'editor']) %></option>
+                <option value='6'><%= it("Barge", scope: ['diveinfo', 'editor']) %></option>
+                <option value='7'><%= it("Landside", scope: ['diveinfo', 'editor']) %></option>
+                <option value='8'><%= it("Hyperbaric facility", scope: ['diveinfo', 'editor']) %></option>
+                <option value='9'><%= it("Other", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Thermal Comfort", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_required'><%= it("(required)", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><select name='thermal_confort' class='editable_input dan_field dan_noempty dan_hero'>
+                <option value=''></option>
+                <option value='1'><%= it("Comfortable", scope: ['diveinfo', 'editor']) %></option>
+                <option value='2'><%= it("Cold", scope: ['diveinfo', 'editor']) %></option>
+                <option value='3'><%= it("Very cold", scope: ['diveinfo', 'editor']) %></option>
+                <option value='4'><%= it("Hot", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Workload during the dive", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_required'><%= it("(required)", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><select name='workload' class='editable_input dan_field dan_noempty dan_hero'>
+                <option value=''></option>
+                <option value='1'><%= it("Resting", scope: ['diveinfo', 'editor']) %></option>
+                <option value='2'><%= it("Light", scope: ['diveinfo', 'editor']) %></option>
+                <option value='3'><%= it("Moderate", scope: ['diveinfo', 'editor']) %></option>
+                <option value='4'><%= it("Severe", scope: ['diveinfo', 'editor']) %></option>
+                <option value='5'><%= it("Exhausting", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Decompression", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_required'><%= it("(required)", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><select name='decompression' class='editable_input dan_field dan_noempty dan_hero'>
+                <option value=''></option>
+                <option value='1'><%= it("Safety stops", scope: ['diveinfo', 'editor']) %></option>
+                <option value='2'><%= it("In water", scope: ['diveinfo', 'editor']) %></option>
+                <option value='3'><%= it("In chamber", scope: ['diveinfo', 'editor']) %></option>
+                <option value='4'><%= it("Other", scope: ['diveinfo', 'editor']) %></option>
+                <option value='5'><%= it("None", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Problem that occured during the dive", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_required'><%= it("(required)", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><select name='problems' class='editable_input dan_field dan_noempty dan_hero'>
+                <option value=''></option>
+                <option value='10'><%= it("None", scope: ['diveinfo', 'editor']) %></option>
+                <option value='1'><%= it("Equalization", scope: ['diveinfo', 'editor']) %></option>
+                <option value='2'><%= it("Vertigo", scope: ['diveinfo', 'editor']) %></option>
+                <option value='3'><%= it("Out of air", scope: ['diveinfo', 'editor']) %></option>
+                <option value='4'><%= it("Buoyancy", scope: ['diveinfo', 'editor']) %></option>
+                <option value='5'><%= it("Shared air", scope: ['diveinfo', 'editor']) %></option>
+                <option value='6'><%= it("Rapid ascent", scope: ['diveinfo', 'editor']) %></option>
+                <option value='7'><%= it("Sea sickness", scope: ['diveinfo', 'editor']) %></option>
+                <option value='9'><%= it("Other", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Equipment Malfunction", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_required'><%= it("(required)", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><select name='malfunction' class='editable_input dan_field dan_noempty dan_hero'>
+                <option value=''></option>
+                <option value='10'><%= it("None", scope: ['diveinfo', 'editor']) %></option>
+                <option value='1'><%= it("Face mask", scope: ['diveinfo', 'editor']) %></option>
+                <option value='2'><%= it("Fins", scope: ['diveinfo', 'editor']) %></option>
+                <option value='3'><%= it("Weight belt", scope: ['diveinfo', 'editor']) %></option>
+                <option value='4'><%= it("BC", scope: ['diveinfo', 'editor']) %></option>
+                <option value='5'><%= it("Thermal protection", scope: ['diveinfo', 'editor']) %></option>
+                <option value='6'><%= it("Dive computer", scope: ['diveinfo', 'editor']) %></option>
+                <option value='7'><%= it("Depth gauge", scope: ['diveinfo', 'editor']) %></option>
+                <option value='8'><%= it("Pressure gauge", scope: ['diveinfo', 'editor']) %></option>
+                <option value='9'><%= it("Breathing apparatus", scope: ['diveinfo', 'editor']) %></option>
+                <option value='11'><%= it("Other", scope: ['diveinfo', 'editor']) %></option>
+                <option value='12'><%= it("Deco reel", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+            </ul>
+            <h4><%= it("Within 48hrs after the dive", scope: ['diveinfo', 'editor']) %></h4>
+            <ul>
+            <li>
+              <span class='dan_question'><%= it("Did you perceive any symptoms?", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_required'><%= it("(required)", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><select name='symptoms' class='editable_input dan_field dan_noempty dan_hero'>
+                <option value=''></option>
+                <option value='2'><%= it("No", scope: ['diveinfo', 'editor']) %></option>
+                <option value='1'><%= it("Yes", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+            <li>
+              <span class='dan_question_large'><%= it("Comments", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><textarea name='comments' class='editable_input dan_field'></textarea></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Exposure to Altitude", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_required'><%= it("(required)", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><select name='altitude_exposure' class='editable_input dan_field dan_noempty dan_hero'>
+                <option value=''></option>
+                <option value='6'><%= it("None", scope: ['diveinfo', 'editor']) %></option>
+                <option value='1'><%= it("Commercial aircraft", scope: ['diveinfo', 'editor']) %></option>
+                <option value='2'><%= it("Unpressurized aircraft", scope: ['diveinfo', 'editor']) %></option>
+                <option value='3'><%= it("MedEvac aircraft", scope: ['diveinfo', 'editor']) %></option>
+                <option value='4'><%= it("Ground transportation", scope: ['diveinfo', 'editor']) %></option>
+                <option value='5'><%= it("Helicopter", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Surface interval before altitude exposure", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input type=number name='altitude_interval' min=0 class='editable_input dan_field'/> hrs</span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Date of flight", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='altitude_date' class='editable_input dan_field dan_date'/>
+              <span class='dan_help tooltiped-wz' title='<%= it("Format : YYYYMMDD", scope: ['diveinfo', 'editor']) %>'>?</span></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Total length of exposure", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input type=number name='altitude_length' min=0 class='editable_input dan_field'/> hrs</span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Altitude of exposure", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input type=number name='altitude_value' min=0 class='editable_input dan_field'/> ft</span><!-- this field must be in feet for DAN export-->
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Were you treated in hyperbaric chamber?", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><select name='hyperbar' class='editable_input dan_field dan_hero'>
+                <option value=''></option>
+                <option value='2'><%= it("No", scope: ['diveinfo', 'editor']) %></option>
+                <option value='1'><%= it("Yes", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+            <li>
+              <span class='dan_question_large'><%= it("Name and location of chamber", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><textarea name='hyperbar_location' class='editable_input dan_field'></textarea></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Number of recompression treatments", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input type=number name='hyperbar_number' min=0 class='editable_input dan_field'/> hrs</span>
+            </li>
+          </ul>
+        </div>
+
+        <h3><%= it("General information on the diver", scope: ['diveinfo', 'editor']) %></h3>
+        <p class=dan_note_prefill><strong><%= it("Note: ", scope: ['diveinfo', 'editor']) %></strong><%= it("you should have to fill in this part of the form %{strong:only once}. Once you have done it once, this part will be automatically pre-filled with your answers.", scope: ['diveinfo', 'editor'], strong: It.tag("strong")) %></p>
+        <!--
+        <div id=dan_general_passwd>
+          <p><%= it("To protect your privacy, the content of this form is stored encrypted. Please enter your password to fill in this part of the form.", scope: ['diveinfo', 'editor']) %></p>
+          <p><%= it("PIN code (4 digits):", scope: ['diveinfo', 'editor']) %> <input type=password /></p>
+          <p><%= it("Please note that the data cannot be retrieved if you lost your password. If you cannot remember your password, your only option is to %{link:TODO: reset the defaults for this form}", scope: ['diveinfo', 'editor'], link: It.link("#")) %></p>
+        </div>
+        -->
+        <div class=dan_form_diver >
+          <h4><%= it("Diver identification", scope: ['diveinfo', 'editor']) %></h3>
+          <ul>
+            <li>
+              <span class='dan_question'><%= it("DAN Project Dive Exploration ID", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='dan_pde_id' class='editable_input dan_field dan_hero'/>
+              <span class='dan_help tooltiped-wz' title='<%= it("This ID can be retrieved at http://www.diversalertnetwork.org/research/projects/pde/index.asp", scope: ['diveinfo', 'editor']) %>'><a href='http://www.diversalertnetwork.org/research/projects/pde/index.asp' target='_blank'>?</a></span></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("DAN member ID", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='dan_id' class='editable_input dan_field'/>
+              <span class='dan_help tooltiped-wz' title='<%= it("If you have subscribed to an insurance with DAN", scope: ['diveinfo', 'editor']) %>'>?</span></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Family name", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_required'><%= it("(required)", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='name' class='editable_input dan_combo_field dan_noempty dan_hero'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Given name", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_required'><%= it("(required)", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='name' class='editable_input dan_combo_field dan_noempty dan_hero'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Middle name", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='name' class='editable_input dan_combo_field'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Suffix", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='name' class='editable_input dan_combo_field'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Prefix", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='name' class='editable_input dan_combo_field'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Degree", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='name' class='editable_input dan_combo_field'/>
+              <span class='dan_help tooltiped-wz' title='<%= it("If the degree is appended to the name (e.g. MD, PhD)", scope: ['diveinfo', 'editor']) %>'>?</span></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Alias", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='alias' class='editable_input dan_field'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Mother's maiden name", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='mother' class='editable_input dan_field dan_hero'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Sex", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_required'><%= it("(required)", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><select name='sex' class='editable_input dan_field dan_noempty dan_hero'>
+                <option value=''></option>
+                <option value='1'><%= it("Female", scope: ['diveinfo', 'editor']) %></option>
+                <option value='2'><%= it("Male", scope: ['diveinfo', 'editor']) %></option>
+                <option value='3'><%= it("Other", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Date of birth", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_required'><%= it("(required)", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='birthday' class='editable_input dan_field dan_noempty dan_hero dan_date'/>
+              <span class='dan_help tooltiped-wz' title='<%= it("Format : YYYYMMDD", scope: ['diveinfo', 'editor']) %>'>?</span></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Birthplace city", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='birthplace' class='editable_input dan_combo_field dan_hero'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Birthplace region", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='birthplace' class='editable_input dan_combo_field dan_hero'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Birthplace country", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='birthplace' class='editable_input dan_combo_field dan_hero'/></span>
+            </li>
+          </ul>
+          <h4><%= it("Contact information", scope: ['diveinfo', 'editor']) %></h4>
+          <ul>
+            <li>
+              <span class='dan_question'><%= it("Street address", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='address' class='editable_input dan_combo_field dan_hero'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Address complement", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='address' class='editable_input dan_combo_field'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("City", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='address' class='editable_input dan_combo_field dan_hero'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("State", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='address' class='editable_input dan_combo_field dan_hero'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("ZIP code", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='address' class='editable_input dan_combo_field dan_hero'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Country", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='address' class='editable_input dan_combo_field dan_hero'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Phone number (home)", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_required'><%= it("(required)", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><span style='width:10px; display:inline-block; text-align:center'>+</span><input name='phone_home' class='editable_input dan_combo_field dan_noempty dan_hero' style='width: 25px'/><span style='width:10px;display:inline-block; text-align:center;'> - </span><input name='phone_home' class='editable_input dan_combo_field dan_noempty dan_hero' style='width: 151px'/>
+              <span class='dan_help tooltiped-wz' title='<%= it("International format, with the country code in the first field.%{br}E.g. + 1 - 1234567890", scope: ['diveinfo', 'editor'], br: It.tag("br")) %>'>?</span></span>
+            </li>
+            <li>
+              <span class='dan_question'>Phone number (work)</span>
+              <span class='dan_answer'><span style='width:10px; display:inline-block; text-align:center'>+</span><input name='phone_work' class='editable_input dan_combo_field' style='width: 25px'/><span style='width:10px;display:inline-block; text-align:center;'> - </span><input name='phone_work' class='editable_input dan_combo_field' style='width: 151px'/>
+              <span class='dan_help tooltiped-wz' title='<%= it("International format, with the country code in the first field.%{br}E.g. + 1 - 1234567890", scope: ['diveinfo', 'editor'], br: It.tag("br")) %>'>?</span></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Email", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='email' class='editable_input dan_field dan_hero'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Primary language", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='language' class='editable_input dan_field dan_hero'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Citizenship", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='citizenship' class='editable_input dan_field dan_hero'/></span>
+            </li>
+          </ul>
+          <h4><%= it("Diving Experience", scope: ['diveinfo', 'editor']) %></h4>
+          <ul>
+            <li>
+              <span class='dan_question'><%= it("Diving license number", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='license' class='editable_input dan_combo_field dan_hero'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Diving license issuing agency", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='license' class='editable_input dan_combo_field dan_hero'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("First date of certification", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input name='first_certif' class='editable_input dan_field dan_hero dan_date'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Certification level", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><select name='certif_level' class='editable_input dan_field dan_hero'>
+                <option value=''></option>
+                <option value='1'><%= it("Student", scope: ['diveinfo', 'editor']) %></option>
+                <option value='2'><%= it("Basic", scope: ['diveinfo', 'editor']) %></option>
+                <option value='3'><%= it("Advanced/Specialty", scope: ['diveinfo', 'editor']) %></option>
+                <option value='4'><%= it("Rescue", scope: ['diveinfo', 'editor']) %></option>
+                <option value='5'><%= it("Dive Master", scope: ['diveinfo', 'editor']) %></option>
+                <option value='6'><%= it("Instructor", scope: ['diveinfo', 'editor']) %></option>
+                <option value='7'><%= it("Technical/Cave/Deep diving", scope: ['diveinfo', 'editor']) %></option>
+                <option value='8'><%= it("Scientific", scope: ['diveinfo', 'editor']) %></option>
+                <option value='9'><%= it("Commercial", scope: ['diveinfo', 'editor']) %></option>
+                <option value='10'><%= it("Military", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Approximate number of dives in the last 12 months", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_required'><%= Dive.where(:user_id => @owner.id).where('time_in > DATE_SUB(NOW(), INTERVAL 1 YEAR)').count %> dives logged</span>
+              <span class='dan_answer'><input type=number name='dives_12m' min=0 class='editable_input dan_field dan_hero'/></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Approximate number of dives in the last 5 years", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_required'><%= Dive.where(:user_id => @owner.id).where('time_in > DATE_SUB(NOW(), INTERVAL 5 YEAR)').count %> dives logged</span>
+              <span class='dan_answer'><input type=number name='dives_5y' min=0 class='editable_input dan_field dan_hero'/></span>
+            </li>
+            <h4><%= it("General medical condition", scope: ['diveinfo', 'editor']) %></h4>
+            <li>
+              <span class='dan_question'><%= it("Weight", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_required'><%= it("(required)", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input type=number name='weight' min=0 class='editable_input dan_combo_field dan_noempty dan_hero'/>
+              <select name='weight' class='editable_input dan_combo_field dan_noempty dan_hero'>
+                <option value=1 ><%= it("lb", scope: ['diveinfo', 'editor']) %></option>
+                <option value=2 <%if !@owner.nil? && @owner.preferred_units['weight'] == 'kg'%>selected<%end%> ><%= it("kg", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Height", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_required'><%= it("(required)", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><input type=number name='height' min=0 class='editable_input dan_combo_field dan_noempty dan_hero'/>
+              <select name='height' class='editable_input dan_combo_field dan_noempty dan_hero'>
+                <option value=1 ><%= it("in", scope: ['diveinfo', 'editor']) %></option>
+                <option value=2 <%if !@owner.nil? && @owner.preferred_units['distance'] == 'm'%>selected<%end%> ><%= it("cm", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+              </span>
+            </li>
+            <li>
+              <span class='dan_question_large'><%= it("Medical conditions", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><textarea name='conditions' class='editable_input dan_field'></textarea>
+              <span class='dan_help tooltiped-wz' title='<%= it("Use a separate line for each condition", scope: ['diveinfo', 'editor']) %>'>?</span></span>
+            </li>
+            <li>
+              <span class='dan_question_large'><%= it("Medications", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><textarea name='medications' class='editable_input dan_field'></textarea>
+              <span class='dan_help tooltiped-wz' title='<%= it("Use a separate line for each medication", scope: ['diveinfo', 'editor']) %>'>?</span></span>
+            </li>
+            <li>
+              <span class='dan_question'><%= it("Smoking Cigarette", scope: ['diveinfo', 'editor']) %></span>
+              <span class='dan_answer'><select name='cigarette' class='editable_input dan_field dan_hero'>
+                <option value=''></option>
+                <option value='2'><%= it("No", scope: ['diveinfo', 'editor']) %></option>
+                <option value='1'><%= it("Yes", scope: ['diveinfo', 'editor']) %></option>
+              </select></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+</div>
+
+<!-- modal window junk for wizard -->
+
+
+<div id="dialog-resize-picture" title="<%= it("Uploading pictures", scope: ['diveinfo', 'editor']) %>" style="display:none;">
+  <p><span class="ui-icon ui-icon-search" style="float:left; margin:0 7px 20px 0;"></span><%= it("Diveboard allows you to automatically resize your pictures before uploading them. Using a lower level of quality will quicken the upload process. The 640x480 is suggested for web browsing, while higher resolution would allow viewing perfectly the picture in fullscreen.", scope: ['diveinfo', 'editor']) %></p>
+  <p><%= it("Note that currently resizing your picture will scrap the EXIF data. To keep them choose the \"Full Quality\" upload.", scope: ['diveinfo', 'editor']) %></p>
+  <p><%= it("What level of detail would you like to use?", scope: ['diveinfo', 'editor']) %></p>
+</div>

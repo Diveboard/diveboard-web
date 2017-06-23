@@ -1,0 +1,493 @@
+ <%
+
+  case status
+  when :not_needed
+    shown = false
+    dismiss = true
+    tab = :sign_up
+    autoshow = false
+  when :ask_once
+    if cookies[:signup_dismiss].nil?
+      shown = true
+    else
+      shown = false
+    end
+    dismiss = true
+    tab = :sign_up
+    autoshow = false
+  when :force_signup
+    shown = true
+    dismiss = false
+    tab = :sign_up
+    autoshow = true
+  when :force_private, :force_login
+    shown = true
+    dismiss = false
+    tab = :login
+    autoshow = true
+  when :prompt_login
+    shown = true
+    dismiss = true
+    tab = :login
+    autoshow = true
+  when :force_count
+    shown = false
+    dismiss = true
+    tab = :sign_up
+    autoshow = true
+  else
+    shown = false
+    dismiss = true
+    tab = :sign_up
+    autoshow = false
+  end
+
+  %>
+<div id="sign_up_popup" <%if !shown then%> style="display: none;"<%end%> class="<%=status.to_s%>" <%if !local_assigns[:redirect_to].blank?%>data-redirect_to='<%=redirect_to%>'<%end%> >
+  <div class='frame'>
+  <p class="signup_close" <%if !dismiss%> style="display: none;"<%end%> >
+    <a href="#">'</a>
+  </p>
+  <center>
+    <img src="/img/embed/header/logo_black.png" class="logo"/>
+    <%if status == :force_private %>
+    <p class="title"><%= it("Private section%{br}Please sign-in", scope: ['login', 'sign_up_popup'], br: It.tag('br')) %></p>
+    <%else%>
+    <p class="title"><%= it("Discover how the world is diving", scope: ['login', 'sign_up_popup']) %></p> 
+    <%end%>
+    <div class="fields anchor">
+
+      <div class="signup big fields_content <%if tab == :sign_up%>active<%end%>" >
+        <p class="subtitle"><%= it("The largest resource for everything scuba", scope: ['login', 'sign_up_popup']) %></p>
+        <p class="anchor">
+          <input type="email" name="sign_up_email" class="sign_up_email_register_first" placeholder="<%=it("Your email", scope: ['login', 'sign_up_popup'])%>"/>
+        </p>
+        <p class="anchor">
+          <button class="yellow_flat_button big_sign_up enter_key"><%= it("Sign-up", scope: ['login', 'sign_up_popup']) %></button>
+        </p>
+        <div class="facebook_flat_button"><%= it("%{b:Sign-Up} WITH FACEBOOK", scope: ['login', 'sign_up_popup'], b: It.tag("b")) %></div>
+        <p class="footer"><%= it("Already a member ?", scope: ['login', 'sign_up_popup']) %> <a href="#" class="already_member"><%= it("Sign in", scope: ['login', 'sign_up_popup']) %></a></p>
+      </div>
+
+
+      <div class="login small fields_content login_popup <%if tab == :login%>active<%end%>">
+        <!-- Our dummy iframe where the form submits to -->
+        <iframe src="/empty.html" name="dummy" style="display: none"></iframe>
+        <form class="login_form" name="login_form" action="" method="post">
+          <p class="anchor">
+            <input type="email" class="user_email" name="sign_in_login" placeholder="<%=it("Your email", scope: ['login', 'sign_up_popup'])%>" />
+            <span class="error_message">
+              <span class="nosuch_email"><%= it("unknown", scope: ['login', 'sign_up_popup']) %></span>
+            </span>
+          </p>
+          <p class="anchor">
+            <input type="password" class="user_password" name="sign_in_password" placeholder="<%=it("Password", scope: ['login', 'sign_up_popup'])%>"/>
+            <span class="error_message">
+              <span class="bad_password"><%= it("incorrect", scope: ['login', 'sign_up_popup']) %></span>
+            </span>
+          </p>
+          <p class="anchor keepsign">
+            <input type="checkbox" class="token" name="sign_in_keep_signed" checked='true' />
+            <label><%= it("Keep me signed in", scope: ['login', 'sign_up_popup']) %></label>
+          </p>
+        </form>
+        <p class="anchor">
+          <button class="yellow_flat_button enter_key" onclick="signup_attempt_login($(this));"><%= it("Login", scope: ['login', 'sign_up_popup']) %></button>
+        </p>
+        <div class="facebook_flat_button"><%= it("%{b:Login} WITH FACEBOOK", scope: ['login', 'sign_up_popup'], b: It.tag("b")) %></div>
+        <p class="footer"><%= it("Need an account?", scope: ['login', 'sign_up_popup']) %> <a href="#" class="need_register"><%= it("Register", scope: ['login', 'sign_up_popup']) %></a> -<wbr/> <%= it("Lost password?", scope: ['login', 'sign_up_popup']) %> <a href="#" class="need_reset"><%= it("Reset", scope: ['login', 'sign_up_popup']) %></a></p>
+      </div>
+
+
+      <div class="reset small fields_content <%if tab == :recover%>active<%end%>">
+        <p class="anchor"><%= it("Did you loose your password? Type in your email and we'll send you a link to recover it", scope: ['login', 'sign_up_popup']) %></p>
+        <p class="anchor email_reset_field">
+          <input type="email" class="user_email" name="reset_login" placeholder="<%=it("Your email", scope: ['login', 'sign_up_popup'])%>" />
+          <span class="error_message">
+            <span class="email_ill"><%= it("bad format", scope: ['login', 'sign_up_popup']) %></span>
+            <span class="email_missing"><%= it("required", scope: ['login', 'sign_up_popup']) %></span>
+            <span class="email_unknown"><%= it("no such user", scope: ['login', 'sign_up_popup']) %></span>
+          </span>
+        </p>
+        <p class="email_reset_confirm">
+          <%= it("SUCCESS", scope: ['login', 'sign_up_popup']) %><br/><%= it("An email has been sent to you with a reset link", scope: ['login', 'sign_up_popup']) %>
+        </p>
+        <p class="anchor email_reset_button" style="margin-top: 10px;">
+          <button class="yellow_flat_button enter_key" onclick="reset_password();"><%= it("Reset", scope: ['login', 'sign_up_popup']) %></button>
+        </p>
+        <p class="footer"><%= it("Need an account?", scope: ['login', 'sign_up_popup']) %> <a href="#" class="need_register"><%= it("Register", scope: ['login', 'sign_up_popup']) %></a> -<wbr/> <%= it("Got your pwd?", scope: ['login', 'sign_up_popup']) %> <a href="#" class="already_member"><%= it("Login", scope: ['login', 'sign_up_popup']) %></a></p>
+      </div>
+
+
+      <div class="register small fields_content <%if tab == :sign_up_full%>active<%end%>">
+        <p class="anchor">
+          <input type="email" class="user_email_register" name="sign_up_login" placeholder="<%=it("Your email", scope: ['login', 'sign_up_popup'])%>" />
+          <span class="error_message">
+            <span class="missing_email"><%= it("required", scope: ['login', 'sign_up_popup']) %></span>
+            <span class="email_used"><%= it("unavailable", scope: ['login', 'sign_up_popup']) %></span>
+            <span class="email_ill"><%= it("bad format", scope: ['login', 'sign_up_popup']) %></span>
+          </span>
+        </p>
+        <p class="anchor">
+          <input type="text" name="sign_up_nickname" placeholder="<%=it("Nickname", scope: ['login', 'sign_up_popup'])%>" />
+          <span class="error_message">
+            <span class="missing_nickname"><%= it("required", scope: ['login', 'sign_up_popup']) %></span>
+            <span class="nickname_length"><%= it("too_short", scope: ['login', 'sign_up_popup']) %></span>
+          </span>
+        </p>
+        <p class="anchor">
+          <input type="password" name="sign_up_password" placeholder="<%=it("Password", scope: ['login', 'sign_up_popup'])%>" />
+          <span class="error_message">
+            <span class="password_length"><%= it("too_short", scope: ['login', 'sign_up_popup']) %></span>
+            <span class="missing_password"><%= it("required", scope: ['login', 'sign_up_popup']) %></span>
+          </span>
+        </p>
+        <p class="anchor" style="margin-top: 10px;">
+          <button class="yellow_flat_button enter_key" onclick="signup_register_email();"><%= it("Sign-up", scope: ['login', 'sign_up_popup']) %></button>
+        </p>
+        <div class="facebook_flat_button"><%= it("%{b:Login} WITH FACEBOOK", scope: ['login', 'sign_up_popup'], b: It.tag("b")) %></div>
+        <p class="footer"><%= it("Already a member ?", scope: ['login', 'sign_up_popup']) %> <a href="#" class="already_member"><%= it("Sign-in", scope: ['login', 'sign_up_popup']) %></a> -<wbr/> <%= it("Lost password?", scope: ['login', 'sign_up_popup']) %> <a href="#" class="need_reset"><%= it("Reset", scope: ['login', 'sign_up_popup']) %></a></p>
+      </div>
+    </div>
+  </center>
+  </div>
+  <div class="sign_up_popup_mask"></div>
+
+</div>
+<script type="text/javascript">
+
+var signup_popup_status_max = <%= @signup_popup_status_max || "null" %>;
+
+diveboard.sign_up = {};
+diveboard.sign_up.slide_fields = function(selector){
+  $("#sign_up_popup .active").addClass("slide_in");
+  $("#sign_up_popup "+selector).addClass("slide_in");
+}
+diveboard.sign_up.slideback_fields = function(selector){
+  $("#sign_up_popup .active").addClass("slide_back");
+  $("#sign_up_popup "+selector).addClass("left").addClass("slide_back");
+}
+diveboard.sign_up.show = function(tab, callback){
+  //shows the popup and does callback at the end
+  $("#sign_up_popup .active").removeClass("active");
+  $("#sign_up_popup .login").addClass("active");
+  $("#sign_up_popup").show();
+  $("#sign_up_popup .signup_close").show();
+
+}
+
+$(document).ready(function(e){
+
+  $(".fields_content").bind("transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd", function(e){
+    //console.log("transform");
+    t = $(e.target);
+    if (t.hasClass('active')){
+      t.removeClass("active").removeClass("slide_in");
+    }else{
+      t.addClass("active").removeClass("slide_in");
+    }
+
+
+  });
+
+  $(".facebook_flat_button").click(function(e){
+    e.preventDefault();
+    attempt_facebook_login();
+  })
+
+  $("#sign_up_popup .already_member").click(function(e){
+    e.preventDefault();
+    diveboard.sign_up.slide_fields(".login");
+  });
+  $("#sign_up_popup .need_register").click(function(e){
+    e.preventDefault();
+    diveboard.sign_up.slide_fields(".register");
+  });
+
+  $("#sign_up_popup .need_reset").click(function(e){
+    e.preventDefault();
+    diveboard.sign_up.slide_fields(".reset");
+  });
+
+  $("#sign_up_popup input").on("focusout", function(e){
+    e.preventDefault();
+    if(e.target.value == ''){
+      e.target.value = e.target.defaultValue;
+      e.target.type = 'text';
+    }
+    //console.log("focusout");
+    if($(e.target).hasClass("user_email_register")){
+      signup_check_login_email($(e.target).val(), $("#sign_up_popup .register input[name=sign_up_login]"));
+    }
+  });
+
+  $(".big_sign_up").click(function(e){
+    e.preventDefault();
+    var email = $(".sign_up_email_register_first").val();
+    signup_save_email(email)
+    $(".user_email_register").val(email);
+    signup_check_login_email(email, $("#sign_up_popup .register input[name=sign_up_login]"));
+    diveboard.sign_up.slide_fields(".register");
+  })
+
+  $(".signup_close").click(function(e){
+    e.preventDefault();
+    $("#sign_up_popup").hide();
+    $.cookie("signup_click_count", 0, { expires : 1 });
+    $.cookie("signup_delay", 0, { expires : 1 });
+    //if we need we store cookie
+    if($("#sign_up_popup").hasClass("ask_once")){
+      $.cookie("signup_dismiss", 1, { expires : 1 });
+    }
+
+  })
+
+<% if autoshow %>
+  $(document).click(function(e){
+    //Dismiss clicks in the popup
+    if(!$(e.target).closest('#sign_up_popup').length) {
+      diveboard_ask_join(true, {
+        show_popup: function(){
+          if(!$('#sign_up_popup').is(":visible"))
+            diveboard.sign_up.show();
+          }, 
+        nb_calls: signup_popup_status_max
+      });
+    }
+  });
+
+  diveboard_ask_join(false, {
+    show_popup: function(){
+      if(!$('#sign_up_popup').is(":visible"))
+        diveboard.sign_up.show();
+      }, 
+    nb_calls: signup_popup_status_max
+  });
+<%end%>
+
+  $(document).keyup(function(e) {
+
+    if(e.keyCode == 27 && $("#sign_up_popup .signup_close").is(":visible")){
+      // Close my modal window if it's closable
+      e.preventDefault();
+      $("#sign_up_popup").hide();
+    }else if(e.keyCode == 13 && $("#sign_up_popup").is(":visible") && $("#sign_up_popup input").is(":focus")) {
+      e.preventDefault();
+      $("#sign_up_popup .active .enter_key").click();
+    }
+  });
+
+})
+
+function signup_save_email(email){
+  console.log("TODO: save_email");
+}
+
+var check_login_email_xhr;
+function signup_check_login_email(email, dom_result){
+
+  $(dom_result).siblings(".error_message").find("span").hide();
+
+  if(check_login_email_xhr) check_login_email_xhr.abort();
+
+  $(dom_result).siblings(".error_message").find("span").hide();
+
+  if(!diveboard.validateEmail(email)){
+    $(dom_result).siblings(".error_message").find(".email_ill").show();
+    return;
+  }
+
+  if (email != "" && !email.match(/email/i)){
+    check_login_email_xhr = $.ajax({
+      url:"/api/check_email",
+      data:({
+          email: email,
+          'authenticity_token': auth_token
+        }),
+      type:"POST",
+      dataType:"json",
+      success:function(data){
+        if (data.success && data.available){
+        }
+        else{
+          $(dom_result).siblings(".error_message").find(".email_used").show();
+        }
+      }
+    });
+  }
+
+}
+
+function signup_register_email(e){
+  if(e)
+    e.preventDefault();
+
+  var data_error = false;
+  clearError();
+  if($("#sign_up_popup .register input[name=sign_up_nickname]")[0].defaultValue == $("#sign_up_popup .register input[name=sign_up_nickname]")[0].value){
+    //need to set nickname
+    $("#sign_up_popup .register input[name=sign_up_nickname]").siblings().find(".missing_nickname").show();
+    data_error = true;
+  }
+
+  if($("#sign_up_popup .register input[name=sign_up_password]")[0].defaultValue == $("#sign_up_popup .register input[name=sign_up_password]")[0].value){
+    //need to set nickname
+    $("#sign_up_popup .register input[name=sign_up_password]").siblings().find(".missing_password").show();
+    data_error = true;
+  }
+
+  if($("#sign_up_popup .register input[name=sign_up_login]")[0].defaultValue == $("#sign_up_popup .register input[name=sign_up_login]")[0].value){
+    //need to set nickname
+    $("#sign_up_popup .register input[name=sign_up_login]").siblings().find(".missing_email").show();
+    data_error = true;
+  }
+
+  if(data_error)
+    return;
+
+  diveboard.mask_file(true);
+  var data_to_send = {
+    'email': $("#sign_up_popup .register input[name=sign_up_login]").val(),
+    'nickname': $("#sign_up_popup .register input[name=sign_up_nickname]").val(),
+    'password': $("#sign_up_popup .register input[name=sign_up_password]").val(),
+    'newsletter': true,
+    'open_session': 'long',
+    'assign_vanity_url': true,
+    'preferred_locale': I18n.locale,
+    'password_check': $("#sign_up_popup .register input[name=sign_up_password]").val(),
+    'source': $("#sign_up_popup").data("source"),
+    'authenticity_token': auth_token,
+    utf8: "&#x2713;"
+  }
+
+  $.ajax({
+    url: '/api/register_email',
+    dataType: 'json',
+    data: data_to_send,
+    type: "POST",
+    success: function(data){
+      if (data.success){
+        if (data.new_account)
+          ga('send', {
+            'hitType': 'event',          // Required.
+            'eventCategory': 'account',   // Required.
+            'eventAction': 'register',      // Required.
+            'eventLabel': 'email',
+            'nonInteraction': true
+          });
+        if ($("#sign_up_popup").data("redirect_to")) {
+          $("#sign_up_popup .login .login_form input[name=sign_in_login]").val($("#sign_up_popup .register input[name=sign_up_nickname]").val());
+          $("#sign_up_popup .login .login_form input[name=sign_in_password]").val($("#sign_up_popup .register input[name=sign_up_password]").val());
+          $("#sign_up_popup .login .login_form").attr('action', $("#sign_up_popup").data("redirect_to"));
+          $("#sign_up_popup .login .login_form").submit(); // ugly hack to get chrome to save password and useful also for popup widget
+        } else{
+          window.location.reload(true);
+        }
+      } else {
+        diveboard.unmask_file();
+
+        $.each(data.errors, function(idx,e){
+          $("#sign_up_popup .register .error_message ."+e.code).show();
+        });
+
+      }
+    },
+    error: function(data){
+
+    }
+  });
+
+}
+
+function clearError(){
+  $("#sign_up_popup .register input[name=sign_up_nickname]").siblings().find(".missing_nickname").hide();
+  $("#sign_up_popup .register input[name=sign_up_nickname]").siblings().find(".nickname_length").hide();
+
+  $("#sign_up_popup .register input[name=sign_up_password]").siblings().find(".password_length").hide();
+  $("#sign_up_popup .register input[name=sign_up_password]").siblings().find(".missing_password").hide();
+
+  $("#sign_up_popup .register input[name=sign_up_login]").siblings().find(".missing_email").hide();
+  $("#sign_up_popup .register input[name=sign_up_login]").siblings().find(".email_used").hide();
+  $("#sign_up_popup .register input[name=sign_up_login]").siblings().find(".email_ill").hide();
+
+}
+
+function signup_attempt_login(myfield){
+  diveboard.mask_file(true);
+  $("#sign_up_popup .login .error_message span").hide();
+  var login_form = myfield.closest('.login_popup');
+  user = new Object();
+  user["email"]= login_form.find(".user_email").val();
+  user["password"]= login_form.find(".user_password").val();
+//post login data
+  $.ajax({
+    url: "/login/user_login",
+    dataType: 'json',
+    data: ({
+      'authenticity_token': auth_token,
+      utf8: "&#x2713;",
+      user: user,
+      token: login_form.find(".token").val()
+    }),
+    type: "POST",
+    error: function() {
+      diveboard.unmask_file();
+      if (data.emailexists == false)
+        $("#sign_up_popup .login .nosuch_email").show();
+      else
+        $("#sign_up_popup .login .bad_password").show();
+    },
+    success: function(data){
+
+      G_login_popup_locked = false;
+      if(data.success){
+        if ($("#sign_up_popup").data("redirect_to"))
+          $("#sign_up_popup .login .login_form").attr('action', $("#sign_up_popup").data("redirect_to"));
+        else
+          $("#sign_up_popup .login .login_form").attr('action', data.redirect_to);
+
+        $("#sign_up_popup .login .login_form").submit(); // ugly hack to get chrome to save password and useful also for popup widget
+        //window.location.replace(data.redirect_to);
+        return true;
+      }
+      else{
+        diveboard.unmask_file();
+        if (data.emailexists == false)
+          $("#sign_up_popup .login .nosuch_email").show();
+        else
+          $("#sign_up_popup .login .bad_password").show();
+      }
+    }
+  });
+}
+
+function reset_password(){
+  diveboard.mask_file(true);
+  $("#sign_up_popup .reset input[name=reset_login]").siblings(".error_message").find("span").hide();
+  $("#sign_up_popup .reset .email_reset_confirm").hide();
+  $.ajax({
+    url: "/api/reset_password",
+    dataType: 'json',
+    data: ({
+      'authenticity_token': auth_token,
+      utf8: "&#x2713;",
+      email: $("#sign_up_popup .reset input[name=reset_login]").val()
+    }),
+    type: "POST",
+    error: function() {
+      diveboard.unmask_file();
+      if(data && data.error_code)
+        $("#sign_up_popup .reset ."+data.error_code).show();
+    },
+    success: function(data){
+      diveboard.unmask_file();
+      if(data.success)
+        $("#sign_up_popup .reset .email_reset_confirm").show();
+      else{
+        $("#sign_up_popup .reset ."+data.error_code).show();
+      }
+    }
+  });
+}
+
+</script>

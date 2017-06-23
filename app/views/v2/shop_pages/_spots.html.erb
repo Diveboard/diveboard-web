@@ -1,0 +1,119 @@
+<%= content_for :javascripts do%>
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=<%=GOOGLE_MAPS_API %>&sensor=false"></script>
+  <script type="text/javascript">
+    // When the window has finished loading create our google map below
+        google.maps.event.addDomListener(window, 'load', init);
+        
+        function init() {
+          var map_center;
+            // Basic options for a simple Google Map
+            // For more options see: https://developers.google.com/maps/documentation/javascript/reference#MapOptions
+            var mapOptions = {
+                // How zoomed in you want the map to start at (always required)
+                zoom: 9,
+
+                draggable: false,
+                scrollwheel: false,
+                disableDoubleClickZoom: true,
+                mapTypeId: google.maps.MapTypeId.TERRAIN,
+                disableDefaultUI: true,
+                // The latitude and longitude to center the map (always required)
+                center: new google.maps.LatLng(<%= @shop.lat %>, <%= @shop.lng %>),
+               
+            };
+
+            // Get the HTML DOM element that will contain your map 
+            // We are using a div with id="map" seen below in the <body>
+            var mapElement = document.getElementById('map');
+
+            // Create the Google Map using out element and options defined above
+            var map = new google.maps.Map(mapElement, mapOptions);
+            var bounds = new google.maps.LatLngBounds();
+            map_center = map.getCenter();
+
+            var marker = [];
+            <%
+              i = 0;
+              @spots.each do |s|
+            %>
+          
+          marker[<%= i %>] = new google.maps.Marker({
+            position: new google.maps.LatLng(<%= s.lat %>, <%= s.lng %>),
+            map: map,
+            title: '<%= s.name %>'
+          });
+
+        var contentString;
+        var infowindow;
+        
+      google.maps.event.addListener(marker[<%= i %>], 'click', function() {
+        if (infowindow)
+          infowindow.close();
+        contentString = '<div class="marker_title"><%=s.name %></div>';
+        infowindow = new google.maps.InfoWindow({
+            content: contentString
+        });
+        infowindow.open(map,marker[<%= i %>]);
+        
+      });
+
+      bounds.extend(marker[<%= i %>].getPosition());
+          <%
+            i += 1
+            end
+      %>
+      map.setCenter(map_center);
+      google.maps.event.addDomListener(window, 'resize', function() {
+        map.setCenter(map_center);
+      });
+      }
+
+
+  </script>
+<%end%>
+
+<div id="spots">
+  <div class="container">
+    <div id="category_title">
+      <h2>
+        <%= it("Spots and recent dives",
+            scope: ['shop_pages', 'v2', 'spots']) %>
+      </h2>
+      <div class="clear"></div>
+    </div>
+  </div>
+  <div id="map" class="map"></div>
+  <div class="dive_reviews">
+    <%
+      i = 0
+      b = 0
+      length = @recent_dives.count
+
+      while b < 3 && i < length do
+        if !@recent_dives[i].public_notes.nil?
+    %>
+      <div class="dive_review<%= if b == 2 then " last" end %>">
+        <a class="user_pic" href="/<%= @recent_dives[i].user.vanity_url %>"<% unless @recent_dives[i].user.picture.nil? %>style="background-image: url('<%= @recent_dives[i].user.picture %>');"<% end %>></a>
+        <div class="review_content">
+          <p class="username"><a href="/<%= @recent_dives[i].user.vanity_url %>"><%= @recent_dives[i].user.first_name.nil? ? "#{@recent_dives[i].user.nickname}" : "#{@recent_dives[i].user.first_name}" %></a></p>
+          <p class="date">
+            <%= it("%{date} at %{time}",
+                scope: ['shop_pages', 'v2', 'spots'],
+                date: @recent_dives[i].time_in.strftime(it("d/m/y",
+                                                        scope: ['date', 'formats'])),
+                time: @recent_dives[i].time_in.strftime(it("H:M",
+                                                        scope: ['time', 'formats']))) %>
+          </p>
+          <div class="clear"></div>
+          <p class="review"><%= @recent_dives[i].notes.nil? ? "<i>" + it("No details available", scope: ['shop_pages', 'v2', 'spots']) + "</i>".html_safe : @recent_dives[i].notes %></p>
+        </div>
+      </div>
+    <%
+          b += 1
+        end
+        i += 1
+      end
+    %>
+    <div class="clear"></div>
+  </div>
+</div>

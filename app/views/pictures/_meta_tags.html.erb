@@ -1,0 +1,22 @@
+ <title><%= it("Great dive pictures from Diveboard community, hand picked every day", scope: ['pictures', 'meta_tags']) %></title>
+	<meta name="description" content="<%= it("Hand picked selection of the best dive pictures uploaded every day by the Diveboard community. Discover wonderful fish, wrecks, sharks, nudibranchs but also sponges and even some mermaids !", scope: ['pictures', 'meta_tags']) %>"/>
+	<META NAME="Title" CONTENT="<%= it("Great dive pictures from Diveboard community, hand picked every day", scope: ['pictures', 'meta_tags']) %>">
+<!-- FB Opengraph Tags -->
+
+<meta property="og:title" content="<%= it("Great dive pictures from Diveboard community, hand picked every day", scope: ['pictures', 'meta_tags']) %>" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="<%=HtmlHelper.find_root_for :canonical%>explore/gallery" />
+<meta property="og:image" content="<%="#{ROOT_URL}img/OG-thumb.png"%>" />
+<meta property="og:description" content="<%= it("Hand picked selection of the best dive pictures uploaded every day by the Diveboard community. Discover wonderful fish, wrecks, sharks, nudibranchs but also sponges and even some mermaids !", scope: ['pictures', 'meta_tags']) %>" />
+<meta property="og:site_name" content="<%= it("Diveboard - Track, Share and Explore Scuba Diving", scope: ['pictures', 'meta_tags']) %>" />
+<meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
+<%I18n.available_locales.each do |locale|%>
+  <link rel='alternate' href='<%=HtmlHelper.find_root_for locale%>explore/gallery' hreflang="<%=locale%>" />
+  <%if locale != I18n.locale then%>
+    <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
+  <%end%>
+<%end%>
+<meta property="fb:admins" content="680251975" />
+<meta property="fb:admins" content="1077557400" />
+
+<!-- END FB Opengraph Tags -->

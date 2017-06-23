@@ -1,0 +1,40 @@
+<%if !@about.nil? then%>
+<div id="destination_info">
+  <div class="presentation">
+    <p><%=truncate_html(@about, length: 1500, omission: ' ... ').html_safe%> ...</p>
+    <a class="transparent_dark_gray_button" href="#loadMoreModal"><%= it("Load More",scope: ['area_pages', 'v2', 'destination']) %></a>
+    <%if !@reviews.empty? then%>
+        <hr>
+    <table class="rating">
+      <tr>
+        <%= render "v2/shared/score_bullet", :score => @mark, :color => :blue %>
+      </tr>
+    </table>
+    <p>
+    <%= it("Based on %{link:%{count} reviews}",
+        scope: ['shop_pages', 'v2', 'shop_details'],
+        link: It.link('#shop_reviews'),
+        count: @reviews.count) %>
+    </p>
+    <%else%>
+    <p>
+      <%= it("No reviews yet",
+          scope: ['area_pages', 'v2', 'shops']) %>
+    </p>
+    <%end%>
+    <hr>
+  </div>
+
+<div id="loadMoreModal" class="modal">
+  <div class="modal_content">
+    <a href="#close" class="close"></a>
+    <div id="loadMores_modal">
+      <div class="container">
+        <%=@about.html_safe%>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+<%end%>

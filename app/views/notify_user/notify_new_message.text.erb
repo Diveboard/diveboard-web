@@ -1,0 +1,19 @@
+
+<%= it("Dear %{recipient},", scope: ['notify_user', 'notify_new_message', 'text'], recipient: @recipient.nickname) %>
+
+<%= it("%{name} has left a message for you:", scope: ['notify_user', 'notify_new_message', 'text'], name: @from_name) %>
+
+<%=@content%>
+
+<%= it("To see the conversation and reply: %{txt_url}", scope: ['notify_user', 'notify_new_message', 'text'], txt_url: @msg_url) %>
+
+
+<%= it("Happy Diving !", scope: ['notify_user', 'notify_new_message', 'text']) %>
+--
+<%= it("The Diveboard team", scope: ['notify_user', 'notify_new_message', 'text']) %>
+http://www.diveboard.com
+
+
+
+<%= it("This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
+If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings", scope: ['notify_user', 'notify_new_message', 'text']) %>

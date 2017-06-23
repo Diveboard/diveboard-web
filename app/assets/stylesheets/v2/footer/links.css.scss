@@ -1,0 +1,241 @@
+@import 'variablesv2';
+#links
+{
+  width: calc(100% - 40px);
+  background-color: white;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 20px;
+  @media (max-width: 720px)
+  {
+    padding-left: 10px;
+    padding-right: 10px;
+    width: calc(100% - 20px);
+  }
+
+  h4
+  {
+    color: #333333;
+    font-size: 22px;
+    font-weight: normal;
+    padding-bottom: 10px;
+  }
+
+  p
+  {
+    color: #333333;
+    @media (max-width: 1130px)
+    {
+      font-size: 14px;
+    }
+  }
+
+  .first
+  {
+    float: left;
+    width: 320px;
+    @media (max-width: 1024px)
+    {
+      width: 100%;
+    }
+
+    .newsletter
+    {
+      float: left;
+      width: 320px;
+      padding-top: 40px;
+      @media (max-width: 720px)
+      {
+        padding-top: 20px;
+        width: 100%;
+        text-align:center;
+      }
+
+      p
+      {
+        font-size: 0.9rem;
+      }
+
+      .subscribe
+      {
+        position: relative;
+        padding-top: 10px;
+        background-color: white;
+        width: 320px;
+        @media (max-width: 720px)
+        {
+          width: 280px;
+          margin: 0 auto;
+        }
+
+        input
+        {
+          height: 40px;
+          width: 310px;
+          border: 1px solid #cccccc;
+          -webkit-border-radius: 3px;
+          -moz-border-radius: 3px;
+          border-radius: 3px;
+          padding-left: 10px;
+          outline: none;
+          -webkit-appearance: none;
+          @media (max-width: 720px)
+          {
+            width: 270px;
+          }
+        }
+
+        button
+        {
+          background-color: #fdc91d;
+          width: 70px;
+          height: 38px;
+          border: none;
+          -webkit-border-radius: 3px;
+          -moz-border-radius: 3px;
+          border-radius: 3px;
+          color: #3c4245;
+          position: absolute;
+          bottom: 2px;
+          right: 0;
+          cursor: pointer;
+        }
+
+        button:hover, button:active
+        {
+          color: #fdc91d;
+          background-color: #3c4245;
+        }
+      }
+    }
+
+    .about
+    {
+      float: right;
+      padding-top: 40px;
+      @media (max-width: 1024px)
+      {
+        width: calc(100% - 380px);
+      }
+      @media (max-width: 720px)
+      {
+        float: left;
+        width: 100%;
+        padding-top: 40px;
+      }
+
+      img
+      {
+        width: 182px;
+        margin-bottom: 15px;
+      }
+
+      p
+      {
+        color: #333333;
+        font-size: 0.9rem;
+      }
+
+      h4
+      {
+        vertical-align: top;
+        padding-bottom: 3px;
+      }
+    }
+  }
+
+  .second
+  {
+    float: left;
+    margin-left: 90px;
+    padding-top: 40px;
+    width: calc(100% - 320px - 90px);
+    @media (max-width: 1024px)
+    {
+      width: 100%;
+      margin-left: 0;
+      padding-top: 20px;
+    }
+    @media (max-width: 720px)
+    {
+      display: none;
+    }
+
+    .strong
+    {
+      font-weight: 600;
+    }
+
+    .link_title
+    {
+      h4
+      {
+        float: left;
+      }
+
+      .language
+      {
+        float: right;
+        padding-top: 2px;
+
+        p
+        {
+          font-size: 14px;
+        }
+
+        .languages_select {
+          width: 120px;
+          height: 34px;
+          border: 1px solid $light-gray-db;
+          border-radius: 3px;
+          overflow: hidden;
+          background: url(/img/footer/arrow-down.svg) no-repeat 96%;
+          background-size: 13px;
+          background-color: white;
+          margin-left: 10px;
+          select {
+            background: transparent;
+            width: 150px;
+            border: none;
+            padding: 5px;
+            font-size: 16px;
+            height: 34px;
+            cursor: pointer;
+            outline: none;
+            -webkit-appearance: none;
+            -moz-appearance:    none;
+            appearance:         none;
+          }
+        }
+      }
+    }
+
+    .link_table
+    {
+      width: 100%;
+      margin-top: 20px;
+
+      @media (max-width: 1024px)
+      {
+        margin-top: 10px;
+      }
+
+      a
+      {
+        color: #333333;
+        text-decoration: none;
+        font-size: 0.9rem;
+      }
+      
+      a:hover, a:active
+      {
+        color: #FDC90C;
+      }
+
+      td
+      {
+        vertical-align: top;
+      }
+    }
+  }
+}

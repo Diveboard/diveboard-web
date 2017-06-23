@@ -1,0 +1,32 @@
+var diveboard_show_login = function(){
+  var iframe = document.createElement("iframe");
+  iframe.src = '<%if Rails.env.development?%>http<%else%>https<%end%>://<%=ROOT_DOMAIN%>/login/widget/<%=partner%>?locale=<%=I18n.locale%>';
+  iframe.width = 450;
+  iframe.height = 453;
+  iframe.scrolling = "no";
+  iframe.frameBorder = 0;
+  iframe.style.position = 'fixed';
+  iframe.style.top = "50%";
+  iframe.style.left = "50%";
+  iframe.style.margin = "-225px 0 0 -225px";
+  iframe.style.zIndex = "1000";
+  iframe.style.boxShadow = "0px 0px 10px 2px #666";
+  iframe.id='diveboard_login'
+  document.body.appendChild(iframe);
+
+  var closing_div = document.createElement("div");
+  closing_div.style.width = "18px";
+  closing_div.style.height = "18px";
+  closing_div.style.position = 'fixed';
+  closing_div.style.top = "50%";
+  closing_div.style.left = "50%";
+  closing_div.style.margin = "-225px 0 0 207px";
+  closing_div.style.zIndex = "1001";
+  closing_div.style.cursor = "pointer";
+  closing_div.id='diveboard_closing';
+  closing_div.onclick = function(){
+    document.body.removeChild(document.getElementById("diveboard_login"));
+    document.body.removeChild(document.getElementById("diveboard_closing"));
+  };
+  document.body.appendChild(closing_div);
+};

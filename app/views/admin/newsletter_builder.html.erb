@@ -1,0 +1,95 @@
+<%= render :partial => 'admin_css'%>
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 11 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+
+<script>
+$(document).ready(function(){
+  //Handles the clicks on images and the max of 5 elements
+  $('.check_image input[name="gallery_ids"], .check_image img').live('click', function(e){
+    e.preventDefault();
+    var checkbox = $(this).closest('.check_image').find('input');
+    checkbox.attr('checked', !checkbox.attr('checked'));
+    if ($('.check_image input:checked').length > 5) {
+      checkbox.attr('checked', false);
+      alert('You cannot select more than 5 elements');
+    }
+  });
+
+  $('.save_changes').live('click', function(){
+    $(this).closest('form').find('input[name="updated_html"]').val($('#letter_editor').elrte('val'));
+  });
+
+  intialize_autocomplete();
+});
+
+
+function intialize_autocomplete()
+{
+  $(".autocomplete_country input").removeClass('ui-autocomplete-input');
+  $(".autocomplete_country input").addClass('ui-autocomplete-input example');
+
+  $(".autocomplete_country input").autocomplete({  source : countries,
+    select: function(event, ui) {
+      //get spot details and show them
+      //selected is ui.item.id
+      $(this).closest('.autocomplete_country').find('img').attr("src","/img/flags/"+ui.item.name.toLowerCase()+".gif");
+      $(this).val(ui.item.name.toLowerCase());
+      $("#preview_wiki_country").html("<img src='/img/transparent_loader.gif'  />");
+      $.ajax({
+        url: '/api/V2/country/'+ui.item.name.toLowerCase()+'?flavour=wiki',
+        success: function(data){
+          $("#preview_wiki_country").html("");
+            if (data.success){
+            $("#preview_wiki_country").html(data.result.wiki_html);
+          }
+        },
+        error: function(data){
+          $("#preview_wiki_country").html("");
+        }
+      });
+      return(false);
+    },
+    close: function(event, ui){
+    //show_flag();
+    },
+    autoFill:true
+  });
+}
+
+
+</script>
+
+<div>
+
+  <form>
+    <h1>Build the newsletter</h1>
+    <h2>Select a blog post</h2>
+    <p>Render for blog post: <select name='blogpost_id'>
+      <%BlogPost.where('published = 1 AND created_at > :last_month', :last_month => 1.month.ago).order('published_at DESC').limit(50).each do |post|%>
+        <option value='<%=post.id%>'><%=post.published_at.strftime "%Y-%m-%d"%> <%=post.user.nickname%>: <%=post.title%></option>
+      <%end%>
+      </select>
+    </p>
+
+    <h2>Select 5 pictures</h2>
+    <div>
+      <%Picture.unscoped.where('great_pic = 1').order('created_at DESC').limit(32).each do |pic|%>
+        <div class='check_image' style='display:inline-block'><input type=checkbox name='picture_gallery_ids[]' value='<%=pic.id%>' style='position:relative; left: 20px; top: 10px; display: inline-block; vertical-align:top'/><img src='<%=pic.thumb%>' style=' cursor:pointer; display: inline-block; vertical-align:top;'/></div>
+      <%end%>
+    </div>
+
+    <h2>Select a region</h2>
+    <p>Render for country: <span class='autocomplete_country'><input id='country_code' name='country_code' value="" type='text' shortname="" class='wizard_input_100 wizard_big_input'/><img src='/img/flags/blank.gif'/></span></p>
+    <div id='preview_wiki_country'></div>
+
+    <input type='hidden' name='authenticity_token' value='<%=form_authenticity_token%>'/>
+    <input type='hidden' name='a' value='generate'/>
+    <input type='submit' class='yellow_button'>Generate wiki for this newsletter content</input>
+  </form>
+</div>
+
+</div>

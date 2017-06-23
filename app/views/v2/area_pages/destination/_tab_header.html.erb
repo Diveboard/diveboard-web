@@ -1,0 +1,23 @@
+<% if !@user.nil? %>
+  <%= content_for :javascripts do%>
+  	<script type="text/javascript">
+      $(document).ready(function(){
+      });
+    </script>
+  <%end%>
+<% end %>
+
+
+
+<div id="tabs" class="destinations_tabs">
+  <a class="page-link" scroll="#destination_info" href="javascript:void(0)" ><div class="tab active" id="tab_infos"><p style="border-left: none"><%= @name %></p></div></a>
+  <% if @spots != nil && !@spots.empty? %>
+  <a class="page-link" scroll="#destination_spots" href="javascript:void(0)" ><div class="tab" id="tab_spots"><p><%= it("Spots", scope: ['shop_pages', 'tab_header']) %></p></div></a>
+  <% end %>
+  <% if @shops != nil && !@shops.empty? %>
+  <a class="page-link" scroll="#destination_shops" href="javascript:void(0)"><div class="tab" id="tab_shops"><p><%= it("Shops", scope: ['shop_pages', 'tab_header']) %></p></div></a>
+  <% end %>
+  <% if @area != nil %>
+  <a class="page-link" scroll="#area" href="javascript:void(0)"><div class="tab" id="tab_areas"><p><%= it("Areas", scope: ['shop_pages', 'tab_header']) %></p></div></a>
+  <% end %>
+</div>

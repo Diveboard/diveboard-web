@@ -1,0 +1,107 @@
+$mobile_screen: 480px;
+$small_screen: 48em;
+$medium_screen: 66em;
+
+$orange: #FDBF30;
+$grey: #EEE;
+$blue_marine: #329FEA;
+
+
+// These colors are defined in https://www.dropbox.com/s/qiq2v5q5r085zvi/colors_select.ai
+$dbcolor_01: #ff8cd4;
+$dbcolor_02: #fdaf00;
+$dbcolor_03: #fcad10;
+$dbcolor_04: #fdb913;
+$dbcolor_05: #fcbc22;
+$dbcolor_06: #ffe100;
+$dbcolor_07: #ffe443;
+$dbcolor_08: #ffe76b;
+$dbcolor_09: #ffeb84;
+$dbcolor_10: #ffed96;
+$dbcolor_11: #fff200;
+$dbcolor_12: #fff34d;
+$dbcolor_13: #ffe76b;
+$dbcolor_14: #fff9a1;
+$dbcolor_15: #fffabe;
+
+
+// To force some features as inactive, set  (feature: 0 and no-feature: 1)
+// To force some features as active, set  (feature: 1 and no-feature: 0)
+$force_features: (flexbox: 0, no-flexbox: 1);
+
+@mixin if-features($features: ()){
+  $feature_selector: "";
+  $include_content: true;
+  @each $feature in $features {
+    @if map-get($force_features, $feature) == 0 {
+      $include_content: false;
+    }
+    @else if map-get($force_features, $feature) != 1 {
+      $feature_selector: $feature_selector + "." + $feature;
+    }
+  }
+  @debug $include_content;
+  @if $include_content == true and str-length($feature_selector) > 0 {
+    #{$feature_selector} & {@content;}
+  }
+  @else if $include_content == true {
+    @content
+  }
+}
+
+@mixin if-feature($features...){
+  @include if-features($features){ @content; }
+}
+
+// full: will apply in medium and large
+// large: will only apply in large
+// medium: will only apply in medium
+// small: will be applied if small or mobile
+@mixin media-layout($layout, $features: ()) {
+  @if $layout == full {
+    @media screen and (min-width: $small_screen ) and (min-device-width: $mobile_screen) {
+      @include if-features($features) {@content}
+    }
+  }
+  @else if $layout == large {
+    @media screen and (min-width: $medium_screen) and (min-device-width: $mobile_screen) {
+      @include if-features($features) {@content}
+    }
+  }
+  @else if $layout == medium {
+    @media screen and (max-width: $medium_screen) and (min-width: $small_screen) and (min-device-width: $mobile_screen) { 
+      @include if-features($features) {@content}
+    }
+  }
+  @else if $layout == small {
+    @media screen and (max-width: $small_screen), screen and (max-device-width: $mobile_screen) { 
+      @include if-features($features) {@content}
+    }
+  }
+}
+
+
+@mixin compatibility-fix($feature, $layout: full){
+  .no-#{$feature} &, .no-js & { @content; }
+}
+
+
+
+@mixin ul-nostyle {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+@mixin hover-style($color) {
+  &:hover {
+    background: lighten($color, 3%);
+  }
+}
+
+@mixin animation($content) {
+  animation: $content;
+  -moz-animation: $content;
+  -webkit-animation: $content;
+}
+

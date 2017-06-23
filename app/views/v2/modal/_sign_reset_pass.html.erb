@@ -1,0 +1,11 @@
+<div class="reset_pass">
+  <div id="reset_menu">
+    <img class="prev_menu_reset" style="margin-left:1rem; margin-top:1rem;" src="<%= HtmlHelper.lbroot "/img/drawer/svg/back_icon.svg" %>" >
+    <p style="margin:25px">Did you lose your password?<br><br> Type in your email and we'll send you a link to recover it</p>
+    <form name="reset_menu" action="#">
+      <input type="email" name="reset_login" class="input_text" placeholder="Your email">
+      <button class="sign_button">Reset password</button>
+    </form>
+    <p class="reset_pass_success" style="margin:25px; display:none;">SUCCESS<br>An email has been sent to you with a reset link</p>
+  </div>
+</div>

@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://stage.diveboard.com/" />
+<title>Action - Change settings qualifications</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Action - Change settings qualifications</td></tr>
+</thead><tbody>
+<!--Checking that no qualification is set-->
+<tr>
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[2]/span</td>
+	<td>Scuba Diver</td>
+</tr>
+<!--Setting two random qualifications-->
+<tr>
+	<td>open</td>
+	<td>/settings</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>menu_3</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>qualif_title</td>
+	<td>Level X</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>qualif_orga</td>
+	<td>label=PADI</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>qualif_date_picker</td>
+	<td>1999-12-12</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>add_qualification</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>qualif_title</td>
+	<td>Big Diver</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>qualif_orga</td>
+	<td>label=CMAS</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>qualif_date_picker</td>
+	<td>1989-12-12</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>add_qualification</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//ul[@id='sortable2']/li[1]/div[2]</td>
+	<td>Level X</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//ul[@id='sortable2']/li[1]/div[1]</td>
+	<td>PADI</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//ul[@id='sortable2']/li[1]/div[3]</td>
+	<td>1999-12-12</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//ul[@id='sortable2']/li[2]/div[1]</td>
+	<td>CMAS</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//ul[@id='sortable2']/li[2]/div[2]</td>
+	<td>Big Diver</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//ul[@id='sortable2']/li[2]/div[3]</td>
+	<td>1989-12-12</td>
+</tr>
+<tr>
+	<td>dragAndDrop</td>
+	<td>//ul[@id='sortable2']/li[1]/div[1]</td>
+	<td>0,-100</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>save_form</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>save_ok</td>
+	<td></td>
+</tr>
+<!--Check on own mini profile-->
+<tr>
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeLocation</td>
+	<td>Logbook_Location</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[2]/span</td>
+	<td>PADI Level X</td>
+</tr>
+<!--Loggin out-->
+<tr>
+	<td>clickAndWait</td>
+	<td>//img[@alt='logout']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='slide_one']/p</td>
+	<td>Connect to facebook, to share your dives and photos with friends.</td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>${Logbook_Location}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[2]/span</td>
+	<td>PADI Level X</td>
+</tr>
+<!--Loggin in-->
+<tr>
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>//img[@alt='#']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//img[@alt='Bulk upload from Computer or file']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/settings</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>menu_3</td>
+	<td></td>
+</tr>
+<tr>
+	<td>dragAndDrop</td>
+	<td>//ul[@id='sortable2']/li[1]/div[1]</td>
+	<td>0,-70</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>save_form</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>save_ok</td>
+	<td></td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[2]/span</td>
+	<td>CMAS Big Diver</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[3]/p</td>
+	<td>exact:Qualifications: PADI Level X</td>
+</tr>
+<!--Loggin out-->
+<tr>
+	<td>clickAndWait</td>
+	<td>//img[@alt='logout']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='slide_one']/p</td>
+	<td>Connect to facebook, to share your dives and photos with friends.</td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>${Logbook_Location}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[2]/span</td>
+	<td>CMAS Big Diver</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[3]/p</td>
+	<td>exact:Qualifications: PADI Level X</td>
+</tr>
+<!--Loggin in-->
+<tr>
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>//img[@alt='#']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//img[@alt='Bulk upload from Computer or file']</td>
+	<td></td>
+</tr>
+<!--resetting qualifs-->
+<tr>
+	<td>open</td>
+	<td>/settings</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>menu_3</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=x</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=x</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>save_form</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>save_ok</td>
+	<td></td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[2]/span</td>
+	<td>Scuba Diver</td>
+</tr>
+</tbody></table>
+</body>
+</html>

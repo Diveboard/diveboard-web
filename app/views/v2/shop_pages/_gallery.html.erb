@@ -1,0 +1,52 @@
+<%= content_for :javascripts do%>
+  <script type="text/javascript">
+    $(document).ready(function()
+    {
+      <%
+        picture_array = []
+        count = 0
+        length = @gallery_pictures.count
+        i = 0
+        j = 0
+
+        while count < length do
+          if !@gallery_pictures[i].nil?
+            picture_array.push(@gallery_pictures[i].id)
+            i += 1
+          else
+            picture_array.push(@gallery_pictures[j].id)
+            j += 1
+          end
+          count += 1
+        end
+      %>
+      LightFrame.init(<%= picture_array.to_json %>);
+    });
+  </script>
+<% end %>
+
+<div id="gallery">
+  <div id="category_title">
+    <h2><%= it("Gallery", scope: ['header', 'v2', 'header']) %> (<%= it("%{count} photos", scope: ['shop_pages', 'v2', 'gallery'], count: @gallery_pictures.count) %>)</h2>
+    <div class="clear"></div>
+  </div>
+  <%
+    i = 0
+    length = @gallery_pictures.count
+
+    while i < 3 && i < length
+  %>
+  <div class="card <%= if i >= 2 then " last" end %>" onclick="LightFrame.displayLive(<%= @gallery_pictures[i].id %>)">
+    <div class="picture">
+      <img src="<%= @gallery_pictures[i].medium %>" alt="<%= @shop.name + " - " + @shop.category %><%= if @shop.country.name.blank? == false then " in " + @shop.country.name end %>">
+    </div>
+    <img class="zoom" src="<%= HtmlHelper.lbroot "/img/gallery/icon_zoom.svg" %>" alt="" />
+  </div>
+  <%
+      i += 1
+    end
+  %>
+  <div class="clear"></div>
+</div>
+
+<%= render :partial => 'v2/lightframe/gallery'%>

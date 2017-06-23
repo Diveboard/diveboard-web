@@ -1,0 +1,41 @@
+<%= render :partial => 'admin_css'%>
+
+<script type="text/javascript">
+
+
+</script>
+
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 6 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+	<h1>Species management</h1>
+	<h2>Find species</h2>
+	<%= form_tag("/admin/species", :method => "get") do %>
+	  <%= label_tag(:species_name, "Search for:") %>
+    <%= text_field_tag(:species_name, params["species_name"]) %>
+    <%= submit_tag("Search") %>
+  <% end %>
+	<div class="admin_species_list">
+	  <ul>
+	  <% @selected_species.each do |s|%>
+	    <li>s-<%=s.id%>, <%=s.sname%>, <%=s.preferred_cname%>, <a href="/admin/species/s-<%=s.id%>">EDIT</a></li>
+	  <% end%>
+	  </ul>
+	</div>
+	<h2>Check species picker</h2>
+	<%= form_tag("/admin/species", :method => "get") do %>
+    <%= label_tag(:location_lat, "Lat") %><%= text_field_tag(:lat, params["lat"]) %>
+    <%= label_tag(:location_lng, "Lng") %><%= text_field_tag(:lng, params["lng"]) %>
+    <%= submit_tag("Load") %>
+  <% end %>
+  <h2>Browse Species by group</h2>
+  <% categories = Eolsname.find(1).species_groups.keys%>
+  <ul>
+  <% categories.each do |c|%>
+  <li><%=c%> (<%=Eolsname.where("taxonrank='species' AND category = '#{c}'").count%>) <a href="/admin/species/<%=c%>">>></a></li>
+  <%end%>
+  </ul>
+</div>

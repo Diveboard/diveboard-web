@@ -1,0 +1,120 @@
+<%
+  eu_bank = EuCentralBank.new
+  eu_bank.update_rate('tmp/exchange_rates.xml') if Rails.root.join('tmp/exchange_rates.xml').mtime >= eu_bank.last_updated rescue nil
+  currencies = Money::Currency.available
+
+  services = YAML.load_file('config/dive_services.yml')
+  services_cat1 = services.map do |h| h.keys.first end
+
+  if currencies.map do |c| c[:iso_code] end .include?(params[:exchange]) then
+    alternative_currency = params[:exchange]
+  elsif params[:exchange] == 'no_exchange' then
+    alternative_currency = nil
+  elsif !@user.nil? && @user.currency? && @user.currency != @shop.currency then
+    alternative_currency = @user.currency
+  else
+    alternative_currency = nil
+  end
+%>
+
+
+<script>
+G_dive_goods = <%=shop.public_dive_goods.to_api(:detailed).to_json.html_safe rescue "null"%>;
+G_dive_categories1 = <%=services_cat1.to_json.html_safe rescue "null"%>;
+G_exclude_vat = <%= (params[:vat] == 'exc')%>;
+$(document).ready(function(){
+  $(".dive_price_list_detailed .show_detail").live('click', function(e){
+    e.preventDefault();
+    $(this).closest('tr').next().find('.good_detail_html').show('blind', {}, 500);
+    $(this).closest('tr').find('.hide_detail').show();
+    $(this).hide();
+  });
+
+  $(".dive_price_list_detailed .hide_detail").live('click', function(e){
+    e.preventDefault();
+    $(this).closest('tr').next().find('.good_detail_html').hide('blind', {}, 500);
+    $(this).closest('tr').find('.show_detail').show();
+    $(this).hide();
+  });
+
+  $(".submit_on_change").live('change', function(){
+    $(this).closest('form').submit();
+  });
+});
+
+</script>
+
+<div class='dive_price_list_detailed_echange'>
+  <form>
+
+    <div style='display:inline-block'><%= it("All prices are displayed", scope: ['shop_pages', 'shop_dive_view']) %></div>
+
+    <div class='dropdown right white submit_on_change' name='vat' <%if !params[:vat].blank?%>data-selected='<%=params[:vat]%>' <%end%>>
+      <div class='options'>
+        <div class='option' data-value='inc'><%= it("including taxes", scope: ['shop_pages', 'shop_dive_view']) %></div>
+        <div class='option' data-value='exc'><%= it("excluding taxes", scope: ['shop_pages', 'shop_dive_view']) %></div>
+      </div>
+    </div>
+
+
+    <div style='display: inline-block'><%= it("Show prices in:", scope: ['shop_pages', 'shop_dive_view']) %> </div>
+
+    <div class='dropdown right white submit_on_change' name='exchange' <%if !alternative_currency.blank?%>data-selected='<%=alternative_currency%>' <%end%>>
+      <div class='options'>
+        <div class='option' data-value='no_exchange'><%= it("Use default currency for this shop", scope: ['shop_pages', 'shop_dive_view']) %></div>
+        <%currencies = Money::Currency.available%>
+        <%currencies.reject do |currency| currency[:priority] > 10 end .sort do |a,b| a[:priority] <=> b[:priority] end .each do |currency|%>
+          <div class='option' data-value='<%=currency[:iso_code]%>'><%=currency[:name]%> (<%=currency[:symbol]%>)</div>
+        <%end%>
+        <div class='option' data-value=''>------------------</div>
+        <%currencies.sort do |a,b| a[:name] <=> b[:name] end .each do |currency|%>
+          <div class='option' data-value='<%=currency[:iso_code]%>' <%= if params[:exchange] == currency[:iso_code] then 'selected' end%>><%=currency[:name]%> (<%=currency[:symbol]%>)</div>
+        <%end%>
+      </div>
+    </div>
+
+  </form>
+
+</div>
+
+
+<table class='dive_price_list_detailed'>
+<%prev_cat = nil%>
+<%color=0%>
+<%shop_api =  shop.to_api(:technical, :caller => @user).to_json%>
+<%shop.public_dive_goods.each do |good|%>
+  <%if prev_cat != good.cat1%>
+  <tr class='category_head'><td colspan=3><h3><%=good.cat1%></h3></td></tr>
+  <%color = 0%>
+  <%end%>
+  <tr class='color_<%=color%>'>
+    <td></td>
+    <td><%=good.title%></td>
+    <td><%if !good.description.blank?%><a href='#' class='show_detail'><%= it("View details", scope: ['shop_pages', 'shop_dive_view']) %></a><a href='#' class='hide_detail'><%= it("Hide details", scope: ['shop_pages', 'shop_dive_view']) %></a><%end%></td>
+    <%if params[:vat] == 'exc'
+      price = good.price_before_tax
+    else
+      price = good.price_after_tax
+    end%>
+    <td><%=if price && price.nonzero? then price.format elsif price then it("Free", scope: ['shop_pages', 'shop_dive_view']) end %></td>
+    <%if alternative_currency && !price.nil? && price.nonzero? then%>
+      <td><%=price && price.exchange_to(alternative_currency).format%></td>
+    <%else%>
+      <td></td>
+    <%end%>
+    <%if shop.can_sell?(:dive) && good.can_be_sold? then%>
+      <td><button class='yellow_button_small buy_button' data-what_to_buy="<%=good.to_api(:public).to_json%>" data-shop="<%=shop_api%>"><%= it("Book now", scope: ['shop_pages', 'shop_dive_view']) %></button></td>
+    <%else%>
+      <td></td>
+    <%end%>
+  </tr>
+  <%if !good.description.blank?%>
+    <tr class='good_detail color_<%=color%>'>
+      <td></td>
+      <td colspan=5><div class='good_detail_html color_<%=(color+1)%2%>'><%=good.description.html_safe%></div></td>
+    </tr>
+  <%end%>
+  <%prev_cat = good.cat1%>
+  <%color = (color+1)%2%>
+<%end%>
+</table>

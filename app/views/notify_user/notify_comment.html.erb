@@ -1,0 +1,18 @@
+  <div class="main_info" align="left">
+    <% if @type == "dive" || @type == "picture"%>
+    <p ><img src="<%=ROOT_URL%>img/email_marketing/Facebook_like_thumb.png" class="left" width=40/><%= it("Hurray ! New comments have been posted on Diveboard for your %{type} on %{link:%{spot} in %{country}}.", scope: ['notify_user', 'notify_comment'], type: @type, link: It.link(@dive.fullpermalink(:locale), style: "text-decoration: none; color: #FF6200;"), spot: @dive.spot.name, country: @dive.spot.country.cname) %></p>
+    <%elsif @type == "blogpost"%>
+    <p><img src="<%=ROOT_URL%>img/email_marketing/Facebook_like_thumb.png" class="left" width=40/><%= it("Wowsers ! New comments have been posted on Diveboard for your blog post '%{link:%{title}}'.", scope: ['notify_user', 'notify_comment'], link: It.link(@post.fullpermalink(:locale), style: "text-decoration: none; color: #FF6200;"), title: @post.title) %></p>
+    <%end%>
+    <div style="clear:both;"></div>
+    <% if !@comment_text.nil? then %>
+    <% if !@comment_user.nil? then %><p><%if !@comment_picture.nil? then%><br/><img alt=# src='<%=@comment_picture%>' style='float: left; margin: 0 10px 0 0; height: 50px; width: 50px;' /><%end%><% if !@comment_diver.nil? then%><a href='<%=@comment_diver.fullpermalink(:locale)%>'><%end%><%=@comment_user%><% if !@comment_diver.nil? then%></a><%end%> said :</p><%end%>
+    <p style='margin: 10px 20px 30px 70px; font-style: italic; padding: 0 0 0 8px; border-style: solid; border-right: 0px; border-top: 0px; border-bottom: 0px; border-left: 2px solid;'><%=@comment_text%></p>
+
+    <%end%>
+    <p style='margin: 5px 0 5px 0; clear: both; text-align: center;'><%= it("Go check out your %{type} and get the conversation started !%{br}
+    %{link:View %{type}}", scope: ['notify_user', 'notify_comment'], type: @type, br: It.tag("br"), link: It.link(@page.fullpermalink(:locale), class: "yellow_button", style: "margin-top: 20px; margin-bottom: 10px")) %></p>
+    <%if @type == "picture"%>
+      <p style='margin: 5px 0 5px 0; clear: both;'><center><a href='<%= @page.fullpermalink(:locale) %>' ><img src='<%=@page.medium%>' style="width: 80%;"/></a></center></p>
+    <%end%>
+  </div>

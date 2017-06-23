@@ -1,0 +1,147 @@
+  <%
+    i = 0
+    length = reviews.count
+
+    while i < 5 && i < length do
+  %>
+  <div class="shop_review" itemscope itemtype="http://schema.org/Review">
+
+    <meta itemprop="about" content="<%= @shop.name %>" />
+    <div class="profile" itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <!-- TODO 'link to logbook' -->
+      <a href="/<%= reviews[i].user.vanity_url %>">
+        <div class="user_pic" <% unless reviews[i].user.picture.nil? %>style="background-image: url('<%= reviews[i].user.picture %>');"<% end %>></div>
+        <p class="name" itemprop="name"><%= reviews[i].user.first_name.nil? ? "#{reviews[i].user.nickname}" : "#{reviews[i].user.first_name}" %></p>
+      </a>
+      <% if !reviews[i].user.city.nil? then %><p class="location" itemprop="homeLocation"><%= reviews[i].user.city.gsub(/\d+/, "").squeeze(" ").strip %></p><% end %>
+      <%if reviews[i].user.very_important_diver? %><img class="super_user" src="/img/shop/svg/icon_super_user.svg" alt="" /><%end%>
+      <p class="picture_count">
+        <%= it("picture",
+            scope: ['units'],
+            count: reviews[i].user.pictures.count) %>
+      </p>
+      <p class="dive_count">
+        <%= it("dive",
+            scope: ['units'],
+            count: reviews[i].user.dives.count) %>
+      </p>
+    </div>
+    <div class="arrow_box"></div>
+    <div class="review_box">
+      <div class="profile">
+        <!-- TODO 'link to logbook' -->
+        <a href="/<%= reviews[i].user.vanity_url %>">
+          <div class="user_pic" <% unless reviews[i].user.picture.nil? %>style="background-image: url('<%= reviews[i].user.picture %>');"<% end %>></div>
+          <p class="name"><%= reviews[i].user.first_name.nil? ? "#{reviews[i].user.nickname}" : "#{reviews[i].user.first_name}" %></p>
+        </a>
+        <% if !reviews[i].user.city.nil? then %><p class="location"><%= reviews[i].user.city.gsub(/\d+/, "").squeeze(" ").strip %></p><% end %>
+        <%if reviews[i].user.very_important_diver? %><img class="super_user" src="/img/shop/svg/icon_super_user.svg" alt="" /><%end%>
+        <p class="picture_count">
+          <%= it("picture",
+              scope: ['unit'],
+              count: reviews[i].user.pictures.count) %>
+        </p>
+        <p class="dive_count">
+          <%= it("dive",
+              scope: ['units'],
+              count: reviews[i].user.dives.count) %>
+        </p>
+      </div>
+      <div itemprop="reviewRating" itemscope itemtype="http://schema.org/Rating">
+        <meta itemprop="ratingValue" content="<%= reviews[i].average_mark %>" />
+        <table class="rating">
+          <tr>
+            <%= render "v2/shared/score_bullet", :score => reviews[i].average_mark, :color => :blue %>
+            <td>
+              <p>
+                <%= it("Posted on %{date} at %{time}",
+                    scope: ['area_pages', 'v2', 'reviews'],
+                    date: reviews[i].created_at.strftime(it("d/m/y",
+                                                          scope: ['date', 'formats'])),
+                    time: reviews[i].created_at.strftime(it("H:M",
+                                                          scope: ['time', 'formats']))) %>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <meta itemprop="datePublished" content="<%= it("Posted on %{date} at %{time}", scope: ['area_pages', 'v2', 'reviews'], date: reviews[i].created_at.strftime(it("d/m/y", scope: ['date', 'formats'])), time: reviews[i].created_at.strftime(it("H:M", scope: ['time', 'formats']))) %>" />
+      <%
+        score_flag = false
+        if !reviews[i].mark_boat.nil? || !reviews[i].mark_rent.nil? || !reviews[i].mark_friend.nil? || !reviews[i].mark_secu.nil? || !reviews[i].mark_orga.nil?
+          score_flag = true
+      %>
+      <table class="detail_score">
+        <%if !reviews[i].mark_boat.nil? || !reviews[i].mark_rent.nil? %>
+          <% if !reviews[i].mark_boat.nil? then score = reviews[i].mark_boat else score = 0.0 end %>
+          <% if !reviews[i].mark_rent.nil? then score = (score + reviews[i].mark_rent) / 2.0 end %>
+          <tr>
+            <td class="label">
+              <p>
+                <%= it("Boat and equipment:",
+                    scope: ['shop_pages', 'v2', 'shop_details']) %>
+              </p>
+            </td>
+            <%= render "v2/shared/score_bullet", :score => score, :color => :blue %>
+          </tr>
+        <%end%>
+
+        <%if !reviews[i].mark_friend.nil? || !reviews[i].mark_secu.nil? %>
+          <% if !reviews[i].mark_friend.nil? then score = reviews[i].mark_friend else score = 0.0 end %>
+          <% if !reviews[i].mark_secu.nil? then score = (score + reviews[i].mark_secu) / 2.0 end %>
+          <tr>
+            <td class="label">
+              <p>
+                <%= it("Guiding and safety:",
+                    scope: ['shop_pages', 'v2', 'shop_details']) %>
+              </p>
+            </td>
+            <%= render "v2/shared/score_bullet", :score => score, :color => :blue %>
+          </tr>
+        <%end%>
+
+        <%if !reviews[i].mark_orga.nil?%>
+          <tr>
+            <td class="label">
+              <p>
+                <%= it("Service:",
+                    scope: ['shop_pages', 'v2', 'shop_details']) %>
+              </p>
+            </td>
+            <%= render "v2/shared/score_bullet", :score => reviews[i].mark_orga, :color => :blue %>
+          </tr>
+        <%end%>
+      </table>
+      <% end %>
+      <p class="review_title<% unless score_flag == false %> col2<% end %>" itemprop="name"><%= reviews[i].title %></p>
+      <p class="review_text<% unless score_flag == false %> col2<% end %>" <%= "itemprop=reviewBody" if !reviews[i].comment.strip.empty? %>>
+        <% no_comment = "<i>" + it("No comment available", scope: ['shop_pages', 'v2', 'shop_reviews']) + "</i>" %>
+        <%= if reviews[i].comment.strip.empty? then no_comment.html_safe else reviews[i].comment end %>
+      </p>
+      <div class="clear"></div>
+      <% if !@user.nil? %>
+      <div class="vote">
+        <%
+          vote = ReviewVote.where({user_id: @user.id, review_id: reviews[i].id})
+        %>
+        <%
+          vote_up = reviews[i].vote_up
+          vote_down = reviews[i].vote_down
+        %>
+        <p><%= it("Was this helpful?", scope: ['shop_pages', 'v2', 'shop_reviews']) %>&nbsp;&nbsp;&nbsp;<a id="vote_up<%= reviews[i].id %>" class="vote_button" href="javascript:void(0);" review_id="<%= reviews[i].id %>" vote="up" v_value="<%= (vote.count != 0 && vote.first.vote == true) ? "true" : "false" %>"><img src="<%= HtmlHelper.lbroot "/img/shop/svg/icon_vote_up" %><%= if vote.count != 0 && vote.first.vote == true then "_green" end %>.svg" alt="" /></a><span class="vote_nb vote_up_nb <%= 'hidden' if vote_up == 0 %>"><%= vote_up %></span> <span class="sep">|</span> <a id="vote_down<%= reviews[i].id %>" class="vote_button" href="javascript:void(0);" review_id="<%= reviews[i].id %>" vote="down" v_value="<%= (vote.count != 0 && vote.first.vote == false) ? "true" : "false" %>"><img src="<%= HtmlHelper.lbroot "/img/shop/svg/icon_vote_down" %><%= if vote.count != 0 && vote.first.vote == false then "_red" end %>.svg" alt="" /></a><span class="vote_nb vote_down_nb <%= 'hidden' if vote_down == 0 %>"><%= vote_down %></span></p>
+      </div>
+      <% end %>
+      <div class="alert alert_modal_open" href="javascript:void(0)" alert_id="<%= reviews[i].id %>"></div>
+
+
+      
+
+
+      <div class="clear"></div>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <%
+      i += 1
+    end
+  %>

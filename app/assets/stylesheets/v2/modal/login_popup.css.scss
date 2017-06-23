@@ -1,0 +1,243 @@
+@import 'variablesv2';
+.loginModal {
+  @media (max-width: 750px) {
+    background: none;
+    position: fixed;
+  }
+  .sign_button{
+    text-decoration: none;
+    border-radius: 3px;
+    width: 160px;
+    height: 50px;
+    text-align: center;
+    line-height: 36px;
+    display: block;
+    margin: 0px auto;
+    background: #fdc90c;
+    color: $dark-gray-db;;
+    border: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    &:active, &:hover{
+      background: $dark-gray-db;
+      color: $yellow-db !important;
+    }
+  }
+  .fb_sign_in{
+    padding-right: 0rem;
+    width: 320px;
+    color: white;
+    border: none;
+    font-weight: 600;
+  }
+
+  .sign_up, .sign_in, .reset_pass
+  {
+    width: 100%;
+
+    .input_text
+    {
+      appearance: none;
+      -moz-appearance: none;
+      -webkit-appearance: none;
+      height: 46px;
+      padding-left: 10px;
+      background-color: #f9f9f9;
+      border-radius: 3px;
+      width: 310px;
+      margin: 0px auto;
+      margin-bottom: 5px;
+      display: block;
+      font-size: 0.9rem;
+      border: solid 1px $light-gray-db;
+      color: $dark-gray-db;
+    }
+    .input_checkbox {
+      appearance: none;
+      -moz-appearance: none;
+      -webkit-appearance: none;
+      border: solid 1px $light-gray-db;
+      width: 15px;
+      height: 15px;
+    }
+    .input_checkbox:checked {
+      background-color: #fdc90c;
+    /* or whatever styles you want depending on your design */
+    /* be as obvious as possible that it's a checkbox and that it's checked! */
+    }
+
+    .terms, .remember
+    {
+      color: #7a7c7d;
+      font-size: 13px !important;
+      margin-bottom: 0px !important;
+
+      a
+      {
+        color: $navy-blue-db;
+      }
+    }
+
+    .error
+    {
+      color: #e22a40;
+      text-align: left;
+      margin: 0 auto;
+      margin-bottom: 15px;
+      font-size: 14px;
+      width: 310px;
+      a
+      {
+        color: #e22a40;
+      }
+    }
+
+    .invalid {
+      border:solid 1px hsl(0, 50%, 50%);
+      background:hsl(0, 50%, 90%);
+    }
+    .forgot_pass
+    { 
+      text-align: center;
+      display: block;
+      font-size: 0.8rem;
+      color: gray;
+      text-decoration: none;
+      &:hover{
+        color: #fdc90c;
+      }
+    }  
+    .prev_menu{
+      display: none;
+    }
+
+  }
+  .modal_content_initial {
+    text-align: center;
+    width: 700px;
+    @media (max-width: 750px) {
+      width: 100%;
+      height: calc(100% - 46px);
+      margin-top: 46px!important;
+    }
+  }
+  .logo_container
+  {
+    display: table;
+    margin: 0 auto;
+    width: 340px;
+    height: 60px;
+    background: #fdc90c;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+
+    img
+    {
+      width: 100%;
+      height: 40px;
+      margin-top: 10px;
+    }
+  }
+}
+
+
+
+
+
+
+
+.login {
+  padding: 10px;
+  .sign_up, .sign_in, .reset_pass {
+    .columns {
+      margin-top: 40px;
+      .column-title {
+        padding: 3px;
+        height: 20px;
+        line-height: 20px;
+        background: white;
+        margin-bottom: 15px;
+        font-size: 14px;
+        color: $dark-gray-db;
+        font-weight: 600;
+      }
+      .title-center {
+        position:absolute;
+        @media (max-width: 750px) {
+          margin-bottom: 0;
+          margin-top: 7px;
+          margin-left: 47%;
+        }
+      }
+      .divider {
+        border-left:1px solid $light-gray-db; 
+        height:394px;
+        margin-top: -5px;
+        position:absolute;
+        margin-left: 2%;
+        left: 50%;
+        top: 0;
+        @media (max-width: 750px) {
+          height: 1px;
+          width: 340px;
+          border-top:1px solid $light-gray-db;
+          border-left: 0;
+          /* position: initial; */
+          margin-top: 20px;
+          margin-left: calc(50% - (340px / 2));
+          left: 0;
+        }
+      }
+      .large {
+        width: 47%;
+        @media (max-width: 750px) {
+          width: 100%;
+        }
+      }
+      .center {
+        position: relative;
+        width: 4%;
+        height: 1px;
+        @media (max-width: 750px) {
+          /* position: initial; */
+          width: 100%;
+          height: 40px;
+        }
+      }
+      .link {
+        text-align: left;
+        margin: 0 auto;
+        margin-top: 50px;
+        width: 310px;
+        a {
+          color: $mid-gray-db;
+          font-size: 13px;
+          display: block;
+          margin-bottom: -23px;
+          color: $navy-blue-db;
+        }
+      }
+    }
+  }
+  .bottom {
+    a {
+      color: $yellow-db;
+    }
+    font-size: 13px;
+    width: 70%;
+    margin: 0 auto;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    color: $dark-gray-db;
+  }
+}
+.column {
+  /*vertical-align: top;
+  display: inline-block; */
+  float: right;
+  @media (max-width: 750px) {
+    vertical-align: initial;
+    display: initial;
+  }
+}

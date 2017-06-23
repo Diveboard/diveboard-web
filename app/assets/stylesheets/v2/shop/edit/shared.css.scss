@@ -1,0 +1,31 @@
+.slides
+{
+  transition: all ease 200ms;
+  .section
+  {
+    //display: none;
+  }
+  
+  .section-active
+  {
+    //display:block;
+  }
+
+  textarea
+  {
+    padding-left: 10px;
+    padding-top: 5px;
+    width: calc(100% - 12px);
+  }
+}
+
+
+label
+{
+  font-weight: 600;
+}
+
+.sub_label
+{
+  font-size: 13px;
+}

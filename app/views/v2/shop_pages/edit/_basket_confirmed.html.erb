@@ -1,0 +1,64 @@
+<%
+customer = basket.user
+highlight ||= nil
+%>
+
+<iframe class='basket_user_profile' frameborder="0" height="245" width="200" scrolling="no" src="<%=customer.fullpermalink(:locale)%>/widget"></iframe>
+
+<div class='basket_for_shop confirmed'>
+  <%if basket.paypal_attention%>
+    <p class='attention_paypal'><strong><%= it("Please check the transaction %{link:on paypal website}", scope: ['basket_management', 'shop_pages', 'basket_confirmed'], link: It.link(Rails.application.config.paypal[:api_3t_url]+"?cmd=_view-a-trans&id="+(basket.paypal_capture_id||basket.paypal_order_id), target: "_blank")) %></strong>.<br/><%= it("This transaction requires your attention to be completed. Once the transaction on paypal is completed, the order will be automatically updated here.", scope: ['basket_management', 'shop_pages', 'basket_confirmed']) %></p>
+  <%end%>
+
+  <%= render :partial => 'basket/shop_view', :locals => {:baskets => {basket.shop_id => basket}, :interactive => false}%>
+</div>
+
+<div class='basket_confirmation_form'>
+  <div class='title'>
+    <div style='display: inline-block'><h2><%= it("Choose your reply:", scope: ['basket_management', 'shop_pages', 'basket_confirmed']) %></h2> </div>
+    <select class='dropdown right grey basket_confirmation_action'>
+        <option class='option' data-value='deliver'><%= it("Mark as delivered", scope: ['basket_management', 'shop_pages', 'basket_confirmed']) %></option>
+        <option class='option' data-value='reject'><%= it("Cancel order", scope: ['basket_management', 'shop_pages', 'basket_confirmed']) %></option>
+    </select>
+  </div>
+
+  <div class='basket_confirmation_deliver basket_confirmation_part' data-basket_id='<%=basket.reference%>'>
+    <p class='explain'><%= it("Once marked as delivered, this order will no longer appear in the listing of \"opened\" orders. You may still find it by filtering for \"delivered\" orders.", scope: ['basket_management', 'shop_pages', 'basket_confirmed']) %></p>
+    <table class='form_table'>
+      <tr>
+        <td><%= it("Delivery note%{br}for customer %{i:(optional)}:", scope: ['basket_management', 'shop_pages', 'basket_confirmed'], br: It.tag("br"), i: It.tag("i")) %></td>
+        <td><textarea class='note_text'></textarea></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><button class='yellow_button send'><%= it("Mark as delivered", scope: ['basket_management', 'shop_pages', 'basket_confirmed']) %></button> </td>
+      </tr>
+    </table>
+  </div>
+
+
+  <div class='basket_confirmation_reject basket_confirmation_part' style='display: none' data-basket_id='<%=basket.reference%>'>
+    <p class="explain"><%= it("This order will be cancelled and the customer will be refunded. Some fees may stay at your charge, depending on you Paypal account.", scope: ['basket_management', 'shop_pages', 'basket_confirmed']) %></p>
+    <!--<button class='grey_button'>Suggest another basket</button>-->
+    <table class='form_table'>
+      <tr>
+        <td><%= it("Cancellation explanation:", scope: ['basket_management', 'shop_pages', 'basket_confirmed']) %></td>
+        <td><textarea class='note_text'></textarea></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><button class='yellow_button send'><%= it("Send reply", scope: ['basket_management', 'shop_pages', 'basket_confirmed']) %></button></td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div class='basket_past_detail' style='clear: both;'>
+  <div class='history'>
+    <h2><%= it("Basket history", scope: ['basket_management', 'shop_pages', 'basket_confirmed']) %></h2>
+    <%= render :partial => 'shop_pages/basket_management/history', :locals => {:basket => basket}%>
+  </div>
+  <div class='exchanges'>
+    <%= render :partial => 'shop_pages/care/customer_history', :locals => {:shop => basket.shop, :customer => customer, :highlight => highlight||basket, :in_reply_to => basket}%>
+  </div>
+</div>

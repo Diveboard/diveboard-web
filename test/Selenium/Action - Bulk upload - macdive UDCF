@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://stage.diveboard.com/" />
+<title>Action - Bulk upload - Macdive UDCF</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Action - Bulk upload - Macdive UDCF</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/squale.ro</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//img[@alt='Bulk upload from Computer or file']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>wizard_import_btn</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>file</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//input[@type='file']</td>
+	<td>D:\DATA\My Documents\Personnel\My Dropbox\Divowa\Testing\Resources\macdive UDCF_9dives #1.udcf</td>
+</tr>
+<!--This can only work with a workaround-->
+<tr>
+	<td>waitForVisible</td>
+	<td>dive_list_selector_button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//select[@id='dive_list_selected']/option[1]</td>
+	<td>regexp:^\* 2010-07-28 10:46 5[56]mins 12.8m</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//select[@id='dive_list_selected']/option[2]</td>
+	<td>regexp:^\* 2010-07-28 14:30 5[01]mins 17.7m</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//select[@id='dive_list_selected']/option[3]</td>
+	<td>regexp:^\* 2010-07-28 21:18 7[78]mins 7.9m</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//select[@id='dive_list_selected']/option[4]</td>
+	<td>regexp:^\* 2010-07-29 10:05 4[78]mins 36.9m</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//select[@id='dive_list_selected']/option[5]</td>
+	<td>regexp:^\* 2010-07-29 15:07 4[78]mins 27.4m</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//select[@id='dive_list_selected']/option[6]</td>
+	<td>regexp:^\* 2010-07-30 10:41 49mins 27.7m</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//select[@id='dive_list_selected']/option[7]</td>
+	<td>regexp:^\* 2010-07-30 14:03 5[56]mins 23.2m</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//select[@id='dive_list_selected']/option[8]</td>
+	<td>regexp:^\* 2010-07-31 10:12 4[01]mins 38.1m</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//select[@id='dive_list_selected']/option[9]</td>
+	<td>regexp:^\* 2010-07-31 14:34 6[67]mins 28.[67]m</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>dive_list_selector_button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>mask</td>
+	<td></td>
+</tr>
+</tbody></table>
+</body>
+</html>

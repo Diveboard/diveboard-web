@@ -1,0 +1,297 @@
+@import 'variablesv2';
+
+.about_shop
+{
+  max-width: $home-width;
+  margin: 0 auto;
+
+  #shopedit_address
+  {
+    height: 90px;
+  }
+
+  #shopedit_openings
+  {
+    height: 80px;
+  }
+
+  #shopedit_about_html
+  {
+    resize: none;
+    height: 218px;
+    margin-top: 10px;
+    font-size: 14px;
+    color: $dark-gray-db;
+    outline: none;
+    -webkit-appearance: none;
+    border: 1px solid $light-gray-db;
+
+  }
+
+  .title
+  {
+    font-weight: 600;
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .left-container
+  {
+    float: left;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    max-width: calc(50% - 10px);
+    background-color: white;
+    border: 1px solid $light-gray-db;
+    color: $dark-gray-db;
+
+    table
+    {
+      width: 100%;
+    }
+
+    td
+    {
+      padding: 10px;
+    }
+
+    #shopedit_country_field
+    {
+      padding-right: 0;
+      position: relative;
+
+      img
+      {
+        position: absolute;
+        right: 0;
+        top: 17px;
+      }
+    }
+
+    textarea
+    {
+      resize: none;
+      font-size: 14px;
+      color: $dark-gray-db;
+      border: 1px solid $light-gray-db;
+    }
+
+    input, select
+    {
+      width: 100%;
+      font-size: 14px;
+      color: $dark-gray-db;
+      outline: none;
+      -webkit-appearance: none;
+      border: none;
+      border-bottom: 1px solid $light-gray-db;
+    }
+  }
+
+  .right-container
+  {
+    float: right;
+    width: calc(50% - 30px);
+    background-color: white;
+    border: 1px solid $light-gray-db;
+    color: $dark-gray-db;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .shop_location
+  {
+    float: right;
+    width: calc(50% - 10px);
+    background-color: white;
+    border: 1px solid $light-gray-db;
+    color: $dark-gray-db;
+    position: relative;
+
+    .button
+    {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      height: 30px;
+      background-color: $yellow-db;
+      padding-left: 10px;
+      padding-right: 10px;
+      line-height: 30px;
+      font-size: 14px;
+      -webkit-border-radius: 3px;
+      -moz-border-radius: 3px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .map
+    {
+      width: 100%;
+      height: 225px;
+    }
+
+    input
+    {
+      width: 70px;
+      color: $dark-gray-db;
+      margin-left: 10px;
+      text-align: center;
+      outline: none;
+      -webkit-appearance: none;
+      border: none;
+      border-bottom: 1px solid $light-gray-db;
+    }
+
+    label
+    {
+      font-weight: normal;
+      padding-left: 30px;
+    }
+  }
+
+  .shop_affiliations
+  {
+    float: right;
+    padding: 10px;
+    width: calc(50% - 30px);
+    background-color: white;
+    margin-top: 10px;
+    border: 1px solid $light-gray-db;
+    color: $dark-gray-db;
+
+    .title
+    {
+      padding: 0;
+    }
+
+    label
+    {
+      padding-left: 5px;
+    }
+
+    table
+    {
+      margin-top: 10px;
+      margin-left: 70px;
+
+      td
+      {
+        padding-right: 35px;
+      }
+    }
+  }
+
+  .shop_languages, .shop_staff
+  {
+    float: left;
+    width: calc(50% - 30px);
+    margin-top: 10px;
+    background-color: white;
+    padding: 10px;
+    color: $dark-gray-db;
+    border: 1px solid $light-gray-db;
+
+    table
+    {
+      width: 100%;
+    }
+
+    .add
+    {
+      margin-left: 20px;
+    }
+
+    input
+    {
+      width: 100%;
+      text-align: center;
+      color: $dark-gray-db;
+      font-size: 14px;
+      height: 25px;
+      outline: none;
+      -webkit-appearance: none;
+      border: none;
+      border-bottom: 1px solid $light-gray-db;
+    }
+
+    .language-stack, .staff-stack
+    {
+      margin-top: 10px;
+    }
+
+    $grid-height: 50px;
+    .grid-stack-item
+    {
+      width: 100%;
+      margin-bottom: 10px;
+      height: 40px;
+    }
+
+    .grid-stack-item-content
+    {
+      border: 1px solid $light-gray-db;
+      line-height: 40px;
+      text-align: center;
+      cursor: move;
+
+      .delete
+      {
+        position: absolute;
+        color: $red-db;
+        font-weight: bold;
+        right: 0px;
+        top: 0px;
+        width: 50px;
+        text-align: center;
+        cursor: pointer;
+
+        &::after
+        {
+          content: 'X';
+        }
+      }
+
+      &:hover
+      {
+        background-color: $light-gray-db;
+      }
+    }
+
+    $i: 0;
+    @while $i < 50
+    {
+      .grid-stack-item[data-gs-y="#{$i}"]  { top: $grid-height * $i; }
+      $i: $i + 1;
+    }
+  }
+
+  .shop_staff
+  {
+    float: right;
+  }
+}
+
+.ui-autocomplete
+{
+  background-color: white;
+  width: 221px;
+  border: 1px solid $light-gray-db;
+  border-top: none;
+  cursor: pointer;
+
+  li
+  {
+    color: $dark-gray-db;
+    font-size: 14px;
+    list-style-type: none;
+    padding: 5px;
+
+    &:hover
+    {
+      background-color: $light-gray-db;
+    }
+  }
+}

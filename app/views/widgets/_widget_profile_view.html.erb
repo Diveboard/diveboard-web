@@ -1,0 +1,128 @@
+<div id="shop_profile_data" class="widget_profile">
+  <%if @owner.shop_proxy.lat.nil? || @owner.shop_proxy.lng.nil?
+      has_shop_location_map = false
+    else
+      has_shop_location_map = true
+    end
+  %>
+  <div id="contact_info_holder" class="<%=if has_shop_location_map then "half_width_content_box" end%>">
+    <%if shop.address || shop.openings then%>
+      <div class='main_content_box'>
+        <h2><%= it("Contact", scope: ['widgets', 'widget_profile_view']) %></h2>
+        <table class='shop_location_table'>
+        <%if !shop.address.nil?%>
+          <tr>
+            <td class='col1'><%= it("Address", scope: ['widgets', 'widget_profile_view']) %></td>
+            <td class='col2'><%=h(shop.address).gsub(/\n/, '<br/>').html_safe %></td>
+          </tr>
+        <%end%>
+        <%if !shop.openings.nil?%>
+          <tr>
+            <td class='col1'><%= it("Opening schedule", scope: ['widgets', 'widget_profile_view']) %></td>
+            <td class='col2'><%=h(shop.openings).gsub(/\n/, '<br/>').html_safe %></td>
+          </tr>
+        <%end%>
+        </table>
+      </div>
+      <%end%>
+
+    <%if shop.web || shop.facebook || shop.twitter || shop.google_plus then %>
+      <div class='main_content_box'>
+      <h2><%= it("On the web", scope: ['widgets', 'widget_profile_view']) %></h2>
+        <table class='shop_location_table'>
+        <%if !shop.web.nil?%>
+          <tr>
+            <td class='col1'><%= it("Official web page", scope: ['widgets', 'widget_profile_view']) %></td>
+            <td class='col2'><a itemprop="url" itemref='shop_orga' href='<%=shop.web%>' target=_blank ><%= shop.web %></a></td>
+          </tr>
+        <%end%>
+        <%if !shop.facebook.nil?%>
+          <tr>
+            <td class='col1'>Facebook</td>
+            <td class='col2'><a href='<%=shop.facebook%>'><%= shop.facebook %></a></td>
+          </tr>
+        <%end%>
+        <%if !shop.twitter.nil?%>
+          <tr>
+            <td class='col1'>Twitter</td>
+            <td class='col2'><%=h shop.twitter %></td>
+          </tr>
+        <%end%>
+        <%if !shop.google_plus.nil?%>
+          <tr>
+            <td class='col1'>Google+</td>
+            <td class='col2'><%=h shop.google_plus %></td>
+          </tr>
+        <%end%>
+        </table>
+      </div>
+    <%end%>
+
+    <% if !shop.is_claimed? then%>
+    <div class='main_content_box'>
+      <br/>
+      <br/>
+      <p><%= it("If you work at this dive shop, you can %{link:claim this page} and add a description of your activity!", scope: ['widgets', 'widget_profile_view'], link: "/login/register_pro?start=1&shop_id=#{shop.id}") %></p>
+    </div>
+    <%end%>
+
+  </div>
+
+
+  <%if has_shop_location_map%>
+  <div id="map_location_holder"> </div>
+  <%end%>
+
+
+  <%if !shop.nearby.nil? %>
+    <div class='main_content_box'>
+      <h2>Accomodation &amp; Services Nearby</h2>
+      <div class='wiki_display'>
+        <%=(HtmlHelper.sanitize shop.nearby, :shift_headings => 2 ).html_safe %>
+      </div>
+    </div>
+  <%end%>
+
+  <div style='margin: 15px 0px 0px 20px'>
+    <div class="fb-like" data-href="<%=shop.fullpermalink(:canonical)%>" data-width="500px" data-height="100px" data-colorscheme="light" data-layout="standard" data-action="like" data-show-faces="true" data-send="false"></div>
+  </div>
+
+</div>
+<div id="dialog-claim-shop" title="<%= it("Get access", scope: ['widgets', 'widget_profile_view']) %>" style="display:none;">
+  <p class="dialog-text-highlight"><%= it("Dive shops and clubs can add description of their activities on their Diveboard page. To allow you to make changes to this page, we first need to make sure that you are an representative of %{shop_name}.", scope: ['widgets', 'widget_profile_view'], shop_name: content_tag("strong", shop.name)) %></p>
+
+  <%if @user.nil? then%>
+    <p><%= it("You first need to be logged in on diveboard. If you have not created your account yet, %{link:sign up} on Diveboard : it's very easy!", scope: ['widgets', 'widget_profile_view'], link: It.link("/login/register")) %></p>
+  <%elsif @user.is_group? then%>
+    <!-- this should never happen-->
+    <p><%= it("A shop or a group cannot claim ownership of another shop. Make sure to log in with your own user.", scope: ['widgets', 'widget_profile_view']) %></p>
+  <%else%>
+    <div class='auto_claim' >
+      <br/>
+      <h3><%= it("Two options are available for registering the page:", scope: ['widgets', 'widget_profile_view']) %></h3>
+      <table>
+        <tr style='height: 100px'>
+          <td style='width: 20px;'>1.</td>
+          <td><p><%= it("We will send you a mail to %{strong} with a confirmation link that will allow you to complete the claim process.", scope: ['widgets', 'widget_profile_view'], strong: content_tag("strong", shop.email)) %></p></td>
+          <td><button id='dialog_claim_auto_submit' class='yellow_button claim_shop_send_mail'><%= it("OK, send me the mail!", scope: ['widgets', 'widget_profile_view']) %></button></td>
+        </tr>
+        <tr>
+          <td style='width: 20px;'>2.</td>
+          <td><p><%= it("If the email %{shop_email} is not correct or if you don't have access to this mailbox, then leave us a message and we'll handle your request manually.", scope: ['widgets', 'widget_profile_view'], shop_email: shop.email) %></p></td>
+          <td><button class='yellow_button claim_shop_manual_link'><%= it("Leave us a message", scope: ['widgets', 'widget_profile_view']) %></button></td>
+        </tr>
+      </table>
+    </div>
+    <div class='manual_claim' style='display:none;'>
+      <p><%= it("Leave us a message with your identity and your role within %{shop_name}, along with any useful explanation. Your claim will only be approved if we can verify that you are the owner or a representative of %{shop_name}.", scope: ['widgets', 'widget_profile_view'], shop_name: shop.name) %></p>
+      <br/>
+      <%if !shop.email.blank? then %>
+      <p><%= it("Please note that whenever possible, you should try the %{link:automated process} to have a quicker answer.", scope: ['widgets', 'widget_profile_view'], link: "#", class: "claim_shop_auto_link") %></p>
+      <%end%>
+      <div>
+        <textarea id='dialog_claim_explanation'></textarea>
+        <p><button class='yellow_button' id='dialog_claim_explanation_submit'><%= it("Submit claim", scope: ['widgets', 'widget_profile_view']) %></button></p>
+      </div>
+    </div>
+  <%end%>
+</div>

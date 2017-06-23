@@ -1,0 +1,49 @@
+<%content_for :css do %>
+<%= include_stylesheets :newsletter, :media => :all %>
+<%end%>
+<style type="text/css">
+#diveboard_newsletter{padding: 20px; background-color: #E7E8EA;}
+#container {width: 100%;}
+</style>
+<center>
+<div id='diveboard_newsletter' >
+  <a href="/" class='header'>
+    <img src="/img/newsletter/newsletter_banner.png"/>
+  </a>
+  <div class='date backgradient'>
+    <table>
+      <tr>
+        <td style='width: 477px; height: 25px; vertical-align: middle; padding-left: 28px;'><%= it("Unsubscribe", scope: ['blog', 'newsletter_unsuscribe']) %></td>
+        <td style='width: 80px'><a href='http://www.facebook.com/Diveboard'><div class='like_button'><img src="/img/newsletter/newsletter_facebook.png"/><span><%= it("Like", scope: ['blog', 'newsletter_unsuscribe']) %></span></div></a></td>
+        <td><a href='http://twitter.com/diveboard'><div class='follow_button'><img src="/img/newsletter/newsletter_twitter.png"/><span><%= it("Follow", scope: ['blog', 'newsletter_unsuscribe']) %></span></div></a></td>
+      </tr>
+    </table>
+  </div>
+  <div class='main_content subscription'>
+    <%if !@message.nil?%>
+    <div><em><%=@message%></em></div><br/>
+    <br/><br/>
+
+    <div style="font-size: 16px;"><%= it("You can still use Diveboard, don't worry!%{br}To receive the newsletter again: log into Diveboard and head to your setting menu (on the yellow top dropdown)%{br}%{br}By the way, did you check out the %{link_explore:explore} page, the %{link_gallery:picture gallery} and the %{link_community:community} blog recently?%{br}We've got awesome stuff there for you to gaze on!", scope: ['blog', 'newsletter_unsuscribe'], br: It.tag('br'), link_explore: It.link("/explore"), link_gallery: It.link("/explore/gallery"), link_community: It.link("/community")) %></div>
+
+    <%else%>
+    <div><%= it("We're sorry to see you go !%{br}Please enter your contact email and hit the unsuscribe button.", scope: ['blog', 'newsletter_unsuscribe'], br: It.tag('br')) %></div>
+    <form method="post" action='/community/newsletter/unsuscribe'>
+      <input type="text" class="register_main_input" name="contact_email" value='<%=@nl_email || params[:email]%>' size=30/>
+      <input type='hidden' name='scope' value='<%=params[:scope] || ""%>'/>
+      <input type='hidden' name='recipient_id' value='<%=params[:recipient_id] || ""%>'/>
+      <input type='hidden' name='authenticity_token' value='<%=form_authenticity_token%>'/>
+      <input type='hidden' name='do_action' value='unsuscribe'/>
+      <button class='yellow_button'><%= it("UNSUBSCRIBE", scope: ['blog', 'newsletter_unsuscribe']) %></button>
+    </form>
+    <%end%>
+  </div>
+  <div class='footer'>
+    <img src="/img/newsletter/newsletter_footer_split.png">
+    <div style="display: block;">
+      <center><a href="/"><div style="background-image: url('/img/newsletter/newsletter_footer_logo.png'); width: 170px; height: 23px; display: inline-block; background-repeat: no-repeat;"></div></a></center>
+    </div>
+    <p></p>
+  </div>
+</div>
+</center>

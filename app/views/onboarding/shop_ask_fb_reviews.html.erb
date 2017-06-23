@@ -1,0 +1,13 @@
+  <div class="main_info" align="left">
+    <div>
+      You currently have <%if @shop.reviews.count == 0%>no reviews<%else%>only <%=pluralize(@shop.reviews.count, 'review')%><%end%> on Diveboard.<br/><br/>
+      To get your ranking boosted <b>you need to have as many reviews as possible</b>!<br/><br/><b>Did you know it?</b> A customer leaving a review will reach between 500 to 2000 new potential customers for you.<br/><br/>
+      Reach out to your fans and ask them to leave a review now!<br/><br/>
+      <% review = "#{@shop.fullpermalink}/review"%>
+      <center><a href="https://www.facebook.com/sharer/sharer.php?u=<%=CGI::escape(review)%>" class="yellow_button">Ask on Facebook</a></center>
+      <br/>
+      Next time you connect with your customers/fans ask them to leave a review on your page: <br/>
+      <center><a href="<%=review%>"><%=review%></a></center>
+    </div>
+    <br/>
+  </div>

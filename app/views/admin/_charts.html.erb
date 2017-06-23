@@ -1,0 +1,812 @@
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+<%
+begin
+  fragment_file = Rails.cache.send(:read_entry,"views/admin_charts",{})
+  if params[:force_refresh] || (fragment_file && Time.now - 70.minutes > Time.at(fragment_file.created_at)) then
+    ActionController::Base.new.expire_fragment "admin_charts"
+  end
+rescue
+  Rails.logger.warn $!.message
+end
+cache "admin_charts" do %>
+
+<script type="text/javascript">
+
+// Load the Visualization API and the piechart package.
+google.load('visualization', '1.0', {'packages':['geochart', 'corechart']});
+// Set a callback to run when the Google Visualization API is loaded.
+google.setOnLoadCallback(function(){draw_chart()});
+
+function add_separator(text){
+  var dom = document.createElement('h3');
+  //dom.setAttribute('style', 'display:inline-block');
+  dom.innerHTML=text;
+  document.getElementById('chart_holder').appendChild(dom);
+}
+
+function draw_chart() {
+  add_separator('User base')
+  draw_chart_users();
+  draw_chart_growth();
+  add_separator('Reviews')
+  draw_chart_reviews();
+  draw_chart_rate_reviews();
+  add_separator('Content')
+  draw_chart_dives();
+  draw_chart_pictures();
+  draw_chart_computer_uploads();
+  draw_chart_comments();
+  add_separator('Activity')
+  draw_chart_activity();
+  draw_chart_distinct_visits_per_day();
+  draw_chart_activity_detailed();
+  draw_chart_shop_claims();
+  add_separator('Returning users')
+  draw_chart_usage();
+  draw_chart_returning_users();
+  draw_chart_active_users();
+  add_separator('Map');
+  draw_chart_dive_locations();
+  draw_chart_users_locations();
+  add_separator('Science');
+  draw_chart_identified_species();
+  draw_chart_dan();
+}
+
+function draw_chart_users() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'New users');
+  data.addColumn('number', 'Total of Users');
+  data.addRows(<%= s = 0; ActiveRecord::Base.connection.select_all("select date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') week, count(*) cnt FROM users WHERE shop_proxy_id is null AND created_at > '#{2.years.ago.to_date.at_beginning_of_month.to_s}' group by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') order by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d')").map do |e| [ e['week'], e['cnt'], s += e['cnt'] ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Users on Diveboard',
+    vAxis: {0: {title: 'Total Users'}, 1: {title: 'New Users'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "bars",
+    series: {0: {targetAxisIndex: 1}, 1: {type: "line", targetAxisIndex: 0}},
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+
+function draw_chart_identified_species() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'Identified Species');
+  data.addRows(<%= s = 0; ActiveRecord::Base.connection.select_all("select date_format(DATE_SUB(dives.created_at, INTERVAL weekday(dives.created_at) day ), '%Y-%m-%d') week, count(*) cnt FROM dives_eolcnames left join dives on dives_eolcnames.dive_id = dives.id group by date_format(DATE_SUB(dives.created_at, INTERVAL weekday(dives.created_at) day ), '%Y-%m-%d') order by date_format(DATE_SUB(dives.created_at, INTERVAL weekday(dives.created_at) day ), '%Y-%m-%d')").map do |e| [ e['week'], s += e['cnt'] ] end .to_json.html_safe%>);
+
+
+  // Set chart options
+  var options = {'title':'Identified Species',
+    vAxis: {0: {title: 'Total Identified Species'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "bars",
+    series: {0: {targetAxisIndex: 1}},
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+function draw_chart_dan() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'DAN Surveys');
+  data.addRows(<%= s = 0; ActiveRecord::Base.connection.select_all("select date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') week, count(*) cnt FROM dives WHERE dan_data_sent IS NOT NULL group by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') order by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d')").map do |e| [ e['week'], s += e['cnt'] ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Total DAN surveys',
+    vAxis: {0: {title: 'Total DAN surveys'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "bars",
+    series: {0: {targetAxisIndex: 1}},
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+function draw_chart_shop_claims() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'Shop claims');
+  data.addRows(<%= s = 0; ActiveRecord::Base.connection.select_all("select date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') week, count(*) cnt FROM memberships group by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') order by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d')").map do |e| [ e['week'], s += e['cnt'] ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Total shop claims',
+    vAxis: {0: {title: 'Total shop claims'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "bars",
+    series: {0: {targetAxisIndex: 1}},
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+function draw_chart_growth() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'User base');
+  data.addRows(<%= s = 0; prev_week = 1; ActiveRecord::Base.connection.select_all("select date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') week, count(*) cnt FROM users WHERE shop_proxy_id is null group by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') order by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d')").map do |e| prev = s==0?1:s; s+=e['cnt']; [ e['week'], (100.0*e['cnt'] / prev).round(2).to_f ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Growth per week',
+    vAxis: {title: 'Growth %', viewWindowMode: 'explicit', viewWindow: {min:0, max: 11}},
+    hAxis: {title: 'Year-Week'},
+    seriesType: "area",
+    series: {0: {targetAxisIndex: 0}},
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+
+
+function draw_chart_dives() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'New dives');
+  data.addColumn('number', 'Total of Dives');
+  data.addRows(<%= s = 0; ActiveRecord::Base.connection.select_all("select date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') week, count(*) cnt FROM dives group by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') order by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d')").map do |e| [ e['week'], e['cnt'], s += e['cnt'] ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Dives on Diveboard',
+    vAxis: {0: {title: 'Total Dives'}, 1: {title: 'New Dives'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "bars",
+    series: {0: {targetAxisIndex: 1}, 1: {type: "line", targetAxisIndex: 0}},
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+
+
+function draw_chart_dive_locations() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Country');
+  data.addColumn('number', 'Nb dives');
+  data.addRows(<%= s = 0; ActiveRecord::Base.connection.select_all("select countries.ccode ccode, count(*) cnt from dives, spots, countries where dives.spot_id = spots.id and spots.country_id = countries.id and countries.ccode <> 'BLANK' group by countries.ccode").map do |e| [ e['ccode'], e['cnt'] ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.GeoChart(dom);
+  chart.draw(data, options);
+}
+
+
+function draw_chart_users_locations() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Country');
+  data.addColumn('number', 'Nb divers');
+  data.addRows(<%= s = 0; ActiveRecord::Base.connection.select_all("select UPPER(location) ccode, count(*) cnt from users where location <> 'blank' and location is not null and shop_proxy_id is null group by location").map do |e| [ e['ccode'], e['cnt'] ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.GeoChart(dom);
+  chart.draw(data, options);
+}
+
+
+function draw_chart_computer_uploads() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'Number of uploads');
+  data.addColumn('number', 'Number of uploads with at least 1 dive');
+  data.addRows(<%= ActiveRecord::Base.connection.select_all("
+        select date_format(DATE_SUB(uploaded_profiles.created_at, INTERVAL weekday(uploaded_profiles.created_at) day ), '%Y-%m-%d') week,
+        count(distinct uploaded_profiles.id) cnt,
+        sum(CASE WHEN dives.id IS NULL THEN 1 ELSE 0 END) no_dive_cnt
+        FROM uploaded_profiles LEFT JOIN dives ON dives.uploaded_profile_id = uploaded_profiles.id
+        WHERE uploaded_profiles.created_at >= '2011-08-29'
+        AND uploaded_profiles.source = 'computer'
+        group by date_format(DATE_SUB(uploaded_profiles.created_at, INTERVAL weekday(uploaded_profiles.created_at) day ), '%Y-%m-%d')
+        order by date_format(DATE_SUB(uploaded_profiles.created_at, INTERVAL weekday(uploaded_profiles.created_at) day ), '%Y-%m-%d') ").map do |e| [ e['week'], e['cnt'], (e['cnt']-e['no_dive_cnt']).to_i ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Computer uploads on Diveboard',
+    vAxis: {title: 'Number of uploads'},
+    hAxis: {title: 'Year-Week'},
+    lineWidth: 0,
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.AreaChart(dom);
+  chart.draw(data, options);
+}
+
+
+
+function draw_chart_comments() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'New comments');
+  data.addColumn('number', 'Total of comments');
+
+<%
+  ref_day = Date.new(2012,03,12)
+  comment_times = ActiveRecord::Base.connection.select_all("select raw_data from fb_comments where raw_data <> '{\"data\":[]}' ").map do |e| JSON.parse(e['raw_data'])['data'].map do |c| c['created_time'] end end
+  comment_weeks = comment_times.flatten.map do |t| ((t.to_date - ref_day)/7).floor end
+  comment_counts = {}
+  comment_weeks.each do |w|
+    comment_counts[w] ||= 0
+    comment_counts[w] += 1
+  end
+%>
+
+  data.addRows(<%= s = 0; 0.upto(comment_weeks.max).map do |w| [ ref_day + (w*7), comment_counts[w]||0, s += (comment_counts[w]||0) ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Comments on Diveboard',
+    vAxis: {0: {title: 'Total comments'}, 1: {title: 'New comments'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "bars",
+    series: {0: {targetAxisIndex: 1}, 1: {type: "line", targetAxisIndex: 0}},
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+
+
+function draw_chart_reviews() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'New reviews');
+  data.addColumn('number', 'Total of reviews');
+  data.addColumn('number', 'Total of reviews with comment');
+  data.addRows(<%= s1 = 0; s2 = 0; ActiveRecord::Base.connection.select_all("select date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') week, count(*) cnt, SUM(case when comment is not null  and comment <> \"\" then 1 else 0 end) cnt_comment FROM reviews group by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') order by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d')").map do |e| [ e['week'], e['cnt'], s1 += e['cnt'], s2 += e['cnt_comment'].to_i ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Reviews on Diveboard',
+    vAxis: {0: {title: 'Nb of reviews'}, 1: {title: 'New reviews'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "bars",
+    series: {0: {targetAxisIndex: 1}, 1: {type: "line", targetAxisIndex: 0}, 2:{type: "line", targetAxisIndex: 0}},
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+
+function draw_chart_rate_reviews() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', '% shop reviewed');
+  //data.addColumn('number', 'Maximum number of reviews');
+  data.addRows(<%= s1 = 0; s2 = 0; ActiveRecord::Base.connection.select_all("select week, total, reviewed, 100*reviewed/total percent from  (
+    select date_format(t_week, '%Y-%m-%d') week, sum(CASE WHEN t_week >= t_start then 1 else 0 end) total, sum(CASE WHEN t_week >= t_end then 1 else 0 end) reviewed from
+      (select SUBTIME( DATE_SUB(created_at, INTERVAL weekday(created_at) day), TIME(created_at)) t_week from dives group by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d')) weeks,
+      (select min(dives.created_at) t_start, min(reviews.created_at) t_end from dives left join reviews on reviews.user_id = dives.user_id and reviews.shop_id = dives.shop_id where dives.shop_id is not null group by dives.user_id, dives.shop_id) linked_reviews
+    where t_week > '2012-07-10'
+    group by date_format(t_week, '%Y-%m-%d')
+    ) reviewed_counted").map do |e|
+      [ e['week'], e['percent'].to_f.round(2).to_f ]#, e['total'].to_i
+    end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Reviews left by users for visited dive centers',
+    vAxis: {
+      0: {title: '% of shop reviewed', minValue: 0.0},
+      1: {title: 'Number of shop reviews', minValue: 0.0}
+    },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "area",
+    series: {0: {targetAxisIndex: 0}, 1: {type: "line", targetAxisIndex: 1}},
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+
+
+
+function draw_chart_pictures() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'New pictures');
+  data.addColumn('number', 'Total of pictures');
+  data.addColumn('number', 'Total of great pictures');
+  data.addRows(<%= s1 = 0; s2 = 0; ActiveRecord::Base.connection.select_all("select date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') week, count(*) cnt, SUM(great_pic) cnt2 FROM pictures group by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') order by date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d')").map do |e| [ e['week'], e['cnt'], s1 += e['cnt'], s2 += e['cnt2'].to_i ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Pictures on Diveboard',
+    vAxis: {0: {title: 'Nb of pictures'}, 1: {title: 'New pictures'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "bars",
+    series: {0: {targetAxisIndex: 1}, 1: {type: "line", targetAxisIndex: 0}, 2:{type: "line", targetAxisIndex: 0}},
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+function draw_chart_activity() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'Static');
+  data.addColumn('number', 'Explore');
+  data.addColumn('number', 'Community');
+  data.addColumn('number', 'Logbook');
+  data.addColumn('number', 'Shop');
+
+  data.addRows(<%=
+    ActiveRecord::Base.connection.select_all("select date_format(DATE_SUB(time, INTERVAL weekday(time) day ), '%Y-%m-%d') week,
+        CONVERT(sum(CASE WHEN col1 IN ('home', 'about', 'settings', 'tour', 'login', 'commercial_pro') THEN nb else 0 end), SIGNED) as static,
+        CONVERT(sum(CASE WHEN col1 IN ('explore', 'gallery', 'search') THEN nb else 0 end), SIGNED) as explore,
+        CONVERT(sum(CASE WHEN col1 IN ('blog', 'widgets') THEN nb else 0 end), SIGNED) as community,
+        CONVERT(sum(CASE WHEN col1 IN ('home_logbook', 'dive_page', 'new_dive', 'trip') THEN nb else 0 end), SIGNED) as logbook,
+        CONVERT(sum(CASE WHEN col1 IN ('shop_page') THEN nb else 0 end), SIGNED) as shop
+      FROM stats_sums
+      where aggreg = 'categ'
+      group by date_format(DATE_SUB(time, INTERVAL weekday(time) day ), '%Y-%m-%d') order by date_format(DATE_SUB(time, INTERVAL weekday(time) day ), '%Y-%m-%d')")[1..-2].map(&:values) .to_json.html_safe rescue '[]' %>);
+
+  // Set chart options
+  var options = {'title':'Hits on Diveboard',
+    vAxis: {0: {title: 'Nb of hits'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "area",
+    lineWidth: 1.5,
+    isStacked: true,
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+function draw_chart_activity_detailed() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  <%
+    cols = ActiveRecord::Base.connection.select_all("select col1
+      from stats_sums
+      where aggreg = 'categ'
+      group by col1
+      order by count(*) ASC").map(&:values).flatten
+    cols.reject! do |col| col.nil? || ['api', 'blog', 'admin'].include?(col) end
+    cols_sql = cols.map do |col| "CONVERT(sum(CASE WHEN col1 = '#{col}' THEN nb else 0 end), SIGNED) as #{col}" end .join(", ")
+  %>
+  <% cols.each do |col|%>
+  data.addColumn('number', '<%=col%>');
+  <%end%>
+  data.addRows(<%=
+    ActiveRecord::Base.connection.select_all("select date_format(DATE_SUB(time, INTERVAL weekday(time) day ), '%Y-%m-%d') week, #{cols_sql}
+      FROM stats_sums
+      where aggreg = 'categ'
+      group by date_format(DATE_SUB(time, INTERVAL weekday(time) day ), '%Y-%m-%d') order by date_format(DATE_SUB(time, INTERVAL weekday(time) day ), '%Y-%m-%d')")[1..-2].map(&:values) .to_json.html_safe unless cols.count == 0%>);
+
+  // Set chart options
+  var options = {'title':'Hits on Diveboard',
+    vAxis: {0: {title: 'Nb of hits'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "area",
+    lineWidth: 1.5,
+    isStacked: true,
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+function draw_chart_distinct_visits_per_day() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'Unique visitors (IP) per day');
+  <%cols_visits = ActiveRecord::Base.connection.select_all("select date_format(DATE_SUB(time, INTERVAL weekday(time) day ), '%Y-%m-%d') week, CONVERT(avg(nb), SIGNED)
+      FROM stats_sums
+      where aggreg = 'visits' and col1='distinct_daily_ip'
+      group by date_format(DATE_SUB(time, INTERVAL weekday(time) day ), '%Y-%m-%d') order by date_format(DATE_SUB(time, INTERVAL weekday(time) day ), '%Y-%m-%d')") %>
+  data.addRows(<%= cols_visits[1..-2].map(&:values) .to_json.html_safe unless cols_visits.count == 0%>);
+
+  // Set chart options
+  var options = {'title':'Unique visitors per day on Diveboard',
+    vAxis: {0: {title: 'Nb of visitors'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "area",
+    lineWidth: 1.5,
+    isStacked: true,
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+
+
+function draw_chart_usage() {
+  // Create the data table.
+  var data = google.visualization.arrayToDataTable(<%=
+    counts = ActiveRecord::Base.connection.select_one("select count(CASE WHEN m is null THEN uid END) as cnil,
+      count(CASE WHEN span = 0  THEN uid END) as c0,
+      count(CASE WHEN span <= 3 and span > 0 THEN uid END) as c3,
+      count(CASE WHEN span <= 6 and span > 3 THEN uid END) as c6,
+      count(CASE WHEN span <= 12 and span > 6 THEN uid END) as c12,
+      count(CASE WHEN span > 12 THEN uid END) as c99
+      from (
+      select users.id as uid, FLOOR(DATEDIFF(max(dives.created_at),min(dives.created_at))/30 ) as span, max(dives.created_at) as m
+      from users left join dives on dives.user_id = users.id
+      WHERE shop_proxy_id is null
+      group by users.id ) S") ;
+      [
+        ['Activity span', 'User count'],
+        ['Less than 1 month', counts['c0']],
+        ['1-3 months', counts['c3']],
+        ['4-6 months', counts['c6']],
+        ['7-12 months', counts['c12']],
+        ['Over 12 months', counts['c99']]
+      ].to_json.html_safe %>);
+
+  // Set chart options
+  var options = {'title':'User engagement (lifespan : longer = better)',
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.PieChart(dom);
+  chart.draw(data, options);
+}
+
+
+function draw_chart_active_users() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'Number of Active Users');
+  data.addRows(<%= ActiveRecord::Base.connection.select_all("select weeks.monday week, count(distinct user_id) cnt
+    FROM (select distinct date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') monday from dives) weeks, dives
+    where dives.created_at < DATE(weeks.monday) and dives.created_at > DATE_SUB(DATE(weeks.monday), INTERVAL 6 month)
+    group by weeks.monday").map do |e| [ e['week'], e['cnt'] ] end .to_json.html_safe%>);
+
+  // Set chart options
+  var options = {'title':'Active Users on Diveboard (created at least 1 dive during the last 6 months',
+    vAxis: {title: 'Number of Active Users'},
+    hAxis: {title: 'Year-Week'},
+    seriesType: "line",
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+function draw_chart_returning_users() {
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Week');
+  data.addColumn('number', 'Number of Returning Users');
+  data.addColumn('number', '% of Returning Users');
+  data.addRows(<%= ActiveRecord::Base.connection.select_all("select
+      weeks.monday week,
+      count(distinct case when dives.created_at < DATE(weeks.monday) and dives.created_at > DATE_SUB(DATE(weeks.monday), INTERVAL 3 month) then users.id else NULL end) cnt,
+      count(distinct case when dives.created_at < DATE(weeks.monday) and dives.created_at > DATE_SUB(DATE(weeks.monday), INTERVAL 3 month) then users.id else NULL end) / count(distinct user_id) percent
+    FROM (select distinct date_format(DATE_SUB(created_at, INTERVAL weekday(created_at) day ), '%Y-%m-%d') monday from dives) weeks, dives, users
+    where users.id = dives.user_id
+      and users.created_at < DATE_SUB(DATE(weeks.monday), INTERVAL 6 month)
+    group by weeks.monday").map do |e| [ e['week'], e['cnt'].to_i, (e['percent'].to_f).round(3).to_f ] end .to_json.html_safe%>);
+
+
+
+  // Set chart options
+  var options = {'title':'Returing Users on Diveboard (user created at least 6 months ago and created at least 1 dive during the last 3 months)',
+    vAxes: {1: {title: 'Number of Returning Users'}, 0: {title: '% of Returning Users', format:'#,###%'} },
+    hAxis: {title: 'Year-Week'},
+    seriesType: "line",
+    series: {0: {targetAxisIndex: 1}, 1: {type: "line", targetAxisIndex: 0}},
+    'width':500,
+    'height':400
+  };
+
+  // Instantiate and draw our chart, passing in some options.
+  var dom = document.createElement('div');
+  dom.setAttribute('style', 'display:inline-block');
+  document.getElementById('chart_holder').appendChild(dom);
+  var chart = new google.visualization.ComboChart(dom);
+  chart.draw(data, options);
+}
+
+
+
+
+</script>
+<!--Div that will hold the charts-->
+<div id="chart_holder" style='width: 1000px'></div>
+
+  <!-- optional block of newsletter stats -->
+  <%if false%>
+    <script>
+    function draw_chart_newsletter() {
+      // Create the data table.
+      var data = new google.visualization.DataTable();
+      <%stats=ActiveRecord::Base.connection.select_all("select
+          case when params like '%source_id=%' then
+            substring(params,
+              locate('=', params, locate('source_id', params)) + 1,
+              case when locate('&', params, locate('source_id', params))>0
+              then locate('&', params, locate('source_id', params))-1
+              else length(params)
+              end - locate('=', params, locate('source_id', params))
+            )
+          else null end newsletter_id,
+        case
+        when url = '/' then 'home'
+        when url = '/community/newsletter/unsuscribe' then 'unsubscribe'
+        when url = '/explore' then 'see_more_explore'
+        when url = '/community/news' then 'blog_news'
+        when url regexp '/community/newsletter/[0-9]*$' then 'view_newsletter_online'
+        when url regexp '^/community/[^/]*/20../' then 'blog_article'
+        when url regexp '^/explore/spots/' then 'see_more_country'
+        when url regexp '^/+[^/]*/pictures/[0-9]*$' then 'picture'
+        when url regexp '^/+pro/+[^/]+' then 'shop'
+        when url regexp '^/+[^/]*/D' then 'dive'
+        when url regexp '^/+[^/]*$' then 'home_logbook'
+        else null end clic_destination,
+        count(*) nb
+        from stats_logs where params like '%source=newsletter%'
+        group by newsletter_id, clic_destination
+        having newsletter_id > 4
+        order by newsletter_id, count(*) desc")
+      category_list = ['unsubscribe', 'home', 'see_more_explore', 'blog_news', 'view_newsletter_online', 'blog_article', 'see_more_country', 'picture', 'shop', 'dive', 'home_logbook'];
+      %>
+      data.addColumn('string', 'Newsletter');
+      <%category_list.each do |cat|%>
+        data.addColumn('number', '<%=cat%>');
+      <%end%>
+      <%row_stats = []
+      stats.group_by do |s| s['newsletter_id'] end .each do |id, items|
+        row = []
+        counts = {}
+        items.each do |row|
+          counts[row['clic_destination']] = row['nb']
+        end
+        row.push id
+        category_list.each do |k|
+          row.push(counts[k]||0)
+        end
+        row_stats.push row
+      end%>
+      data.addRows(<%=row_stats.to_json.html_safe%>);
+
+      // Set chart options
+      var options = {'title':'newsletter clics',
+        vAxis: {0:{title: 'Number of clics'}},
+        hAxis: {title: 'Newsletter'},
+        seriesType: "bars",
+        lineWidth: 1.5,
+        isStacked: true,
+        chartArea: {left: 50, width: 780},
+        legend: {position: 'right', textStyle: { fontSize: 12}},
+        'width':1000,
+        'height':400
+      };
+
+      // Instantiate and draw our chart, passing in some options.
+      var dom = document.createElement('div');
+      dom.setAttribute('style', 'display:inline-block');
+      document.getElementById('chart_holder').appendChild(dom);
+      var chart = new google.visualization.ComboChart(dom);
+      chart.draw(data, options);
+    }
+
+    draw_chart_without_newsletter = draw_chart;
+    draw_chart = function(){
+      draw_chart_without_newsletter();
+      add_separator('Newsletter');
+      draw_chart_newsletter()
+    }
+    </script>
+
+
+    <div style='width: 1000px'>
+      <table style='text-align: center;'>
+        <tr>
+          <th>ID</th>
+          <th>Date</th>
+          <th>Total sent</th>
+          <th>Users targeted</th>
+          <th>Total clics</th>
+          <th>Unique users</th>
+          <th>Unsubscribing users</th>
+          <th>% unique users / targeted</th>
+          <th>% users unsubscribing</th>
+        </tr>
+        <%ActiveRecord::Base.connection.select_all("select
+          newsletter_id,
+          newsletters.distributed_at distributed_at,
+          sent_stats.total_nb nb_sent,
+          sent_stats.nb nb_targeted,
+          count(*) nb_clics,
+          count(distinct user_id) - count(distinct unsubscribing_user_id) nb_users,
+          count(distinct unsubscribing_user_id) unsubscribing_users,
+          100*(count(distinct user_id)-count(distinct unsubscribing_user_id))/sent_stats.nb clic_ratio,
+          100*count(distinct unsubscribing_user_id)/sent_stats.nb unsubscribing_ratio
+        from (
+          select *,
+          case when params like '%source_id=%' then
+            substring(params,
+              locate('=', params, locate('source_id', params)) + 1,
+              case when locate('&', params, locate('source_id', params))>0
+              then locate('&', params, locate('source_id', params))-1
+              else length(params)
+              end - locate('=', params, locate('source_id', params))
+            )
+          else null end newsletter_id,
+          case when params like '%user_id=%' then
+            substring(params,
+              locate('=', params, locate('user_id', params)) + 1,
+              case when locate('&', params, locate('user_id', params))>0
+              then locate('&', params, locate('user_id', params))-1
+              else length(params)
+              end - locate('=', params, locate('user_id', params))
+            )
+          else null end user_id,
+          case when url = '/community/newsletter/unsuscribe' then
+              case when params like '%user_id=%' then
+              substring(params,
+                locate('=', params, locate('user_id', params)) + 1,
+                case when locate('&', params, locate('user_id', params))>0
+                then locate('&', params, locate('user_id', params))-1
+                else length(params)
+                end - locate('=', params, locate('user_id', params))
+              )
+              else null end
+          else null end unsubscribing_user_id
+          from stats_logs where params like '%source=newsletter%'
+        ) logs
+        LEFT JOIN (select newsletter_id nlid, count(*) total_nb, count(distinct recipient_id) nb from newsletter_users group by newsletter_id) sent_stats
+          ON logs.newsletter_id = sent_stats.nlid
+        LEFT JOIN newsletters
+          ON logs.newsletter_id = newsletters.id
+        group by newsletter_id
+        order by newsletter_id").each do |row|%>
+          <tr>
+            <td><%=row['newsletter_id']%></td>
+            <td><%=row['distributed_at']%></td>
+            <td><%=row['nb_sent']%></td>
+            <td><%=row['nb_targeted']%></td>
+            <td><%=row['nb_clics']%></td>
+            <td><%=row['nb_users']%></td>
+            <td><%=row['unsubscribing_users']%></td>
+            <td style='font-weight: bold'><%=row['clic_ratio'].round(1).to_f rescue nil%></td>
+            <td style='color:#f00;'><%=row['unsubscribing_ratio'].round(1).to_f rescue nil%></td>
+          </tr>
+        <%end%>
+      </table>
+    </div>
+  <%end%><!-- end of newsletter stats -->
+
+<%end%>

@@ -1,0 +1,34 @@
+<%if !@real_user.nil? && @real_user.can_sudo? then%>
+<div id='dialog-sudo' title='<%= it("My pages", scope: ['layouts', 'switch_user_dialog']) %>' style="display:none;" data-cookie-domain='<%=COOKIES_DOMAIN%>'>
+  <p class='dialog-text-highlight'>These are all the pages you can edit on Diveboard</p>
+  <% list_user = [@user]
+  list_user += Membership.where(:user_id => @user.id, :role => 'admin').map(&:group).reject{|e| e.nil?}
+  list_user.push @user unless list_user.include? @user
+  list_user.push @real_user unless list_user.include? @real_user
+  list_user.each do |other_user|%>
+    <div class='user_choice <%="active" if @user == other_user %>'>
+      <input class='user_choice_id' type='hidden' value='<%=other_user.id%>'/>
+      <img class='user_choice_pic' src='<%=other_user.picture%>' alt='Picture' />
+      <div class='user_choice_info'>
+        <div class='user_choice_name'><%=other_user.nickname%></div>
+        <div class='user_choice_detail'>
+          <%= it("%{count} dives", scope: ['layouts', 'switch_user_dialog'], count: other_user.dives.count) %> -
+          <span class='user_choice_url'><%=root_url%><%=other_user.vanity_url%></a>
+        </div>
+      </div>
+    </div>
+  <%end%>
+
+  <%if !@real_user.nil? && @real_user.admin_rights >= 4 then%>
+    <hr/>
+    <p class='dialog-text-highlight'><%= it("SUDO for admin:", scope: ['layouts', 'switch_user_dialog']) %></p>
+    <div id='user_choice_admin'>
+      <%= it("Enter user id or name and select within the suggestion list:", scope: ['layouts', 'switch_user_dialog']) %> <input class='user_choice_id' type='text' value=''/>
+    </div>
+    <div>
+      <%= it("Come back to your own self:", scope: ['layouts', 'switch_user_dialog']) %> <button id='user_choice_admin_reset' class='grey_button'><%= it("Reset", scope: ['layouts', 'switch_user_dialog']) %></button>
+    </div>
+  <%end%>
+
+</div>
+<%end%>

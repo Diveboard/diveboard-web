@@ -1,0 +1,24 @@
+<%if @type == "dive" || @type == "picture" %>
+	<%if !@dive.spot.country.nil?%>
+		<%= it("Your %{type} on %{spot} in %{country} just received another 'Like'.", scope: ['notify_user', 'notify_like', 'text'], type: @type, spot: @dive.spot.name, country: @dive.spot.country.cname) %>
+	<%else%>
+		<%= it("Your %{type} on %{spot} just received another 'Like'.", scope: ['notify_user', 'notify_like', 'text'], type: @type, spot: @dive.spot.name) %>
+	<%end%>
+<%else%>
+<%= it("Your blog post \"%{title}\" just received another 'Like'.", scope: ['notify_user', 'notify_like', 'text'], title: @post.title) %>
+<%end%>
+
+<% if !@like_count.nil? && @like_count > 0 then%><%= it("Currently, %{like_count} %{person} %{like} this dive.", scope: ['notify_user', 'notify_like', 'text'], like_count: @like_count, person: it("people", scope: ['pluralize'], count: @like_count), like: it("like", scope: ['units'], count: @like_count)) %>
+
+<%end%>
+<%= it("You can view the details of that %{type} on %{txt_url}", scope: ['notify_user', 'notify_like', 'text'], type: @type, txt_url: @page.fullpermalink(:locale)) %>
+
+<%= it("Happy Diving !", scope: ['notify_user', 'notify_like', 'text']) %>
+--
+<%= it("The Diveboard team", scope: ['notify_user', 'notify_like', 'text']) %>
+http://www.diveboard.com
+
+
+
+<%= it("This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
+If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings", scope: ['notify_user', 'notify_like', 'text']) %>

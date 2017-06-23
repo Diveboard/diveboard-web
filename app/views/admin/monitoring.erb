@@ -1,0 +1,208 @@
+<%= render :partial => 'admin_css'%>
+<%= render :partial => 'menu',  :locals => { :item => 5 } %>
+<style type="text/css">
+  .admin_monitoring .alert {color: #F00; font-weight: bolder;}
+  .admin_monitoring .warn {color: #FF9040; font-weight: bolder;}
+  .admin_monitoring .ok {color: #00FF00; font-weight: bolder;}
+  .admin_monitoring table th {background: #333; color: #FFF;}
+  .admin_monitoring table td {background: #DDD; margin: 2px;}
+</style>
+<div class='admin_monitoring' id="main_content_area" style="height:auto !important; padding-bottom:30px;">
+
+<div class=admin_processes>
+  <h1>Daemons</h1>
+  <% procs = []
+  IO.popen("ps auwwx | grep 'searchd.*#{Rails.env}' | grep -v 'grep'") { |io| while (line = io.gets) do procs.push line.chomp end }
+  if procs.count == 0 then%>
+    <h2>Sphinx : <span class=alert>KO</span></h2>
+    <p class=alert>Sphinx is NOT RUNNING !!!</p>
+  <%else%>
+    <h2>Sphinx : <span class=ok>OK</span></h2>
+    <%procs.each do |line|%>
+    <pre><%=line%></pre>
+    <%end%>
+  <%end%>
+</div>
+
+<br/>
+<br/>
+<hr/>
+<div class=admin_workers>
+<h1>Workers</h1>
+<h2>Processes running <%if @running_procs.length != Rails.application.config.workers_count then%><span class=alert>KO</span><%else%><span class=ok>OK</span><%end%></h2>
+<% if @running_procs.length != Rails.application.config.workers_count then%><p class='alert'><%=@running_procs.length%> processes running, <%=Rails.application.config.workers_count%> expected</p><%end%>
+<PRE>
+<%=@running_procs.join "\n"%>
+</PRE>
+
+<h2>Queue content : <%=Delayed::Job.all.count %> jobs</h2>
+<% if Delayed::Job.all.count > Rails.application.config.workers_maxqueue_warn then %><p class='alert'>You have too many requests in the queue : <%=Delayed::Job.all.count%></p><%end%>
+<table style='border: solid 1px'>
+    <tr>
+      <th>ID</td>
+      <th>Action</td>
+      <th>created_at</td>
+      <th>attempts</td>
+      <th>failed ?</td>
+    </tr>
+  <%Delayed::Job.all.each do |job| %>
+    <tr>
+      <td><a href='#job_<%=job.id%>'><%=job.id%></a></td>
+      <td><%= job.handler.gsub(/.*object: !ruby\/object:([^\n]*)\n.* id: *([0-9]*)\n.*method_name:([^\n]*)\n.*/m, '\1(\2) \3') %></td>
+      <td class='<%if job.created_at+Rails.application.config.workers_maxold_warn <= Time.now && job.attempts != Delayed::Worker.max_attempts then%>alert<%end%>'><%= job.created_at %></td>
+      <td class='<%= if job.attempts==0 then '' elsif job.attempts == Delayed::Worker.max_attempts then 'alert' else 'warn' end%>'><%=job.attempts%><%if job.attempts == Delayed::Worker.max_attempts then %> - Not retrying<%end%></td>
+      <td class='alert'><% if job.failed? then %><%= job.failed_at %><%end%></td>
+    </tr>
+  <%end%>
+</table>
+
+<% Delayed::Job.all.reject{|j| j.last_error.nil?}.each do |job|%>
+  <h3>Job #<%=job.id%> : <%=job.handler.gsub(/.*object: !ruby\/object:([^\n]*)\n.* id: *([0-9]*)\n.*method_name:([^\n]*)\n.*/m, '\1(\2) \3')%></h3>
+  <pre id='job_<%=job.id%>'><%= job.to_yaml %></pre>
+<%end%>
+</div>
+<br/>
+<br/>
+<hr/>
+
+
+<!-- CACHE START -->
+<%
+begin
+  if params[:force_expire] || Time.now - 24.hours > Time.at(Rails.cache.send(:read_entry,'views/admin_monitoring_storage',{}).created_at) then
+    ActionController::Base.new.expire_fragment 'admin_monitoring_storage'
+  end
+rescue
+  Rails.logger.warn $!.message
+end
+%>
+<!-- CACHE START -->
+
+<div class=admin_picture>
+
+  <h1>Picture Storage</h1>
+  <% begin
+  date_cached = Time.at(Rails.cache.send(:read_entry,'views/admin_monitoring_storage',{}).created_at) %>
+  <p>This information has been cached at <%=date_cached%> and is refreshed once per day only. <a href='/admin/monitoring?force_expire=true'>You can force the expiration manually</a>.</p>
+  <% rescue
+  end %>
+  <br/>
+
+<% cache 'admin_monitoring_storage' do %>
+<!-- CACHED HTML -->
+
+  <h2>Storage usage</h2>
+
+  <% all_buckets = Rails.application.config.google_cloud_buckets.values.flatten
+  dir_size = 0
+  dir_count = 0
+  Dir.glob('public/user_images/*').each do |fname|
+    dir_size += File.size(fname)
+    dir_count += 1
+  end%>
+  <p>Local disk usage : <%=dir_count%> files - <%=dir_size/(1024.0*1024.0)%> Mb</p>
+  <% all_buckets.each do |bucket|
+    info = CloudObject.bucket_info(bucket) %>
+    <p>Bucket <strong><%=bucket%></strong> : <%=info[:count]%> files - <%=info[:size]/(1024.0*1024.0)%> Mb</p>
+  <%end%>
+
+  <br/>
+  <br/>
+  <h2>Cloud objects not in database</h2>
+  <% all_buckets.each do |bucket| %>
+    <p>To purge all these elements, run : bundle exec rake purge:ghosts</p>
+    <h3>Bucket '<%=bucket%>'</h3>
+    <% cloud_ghosts = CloudObject.ghosts bucket%>
+    <p><%= cloud_ghosts[:count] %> files are stored on the cloud but missing in our database (<%=cloud_ghosts[:size]/(1024.0*1024.0)%> Mb)</p>
+    <table>
+    <%cloud_ghosts[:missing].each do |obj|%>
+      <tr>
+        <td><a href='http://commondatastorage.googleapis.com/<%=bucket%><%=obj['Key']%>' target='_blank'><%=obj['Key']%></a></td>
+        <td><%=obj['LastModified']%></td>
+        <td><%=obj['Size'].to_i/(1024.0*1024.0)%> Mb</td>
+      </tr>
+    <%end%>
+    </table>
+  <%end%>
+
+
+  <br/>
+  <br/>
+  <h2>Cloud objects not linked to pictures</h2>
+  <p>To purge all these elements, run : bundle exec rake purge:cloud</p>
+  <% cloud_orphans = CloudObject.orphans
+  total_size = 0 %>
+  <p><%=cloud_orphans.length%> cloud objects are not linked to pictures</p>
+  <% cloud_orphans.group_by(&:bucket).each do |bucket, objects|
+    bucket_size = 0 %>
+    <h3>Orphan elements in bucket '<%=bucket%>'</h3>
+    <table>
+    <%objects.each do |obj|%>
+      <tr>
+        <td><%=obj.id%></td>
+        <td><a href='<%=obj.url%>' target='_blank'><%=obj.path%></a></td>
+        <td><%=obj.created_at%></td>
+      </tr>
+    <%end%>
+    </table>
+  <%end%>
+
+  <br/>
+  <br/>
+  <h2>Pictures not linked to dives</h2>
+  <p>To purge all these elements, run : bundle exec rake purge:pictures</p>
+  <%pic_orphans = Picture.orphans%>
+  <p><%=pic_orphans.length%> pictures are not linked to a dive</p>
+  <table>
+    <tr>
+      <th>Pic</th>
+      <th>Id</th>
+      <th>Owner</th>
+      <th>Created at</th>
+      <th>On the cloud</th>
+    </tr>
+  <%pic_orphans.each do |pic|%>
+    <tr>
+      <td><a href='<%=pic.medium%>' target='_blank'><img src='<%=pic.thumbnail%>' width=50px /></a></td>
+      <td><%=pic.id%></td>
+      <td><a href='/admin/users/<%=pic.user.id unless pic.user.nil?%>'><%=pic.user.nickname unless pic.user.nil?%></a></td>
+      <td><%=pic.created_at%></td>
+      <td><%if !pic.thumb_id.nil? && !pic.small_id.nil? && !pic.medium_id.nil? && !pic.large_id.nil? && !pic.original_image_id.nil? then%>Yes<%elsif !pic.thumb_id.nil? || !pic.small_id.nil? || !pic.medium_id.nil? || !pic.large_id.nil?|| !pic.original_image_id.nil? then %>Partial<%else%>No<%end%></td>
+      <td></td>
+    </tr>
+  <%end%>
+  </table>
+
+<!-- END OF CACHED PART --> <%end%>
+
+  <br/>
+  <br/>
+  <h2>Pictures not on the cloud</h2>
+  <p>To upload all these elements, run in a console : (Picture.where 'thumb_id is null or small_id is null or medium_id is null or large_id is null or original_image_id is null').map &amp;:upload_thumbs_without_delay</p>
+  <%pic_unclouded = Picture.where('thumb_id is null or small_id is null or medium_id is null or large_id is null')%>
+  <p><%=pic_unclouded.length%> pictures are not on the cloud</p>
+  <table>
+    <tr>
+      <th>Pic</th>
+      <th>Id</th>
+      <th>Owner</th>
+      <th>Dive</th>
+      <th>Created at</th>
+      <th>On the cloud</th>
+    </tr>
+  <%pic_unclouded.each do |pic|%>
+    <tr>
+      <td><a href='<%=pic.medium%>' target='_blank'><img src='<%=pic.thumbnail%>' width=50px /></a></td>
+      <td><%=pic.id%></td>
+      <td><a href='/admin/users/<%=pic.user.id unless pic.user.nil?%>'><%=pic.user.nickname unless pic.user.nil?%></a></td>
+      <td><a href='/<%=pic.user.vanity_url unless pic.user.nil?%>/<%=pic.dive.id unless pic.dive.nil? %>'><%=pic.dive.id unless pic.dive.nil? || pic.user.nil?%></a></td>
+      <td><%=pic.created_at%></td>
+      <td><%if !pic.thumb_id.nil? && !pic.small_id.nil? && !pic.medium_id.nil? && !pic.large_id.nil? && !pic.original_image_id.nil? then%>Yes<%elsif !pic.thumb_id.nil? || !pic.small_id.nil? || !pic.medium_id.nil? || !pic.large_id.nil?|| !pic.original_image_id.nil? then %>Partial<%else%>No<%end%></td>
+      <td></td>
+    </tr>
+  <%end%>
+  </table>
+
+</div>
+
+</div>

@@ -1,0 +1,67 @@
+<%
+  embedded ||= false
+  reload_url ||= nil
+  hide_notif = false if local_assigns[:hide_notif].nil?
+  with_cancel = true if local_assigns[:with_cancel].nil?
+  topics = :default if local_assigns[:topics].nil?
+%>
+<div id="dialog_general_inquiry" title="<%= it("Ask a question", scope: ['shop_pages', 'general_inquiry']) %>" <%unless embedded%>style='display:none'<%end%> data-to_id='<%=shop.user_proxy.id%>' <%if reload_url%>data-reload_url="<%=reload_url%>"<%end%> >
+  <%if !customer.nil? && shop.contact_email? then %>
+
+    <table class='inquiry_table'>
+      <tr <%if topics == :orders%>style='display: none'<%end%>>
+        <td>Select a topic:</td>
+        <td><div class='dropdown right white topic_text'>
+          <div class='options'>
+            <% case topics when :orders then%>
+            <div class='option'><%= it("Question about an order", scope: ['shop_pages', 'general_inquiry']) %></div>
+            <%else%>
+            <div class='option'><%= it("Diving with %{shop_name}", scope: ['shop_pages', 'general_inquiry'], shop_name: shop.name) %></div>
+            <div class='option'><%= it("Availability", scope: ['shop_pages', 'general_inquiry']) %></div>
+            <div class='option'><%= it("Trainings", scope: ['shop_pages', 'general_inquiry']) %></div>
+            <div class='option'><%= it("Other inquiry", scope: ['shop_pages', 'general_inquiry']) %></div>
+            <%end%>
+          </div>
+        </div></td>
+      </tr>
+      <tr>
+        <td><%= it("Message:", scope: ['shop_pages', 'general_inquiry']) %></td>
+        <td><textarea class='message_text'></textarea></td>
+      </tr>
+    </table>
+
+    <%unless hide_notif%>
+      <% if !customer.contact_email.blank? then%>
+        <p class='real_life_callback1'><%= it("You will be notified of replies by email on your contact email (you can change this in the settings page under on the \"Preferences\" tab):", scope: ['shop_pages', 'general_inquiry']) %></p>
+        <p class='real_life_callback2'><%=customer.contact_email%></p>
+      <%else%>
+        <p class='real_life_callback1'><%= it("You haven't defined a contact email for Diveboard to notify you of a reply. If you wish to be notified, please go to the settings page on the \"Preference\" tab.", scope: ['shop_pages', 'general_inquiry']) %></p>
+      <%end%>
+    <%end%>
+    <div class='diveboard_popup_buttons'>
+      <%if with_cancel%><button class='grey_button cancel_inquiry'><%= it("Cancel", scope: ['shop_pages', 'general_inquiry']) %></button><%end%>
+      <button class='yellow_button submit_inquiry'><%= it("Submit", scope: ['shop_pages', 'general_inquiry']) %></button>
+    </div>
+    <p class='dialog-text-highlight ok_text hidden'><%= it("Your message has correctly been sent to %{shop_name}", scope: ['shop_pages', 'general_inquiry'], shop_name: shop.name) %>.</p>
+    <% if !customer.contact_email.blank? then%>
+      <p class='ok_text hidden'><%= it("A notification will be sent to %{customer_email} upon reply.", scope: ['shop_pages', 'general_inquiry'], customer_email: customer.contact_email) %></p>
+    <%else%>
+      <p class='ok_text hidden'><%= it("Please check back on Diveboard soon to see if you received a reply, or head to the settings page and provide an email address for Diveboard to notify you when a reply will be posted.", scope: ['shop_pages', 'general_inquiry']) %></p>
+    <%end%>
+  <%elsif !shop.contact_email? then%>
+    <p><%= it("This shop is not yet connected with Diveboard.", scope: ['shop_pages', 'general_inquiry']) %>. We have no contact for this shop you may be able to find this on the shop's web page.</p>
+  <%else%>
+    <table style='margin: 20px;'>
+      <tr>
+        <td style='padding: 15px; font-size: 14px; line-height: 20px;'>
+          <p><%= it("You must be logged in to leave a message.", scope: ['shop_pages', 'general_inquiry']) %></p>
+          <br/>
+          <p><%= it("Please sign in to diveboard, or if you don't have an account yet, %{link:sign up}", scope: ['basket', 'view'], link: It.link("/login/register")) %>.</p>
+        </td>
+        <td style='padding: 15px;'>
+          <%= render :partial => 'layouts/login_popup', :locals => {:id => 'login_review', :style => 'login_inline', :hidden => false, :status => @signup_popup_status || :force_count}%> 
+        </td>
+      </tr>
+    </table>
+  <%end%>
+</div>

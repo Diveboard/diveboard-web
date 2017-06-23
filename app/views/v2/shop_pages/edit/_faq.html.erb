@@ -1,0 +1,83 @@
+<%= content_for :javascripts do%>
+<script>
+var _FAQ = {
+
+
+};
+$(document).ready(function(){
+  $("#faq_content").sortable({
+    placeholder: "ui-state-highlight",
+    start: function( event, ui ){
+      $('.ui-state-highlight').css("height", ui.item[0].clientHeight);
+      $('.ui-state-highlight').css("width", ui.item[0].clientWidth);
+    },
+    change: function(event, ui) {
+      changes_list['shopedit_questions'] = 1;
+      console.log('change position');
+    }
+  });
+
+  $("#faq_content").disableSelection();
+  
+  $("#faq_edit .yellow_button.add").click(newFaq);
+  $("#faq_content .file-row .delete").click(function(){
+    $(this).closest('.file-row').remove();
+    changes_list['shopedit_questions'] = 1;
+    console.log('delete');
+  });
+
+  $('.file-row .title').bind('change', function()
+    {
+      changes_list['shopedit_questions'] = 1;
+      console.log('edit title');
+    });
+  $('.file-row .description').bind('change', function()
+    {
+      changes_list['shopedit_questions'] = 1;
+      console.log('edit answer');
+    });
+});
+
+function newFaq(){
+
+  new_elem = '<li class="file-row ui-state-default "><div class="data"><div class="question"><input type="text" class="title" value="" placeholder="Question"/><textarea class="description" placeholder="Answer"></textarea><div class="delete"></div></div></div></li>';
+  new_elem = $(new_elem);
+  $('#faq_content').prepend(new_elem);
+  $(new_elem).find('.delete').click(function(){
+    new_elem.remove();
+  });
+  changes_list['shopedit_questions'] = 1;
+  console.log('add');
+}
+
+</script>
+<%end%>
+
+
+<div class="faq section" id="faq_edit">
+  <div id="category_title">
+    <h2>Questions & Answers</h2>
+    <div class="clear"></div>
+  </div>
+
+  <div class="yellow_button add">Add Q&A</div>
+
+  <div class="faqs_wrapper">
+    <ul id="faq_content">
+    <% @faqs.each do |f| %>
+      <li class="file-row ui-state-default">
+        <div class="data">
+          <div class="question">
+            <input type="text" class="title" value="<%= it(f.question, scope: ['globals', 'shop', 'qa', 'hint']) %>" />
+            <textarea class="description"><%= f.answer %></textarea>
+            <% if !f.official? %>
+              <div class="delete"></div>
+            <% end %>
+          </div>
+        </div>
+      </li>
+      <%end%>
+    </ul>
+  </div>
+  <div class="clear"></div>
+</div>

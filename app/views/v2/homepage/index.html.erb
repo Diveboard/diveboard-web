@@ -1,0 +1,69 @@
+<%= content_for :meta_tags do%>
+	<title>Diveboard, the largest online logbook to find out the perfect scuba diving destination and shops</title>
+  <meta property="fb:app_id" content="193803977296892" />
+  <meta property="og:type"   content="website" />
+  <meta property="article:publisher" content="https://www.facebook.com/Diveboard" />
+  <meta property="og:description" content="Diveboard is a scuba diving community enabling divers to track their dives through an online logbook, explore new spots and destinations and share their passion" />
+  <meta property="og:url"    content="<%=ROOT_URL%>" />
+  <meta property="og:title"  content="Diveboard, the largest online logbook to find out the perfect scuba diving destination and shops" />
+  <meta property="og:site_name" content="Diveboard - Track, Share and Explore Scuba Diving" />
+  <meta property="og:image" content="<%="#{ROOT_URL}img/OG-thumb.png"%>" />
+<%end%>
+
+<%= content_for :stylesheets do%>
+	<%= stylesheet_link_tag 'homepage' %>
+<%end%>
+
+<%= content_for :javascripts do%>
+  <%= javascript_include_tag "homepage" %>
+<%end%>
+
+<%= begin
+		render :partial => 'cover'
+			rescue MissingTemplate
+		end
+%>
+
+<%= begin
+		render :partial => 'splash_card'
+			rescue MissingTemplate
+		end
+%>
+
+<% #caching 10 versions of the home page
+  cache_version ||= params[:cache_version]
+  version=cache_version||Random.new.rand(10)
+  begin
+    fragment_file = Rails.cache.send(:read_entry,"views/#{I18n.locale} homepage_#{version}",{})
+    if cache_version || (fragment_file && Time.now - 30.minutes > Time.at(fragment_file.created_at)) then
+      ActionController::Base.new.expire_fragment "#{I18n.locale} homepage_#{version}"
+    end
+  rescue
+    Rails.logger.warn $!.message
+  end
+  cache "#{I18n.locale} homepage_#{version}" do 
+%>
+    <%= begin
+        render :partial => 'featured_destinations'
+          rescue MissingTemplate
+        end
+    %>
+<% end %>
+
+    <%= begin
+    		render :partial => 'latest_photos'
+    			rescue MissingTemplate
+    		end
+    %>
+<%= begin
+		render :partial => 'sep_picture'
+			rescue MissingTemplate
+		end
+%>
+
+<%= begin
+		render :partial => 'app_download'
+			rescue MissingTemplate
+		end
+%>
+<%= if !@user.nil? then render "v2/modal/email" end %>

@@ -1,0 +1,116 @@
+
+
+
+
+
+
+Using branch
+============
+
+Reference : http://www.zorched.net/2008/04/14/start-a-new-branch-on-your-remote-git-repository/
+
+Creating a remote branch
+------------------------
+
+1. Create the remote branch
+
+git push origin origin:refs/heads/new_feature_name
+
+2. Make sure everything is up-to-date
+
+git fetch origin
+
+3. Then you can see that the branch is created.
+
+git branch -r
+This should show ‘origin/new_feature_name’
+
+4. Start tracking the new branch
+
+git checkout --track -b new_feature_name origin/new_feature_name
+This means that when you do pulls that it will get the latest from that branch as well.
+
+5. Make sure everything is up-to-date
+
+git pull
+
+Checking on which branch the current environment is
+---------------------------------------------------
+
+git branch
+
+Switching to another branch
+---------------------------
+
+1/ if some file have not been commited, you may need to stash them :
+
+git stash
+
+2/ switch to the other environment :
+
+git checkout master
+
+3/ make sure you have the latest changes :
+
+git pull
+
+4/ do your evil deeds and commit...
+
+5/ switch back to your environment
+
+git checkout new_feature_name
+
+6/ restore your steshed changes
+
+git stash pop
+
+Pushing and pulling
+-------------------
+
+Push and pull update both branch separately.
+
+Updating the working branch with the latest dev on master
+---------------------------------------------------------
+
+1/ while being on the new_feature_name branch, do :
+
+git pull origin master
+
+2/ solve the conflicts and commit :)
+
+
+Merging back the working branch into the master
+-----------------------------------------------
+
+
+
+Deleting completely a remote branch
+-----------------------------------
+
+git push origin :heads/new_feature_name
+
+
+Adding a tag when deploying into production
+-------------------------------------------
+
+When master is deployed on production, a tag with the date need to be placed on the master branch.
+The tag is named prod_YYYYMMDD 
+If multiple deploys are done on the same day, the following tags are named prod_YYYYMMDD.X X being an integer (starting at 0)
+
+1/ make sure you are on master branch
+
+git checkout master
+
+2/ add the tag
+
+git tag -a prod_YYYYMMDD -m 'deploy'
+
+3/ push the tags to the repository
+
+git push --tags
+
+
+
+
+
+

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://stage.diveboard.com/" />
+<title>Check ksso page</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Check ksso page</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/ksso/13</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='sidebar']/div[1]/ul/li[1]/span</td>
+	<td>Ksso</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/ul/li[2]</td>
+	<td>Max Depth: 12.6m Duration:48mins</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[1]/div[2]/p</td>
+	<td>Plenty of caves to explore. New torch is paying off !<br />On the pics you can see the digging done back in the days when there was a river there ... hard to imagine in dry Cyprus!<br />This was a shore dive - always a bit of a pain to carry the gear under the sun but beautiful landscape!</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[2]/div[3]/ul/li[1]</td>
+	<td>exact:Temp: Surf 22°C Bottom 18°C</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='tab_overview']/div[2]/div[3]/ul/li[2]</td>
+	<td>Species spotted: No species spotted</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='main_content_area']/div[1]/ul[1]/li[1]/span</td>
+	<td>White River</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>country_title</td>
+	<td>Greece</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>link=Cyprus</td>
+	<td>Cyprus</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>link=Mediterranean Sea</td>
+	<td>Mediterranean Sea</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='tab_overview']/div[3]/div[1]/ul/li[1]/a/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='tab_overview']/div[3]/div[1]/ul/li[2]/a/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='tab_overview']/div[3]/div[1]/ul/li[3]/a/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='tab_overview']/div[3]/div[2]/ul/li[1]/a/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='tab_overview']/div[3]/div[2]/ul/li[2]/a/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='tab_overview']/div[3]/div[2]/ul/li[3]/a/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='tab_overview']/div[1]/div[2]/p</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>featured_pic</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>tab_pictures_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//img[contains(@src,'http://farm3.static.flickr.com/2427/3622207082_c5cd97c4cd.jpg')]</td>
+	<td></td>
+</tr>
+</tbody></table>
+</body>
+</html>

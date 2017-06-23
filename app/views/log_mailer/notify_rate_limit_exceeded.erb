@@ -1,0 +1,12 @@
+<html>
+<body>
+
+<p style='font-size: 2em; color: #f33;'><%= it("The rate limitation on API has been exceeded!!!!!", scope: ['log_mailer', 'notify_rate_limit_exceeded']) %></p>
+
+<pre>
+<%=@data.pretty_inspect%>
+</pre>
+
+
+</body>
+</html>

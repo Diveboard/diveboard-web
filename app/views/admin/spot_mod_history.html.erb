@@ -1,0 +1,70 @@
+<%= render :partial => 'admin_css'%>
+
+<script src="http://maps.google.com/maps/api/js?sensor=false&amp;key=<%= @gmapskey%>" type="text/javascript"></script>
+<%= javascript_include_tag 'divepage', defer: true %>
+
+<script type="text/javascript">
+
+/*
+  to apply template id=if_from on div with id=id_to with data :
+  $("#id_to").html(tmpl("id_from", data))
+  */
+
+
+  $(document).ready( function () {
+    $(".mod_item").click(
+      function(e){
+        e.preventDefault();
+        el = $(e.target);
+        if(el.find('.details').length == 0)
+        {
+          el.parent().find('.details').toggle();
+        }else
+          el.find('.details').toggle();
+      });
+    });
+</script>
+
+<!-- The Sidebar starts here! -->
+<%= render :partial => 'menu',  :locals => { :item => 3 } %>
+<!-- The Sidebar Ends Here -->
+<!-- The Main Content Area Begins here -->
+<div id="main_content_area" style="height:auto !important; padding-bottom:30px;" class="spot_mod_history">
+  <%= render :partial => 'spot_menu' %>
+  <div class="flash"><%=flash[:notice]%></div>
+  <h1>Modification History</h1>
+  <%=form_tag do%>
+    Search for spot: <input type="number" name="spot" id="spot"/>
+    <%= submit_tag 'Check mod history' %>
+  <%end%>
+  <%if @spot_id.nil?%>
+    Page: <%=@page%>/<%=@max_page%>
+    <% if @page > 0 %>
+    <a href="/admin/mod_history?page=<%=@page-1%>">Prev</a>
+    <%end%>
+    <% if @page <  @max_page%>
+    <a href="/admin/mod_history?page=<%=@page+1%>">Next</a>
+    <%end%>
+    <br/>
+  <%else%>
+    <a href="/admin/mod_history">All spots</a>
+    <h2> Mod History for spot <%=@spot_id%></h2>
+  <%end%>
+  <ul>
+  <%@list.each do |m|%>
+    <li class="mod_item">
+      <b><%= m.operation_name%></b> on <%=m.table%> nº <%=m.obj_id%> on <%=m.created_at%> <a href="#">detail</a><br/>
+      <div class="details" style="display:none">
+        <div class="before">
+        <b>before</b>:<br/>
+        <%= begin JSON.pretty_generate(JSON.parse(m.before)).to_html.html_safe rescue "nil" end%><br/>
+        </div>
+        <div class="after">
+        <b>after</b>:<br/>
+        <%= begin JSON.pretty_generate(JSON.parse(m.after)).to_html.html_safe rescue "nil" end%><br/>
+        <after>
+      </div>
+    </li>
+  <%end%>
+  </ul>
+</div>

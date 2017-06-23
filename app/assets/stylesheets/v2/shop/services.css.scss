@@ -1,0 +1,22 @@
+@import 'variablesv2';
+
+#services
+{
+  max-width: $home-width;
+  margin: 0 auto;
+  padding: 10px;
+  margin-top: 10px;
+
+  .hided
+  {
+    display: none;
+  }
+
+  .load_more_button
+  {
+    width: 197px;
+    margin-left: calc(50% - 98px);
+    margin-bottom: 10px;
+    margin-top: 10px;
+  }
+}

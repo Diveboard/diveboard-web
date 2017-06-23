@@ -1,0 +1,125 @@
+---
+fr:
+  globals:
+    shop:
+      qa:
+        questions:
+          deco_chambers: "Emplacement de la chambre de déco la plus proche"
+          staff: Personnel
+          boat: Bateau
+          shore_dives: "Plongées du rivage"
+          deco_chamber: "Emplacement de la chambre de déco la plus proche"
+          tanks: Bouteilles
+          gases: Gaz
+          gear: "Équipement loué"
+          services: "Services proposés"
+          payment: "Moyens de paiement acceptés"
+          best_period: "Meilleure période pour la plongée"
+          hotels: "Hôtels à proximité"
+          transfers: "Transport de/vers les hôtels"
+          parking: "Parking privé disponible"
+          other_activities: "Pour les non-plongeurs"
+          gear_sales: "Ventes d'équipement"
+          gear_maintenance: "Maintenance de matériel"
+        hint:
+          deco_chambers: "A quelle distance est la chambre de décompression la plus proche ?"
+          staff: "Veuillez présenter votre équipe, les moniteurs et leurs spécialités"
+          boat: "Quel type de bateau avez-vous ? Combien de plongeurs / accompagnant peut se trouver à bord ? Quel matériel emportez-vous (oxygène, café, ...) ?"
+          shore_dives: "Est-ce vous plongez du rivage ? Depuis le rivage à côté de vos locaux ?"
+          deco_chamber: "A quelle distance est la chambre de décompression la plus proche ?"
+          tanks: "Utilisez-vous des bouteilles en acier ou en aluminium ? De quelle capacité ?"
+          gases: "Fournissez-vous Nitrox ou Trimix ? Quels mélanges standards vous proposez ?"
+          gear: "Quel équipement est disponible à la location (combinaison, stab, appareil photo, ordinateur,...) ? Quelles marques ?"
+          services: "Quels sont les services que vous proposez ? casiers, salles de classe, douche, piscine, jacuzzi..."
+          payment: "Quels moyens de paiement acceptez vous ?"
+          best_period: "Y a-t-il une période spéciale de l'anée où il y a des espèces exceptionnelles à rencontrer ?"
+          hotels: "Quels sont les hôtels à proximité que vous recommandez"
+          transfers: "Pouvez vous aller chercher les clients depuis leur hôtel jusqu'à votre centre ?"
+          parking: "Y a-t-il un parking dédié pour vos clients ?"
+          other_activities: "Organisez-vous des activités pour les non plongeurs ? Quelles sont les activités intéressantes dans la région pour les non plongeurs ?"
+          gear_sales: "Avez vous un magasin d'équipement sur place ? Quels types d'équipement vendez-vous ? Quelles marques ? Faites-vous partie d'un réseau de revendeurs ?"
+          gear_maintenance: "Faites-vous les révisions ou réparation des équipements de plongeurs ? Quels équipements et quels marques ? Êtes-vous réparateur agréé par certains fabriquants ?"
+    divetype:
+      recreational: Loisir
+      training: Entrainement
+      ? "night dive"
+      : "Plongée de nuit"
+      ? "deep dive"
+      : Profonde
+      drift: Dérivante
+      wreck: Épave
+      cave: Grotte
+      reef: Récif
+      photo: Photo
+      research: Recherche
+      ? "Photo Survey"
+      : "Expédition Photo"
+      Shore: Rivage
+      Twilight: Crépuscule
+      Drift: Dérivante
+      Tech: Tech
+      ? "Ice Diving"
+      : "Plongée sous glace"
+      ? "Boat Dive"
+      : Bateau
+      Video: Video
+      Sidemount: Sidemount
+      Recreational: Loisir
+      Reef: Récif
+      Photo: Photo
+    watertype:
+      salt: Salée
+      fresh: Douce
+    visibility:
+      bad: Mauvaise
+      average: Moyenne
+      good: Bonne
+      excellent: Excellente
+    gear_categories:
+      BCD: Stab
+      Boots: Chaussons
+      Camera: "Appareil photo"
+      Compass: Boussole
+      Computer: Ordinateur
+      Cylinder: Bloc
+      ? "Dive skin"
+      : Lycra
+      ? "Dry suit"
+      : "Combi étanche"
+      Fins: Palmes
+      Gloves: Gants
+      Hood: Cagoule
+      Knife: Couteau
+      ? "Lift bag"
+      : Parachute
+      Light: Lampe
+      Mask: Masque
+      Other: Autre
+      Rebreather: Recycleur
+      Regulator: Détendeur
+      Scooter: Scooter
+      ? "Wet suit"
+      : "Combi humide"
+    tank_material:
+      aluminium: Aluminium
+      steel: Acier
+      carbon: Carbone
+    current:
+      none: Aucun
+      light: Léger
+      medium: Moyen
+      strong: Fort
+      extrme: Extrême
+    long:
+      current:
+        light: "Léger (jusqu'à 1 noeud)"
+        mediume: "Moyen (jusqu'à 2 noeuds)"
+        strong: "Fort (jusqu'à 3 noeuds)"
+        extreme: "Extrême (plus de 3 noeuds)"
+        none: Aucun
+  blog:
+    feed_rss:
+      ? "%{user}'s scuba dive in %{spot_name}"
+      : "Plongée de %{user} sur %{spot_name}"
+      ? "Dive spot: %{country}, %{location}, %{spot} - Depth: %{dive_maxdepth}m, duration: %{dive_duration}mins - buddies: %{buddies} - species spotted : %{species} - Notes: %{notes}"
+      : "Spot : %{country}, %{location}, %{spot} - Profondeur : %{dive_maxdepth}m, durée : %{dive_duration}min - Palanquée : %{buddies} - Espèces identifiées : %{species} - Notes : %{notes}"

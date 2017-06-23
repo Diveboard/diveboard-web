@@ -1,0 +1,270 @@
+@import 'variables';
+
+
+
+// =============================================================================
+//                                Menu Classes 
+// =============================================================================
+
+///////////----------POP UP PANEL (MEDIUM & LARGE DESIGN)------------/////////
+
+.popup_panel { 
+    @include media-layout(small) {
+      display: none;
+    }
+    right: 1rem;
+    display: inline-block;
+    position: fixed;
+    z-index: 2;
+}
+
+.dropdown {
+  position: relative;
+  img{
+    position: absolute;
+    display: inline-block;
+    width: 5rem;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1;
+  }
+  a { text-decoration: none; }
+
+  [data-toggle="dropdown"] {
+    display: block;
+    color: white;
+    height: 4rem;
+    /*@include double-shadow($orange);*/
+    /*@include hover-style($blue_marine);*/
+    /*text-shadow(0 -1px 0 rgba(0,0,0,0.3));*/
+    padding: 10px;
+    
+    &:before {
+      position: absolute;
+      display: block;
+      font-size: 0.7em;
+      color: #fff;
+      top: 13px;
+      right: 10px;
+      transform: rotate(0deg);
+      transition: transform .6s;
+    }
+  }
+
+  & > .dropdown-menu {
+    max-height: 0;
+    overflow: hidden;
+    position: relative;
+    top: 5rem;
+    background: #2c2f32;
+    margin-top: 1rem;
+    padding: 1rem;
+    @include ul-nostyle;
+    /*transform: scaleY(0);*/
+    transform-origin: 50%, 0%;
+    transition: max-height .2s ease-out;
+    animation: hideAnimation .2s ease-out;
+    .section {
+      display: inline-block; 
+      list-style: none; 
+      vertical-align: top;
+    }
+    .s-head {font-weight: bold; background: orange; text-align: center;}
+    ul{
+      padding-left: 0;
+      display: inline-block;
+      vertical-align: top;
+      li {
+        padding: 0;
+        list-style: none;
+        .section {background: orange; display: inline-block;}
+        
+        a {
+          &:hover{color: $orange !important;}
+          display: block;
+          color: white;
+          padding: 1rem 1rem;
+          font-weight: bold;
+          font-size: 1rem;
+          /*@include text-shadow(0 -1px 0 rgba(255,255,255,0.3));*/
+        }
+      }
+    }
+  }
+  
+  & > input[type="checkbox"] {
+    opacity: 0;
+    display: block;
+    position: absolute;
+    top: 0;
+    width: 5rem;
+    height: 5rem;
+    right: 0;
+    cursor: pointer;
+    z-index: 2;
+    &:checked ~ .dropdown-menu {
+      max-height: 9999px;
+      display: block;
+      /*@include transform(scaleY(1));*/
+      @include animation(showAnimation .1s ease-in-out);
+      transition: max-height 1s ease-in-out;
+    }
+    
+    &:checked + a[data-toggle="dropdown"] {
+      &:before {
+        transform: rotate(-180deg);
+        transition: transform .6s;
+      }
+    }
+  }
+}
+
+///////////----------SLIDING PANEL (MINI DESIGN)------------/////////
+
+.top_menu { position: absolute; width: 100%; margin-top: 1rem;}
+#slide_panel{
+  display: none;
+  @include media-layout(full) {
+    display: none !important;
+  }
+  -webkit-box-shadow: 4px 4px 3px 0px black;
+  -moz-box-shadow:    4px 4px 3px 0px black;
+  box-shadow:         4px 4px 3px 0px black;
+  @include media-layout(small) {  
+    display: none;
+    color:#fff;
+    border: 1px solid dashed #FFF;
+    height:40rem;
+    width:15rem;
+    padding-top: 1rem;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    background: #2c2f32;
+    overflow-y: auto;
+    .not_logged {
+      background: #F5DD25 !important;
+      border-radius: 0.5rem;
+
+      text-align: center;
+      a{color: black !important; text-align: center;}
+      &:hover{
+        opacity: 1;
+        > a {font-weight: bold;}
+      }
+    }
+    a {
+      color:#fff;
+      text-decoration:none;
+      font: 1.1rem 'Quicksand', sans-serif;
+      transition:color .3s ease-in-out;
+      display:table-cell;
+      vertical-align: middle;
+      text-align: left;
+
+    }
+    .title{
+      /*float: left;*/
+      text-transform:uppercase;
+      padding:0;
+      width:8rem;
+      margin:0 0 0 1rem;
+      opacity:1;
+      display: table;
+      text-align:center;
+      transition-duration: .3s;
+      transition-timing-function: ease-in-out;
+      transition-property: box-shadow, color, opacity, padding-left;
+      cursor: pointer;
+      color: $orange;
+      font-size: 2rem;
+      &:hover{
+        opacity: .8;
+      }
+    }
+    .own_page {
+      border-bottom: 0.2rem solid rgba(0, 0, 0, 0.5);
+    }
+    ul {
+      padding: 0;  
+      margin: 0 auto;  
+      width: auto;
+      > li {
+        /*float:left;*/
+        padding:0 .55rem;
+        height:1.75rem;
+        margin:.2rem;
+        opacity:1;
+        margin-left: 0.5rem;
+        width: 11rem;
+        text-transform:uppercase;
+        display: table;
+        cursor: pointer;
+        text-align:center;
+        transition-duration: .2s;
+        transition-timing-function: ease-in-out;
+        transition-property: box-shadow, color, opacity, padding-left;
+        cursor: pointer;
+    
+        &:hover{
+            color:orange;
+            opacity:.8;
+            margin-left: 1rem;
+            background:$orange;
+          > a {
+             color:#fff;
+          }
+        }
+
+        
+      }
+    }
+  }
+}
+
+
+label:after {
+  position: absolute; 
+  top: 0;
+  content:"\2261";
+  font-size:1.8rem;
+  left: 0;
+}
+
+label:hover,
+input:checked ~ label {
+  color:#fff;
+}
+
+label {   
+  @include media-layout(full){
+    display: none;
+  }
+  @include media-layout(small) {
+    display:block;
+    z-index: 1;
+    position: fixed;
+    left:0;
+    width:0.5rem;
+    height:2.25rem;
+    padding:.35rem;
+    padding-top: 0;
+    font-size:1.1rem;
+    color:#fff;
+    transition:color .3s ease-in-out;
+    cursor: pointer;
+    user-select:none;
+    margin:0;
+    background:#2c2f32;
+    -moz-border-radius-topright: 20%;
+    -webkit-border-top-right-radius: 20%;
+    border-top-right-radius: 20%;
+    -moz-border-radius-bottomright: 20%;
+    -webkit-border-bottom-right-radius: 20%;
+    border-bottom-right-radius: 20%;
+  }
+}
+
+// =============================================================================
+// =============================================================================

@@ -1,0 +1,29 @@
+<html>
+<body>
+
+<div style='background-color: #222; color: #1D1D1D; max-width: 800px; padding: 20px; font-size: 12px; font-family: "Helvetica, Verdana, Arial, sans-serif"; text-shadow: white 0px 1px;'>
+
+  <div style='margin-top: 20px; margin-bottom: 30px;'>
+  <img src="http://www.diveboard.com/img/logo-alpha.png" alt="DiveBoard">
+  </div>
+
+  <div style=' background-color: #f9c03d; margin-bottom: 0; padding: 10px; font-size: 24px; font-weight: bolder; text-shadow: #FAF183 0px 1px;'><%= it("Welcome to Diveboard !", scope: ['password_reset', 'registration_ok']) %></div>
+  <div style='background-color: #f4f4f4; margin-top: 0; padding: 30px 10px 10px 10px;'>
+  <p style='margin: 0px 0 20px 0;'><%= it("Now that you're a registered user, you'll be able to create your logbook, track your dive and share your experiences.", scope: ['password_reset', 'registration_ok']) %></p>
+  <p style='margin: 20px 0 20px 0;'><%= it("Head over to %{link:your logbook} and start logging dives now.", scope: ['password_reset', 'registration_ok'], link: It.link(@logbook_url, style: "text-decoration: none; color: #FF6200;")) %></p>
+	<%if !@user.email.nil?%>
+  <p style='margin: 20px 0 20px 0;'><%= it("As a reminder, your login is your email : %{email}", scope: ['password_reset', 'registration_ok'], email: @user.email) %></p>
+	<%end%>
+	<%if !@user.fb_id.nil?%>
+  <p style='margin: 20px 0 20px 0;'><%= it("Since you already connected your account to Facebook, you can use the \"Facebook Login\" button.", scope: ['password_reset', 'registration_ok']) %></p>
+	<%end%>
+
+  <p style='margin: 30px 0 5px 0;'><%= it("Happy Diving !", scope: ['password_reset', 'registration_ok']) %></p>
+  <p style='margin: 5px 0 5px 0;'><%= it("The Diveboard team", scope: ['password_reset', 'registration_ok']) %></p>
+  <p style='margin: 5px 0 0px 0;'><a href='http://www.diveboard.com'>http://www.diveboard.com</a></p>
+
+  </div>
+
+</div>
+</body>
+</html>

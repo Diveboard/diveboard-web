@@ -1,0 +1,249 @@
+<%
+require 'yaml'
+computer_yml = YAML.load_file "#{Rails.root}/config/computer.yml"
+%>
+<script>
+G_uploader_list_favorites = <%= computer_yml['Favorites'].to_json.html_safe %>;
+G_uploader_list_emulators = <%= computer_yml['Dislikes'].to_json.html_safe %>;
+</script>
+
+  <div class='tab_panel tab_profile'>
+    <div class="main_content_box">
+      <div id="wizard_agent_download" class="hidden">
+      <%= render "staticpages/agent", :location => location %>
+      </div>
+      <div id="wizard_plugin_uploader" class="hidden">
+
+        <div class=hidden>
+        <input id="dive_fileid" type="hidden"/>
+        <input type=hidden id=xmlFormSend name=xmlFormSend />
+        <input type=hidden id=logFormSend name=logFormSend />
+        <input type=hidden id=verFormSend name=verFormSend />
+        <input type=hidden id=nbrFormSend name=nbrFormSend />
+        <input type=hidden id=nbtFormSend name=nbtFormSend />
+        <input type=hidden id=userid name=userid value="<%=@owner.id%>"/>
+        </div>
+
+        <div id=introBox>
+          <p><%= it("Waking up the plugin...", scope: ['diveinfo', 'uploader']) %></p>
+        </div>
+
+        <div id=errorBox class="hidden">
+          <p><%= it("An error occured while attempting to communicate with your dive computer. The technical error reported is:", scope: ['diveinfo', 'uploader']) %> </p>
+          <p id="wizard_plugin_error"></p>
+          <p><%= it("If you would like to report an issue with your dive computer, or would like support from Diveboard team, just hit the %{label:HELP} link on the top-right of your screen and fill in the form. We'll get back to you as soon as we can!", scope: ['diveinfo', 'uploader'], label: It.tag("label")) %></p>
+          <p id="wizard_plugin_error_download" class=hidden><%= it("By the way, a new version of Diveboard' Browser Plugin is available. You may want to give it a try!", scope: ['diveinfo', 'uploader']) %> <a href='/about/import/1'><%= it("Download the latest version here", scope: ['diveinfo', 'uploader']) %></a></p>
+          <p><input id="wizard_plugin_install_retry1" class="yellow_button" value="Try again" type="button"> <a href="#" id="wizard_plugin_install_cancel1" class="wizard_save_exit"><%= it("Cancel", scope: ['diveinfo', 'uploader']) %></a></p>
+        </div>
+
+        <div id=installBox class="hidden">
+          <b><%= it("Missing Plugin", scope: ['diveinfo', 'uploader']) %></b><br/><br/>
+          <p><%= it("Diveboard uses a small browser plugin to communicate with your dive computer. To install it follow, simply click on the link below and execute the installer", scope: ['diveinfo', 'uploader']) %></p>
+          <p><%= it("You will need to close and restart your browser once you have installed this plugin.", scope: ['diveinfo', 'uploader']) %></p>
+          <ul>
+          <li><a href="/plugin/latest/win/diveboard.zip"><%= it("Windows", scope: ['diveinfo', 'uploader']) %></a></li>
+          <li><a href="/plugin/latest/mac/diveboard.dmg"><%= it("Mac", scope: ['diveinfo', 'uploader']) %></a></li>
+          <li><%= it("Linux - DEB package %{link32:32-bits} or %{link64:64-bits}", scope: ['diveinfo', 'uploader'], link32: It.link("/plugin/latest/linux/diveboard.deb"), link64: It.link("/plugin/latest/linux/diveboard-64.deb")) %></li>
+          <li><%= it("Linux - RPM package %{link32:32-bits} or %{link64:64-bits}", scope: ['diveinfo', 'uploader'], link32: It.link("/plugin/latest/linux/diveboard.rpm"), link64: It.link("/plugin/latest/linux/diveboard-64.rpm")) %></li>
+          <li><%= it("Linux - TGZ package %{link32:32-bits} or %{link64:64-bits}", scope: ['diveinfo', 'uploader'], link32: It.link("/plugin/latest/linux/diveboard.tgz"), link64: It.link("/plugin/latest/linux/diveboard-64.tgz")) %></li>
+          </ul>
+          <br/>
+          <br/>
+          <input type=button action=# id="wizard_plugin_install_retry2" value='Retry'/> <a href="#" id="wizard_plugin_install_cancel2">Cancel</a>
+        </div>
+
+        <div id=detectBox1 class="hidden">
+          <b><%= it("Connect your computer", scope: ['diveinfo', 'uploader']) %></b><br/><br/>
+          <p><%= it("Select your computer's type in the list below", scope: ['diveinfo', 'uploader']) %></p>
+          <select id="wizard_computer_select1" autocomplete="off">
+          <option value='XXX'><%= it("Select your computer model...", scope: ['diveinfo', 'uploader']) %></option>
+          <% computer_yml["Favorites"].each { |key| %><option value='<%=computer_yml["Computers"][key]["driver"]%>'><%= key %></option><% } %>
+          <option value='XXX'>--------------------</option>
+          <% computer_yml["Computers"].keys.sort.each { |key| %><option value='<%=computer_yml["Computers"][key]["driver"]%>'><%= key %></option><% } %>
+          <option value='XXX'>--------------------</option>
+          <% computer_yml["Emulators"].keys.sort.each { |key| %><option value='<%=computer_yml["Emulators"][key]["driver"]%>'><%= key %></option><% } %>
+          </select>
+          <div id="wizard_computer_instructions1" class='hidden wizard_instructions'>
+            <label><%= it("How to connect your computer:", scope: ['diveinfo', 'uploader']) %></label>
+            <% computer_yml["Computers"].each_key { |computer_name| %>
+            <div class="Instructions_<%= computer_name.gsub(/[^A-Za-z0-9]/,"") %>">
+            <ol>
+            <% computer_yml["Computers"][computer_name]["instructions"].each {|instruction| %>
+            <li><%= instruction.html_safe %></li>
+            <% } %>
+            </ol>
+            <% if (computer_yml["Computers"][computer_name]["cable"]) %>
+              <p class=wizard_note><%= it("Note: the cable can be purchased on %{link:Amazon.com}", scope: ['diveinfo', 'uploader'], link: It.tag("computer_yml['Computers'][computer_name]['cable']", target: "_blank")) %></p>
+            <% end %>
+            </div>
+            <% } %>
+
+            <% computer_yml["Emulators"].each_key { |computer_name| %>
+            <div class="Instructions_<%= computer_name.gsub(/[^A-Za-z0-9]/,"") %>">
+            <ol>
+            <% computer_yml["Emulators"][computer_name]["instructions"].each {|instruction| %>
+            <li><%= instruction.html_safe %></li>
+            <% } %>
+            </ol>
+            </div>
+            <% } %>
+
+            <div class='Instuctions_missing'>
+              <ol>
+                <li><%= it("We don't have the detailed instructions for this computer. If you know how to connect this computer, we would appreciate a lot if you told us! You can send that kind of information through the \"PANIC\" button on the left, or %{mail:by mail}", scope: ['diveinfo', 'uploader'], mail: It.link("mailto:support@diveboard.com")) %></li>
+              </ol>
+            </div>
+          </div>
+          <p style="margin-top: 10px;"> <%= it("When you are ready, go ahead:", scope: ['diveinfo', 'uploader']) %> <button class="yellow_button" id="wizard_plugin_detect_extract"><%= it("Upload dives", scope: ['diveinfo', 'uploader']) %></button> <a href="#" id="wizard_plugin_install_cancel3" class="wizard_save_exit"><%= it("Cancel", scope: ['diveinfo', 'uploader']) %></a></p>
+        </div>
+
+
+        <div id=detectBox2 class="hidden">
+          <b><%= it("Connect your computer", scope: ['diveinfo', 'uploader']) %></b><br/><br/>
+          <p><%= it("We did not find the computer you requested on your computer. If you're sure of the driver to use, you can force the Port to use by selecting it in the list below.", scope: ['diveinfo', 'uploader']) %></p>
+          <select id="wizard_computer_select2" autocomplete="off">
+          <option value='XXX'><%= it("Select your computer model...", scope: ['diveinfo', 'uploader']) %></option>
+          <% computer_yml["Favorites"].each { |key| %><option value='<%=computer_yml["Computers"][key]["driver"]%>'><%= key %></option><% } %>
+          <option value='XXX'>--------------------</option>
+          <% computer_yml["Computers"].keys.sort.each { |key| %><option value='<%=computer_yml["Computers"][key]["driver"]%>'><%= key %></option><% } %>
+          <option value='XXX'>--------------------</option>
+          <% computer_yml["Emulators"].keys.sort.each { |key| %><option value='<%=computer_yml["Emulators"][key]["driver"]%>'><%= key %></option><% } %>
+          </select></p>
+          <p><%= it("Select the com port :", scope: ['diveinfo', 'uploader']) %><select id=wizard_plugin_port autocomplete="off"> </select></p>
+          <div id="wizard_computer_instructions2" class='hidden wizard_instructions'>
+            <label><%= it("How to connect your computer:", scope: ['diveinfo', 'uploader']) %></label>
+            <% computer_yml["Computers"].each_key { |computer_name| %>
+            <div class="Instructions_<%= computer_name.gsub(/[^A-Za-z0-9]/,"") %>">
+            <ol>
+            <% computer_yml["Computers"][computer_name]["instructions"].each {|instruction| %>
+            <li><%= instruction.html_safe %></li>
+            <% } %>
+            </ol>
+            <% if (computer_yml["Computers"][computer_name]["cable"]) %>
+              <p class=wizard_note><%= it("Note: the cable can be purchased on %{link:Amazon.com}", scope: ['diveinfo', 'uploader'], link: It.tag("computer_yml['Computers'][computer_name]['cable']", target: "_blank")) %></p>
+            <% end %>
+            </div>
+            <% } %>
+
+            <% computer_yml["Emulators"].each_key { |computer_name| %>
+            <div class="Instructions_<%= computer_name.gsub(/[^A-Za-z0-9]/,"") %>">
+            <ol>
+            <% computer_yml["Emulators"][computer_name]["instructions"].each {|instruction| %>
+            <li><%= instruction.html_safe %></li>
+            <% } %>
+            </ol>
+            </div>
+            <% } %>
+          </div>
+
+          <p style="margin-top: 10px;"> <%= it("When you are ready, go ahead:", scope: ['diveinfo', 'uploader']) %> <button class="yellow_button" id="wizard_plugin_force_extract" type="button"><%= it("Upload dives", scope: ['diveinfo', 'uploader']) %></button> <a href="#" id="wizard_plugin_install_cancel4" class="wizard_save_exit"><%= it("Cancel", scope: ['diveinfo', 'uploader']) %></a></p>
+        </div>
+
+        <div id=progressBox class="hidden">
+          <p id=progressStatus><%= it("Uploading...", scope: ['diveinfo', 'uploader']) %></p>
+          <div id="progressbar" style="width:350px; height:10px;"></div>
+          <button class='yellow_button' id="wizard_upload_cancel" ><%= it("Cancel", scope: ['diveinfo', 'uploader']) %></button>
+        </div>
+
+      </div>
+
+
+      <div id="wizard_add_profile"<% if @dive.has_profile_data? then %> style="display: none;"<% end %> >
+        <p class='wizard-expl-text'><%= it("To display on Diveboard the exact profile of your dive, you can either connect directly your dive computer, or select an export from another software.", scope: ['diveinfo', 'uploader']) %></p>
+        <p id="manual_creation_txt" class='wizard-expl-text'><%= it("If you don't upload your dive profile, a generic profile will be generated based on the duration and safety stops you entered.", scope: ['diveinfo', 'uploader']) %></p>
+        <%if !@owner.nil? && @owner.dives.count == 0 && params[:content] != :bulk then%><p><%= it("If you already have a lot of dives logged in another software, and want to import all these data quickly and easily in Diveboard, check out the %{link:Bulk uploader}", scope: ['diveinfo', 'uploader'], link: It.link("/"+@owner.vanity_url+"/bulk?bulk=wizard")) %>.</p><%end%>
+          <a id="wizard_import_btn" href="#"><%= it("Import from your dive computer.", scope: ['diveinfo', 'uploader']) %></a>
+
+
+        <div>
+
+          <div id="wizard_upload_btn"><%= it("Import from a dive export file.", scope: ['diveinfo', 'uploader']) %></div>
+
+          <% if @user.movescount_email.nil? && @user.movescount_userkey.nil? %>
+            <!--
+            <%= MOVESCOUNT_URL%>auth?client_id=<%= MOVESCOUNT_API_KEY %>&redirect_uri=http%3A%2F%2Fwww.diveboard.com%2F<%= @user.vanity_url %>%2Fbulk%3Fbulk%3Dwizard
+            <a href="#" id="callMovescountPopup" data="<%= MOVESCOUNT_URL%>auth?client_id=<%= MOVESCOUNT_API_KEY %>&redirect_uri=http%3A%2F%2Fwww.diveboard.com%2Fapi%2Fv2%2Fmovescount">Movescount Popup</a>
+          -->
+            <a href="#" class="movescount_import" id="callMovescountPopup" data="<%= MOVESCOUNT_URL%>auth?client_id=<%= MOVESCOUNT_API_KEY %>&redirect_uri=<%= CGI.escape(MOVESCOUNT_REDIRECT_URI).html_safe %>"><%= it("Import from your movescount account", scope: ['diveinfo', 'uploader']) %></a>
+          <% else %>
+            <a href="#" class="movescount_import" id="importMovescountDives" data="<%= MOVESCOUNT_URL%>auth?client_id=<%= MOVESCOUNT_API_KEY %>&redirect_uri=<%= CGI.escape(MOVESCOUNT_REDIRECT_URI).html_safe%>"><%= it("Import from your movescount account", scope: ['diveinfo', 'uploader']) %></a>
+
+            <!--<a href="#" id="importMovescountDives">Movescount</a>-->
+          <% end %>
+
+        </div>
+        <br style='clear: both' />
+        
+        <%if params[:content] == :bulk%>
+        <p><%= it("%{b:EXPERIMENTAL}: try %{link:speadsheet import}", scope: ['diveinfo', 'uploader'], b: It.tag("b"), link: It.link("#", id: "spreadsheet_import")) %></p>
+        <%end%>
+        <p><%= it("Currently supported file format for import:", scope: ['diveinfo', 'uploader']) %></p>
+        <ul class='compact-list'>
+          <li><%= it("UDCF", scope: ['diveinfo', 'uploader']) %></li>
+          <li><%= it("DAN DL7 (.zxl or .zxu files)", scope: ['diveinfo', 'uploader']) %></li>
+          <li><%= it("Suunto Dive Export (.sde files)", scope: ['diveinfo', 'uploader']) %></li>
+          <li><%= it("Uwatec TravelTrak (.asd files)", scope: ['diveinfo', 'uploader']) %></li>
+          <li><%= it("Movescount .xlsx export", scope: ['diveinfo', 'uploader']) %></li>
+          <li><%= it("Cressi .txt export", scope: ['diveinfo', 'uploader']) %></li>
+        </ul>
+        <p><i><%= it("If the software from your favorite dive computer cannot export the data to one of these format, you can use the Panic! button to contact us, and we'll see what we can do!", scope: ['diveinfo', 'uploader']) %></i></p>
+      </div>
+
+      <a id="wizard_delete_graph" href="#" <% if !@dive.has_profile_data? then %>style="display: none;"<% end %> ><%= it("Delete profile or Import from file/computer", scope: ['diveinfo', 'uploader']) %></a>
+
+
+      <div id="wizard_graph"></div>
+
+      <div id="dive_list_selector" class="hidden" >
+        <br/>
+        <label><%= it("The file uploaded contains several profiles logs. Please select in the following list the profile you want to import for this dive", scope: ['diveinfo', 'uploader']) %><br/></label>
+        <label style="display:none;" id="dive_list_selected_info"><br/><%= it("We pre-precossed profiles as follow:", scope: ['diveinfo', 'uploader']) %><br/>
+        <%= it("%{b:\"Skip\"} those that seem to be already present%{br}
+        %{b:\"New Dive\"} those with no existing match%{br}
+        %{b:\"Add to dive\"} those that match and existing dive with no profile%{br}
+        You can tune up your selection and hit the \"Import Dives\" button at the bottom when ready.%{br}
+        If you add a profile to a dive that already has one, profile will be overwritten.%{br}
+        Skipped profiles on computer uploads will be remembered and skipped by default on future uploads.", scope: ['diveinfo', 'uploader'], b: It.tag("b"), br: It.tag("br")) %></label>
+        <p style="margin-top: 5px;"><%= it("Unhappy with the automatic selection? %{link:Unselect all} dives and hand pick those you want to import.", scope: ['diveinfo', 'uploader'], link: It.link("#", onclick: "unselect_all_bulk(); return false;")) %></p>
+        <div class='wizard-centered'>
+          <select id="dive_list_selected" style="margin-top: 15px;width: 250px; margin-bottom: 10px;"> </select>
+          <div id="dive_list_enhanced_actions">
+          </div>
+          <script type="text/html" id="dive_list_enhanced_actions_template">
+          <table>
+          <tr style="text-align: center; font-weight: bold;"><td colspan="2"><%= it("Profile info", scope: ['diveinfo', 'uploader']) %></td><td><%= it("Skip", scope: ['diveinfo', 'uploader']) %></td><td><%= it("New Dive", scope: ['diveinfo', 'uploader']) %></td><td><%= it("Add to dive", scope: ['diveinfo', 'uploader']) %></td></tr>
+          <$for ( var i = 0; i < nbdives; i++ ) {
+            var value = dive_summary[i];
+            var digest = dive_details_compute_digest(value);
+            if(source =="computer" && G_user_skipped_dives_hash[digest]==true){
+              var action = "do_nothing";
+            }else if(value.dive_duplicate_id == null){
+              var action = "new_dive";
+            }else if(G_private_dives_digest_hash[value.dive_duplicate_id].has_uploaded_profile){
+              var action = "do_nothing";
+            }else{
+              var action = "append_to_dive";
+            }
+            $>
+          <tr data="<$=value.number$>" class="dive_list_enhanced_entry" digest="<$=digest$>" source="<$=source$>">
+            <td><$=value.date$> <$=value.time$></td><td><$=value.duration$>mins
+             <$ if (value.max_depth!=undefined){ $>
+              <$=unit_distance(value.max_depth,true)$></td>
+              <$ } $>
+            <td style="text-align: center;"><input type="radio" class="dive_list_radio" name="dive_list_radio_<$=value.number$>"  <$if(action == "do_nothing"){$>CHECKED<$}$> value="do_nothing"/></td>
+            <td style="text-align: center;"><input type="radio" class="dive_list_radio" name="dive_list_radio_<$=value.number$>" <$if(action == "new_dive"){$>CHECKED<$}$> value="new_dive"/></td>
+            <td><input type="radio" class="dive_list_radio" name="dive_list_radio_<$=value.number$>"  <$if(action == "append_to_dive"){$>CHECKED<$}$> value="append_to_dive" style="display: none;"/>
+            <$if(action != "append_to_dive"){$>
+              <$=build_dive_picker_options(null)$>
+            <$}else{$>
+              <$=build_dive_picker_options(value.dive_duplicate_id)$>
+            <$}$></td></tr>
+          <$}$>
+          </table>
+          </script>
+          <br/><a id="dive_list_selector_button_cancel" href="#" class="wizard_back"><%= it("Cancel", scope: ['diveinfo', 'uploader']) %></a> <a id="dive_list_selector_button" href="#" class="yellow_button"><%= it("Select", scope: ['diveinfo', 'uploader']) %> <img style="display:none; position: relative; top: 3px;" src="/img/loading.gif" width='15px' height='15px' /></a>
+        </div>
+      </div>
+
+    </div>
+  </div>

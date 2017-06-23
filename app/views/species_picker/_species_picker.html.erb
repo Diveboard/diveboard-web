@@ -1,0 +1,23 @@
+<div class="species_picker_frame">
+  <table><tr>
+  <td class="species_picker_left" VALIGN="top">
+    <input type="text" class="species_picker_search">
+    <a href="#" class="symbol search_symbol">L</a>
+    <div class="search_scope"><input type="radio" name="species_scope" value="local" checked> <p><%= it("Local Species", scope: ['species_picker', 'species_picker']) %></p> <input type="radio" name="species_scope" value="all" > <p><%= it("All", scope: ['species_picker', 'species_picker']) %></p></div>
+    <ul>
+      <li class="highlighted sticky_picker selected_species selected"><%= it("Selected species", scope: ['species_picker', 'species_picker']) %> <span>0</span></li>
+    </ul>
+
+    <ul style="margin-top: 25px; margin-bottom: 10px;" class="species_categories">
+      <li class="highlighted sticky_picker my_species"><%= it("My Species", scope: ['species_picker', 'species_picker']) %><span></span></li>
+      <li class="highlighted sticky_picker search_species" style="display: none;"><%= it("Search Results", scope: ['species_picker', 'species_picker']) %><span></span></li>
+    </ul>
+
+    <div class="species_credits"><%= it("Data provided through %{eol:EOL} and %{gbif:GBIF}", scope: ['species_picker', 'species_picker'], eol: It.link("http://www.gbif.org", target:"_blank"), gbif: It.link("http://www.gbif.org", target: "_blank")) %></div>
+  </td>
+  <td class="species_picker_right" VALIGN="top">
+
+  </td>
+  </tr><tr><td colspan=2><p style="margin-bottom: 20px;"><%= it("Can't find the species you are looking for ?", scope: ['species_picker', 'species_picker']) %> <a href="#" onclick="report_missing_species(); return false;" class="yellow_button" style="display: inline-block;"><%= it("Add missing species", scope: ['species_picker', 'species_picker']) %></a></p></td></tr></table>
+
+</div>

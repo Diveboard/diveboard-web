@@ -1,0 +1,35 @@
+#affiliation
+{
+  width: 100%;
+  background-color: #fdc90c;
+  padding-top: 20px;
+  padding-bottom: 20px;
+
+  table
+  {
+    border-collapse: collapse;
+    width: 700px;
+    margin: 0 auto;
+
+    @media (max-width: 700px)
+    {
+      width: 100%;
+      img
+      {
+        width: 80px;
+        height: 70px;
+      }
+    }
+
+    img
+    {
+      max-width: 170px;
+      max-height: 90px;
+    }
+
+    td
+    {
+      text-align: center;
+    }
+  }
+}

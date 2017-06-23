@@ -1,0 +1,207 @@
+@import 'variablesv2';
+
+.book_button
+{
+  display: block;
+  background-color: $yellow-db;
+  width: 130px;
+  height: 31px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  color: $dark-gray-db;
+  padding-top: 9px;
+  position: relative;
+  text-decoration: none;
+  overflow: hidden;
+  cursor: pointer;
+
+  p
+  {
+    margin-left: 14px;
+    display: inline-block;
+    vertical-align: top;
+  }
+  &:hover, &:active{
+    background-color: $dark-gray-db;
+    color: $yellow-db;
+    img{
+      top: -18px;
+    }
+  }
+
+  img
+  {
+    width: 9px;
+    position: absolute;
+    top: 11px;
+    right: 20px;
+    height: 50px;
+  }
+}
+
+.load_more_button, .load_more_review_button
+{
+  display: inline-block;
+  height: 30px;
+  border: 1px solid $dark-gray-db;
+  line-height: 30px;
+  color: $dark-gray-db;
+  text-decoration: none;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  text-align: center;
+  cursor: pointer;
+  &:hover
+  {
+    background-color: $light-gray-db;
+  }
+}
+
+.light-blue-button
+{
+  display: block;
+  text-decoration: none;
+  padding-left: 10px;
+  padding-right: 10px;
+  line-height: 40px;
+  color: white;
+  background-color: $light-blue-db;
+  height: 40px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  cursor: pointer;
+
+  &:hover
+  {
+    background-color: $mid-blue-db;
+  }
+}
+
+.transparent_dark_gray_button
+{
+  border: 1px solid $dark-gray-db;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  color: $dark-gray-db;
+  height: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
+  line-height: 30px;
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover
+  {
+    background-color: $light-gray-db;
+  }
+}
+
+.see_all_button
+{
+  height: 40px;
+  line-height: 40px;
+  color: $dark-gray-db;
+  text-decoration: none;
+
+  &:hover
+  {
+    color: orange;
+  }
+}
+
+.modal_button, .modal_button_center
+{
+  a
+  {
+    display: block;
+    background-color: $yellow-db;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    height: 35px;
+    line-height: 35px;
+    color: $dark-gray-db;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    margin-left: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+.modal_button
+{
+  a
+  {
+    float: left;
+  }
+}
+.modal_button_center
+{
+  a
+  {
+    margin: 0 auto;
+    width: 100px;
+  }
+}
+
+.yellow_button
+{
+  display: block;
+  padding-top: 0px;
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 30px;
+  line-height: 30px;
+  background-color: $yellow-db;
+  color: $dark-gray-db;
+  font-size: 16px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+
+  &:hover
+  {
+    background-color: $dark-gray-db;
+    color: $yellow-db;
+  }
+}
+
+.red-button
+{
+  display: block;
+  cursor: pointer;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background-color: $red-db;
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 30px;
+  line-height: 30px;
+  color: white;
+  text-align: center;
+}
+
+.green-button
+{
+  display: block;
+  cursor: pointer;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background-color: $green-db;
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 30px;
+  line-height: 30px;
+  color: white;
+}

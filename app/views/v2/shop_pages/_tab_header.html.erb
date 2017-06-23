@@ -1,0 +1,101 @@
+<% if !@user.nil? %>
+  <%= content_for :javascripts do%>
+  	<script type="text/javascript">
+      $(document).ready(function(){
+        <% if @user.playOnThisShop(@shop.id) %>
+          treasureHunt();
+        <% end %>
+      });
+      $('.button_follow').click(fireFollow);
+
+    </script>
+  <%end%>
+<% end %>
+
+<% if !@user.nil? && @user.playOnThisShop(@shop.id) %>
+  <div id="findedTreasureModal" class="modal">
+    <div class="modal_content modal_content_initial">
+      <a href="javascript:void(0)" class="close" modal_trigger="close"></a>
+        <div class="title"></div>
+        <div class="modal_body" style="padding-bottom: 20px">
+        </div>
+    </div>        
+  </div>
+<% end %>
+
+<div id="tabs">
+  <a class="page-link" href="javascript:void(0)" scroll="#shop_info<% if @edit_flag then%>_edit<%end%>"><div class="tab active"><p style="border-left: none"><%= it("About the shop", scope: ['shop_pages', 'tab_header']) %></p></div></a>
+  <% if !@gallery_pictures.nil? && @gallery_pictures.count != 0 && @edit_flag == false%>
+    <a class="page-link" href="javascript:void(0)" scroll="#gallery"><div class="tab"><p><%= it("Gallery", scope: ['shop_pages', 'tab_header']) %></p></div></a>
+  <%elsif @edit_flag == true %>
+    <a class="page-link" scroll="#pictures_edit" href="javascript:void(0)"><div class="tab"><p><%= it("Pictures", scope: ['shop_pages', 'tab_header']) %></p></div></a>
+  <%else%>
+    <a class="page-link" style="display:none" scroll="#gallery" href="javascript:void(0)"><div class="tab"><p><%= it("Gallery", scope: ['shop_pages', 'tab_header']) %></p></div></a>
+  <%end%>
+  <% if (!@shop.all_dive_goods.nil? && @shop.all_dive_goods.count > 0) || @edit_flag == true %>
+    <a class="page-link" href="javascript:void(0)" scroll="#services<% if @edit_flag then%>_edit<%end%>"><div class="tab"><p><%= it("Services", scope: ['shop_pages', 'tab_header']) %></p></div></a>
+  <%else%>
+    <a class="page-link" style="display:none" scroll="#services" href="javascript:void(0)"><div class="tab"><p> <%= it("Services", scope: ['shop_pages', 'tab_header']) %></p></div></a>
+  <%end%>
+  <% if @edit_flag == false %>
+  <a class="page-link" href="javascript:void(0)" scroll="#spots"><div class="tab"><p><%= it("Spots", scope: ['shop_pages', 'tab_header']) %></p></div></a>
+  <% end %>
+  <% if @edit_flag == false %>
+    <a class="page-link" href="javascript:void(0)" scroll="#shop_reviews<% if @edit_flag then%>_edit<%end%>"><div class="tab"><p><%= it("Reviews", scope: ['shop_pages', 'tab_header']) %></p></div></a>
+  <%end%>
+  <% if @faqs.size != 0 || @edit_flag == true%>
+    <a class="page-link" href="javascript:void(0)" scroll="#faq<% if @edit_flag then%>_edit<%end%>"><div class="tab"><p>Q&A</p></div></a>
+  <%else%>
+    <a class="page-link" style="display:none" scroll="#faq" href="javascript:void(0)"><div class="tab"><p>Q&A</p></div></a>
+  <%end%>
+  <% if !@shop.area.nil? && @edit_flag == false%>
+    <a class="page-link" href="javascript:void(0)" scroll="#area<% if @edit_flag then%>_edit<%end%>"><div class="tab"><p><%= it("Areas", scope: ['shop_pages', 'tab_header']) %></p></div></a>
+  <%end%>
+  <% if @edit_flag == true %>
+    <a class="page-link" href="javascript:void(0)" scroll="#cares<% if @edit_flag then%>_edit<%end%>"><div class="tab"><p><%= it("Care", scope: ['shop_pages', 'tab_header']) %></p></div></a>
+  <% end %>  
+  <% if @edit_flag == true %>
+    <a class="page-link" href="javascript:void(0)" scroll="#marketing_widget<% if @edit_flag then%>_edit<%end%>"><div class="tab"><p><%= it("Marketing", scope: ['shop_pages', 'tab_header']) %></p></div></a>
+  <% end %>  
+  <div class="wrapper_follow"> 
+    <div class="button_follow" shop_id="<%= @shop.id %>" following="<%= @is_following %>">
+      <img src="<%= HtmlHelper.lbroot "/img/shop/svg/icon_follow_shop.svg" %>" alt="">
+      <p><%= @is_following ? it("Unfollow" , scope: ['shop_pages', 'tab_header']): it("Follow", scope: ['shop_pages', 'tab_header']) %></p>
+    </div>
+    <div class="count_follow" >
+      <img src="<%= HtmlHelper.lbroot "/img/shop/svg/icon_count_follow.svg" %>">
+      <p class="count"><%=@shop.follow_count%></p>
+    </div>    
+  </div>
+  <%if !@user.nil? && @user.admin_rights >= 4 || @user_owns_shop %>
+    <div class="edit_mode">
+      <% if @edit_flag == false %>
+        <%= link_to(controller: :shop_pages, action: :edit, vanity_url: @shop.vanity_url) do %>
+          <img src="<%= HtmlHelper.lbroot "/img/drawer/svg/settings.svg" %>">
+          <p><%= it("Edit", scope: ['shop_pages', 'tab_header']) %></p>
+        <% end %>
+      <% else %>
+        <a href="javascript:save_changes()">
+          <img src="<%= HtmlHelper.lbroot "/img/drawer/svg/settings.svg" %>">
+          <p>Save</p>
+        </a>
+      <% end %>
+    </div>
+  <%end%>
+
+</div>
+
+<div id="tab_list">
+  <select>
+    <option value="shop_info"><%= it("About the shop", scope: ['shop_pages', 'tab_header']) %></option>
+    <% if !@gallery_pictures.nil? && @gallery_pictures.count != 0 %>
+      <option value="gallery"><%= it("Gallery", scope: ['shop_pages', 'tab_header']) %></option>
+    <% end %>
+    <% if (!@shop.all_dive_goods.nil? && @shop.all_dive_goods.count > 0) then %>
+      <option value="services"><%= it("Services", scope: ['shop_pages', 'tab_header']) %></option>
+    <% end %>
+    <option value="spots"><%= it("Spots", scope: ['shop_pages', 'tab_header']) %></option>
+    <option value="shop_reviews"><%= it("Reviews", scope: ['shop_pages', 'tab_header']) %></option>
+    <% if @faqs.size != 0 then %><option value="faq">Q&A</option><% end %>
+  </select>
+</div>

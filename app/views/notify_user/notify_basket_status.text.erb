@@ -1,0 +1,28 @@
+
+<%= it("Dear %{recipient},", scope: ['notify_user', 'notify_basket_status', 'text'], recipient: @recipient.nickname) %>
+
+<%if @basket.status == 'confirmed' then
+  %><%= it("Your order with %{shop} has been confirmed. Get ready to dive!", scope: ['notify_user', 'notify_basket_status', 'text'], shop: @shop.name) %>
+<%elsif @basket.status == 'hold' then
+  %><%= it("Your order with %{shop} requires some more information from you and has been put on hold. Please check on Diveboard to complete the transaction.", scope: ['notify_user', 'notify_basket_status', 'text'], shop: @shop.name) %>
+<%elsif @basket.status == 'delivered' then
+  %><%= it("Your order with %{shop} has been marked as delivered. Don't forget to leave a review to tell how satisfied you were!", scope: ['notify_user', 'notify_basket_status', 'text'], shop: @shop.name) %>
+<%elsif @basket.status == 'cancelled' then
+  %><%= it("Your order with %{shop} could not be fulfilled. Please check the details online.", scope: ['notify_user', 'notify_basket_status', 'text'], shop: @shop.name) %>
+<%else
+  %><%= it("Your order with %{shop} has changed status to : %{status}", scope: ['notify_user', 'notify_basket_status', 'text'], shop: @shop.name, status: config_translate(:basket_status, @basket.status)) %>
+<%end%>
+
+<%if @basket.note_from_shop && ['delivered', 'confirmed'].include?(@basket.status) then%><%=@basket.note_from_shop%>
+<%end%>
+<%= it("View on Diveboard", scope: ['notify_user', 'notify_basket_status', 'text']) %>: <%=@basket.customer_fullpermalink%>
+
+<%= it("Happy Diving !", scope: ['notify_user', 'notify_basket_status', 'text']) %>
+--
+<%= it("The Diveboard team", scope: ['notify_user', 'notify_basket_status', 'text']) %>
+http://www.diveboard.com
+
+
+
+<%= it("This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
+If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings", scope: ['notify_user', 'notify_basket_status', 'text']) %>

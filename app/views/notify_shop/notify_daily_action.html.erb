@@ -1,0 +1,27 @@
+  <div class="main_info" align="left">
+    <div>
+      <%= it("Time to take a break from the ocean and gove some love to your customers.%{br}
+      New actions are waiting in your shop's inbox:", scope: ['notify_shop', 'notify_daily_action'], br: It.tag("br")) %> <br/>
+      <ul class="action_list">
+      <%@global_inbox.each do |section|%>
+          <%=section[:count].map do |what, nb|
+            if nb > 0 && what == :messages then "<li>".html_safe + t("new message to read", scope: ['notify_shop', 'notify_daily_action'], count: nb) + "</li>".html_safe
+            elsif nb > 0 && what == :baskets then "<li>".html_safe + t("new order", scope: ['notify_shop', 'notify_daily_action'], count: nb) + "</li>".html_safe
+            elsif what == :signature then "<li>".html_safe + t("new dive to confirm", scope: ['notify_shop', 'notify_daily_action'], count: nb) + "</li>".html_safe
+            end
+          end .join("\n").html_safe%>
+      <%end%>
+      </ul>
+    </div>
+    <% if @shop.is_claimed? %>
+    <div>
+      <center><a href="<%=@shop.fullpermalink(:locale)%>/edit/care?ensure_login=true" class="yellow_button"><%= it("Go to INBOX", scope: ['notify_shop', 'notify_daily_action']) %></a></center>
+    </div>
+    <%else%>
+    <div>
+      <%= it("To answer those messages you first need to claim your %{link:page} on diveboard!", scope: ['notify_shop', 'notify_daily_action'], link: @shop.fullpermalink(:locale)) %>
+      <center><a href="<%=ROOT_URL%>login/register_pro/user" class="yellow_button"><%= it("REGISTER", scope: ['notify_shop', 'notify_daily_action']) %></a></center>
+    </div>
+    <%end%>
+    <br/>
+  </div>

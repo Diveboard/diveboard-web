@@ -1,0 +1,6 @@
+<%basket.histories.reverse.each do |history|%>
+<div class='history_change'>
+  <p class='change'><%= it("Status changed to %{status}", scope: ['basket_management', 'shop_pages', 'history'], status: history.new_status) %></p>
+  <p class='timestamp local_timezone'><%=history.created_at%></p>
+</div>
+<%end%>
