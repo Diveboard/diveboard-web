@@ -35,7 +35,7 @@ set :disable_path, "#{shared_path}/system/maintenance/"
 # ==============================
 
 after "deploy:restart", "git:tags:push_deploy_tag"
-after "deploy:restart", "hipchat:notify_end"
+#after "deploy:restart", "hipchat:notify_end"
 before "deploy:restart", "deploy:add_robots"
 # Disable cron jobs at the begining of a deploy.
 after "deploy:update_code", "whenever:clear_crontab"
@@ -44,8 +44,8 @@ after "deploy:symlink", "whenever:update_crontab"
 # If anything goes wrong, undo.
 after "deploy:rollback", "whenever:update_crontab"
 # Manage DB
-before "deploy:update_code", "deploy:backup_db" unless no_backup == 1
-before "deploy:update_code", "hipchat:notify_start"
+before "deploy:update_code", "deploy:backup_db" # unless no_backup == 1
+#before "deploy:update_code", "hipchat:notify_start"
 
 
 #assets regeneration at the end... to make sure
