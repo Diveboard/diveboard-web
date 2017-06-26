@@ -95,6 +95,10 @@ COOKIES_DOMAIN = ".stage.diveboard.com"
 LOCALE_ROOT_URL = "http://%{locale}.stage.diveboard.com/"
 ROOT_TINY_URL = "http://stage.scu.bz/"
 ROOT_MOBILE_DOMAIN = "m.stage.diveboard.com"
+
+SENDGRID_API = ENV["SENDGRID_API"]
+
+
 TINY_PRIMES = [28657, 426389, 1686049, 94418953, 780291637, 2971215073]
 
 # for Facebook Connect / Koala
