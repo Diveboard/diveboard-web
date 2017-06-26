@@ -70,11 +70,11 @@ every 15.minutes do
   #refresh the feed for non logged in users
   runner "ApplicationController.new.render_to_string :partial => 'feeds/default_activity_feed', :locals => {:cookies => {}, :force_refresh => true}"
 end
-every 30.minutes do
+every :monday do
   runner "ApplicationController.new.render_to_string :partial => 'admin/charts', :locals => {:cookies => {}, :force_refresh => true}"
   runner "ApplicationController.new.render_to_string :partial => 'admin/statistics', :locals => {:cookies => {}, :force_refresh => true}"
 end
-every 3.hours do
+every :wednesday do
   rake "cache:charts"
 end
 every :tuesday, :at => '1pm' do
