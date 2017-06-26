@@ -130,6 +130,8 @@ LOCALE_ROOT_URL = "http://%{locale}.diveboard.com/"
 ROOT_TINY_URL = "http://scu.bz/"
 ROOT_MOBILE_DOMAIN = "m.diveboard.com"
 
+SENDGRID_API = ENV["SENDGRID_API"]
+
 #For flickr
 FLICKR_KEY = ENV["FLICKR_KEY"]
 FLICKR_SECRET = ENV["FLICKR_SECRET"]
