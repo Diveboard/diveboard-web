@@ -53,7 +53,7 @@ every 1.day, :at => '7am' do
   runner "(Picture.where 'thumb_id is null or small_id is null or medium_id is null or large_id is null or original_image_id is null').map &:upload_thumbs"
 end
 every "40 * * * *" do # 40 minutes after every hour
-  rake "stats:import"
+  #TODO reactivate at some point: rake "stats:import"
 end
 every 1.day, :at => '6pm' do
   runner "Review.notify_missing!"
