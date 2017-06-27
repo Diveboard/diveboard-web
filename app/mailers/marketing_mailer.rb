@@ -10,7 +10,7 @@ class MarketingMailer < ActionMailer::Base
     Rails.logger.debug "Sending from sendgrid"
     self.class.delivery_method = :smtp
     self.class.smtp_settings = {
-      :user_name => "diveboard",
+      :user_name => "apikey",
       :password => SENDGRID_API,
       :domain => "diveboard.com",
       :address => "smtp.sendgrid.net",
