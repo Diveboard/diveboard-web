@@ -1,4 +1,4 @@
-![image alt text](image_0.png)
+![image alt text](/public/img/big_db_logo.png)
 
 PUBLIC API SPECIFICATION
 
@@ -59,7 +59,7 @@ Table of content
 
 (b) If you develop a technology as a result of your use of the Site and the Materials on the Site, we encourage you to provide us with information about such technology. Sharing your success with us will help foster the Diveboard community by providing examples of success. We may choose to feature your story on the Site, or highlight your technology or product on the Site.
 
-(c) The Data published through Diveboard is licenced under Creative Common’s [is licensed under a Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License ](http://creativecommons.org/licenses/by-nc-nd/3.0/deed.en_US)![image alt text](image_1.png) . Published data coming from Diveboard must link back to their location on Diveboard. Modification or corrections are only allowed through the APIs. If you are the original creator of a content you are free to push/pull/modify/delete such content. Diveboard may keep anonymized scientific data upon delete.
+(c) The Data published through Diveboard is licenced under Creative Common’s [is licensed under a Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License ](http://creativecommons.org/licenses/by-nc-nd/3.0/deed.en_US)![image alt text](/public/img/creative_commons.png) . Published data coming from Diveboard must link back to their location on Diveboard. Modification or corrections are only allowed through the APIs. If you are the original creator of a content you are free to push/pull/modify/delete such content. Diveboard may keep anonymized scientific data upon delete.
 
 (d) You also agree to comply with the licenses associated with the Materials you acquire from the Site. You also agree to pass on all license terms and attributions associated with the objects as required by the licenses associated with those Materials.
 
@@ -81,7 +81,7 @@ The API is very (maybe too) close to the actual DB model, and was mostly built a
 
 ## How to **test**
 
-For testing purposes, you may want to try and use our staging environment. Beware that this environment has always new features, but it should still be stable. 
+For testing purposes, you may want to try and use our staging environment. Beware that this environment has always new features, but it should still be stable.
 
 Please do not make load testing with either environment without checking with us that it’s OK to do so !
 
@@ -213,7 +213,7 @@ The body of the response is a JSON string, which contains a Hash. The attributes
     <td>String</td>
     <td>O</td>
     <td>N</td>
-    <td>id of the error (only present if success==false) 
+    <td>id of the error (only present if success==false)
 This id should be provided when available to report bugs to Diveboard.</td>
   </tr>
   <tr>
@@ -363,7 +363,7 @@ The body of the response is a JSON string, which contains a Hash. The attributes
     <td>String</td>
     <td>O</td>
     <td>N</td>
-    <td>id of the error (only present if success==false) 
+    <td>id of the error (only present if success==false)
 This id should be provided when available to report bugs to Diveboard.</td>
   </tr>
   <tr>
@@ -420,7 +420,7 @@ Deprecated</td>
 </table>
 
 
- 
+
 
 ### Change a vanity_url
 
@@ -507,7 +507,7 @@ The body of the response is a JSON string, which contains a Hash. The attributes
     <td>String</td>
     <td>O</td>
     <td>N</td>
-    <td>id of the error (only present if success==false) 
+    <td>id of the error (only present if success==false)
 This id should be provided when available to report bugs to Diveboard.</td>
   </tr>
 </table>
@@ -673,7 +673,7 @@ ARRAY of OBJECT ERROR</td>
     <td>String</td>
     <td>O</td>
     <td>N</td>
-    <td>id of the error (only present if success==false) 
+    <td>id of the error (only present if success==false)
 This id should be provided when available to report bugs to Diveboard.</td>
   </tr>
 </table>
@@ -702,8 +702,8 @@ To get more detail for a user, use a different flavour (cf. the object section t
 <table>
   <tr>
     <td>REQUEST</td>
-    <td>curl "http://www.diveboard.com/api/V2/user" 
--F 'arg={"id":48}' 
+    <td>curl "http://www.diveboard.com/api/V2/user"
+-F 'arg={"id":48}'
 -F 'flavour=private'
 -F 'auth_token=ip4rHSSD9/diOWR3szonh7ikbhl0k9g/UgMSTBfjb00='
 -F "apikey=xxXXX6XXX6XxxxX6XXXX"</td>
@@ -720,9 +720,9 @@ To create a new element, just send the data without specifying an id. You will g
 <table>
   <tr>
     <td>REQUEST</td>
-    <td>curl -s "http://l.dev.diveboard.com/api/V2/dive" 
--F 'auth_token=UEEnVPDmErqKIKhI952vcQMnU1qbTQ/WxlXsnXUNBoY=' 
--F "apikey=j9icv6zlgwq9" 
+    <td>curl -s "http://l.dev.diveboard.com/api/V2/dive"
+-F 'auth_token=UEEnVPDmErqKIKhI952vcQMnU1qbTQ/WxlXsnXUNBoY='
+-F "apikey=j9icv6zlgwq9"
 -F 'arg={"user_id": 12885, "duration": 90, "maxdepth":40, "time_in": "2011-10-16T09:40:00Z", "spot": {"name":"Blue hole", "country_code":"MT","location":{"name":"Gozo"}, "region":{"name":"Mediterranean Sea"}}}'</td>
   </tr>
   <tr>
@@ -737,8 +737,8 @@ To update an element, you only need to provide the id of the element you wish to
 <table>
   <tr>
     <td>REQUEST</td>
-    <td>curl "http://www.diveboard.com/api/V2/dive" 
--F "auth_token=ip4rHSSD9/diOWR3szonh7ikbhl0k9g/UgMSTBfjb00=" 
+    <td>curl "http://www.diveboard.com/api/V2/dive"
+-F "auth_token=ip4rHSSD9/diOWR3szonh7ikbhl0k9g/UgMSTBfjb00="
 -F "apikey=xxXXX6XXX6XxxxX6XXXX"
 -F 'arg={"id":10306,"duration":120}'</td>
   </tr>
@@ -1205,13 +1205,13 @@ The body of the response is a JSON string, which contains a Hash. The attributes
 </table>
 
 
- 
+
 
 ### Picture upload
 
 #### Presentation
 
- ‘TODO XXX’ 
+ ‘TODO XXX’
 
 #### URL
 
@@ -1305,7 +1305,7 @@ The body of the response is a JSON string, which contains a Hash. The attributes
 
 ## Reading an object
 
-To get an object with a given flavour from an id, you need to call the given API and pass as argument only the ‘id’ value in the ‘arg’ hash. 
+To get an object with a given flavour from an id, you need to call the given API and pass as argument only the ‘id’ value in the ‘arg’ hash.
 
 <table>
   <tr>
@@ -1539,7 +1539,7 @@ This call will let you upload a profile file in a Diveboard supported format (cu
 
 The file will be analyzed and stored and as an output you get a list of the dive profiles present in the file in a digested format as well as their id within the file and the file id itself. This can be used to be bound to a dive.
 
- 
+
 
 <table>
   <tr>
@@ -1567,7 +1567,7 @@ $ curl "http://www.diveboard.com/api/V2/user?arg=%7Bid:48,nickname:'coucou'%7D&a
 
 {"success":true,"error":[{"error":"Forbidden","object":{"id":48,"nickname":"coucou"}}],"result":{"class":"User","flavour":"public","id":48,"vanity_url":"pascal","qualifications":{"featured":[{"org":"CMAS","title":"2 stars diver","date":"2011-07-26"},{"org":"PADI","title":"Advanced Open Water","date":"2011-07-25"},{"org":"CMAS","title":"Nitrox","date":"2011-10-17"}],"other":[{"org":"Other","title":"Cayman Island Lionfish Culling License","date":"2011-11-08"},{"org":"CMAS","title":"1 star","date":"2007-06-01"}]},"picture":"http://www.diveboard.com/user_images/48.png","picture_small":"http://www.diveboard.com/user_images/48.png","picture_large":"http://www.diveboard.com/user_images/48.png","full_permalink":"http://www.diveboard.com/pascal","total_nb_dives":66,"public_nb_dives":29,"public_dive_ids":["728","33","34","30","29","28","27","26","25","24","23","22","10305","555","1850","1851","2434","2435","2436","2437","2438","2439","2442","2443","2532","2533","2569","2570","5632"],"nickname":"Pascal"}}
 
-$ curl "http://www.diveboard.com/api/V2/dive?arg=%7Bid:2434, duration:123%7D&auth_token=ip4rHSSD9/diOWR3szonh7ikbhl0k9g/UgMSTBfjb00=&apikey=xxXXX6XXX6XxxxX6XXXX" 
+$ curl "http://www.diveboard.com/api/V2/dive?arg=%7Bid:2434, duration:123%7D&auth_token=ip4rHSSD9/diOWR3szonh7ikbhl0k9g/UgMSTBfjb00=&apikey=xxXXX6XXX6XxxxX6XXXX"
 
 {"success":true,"error":[{"error":"Forbidden","object":{"id":2434,"**duration**":**123**}}],"result":{"class":"Dive","flavour":"public","id":2434,"time_in":"2011-10-16T09:40:00Z","duration":53,"maxdepth":"20.1","user_id":48,"spot_id":1843,"temp_surface":20.0,"temp_bottom":19.0,"privacy":0,"weights":null,"safetystops":"[]","divetype":["recreational","Autonomy"],"favorite":null,"buddy":[],"visibility":null,"trip_name":"Nitrox training - Marseilles","water":null,"altitude":0,"fullpermalink":"http://www.diveboard.com/pascal/2434","complete":true,"thumbnail_image_url":"http://www.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":"http://www.diveboard.com/pascal/2434/profile.png?g=small_or&u=m","species":[],"guide":"","shop_id":812,"notes":null,"public_notes":null,"diveshop":{"name":"ATOLL - DEEP SUB","url":"http://www.atollplongee.com","guide":"","id":812},"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-16","time":"09:40"}}
 
@@ -2441,7 +2441,7 @@ path to the dive (without the leading http://xxx.diveboard.com)</td>
     <td></td>
     <td>DEPRECATED
 A Hash containing the following key, to enable a free fill in when a diveshop does not exists in Diveboard database :
-- name : name of the shop 
+- name : name of the shop
 - url : url of the shop
 - country : country code
 - town : town name</td>
@@ -3627,5 +3627,3 @@ The attribute "Units" is deprecated. To get or set the preferred units of a user
     <td>error code (will be implemented in future version)</td>
   </tr>
 </table>
-
-
