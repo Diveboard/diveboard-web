@@ -277,7 +277,7 @@ namespace :deploy do
 
     desc "Backs up the DB before migrating"
     task :backup_db do
-      run "mysqldump --lock-tables=false --user=dbuser --password=`echo $PROD_DB` diveboard > /tmp/diveboard-db-bak-#{Time.now.to_i}.sql"
+      #run "mysqldump --lock-tables=false --user=dbuser --password=`echo $PROD_DB` diveboard > /tmp/diveboard-db-bak-#{Time.now.to_i}.sql"
     end
 
     task :cleanup_spots do
