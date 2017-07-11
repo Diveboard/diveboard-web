@@ -25,6 +25,16 @@
 	<link href="https://plus.google.com/+Diveboard" rel="publisher" />
 	<!--OG Meta Informations-->
 	<link rel="icon" href="<%= HtmlHelper.lbroot "img/favicon/favicon.ico" %>" type="image/x-icon" />
+
+	<!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({‘gtm.start’:
+  new Date().getTime(),event:‘gtm.js’});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!=‘dataLayer’?‘&l=‘+l:‘’;j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,‘script’,‘dataLayer’,‘GTM-N9ZXLSV’);</script>
+  <!-- End Google Tag Manager -->
+
+
 	<!-- STYLESHEETS -->
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
   <link href="http://cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.css" rel='stylesheet' type='text/css'>
@@ -37,6 +47,12 @@
 	<%else%>
 	<body class='lang_<%=I18n.locale%>'>
 	<% end %>
+
+	<!-- Google Tag Manager (noscript) -->
+	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N9ZXLSV"
+	height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+	<!-- End Google Tag Manager (noscript) -->
+
     <%= yield :header %>
 	</body>
 

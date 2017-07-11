@@ -10,6 +10,16 @@
 
   <link rel="icon" href="<%=ROOT_URL%>img/favicon/favicon.ico" type="image/x-icon" />
 
+
+	<!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({‘gtm.start’:
+  new Date().getTime(),event:‘gtm.js’});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!=‘dataLayer’?‘&l=‘+l:‘’;j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,‘script’,‘dataLayer’,‘GTM-N9ZXLSV’);</script>
+  <!-- End Google Tag Manager -->
+
+
   <style type="text/css">
     body { font-family: Helvetica, Verdana, Arial, sans-serif; background-image: url(/img/main_bg.jpg); color: #1d1d1d; background-color: #222; text-align:justify;}
     h1 { font-size: 26px; color: #3e3e3e; line-height: 1.5em; }
@@ -38,6 +48,12 @@ $(document).ready(function () {
 </head>
 
 <body>
+
+	<!-- Google Tag Manager (noscript) -->
+	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N9ZXLSV"
+	height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+	<!-- End Google Tag Manager (noscript) -->
+
   <!-- This file lives in public/404.html -->
 	<div class="no_content">
 	<h1><%= it("Time to surface, diver! It's a 404!", scope: ['layouts', '404']) %></h1>
