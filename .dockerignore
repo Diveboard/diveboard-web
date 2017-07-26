@@ -1,0 +1,5 @@
+#files non-relevant to the docker context
+log/*
+db/*
+tmp/*
+.git*

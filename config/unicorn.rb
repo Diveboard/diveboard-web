@@ -13,7 +13,7 @@
 if ENV['RAILS_ENV'] == 'production' then
   worker_processes 8
 else
-  worker_processes 4
+  worker_processes 1
 end
 
 # Since Unicorn is never exposed to outside clients, it does not need to
@@ -21,7 +21,8 @@ end
 # as root unless it's from system init scripts.
 # If running the master process as root and the workers as an unprivileged
 # user, do this to switch euid/egid in the workers (also chowns logs):
-user "diveboard", "diveboard"
+
+user "diveboard", "diveboard" unless ENV['RAILS_ENV'] == 'docker_development'
 
 # Help ensure your application will always spawn in the symlinked
 # "current" directory that Capistrano sets up.
@@ -36,13 +37,13 @@ listen "127.0.0.1:8080", :tcp_nopush => true
 timeout 300
 
 # feel free to point this anywhere accessible on the filesystem
-pid "/home/diveboard/diveboard-web/shared/pids/unicorn.pid"
+pid "/home/diveboard/diveboard-web/shared/pids/unicorn.pid" unless ENV['RAILS_ENV'] == 'docker_development'
 
 # By default, the Unicorn logger will write to stderr.
 # Additionally, ome applications/frameworks log to stderr or stdout,
 # so prevent them from going to /dev/null when daemonized here:
-stderr_path "/home/diveboard/diveboard-web/shared/log/unicorn.stderr.log"
-stdout_path "/home/diveboard/diveboard-web/shared/log/unicorn.stdout.log"
+stderr_path "/home/diveboard/diveboard-web/shared/log/unicorn.stderr.log" unless ENV['RAILS_ENV'] == 'docker_development'
+stdout_path "/home/diveboard/diveboard-web/shared/log/unicorn.stdout.log" unless ENV['RAILS_ENV'] == 'docker_development'
 
 # combine Ruby 2.0.0dev or REE with "preload_app true" for memory savings
 # http://rubyenterpriseedition.com/faq.html#adapt_apps_for_cow

@@ -1,2 +1,21 @@
 == Diveboard app
 
+In order to setup a working environment, we are providing a Dockerfile to build a test container for the Diveboard application.
+
+To setup the Docker container run from the docker CLI:
+
+create storage for the db
+docker volume create --name hello
+
+docker build -t diveboard .
+
+initialize the container
+docker run -v ${PWD}:/home/diveboard/diveboard-web/current -p 80:80/tcp -p 443:443/tcp -p3306:3306/tcp diveboard /home/diveboard/diveboard-web/current/config/docker/init_env
+
+
+You can then connect to the container in interactive mode with: 
+docker run -v ${PWD}:/home/diveboard/diveboard-web/current  -v ${PWD}/tmp/mysql:/var/lib/mysql -p 80:80/tcp -p 443:443/tcp -p3306:3306/tcp diveboard
+
+This will mount the curren tdirectory and allow you to use it as your dev codebase
+You need to then point your /etc/hosts to resolve the docker ip with "dev.diveboard.com"
+You must forward ports 80>80 and 443>443 otherwise some resources won't load

@@ -1,3 +1,8 @@
+<%
+## we can't generate this without the photos
+return if @latest_photos.count < 5
+%>
+
 <%= content_for :javascripts do%>
   <%
     flag_first = true
@@ -5,8 +10,8 @@
     i = 0
 
     while i < 5 do
-      picture_array.push(@latest_photos[i].id)
-      i += 1
+        picture_array.push(@latest_photos[i].id)
+        i += 1
     end
   %>
   <script type="text/javascript">

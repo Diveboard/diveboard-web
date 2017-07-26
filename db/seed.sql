@@ -1241,7 +1241,7 @@ CREATE TABLE IF NOT EXISTS `shops` (
 -- Data exporting was unselected.
 -- Dumping structure for view diveboard.shops_shared
 -- Creating temporary table to overcome VIEW dependency errors
-CREATE TABLE `shops_shared` (
+CREATE TABLE IF NOT EXISTS `shops_shared` (
 	`id` INT(11) NOT NULL,
 	`kind` VARCHAR(255) NULL COLLATE 'utf8_unicode_ci',
 	`lat` FLOAT NULL,
@@ -1255,7 +1255,7 @@ CREATE TABLE `shops_shared` (
 
 -- Dumping structure for view diveboard.shop_customers
 -- Creating temporary table to overcome VIEW dependency errors
-CREATE TABLE `shop_customers` (
+CREATE TABLE IF NOT EXISTS `shop_customers` (
 	`id` BIGINT(28) NULL,
 	`shop_id` INT(11) NULL,
 	`user_id` BIGINT(20) NULL,
@@ -1268,7 +1268,7 @@ CREATE TABLE `shop_customers` (
 
 -- Dumping structure for view diveboard.shop_customer_detail
 -- Creating temporary table to overcome VIEW dependency errors
-CREATE TABLE `shop_customer_detail` (
+CREATE TABLE IF NOT EXISTS `shop_customer_detail` (
 	`shop_id` INT(11) NULL,
 	`user_id` BIGINT(20) NULL,
 	`stuff_type` VARCHAR(15) NOT NULL COLLATE 'utf8_general_ci',
@@ -1282,7 +1282,7 @@ CREATE TABLE `shop_customer_detail` (
 
 -- Dumping structure for view diveboard.shop_customer_history
 -- Creating temporary table to overcome VIEW dependency errors
-CREATE TABLE `shop_customer_history` (
+CREATE TABLE IF NOT EXISTS `shop_customer_history` (
 	`shop_id` INT(11) NULL,
 	`user_id` BIGINT(20) NULL,
 	`registered_at` DATETIME NULL,
@@ -1745,17 +1745,17 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- Dumping structure for view diveboard.shop_customers
 -- Removing temporary table and create final VIEW structure
 DROP TABLE IF EXISTS `shop_customers`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`dbuser`@`localhost` SQL SECURITY DEFINER VIEW `shop_customers` AS select (`shop_customer_detail`.`shop_id` + (`shop_customer_detail`.`user_id` * 1000000)) AS `id`,`shop_customer_detail`.`shop_id` AS `shop_id`,`shop_customer_detail`.`user_id` AS `user_id`,count(`shop_customer_detail`.`dive_id`) AS `dive_count`,max(`shop_customer_detail`.`review_id`) AS `review_id`,count(`shop_customer_detail`.`basket_id`) AS `basket_count`,count(`shop_customer_detail`.`message_id_to`) AS `message_to_count`,count(`shop_customer_detail`.`message_id_from`) AS `message_from_count` from `shop_customer_detail` group by `shop_customer_detail`.`shop_id`,`shop_customer_detail`.`user_id`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `shop_customers` AS select (`shop_customer_detail`.`shop_id` + (`shop_customer_detail`.`user_id` * 1000000)) AS `id`,`shop_customer_detail`.`shop_id` AS `shop_id`,`shop_customer_detail`.`user_id` AS `user_id`,count(`shop_customer_detail`.`dive_id`) AS `dive_count`,max(`shop_customer_detail`.`review_id`) AS `review_id`,count(`shop_customer_detail`.`basket_id`) AS `basket_count`,count(`shop_customer_detail`.`message_id_to`) AS `message_to_count`,count(`shop_customer_detail`.`message_id_from`) AS `message_from_count` from `shop_customer_detail` group by `shop_customer_detail`.`shop_id`,`shop_customer_detail`.`user_id`;
 
 -- Dumping structure for view diveboard.shop_customer_detail
 -- Removing temporary table and create final VIEW structure
 DROP TABLE IF EXISTS `shop_customer_detail`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`dbuser`@`localhost` SQL SECURITY DEFINER VIEW `shop_customer_detail` AS select `dives`.`shop_id` AS `shop_id`,`dives`.`user_id` AS `user_id`,'Dive' AS `stuff_type`,`dives`.`time_in` AS `registered_at`,`dives`.`id` AS `dive_id`,NULL AS `review_id`,NULL AS `basket_id`,NULL AS `message_id_from`,NULL AS `message_id_to` from `dives` where ((`dives`.`privacy` = 0) and (`dives`.`shop_id` is not null) and (`dives`.`user_id` is not null)) union all select `reviews`.`shop_id` AS `shop_id`,`reviews`.`user_id` AS `user_id`,'Review' AS `Review`,`reviews`.`created_at` AS `created_at`,NULL AS `NULL`,`reviews`.`id` AS `id`,NULL AS `NULL`,NULL AS `NULL`,NULL AS `NULL` from `reviews` where (`reviews`.`anonymous` = 0) union all select `baskets`.`shop_id` AS `shop_id`,`baskets`.`user_id` AS `user_id`,'Basket' AS `Basket`,ifnull(`baskets`.`paypal_order_date`,`baskets`.`created_at`) AS `IFNULL(baskets.paypal_order_date, baskets.created_at)`,NULL AS `NULL`,NULL AS `NULL`,`baskets`.`id` AS `id`,NULL AS `NULL`,NULL AS `NULL` from `baskets` where (`baskets`.`status` in ('paid','confirmed','hold','delivered','cancelled')) union all select `users`.`shop_proxy_id` AS `shop_proxy_id`,`internal_messages`.`from_id` AS `from_id`,'InternalMessage' AS `InternalMessage`,`internal_messages`.`created_at` AS `created_at`,NULL AS `NULL`,NULL AS `NULL`,NULL AS `NULL`,`internal_messages`.`id` AS `id`,NULL AS `NULL` from (`internal_messages` join `users`) where ((`internal_messages`.`to_id` = `users`.`id`) and (`users`.`shop_proxy_id` is not null)) union all select `users`.`shop_proxy_id` AS `shop_proxy_id`,`internal_messages`.`to_id` AS `to_id`,'InternalMessage' AS `InternalMessage`,`internal_messages`.`created_at` AS `created_at`,NULL AS `NULL`,NULL AS `NULL`,NULL AS `NULL`,NULL AS `NULL`,`internal_messages`.`id` AS `id` from (`internal_messages` join `users`) where ((`internal_messages`.`from_group_id` = `users`.`id`) and (`users`.`shop_proxy_id` is not null));
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `shop_customer_detail` AS select `dives`.`shop_id` AS `shop_id`,`dives`.`user_id` AS `user_id`,'Dive' AS `stuff_type`,`dives`.`time_in` AS `registered_at`,`dives`.`id` AS `dive_id`,NULL AS `review_id`,NULL AS `basket_id`,NULL AS `message_id_from`,NULL AS `message_id_to` from `dives` where ((`dives`.`privacy` = 0) and (`dives`.`shop_id` is not null) and (`dives`.`user_id` is not null)) union all select `reviews`.`shop_id` AS `shop_id`,`reviews`.`user_id` AS `user_id`,'Review' AS `Review`,`reviews`.`created_at` AS `created_at`,NULL AS `NULL`,`reviews`.`id` AS `id`,NULL AS `NULL`,NULL AS `NULL`,NULL AS `NULL` from `reviews` where (`reviews`.`anonymous` = 0) union all select `baskets`.`shop_id` AS `shop_id`,`baskets`.`user_id` AS `user_id`,'Basket' AS `Basket`,ifnull(`baskets`.`paypal_order_date`,`baskets`.`created_at`) AS `IFNULL(baskets.paypal_order_date, baskets.created_at)`,NULL AS `NULL`,NULL AS `NULL`,`baskets`.`id` AS `id`,NULL AS `NULL`,NULL AS `NULL` from `baskets` where (`baskets`.`status` in ('paid','confirmed','hold','delivered','cancelled')) union all select `users`.`shop_proxy_id` AS `shop_proxy_id`,`internal_messages`.`from_id` AS `from_id`,'InternalMessage' AS `InternalMessage`,`internal_messages`.`created_at` AS `created_at`,NULL AS `NULL`,NULL AS `NULL`,NULL AS `NULL`,`internal_messages`.`id` AS `id`,NULL AS `NULL` from (`internal_messages` join `users`) where ((`internal_messages`.`to_id` = `users`.`id`) and (`users`.`shop_proxy_id` is not null)) union all select `users`.`shop_proxy_id` AS `shop_proxy_id`,`internal_messages`.`to_id` AS `to_id`,'InternalMessage' AS `InternalMessage`,`internal_messages`.`created_at` AS `created_at`,NULL AS `NULL`,NULL AS `NULL`,NULL AS `NULL`,NULL AS `NULL`,`internal_messages`.`id` AS `id` from (`internal_messages` join `users`) where ((`internal_messages`.`from_group_id` = `users`.`id`) and (`users`.`shop_proxy_id` is not null));
 
 -- Dumping structure for view diveboard.shop_customer_history
 -- Removing temporary table and create final VIEW structure
 DROP TABLE IF EXISTS `shop_customer_history`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`dbuser`@`localhost` SQL SECURITY DEFINER VIEW `shop_customer_history` AS select `shop_customer_detail`.`shop_id` AS `shop_id`,`shop_customer_detail`.`user_id` AS `user_id`,`shop_customer_detail`.`registered_at` AS `registered_at`,`shop_customer_detail`.`stuff_type` AS `stuff_type`,(case `shop_customer_detail`.`stuff_type` when 'Dive' then `shop_customer_detail`.`dive_id` when 'Review' then `shop_customer_detail`.`review_id` when 'Basket' then `shop_customer_detail`.`basket_id` when 'InternalMessage' then ifnull(`shop_customer_detail`.`message_id_from`,`shop_customer_detail`.`message_id_to`) else NULL end) AS `stuff_id` from `shop_customer_detail`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `shop_customer_history` AS select `shop_customer_detail`.`shop_id` AS `shop_id`,`shop_customer_detail`.`user_id` AS `user_id`,`shop_customer_detail`.`registered_at` AS `registered_at`,`shop_customer_detail`.`stuff_type` AS `stuff_type`,(case `shop_customer_detail`.`stuff_type` when 'Dive' then `shop_customer_detail`.`dive_id` when 'Review' then `shop_customer_detail`.`review_id` when 'Basket' then `shop_customer_detail`.`basket_id` when 'InternalMessage' then ifnull(`shop_customer_detail`.`message_id_from`,`shop_customer_detail`.`message_id_to`) else NULL end) AS `stuff_id` from `shop_customer_detail`;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
