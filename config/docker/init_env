@@ -1,0 +1,20 @@
+#!/bin/sh
+
+echo "Seed DB & configure Sphinx"
+
+/etc/init.d/mysql start
+
+#only do 1st time
+mysql -e "GRANT ALL PRIVILEGES ON * . * TO 'root'@'%';"
+mysql -uroot < db/seed.sql
+#only do 1st time
+bundle exec rake ts:configure 
+bundle exec rake ts:index
+bundle exec rake assets:jammit
+bundle exec rake assets:precompile
+
+/etc/init.d/mysql stop
+
+#move files to persistant storage
+mkdir -p /home/diveboard/diveboard-web/current/tmp/mysql
+cp -rf /var/lib/mysql/* /home/diveboard/diveboard-web/current/tmp/mysql/

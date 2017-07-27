@@ -1,0 +1,22 @@
+#!/bin/sh
+
+
+cd /home/diveboard/diveboard-web/current
+# start service in background here
+
+echo "Starting mysql & nginx"
+
+/etc/init.d/mysql start
+/etc/init.d/nginx start
+
+
+
+
+echo "Launch diveboard"
+
+./config/docker/unicorn start
+
+./config/docker/diveboard start
+
+#keep the container running
+tail -f log/docker_development.log

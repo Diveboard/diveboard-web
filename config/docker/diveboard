@@ -1,0 +1,60 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          diveboard
+# Required-Start:    $named $local_fs $remote_fs $network $syslog $mysql $unicorn
+# Required-Stop:     $named $local_fs $remote_fs $network $syslog $mysql $unicorn
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts the unicorn web server
+# Description:       starts unicorn using start-stop-daemon
+### END INIT INFO
+
+set -e
+
+# Feel free to change any of the following variables for your app:
+TIMEOUT=${TIMEOUT-60}
+APP_ROOT=/home/diveboard/diveboard-web/current
+CMD="cd $APP_ROOT; bundle exec rake ts:start"
+set -u
+
+#load environment variables
+
+
+sig () {
+  test -s "$PID" && kill -$1 `cat $PID`
+}
+
+oldsig () {
+  test -s $OLD_PIN && kill -$1 `cat $OLD_PIN`
+}
+
+run () {
+  eval $1
+}
+
+case "$1" in
+start)
+#  sig 0 && echo >&2 "Already running" && exit 0
+  run "cd $APP_ROOT; bundle exec rake ts:start"
+  run "cd $APP_ROOT; bundle exec rake jobs:start"
+  ;;
+stop)
+#  sig QUIT && exit 0
+#  echo >&2 "Not running"
+  run "cd $APP_ROOT; bundle exec rake ts:stop"
+  run "cd $APP_ROOT; bundle exec rake jobs:stop"
+  ;;
+restart)
+#  sig HUP && echo reloaded OK && exit 0
+#  echo >&2 "Couldn't reload, starting '$CMD' instead"
+#  run "$CMD"
+  run "cd $APP_ROOT; bundle exec rake ts:stop"
+  run "cd $APP_ROOT; bundle exec rake ts:start"
+  run "cd $APP_ROOT; bundle exec rake jobs:restart"
+  ;;
+*)
+  echo >&2 "Usage: $0 <start|stop|restart>"
+  exit 1
+  ;;
+esac
