@@ -10,7 +10,7 @@ docker volume create --name hello
 docker build -t diveboard .
 
 initialize the container
-docker run -v ${PWD}:/home/diveboard/diveboard-web/current -p 80:80/tcp -p 443:443/tcp -p3306:3306/tcp diveboard /home/diveboard/diveboard-web/current/config/docker/init_env
+docker run -v ${PWD}:/home/diveboard/diveboard-web/current diveboard /home/diveboard/diveboard-web/current/config/docker/init_env
 
 
 You can then connect to the container in interactive mode with: 
