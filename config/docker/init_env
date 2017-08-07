@@ -18,3 +18,4 @@ bundle exec rake assets:precompile
 #move files to persistant storage
 mkdir -p /home/diveboard/diveboard-web/current/tmp/mysql
 cp -rf /var/lib/mysql/* /home/diveboard/diveboard-web/current/tmp/mysql/
+echo "Stopping all FS is ready - next time launch start_all instead!"
