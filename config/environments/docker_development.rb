@@ -140,3 +140,5 @@ MOVESCOUNT_REST_URL = "http://partner-rest.movescount.com"
 
 
 TREASURE_SHOPS = [9378, 4288, 943]
+
+SENDGRID_API ="NOEMAIL"

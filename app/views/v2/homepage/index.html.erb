@@ -44,8 +44,11 @@
   cache "#{I18n.locale} homepage_#{version}" do 
 %>
     <%= begin
-        render :partial => 'featured_destinations'
-          rescue MissingTemplate
+          render :partial => 'featured_destinations'
+        rescue MissingTemplate
+        
+        rescue
+           Rails.logger.warn $!.message
         end
     %>
 <% end %>

@@ -7,6 +7,23 @@ echo "Seed DB & configure Sphinx"
 #only do 1st time
 mysql -e "GRANT ALL PRIVILEGES ON * . * TO 'root'@'%';"
 mysql -uroot < db/seed.sql
+
+#add content to some tables
+zcat db/seed_data/diveboard/countries.sql.gz | mysql -uroot -D diveboard
+zcat db/seed_data/diveboard/countries_regions.sql.gz | mysql -uroot -D diveboard
+zcat db/seed_data/diveboard/areas.sql.gz | mysql -uroot -D diveboard
+zcat db/seed_data/diveboard/area_categories.sql.gz | mysql -uroot -D diveboard
+zcat db/seed_data/diveboard/i18n_languages.sql.gz | mysql -uroot -D diveboard
+zcat db/seed_data/diveboard/locations.sql.gz | mysql -uroot -D diveboard
+zcat db/seed_data/diveboard/locations_regions.sql.gz | mysql -uroot -D diveboard
+zcat db/seed_data/diveboard/regions.sql.gz | mysql -uroot -D diveboard
+zcat db/seed_data/diveboard/schema_migrations.sql.gz | mysql -uroot -D diveboard
+zcat db/seed_data/diveboard/geonames_cores.sql.gz | mysql -uroot -D diveboard
+zcat db/seed_data/diveboard/geonames_countries.sql.gz | mysql -uroot -D diveboard
+zcat db/seed_data/diveboard/geonames_featurecodes.sql.gz | mysql -uroot -D diveboard
+zcat db/seed_data/diveboard/spots.sql.gz | mysql -uroot -D diveboard
+zcat db/seed_data/diveboard/wikis.sql.gz | mysql -uroot -D diveboard
+
 #only do 1st time
 bundle exec rake ts:configure 
 bundle exec rake ts:index
