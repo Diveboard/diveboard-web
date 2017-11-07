@@ -15,7 +15,7 @@ docker volume create --name hello
 ```
 
 ```
-docker build -t diveboard
+docker build -t diveboard .
 ```
 
 Initialize the container:
