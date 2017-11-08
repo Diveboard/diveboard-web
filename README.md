@@ -1,4 +1,27 @@
-== Diveboard app
+![Diveboard logo](https://cdn.diveboard.com/img/drawer/svg/logo_topbar_mobile.svg "Diveboard")
+
+DIVEBOARD PLATFORM APP
+========
+
+Introduction
+--------
+This repository holds the code of the Diveobard web application.
+As described in the main [documentation](https://github.com/Diveboard/Documentation), this piece is responsible for storing, making sense, displaying and exposing the user's logs.
+
+It provides:
+* A public API ([documentation](https://github.com/Diveboard/Documentation/API.md)) 
+* A web frontend - the master branch is the current live one on [www.diveboard.com](http://www.diveboard.com)
+  * Translations of the frontend are done through [OneSkyApp](https://diveboard.oneskyapp.com) 
+* a set of jobs a.k.a. workers 
+
+It relies on:
+* a Mysql database operated by Diveboard. A kickstart seed is available in this repo expurged from user data.
+* GCP Storage buckets to keep images & videos
+* a Rails stack (see the Dockerfile for full stack details)
+
+
+Setting up a Development Environment
+--------
 
 Some seed files use git-lfs since they are over Git's 100Mb limit
 get git-lfs here: https://git-lfs.github.com/
