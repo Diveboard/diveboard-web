@@ -1,3 +1,6 @@
+[![Slack Chat](http://slack.diveboard.com/badge.svg "Join us. Anyone is welcome!")](http://slack.diveboard.com/) ⇦ Join us!
+
+
 ![Diveboard logo](https://cdn.diveboard.com/img/drawer/svg/logo_topbar_mobile.svg "Diveboard")
 
 DIVEBOARD PLATFORM APP
@@ -57,3 +60,7 @@ This will mount the current directory and allow you to use it as your dev codeba
 A few last steps:
 You need to then point your /etc/hosts to resolve the docker ip with "dev.diveboard.com"
 You must forward ports 80>80 and 443>443 otherwise some resources won't load
+
+Need help?
+------
+Join us on Slack: ![Join our Slack](http://slack.diveboard.com/badge.svg "Diveboard Slack") 
