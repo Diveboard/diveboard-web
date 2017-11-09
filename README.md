@@ -30,6 +30,10 @@ Some seed files use git-lfs since they are over Git's 100Mb limit
 get git-lfs here: https://git-lfs.github.com/
 check .gitattributes for the files you'll need to checkout manually
 
+In order to get the database seed required for the dev environment environment to run you will need to run
+```
+git lfs pull
+``` 
 
 In order to setup a working environment, we are providing a Dockerfile to build a test container for the Diveboard application.
 
