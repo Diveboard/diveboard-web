@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "starting up and keeping it busy"
+tail -f /dev/null

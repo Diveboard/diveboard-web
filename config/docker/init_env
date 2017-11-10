@@ -2,6 +2,9 @@
 
 echo "Seed DB & configure Sphinx"
 
+# fix an issue on docker/osx only (??)
+chmod -R a+rw /var/lib/mysql*
+
 /etc/init.d/mysql start
 
 #only do 1st time

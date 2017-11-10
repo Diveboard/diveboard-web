@@ -30,6 +30,7 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout /etc/ssl/private
 # Launch Mysql and allow access from docker
 RUN sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/my.cnf
 
+
 WORKDIR /tmp 
 ADD Gemfile Gemfile
 ADD Gemfile.lock Gemfile.lock
