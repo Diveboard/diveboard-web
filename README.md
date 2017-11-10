@@ -39,13 +39,10 @@ In order to setup a working environment, we are providing a Dockerfile to build 
 
 To setup the Docker container run from the docker CLI:
 
-Create storage for the DB:
-```
-docker volume create --name hello
-```
-
 ```
 docker build -t diveboard .
+#OR if you want a clean start
+docker build --no-cache -t diveboard .
 ```
 
 Initialize the container:
