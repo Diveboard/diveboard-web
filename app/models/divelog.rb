@@ -92,6 +92,7 @@ class Divelog
   # XLS             Yes     No
   # ASD             Yes     No
   # TXT (CRESSI)    Yes     No
+  # UDDF            Yes     No  
 
 
   #dive_number_in_export = number, starting at 0
@@ -1103,7 +1104,7 @@ class Divelog
     end
 
     udcf = "<profile udcf='1'>\n"
-    udcf += "\t<units>Metric</units>\n"
+    udcf += "\t<units>metric</units>\n"
     udcf += "\t<device>"
     udcf += "\t\t<vendor>Diveboard</vendor>"
     udcf += "\t\t<model>Diveboard</model>"
