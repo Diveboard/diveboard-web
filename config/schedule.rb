@@ -46,7 +46,7 @@ every :sunday, :at => '3pm' do
   nice_command "script/filter_log.rb --input log/production.log.1 --output log/filtered_logs/filtered.log --timed --anytime"
 end
 
-every 1.day, :at => '4am' do
+every :tuesday, :at => '4am' do
   nice_rake "assets:all"
 end
 every 1.day, :at => '7am' do
