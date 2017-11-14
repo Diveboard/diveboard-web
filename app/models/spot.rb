@@ -300,7 +300,7 @@ class Spot < ActiveRecord::Base
       zoomfix = 1
     end
 
-    return "http://maps.google.com/maps/api/staticmap?center=#{self.lat.to_f},#{self.long.to_f}&zoom=#{zoomfix}&size=#{x}x#{y}&maptype=hybrid&markers=icon:http://www.diveboard.com/img/marker.png%7C#{self.lat.to_f},#{self.long.to_f}&sensor=false&format=jpg"
+    return "http://maps.google.com/maps/api/staticmap?center=#{self.lat.to_f},#{self.long.to_f}&zoom=#{zoomfix}&size=#{x}x#{y}&maptype=hybrid&markers=icon:https://www.diveboard.com/img/marker.png%7C#{self.lat.to_f},#{self.long.to_f}&sensor=false&format=jpg"
   end
 
   def update_habtm

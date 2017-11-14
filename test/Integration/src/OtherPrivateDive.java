@@ -8,7 +8,7 @@ public class OtherPrivateDive extends SimpleDiveActions{
 	
 	// test the permissions between two accounts
 	public static String smn_private_dive = "ksso/488";
-//	public static String smn_draft_dive = "http://stage.diveboard.com/ksso/488";
+//	public static String smn_draft_dive = "https://stage.diveboard.com/ksso/488";
 	
 //	public static String other_user_id;
 	public static String other_user_puplic_dive;

@@ -99,7 +99,7 @@ Please do not make load testing with either environment without checking with us
   <tr>
     <td>Staging</td>
     <td>Next version testing</td>
-    <td>http://stage.diveboard.com</td>
+    <td>https://stage.diveboard.com</td>
   </tr>
 </table>
 
@@ -688,7 +688,7 @@ To get the details of a user :
 <table>
   <tr>
     <td>REQUEST</td>
-    <td>curl -X GET "http://www.diveboard.com/api/V2/user/48" -F "apikey=xxXXX6XXX6XxxxX6XXXX"</td>
+    <td>curl -X GET "https://www.diveboard.com/api/V2/user/48" -F "apikey=xxXXX6XXX6XxxxX6XXXX"</td>
   </tr>
   <tr>
     <td>RESPONSE</td>
@@ -702,7 +702,7 @@ To get more detail for a user, use a different flavour (cf. the object section t
 <table>
   <tr>
     <td>REQUEST</td>
-    <td>curl "http://www.diveboard.com/api/V2/user"
+    <td>curl "https://www.diveboard.com/api/V2/user"
 -F 'arg={"id":48}'
 -F 'flavour=private'
 -F 'auth_token=ip4rHSSD9/diOWR3szonh7ikbhl0k9g/UgMSTBfjb00='
@@ -720,14 +720,14 @@ To create a new element, just send the data without specifying an id. You will g
 <table>
   <tr>
     <td>REQUEST</td>
-    <td>curl -s "http://l.dev.diveboard.com/api/V2/dive"
+    <td>curl -s "https://l.dev.diveboard.com/api/V2/dive"
 -F 'auth_token=UEEnVPDmErqKIKhI952vcQMnU1qbTQ/WxlXsnXUNBoY='
 -F "apikey=j9icv6zlgwq9"
 -F 'arg={"user_id": 12885, "duration": 90, "maxdepth":40, "time_in": "2011-10-16T09:40:00Z", "spot": {"name":"Blue hole", "country_code":"MT","location":{"name":"Gozo"}, "region":{"name":"Mediterranean Sea"}}}'</td>
   </tr>
   <tr>
     <td>RESPONSE</td>
-    <td>{"success":true,"error":[],"result":{"class":"Dive","flavour":"public","id":31722,"shaken_id":"D6fQS5L","time_in":"2011-10-16T09:40:00Z","duration":90,"maxdepth":40.0,"user_id":12885,"spot_id":21481,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"http://l.dev.diveboard.com//D6fQS5L","permalink":"//D6fQS5L","complete":true,"thumbnail_image_url":"http://l1.dev.diveboard.com/map_images/map_21481.jpg","thumbnail_profile_url":null,"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-16","time":"09:40"},"user_authentified":true}</td>
+    <td>{"success":true,"error":[],"result":{"class":"Dive","flavour":"public","id":31722,"shaken_id":"D6fQS5L","time_in":"2011-10-16T09:40:00Z","duration":90,"maxdepth":40.0,"user_id":12885,"spot_id":21481,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"https://l.dev.diveboard.com//D6fQS5L","permalink":"//D6fQS5L","complete":true,"thumbnail_image_url":"https://l1.dev.diveboard.com/map_images/map_21481.jpg","thumbnail_profile_url":null,"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-16","time":"09:40"},"user_authentified":true}</td>
   </tr>
 </table>
 
@@ -737,14 +737,14 @@ To update an element, you only need to provide the id of the element you wish to
 <table>
   <tr>
     <td>REQUEST</td>
-    <td>curl "http://www.diveboard.com/api/V2/dive"
+    <td>curl "https://www.diveboard.com/api/V2/dive"
 -F "auth_token=ip4rHSSD9/diOWR3szonh7ikbhl0k9g/UgMSTBfjb00="
 -F "apikey=xxXXX6XXX6XxxxX6XXXX"
 -F 'arg={"id":10306,"duration":120}'</td>
   </tr>
   <tr>
     <td>RESPONSE</td>
-    <td>{"success":true,"error":[],"result":{"class":"Dive","flavour":"public","id":10306,"time_in":"2011-10-16T09:40:00Z","duration":120,"maxdepth":"40.0","user_id":32,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"http://www.diveboard.com/duncan.farthing/10306","complete":false,"thumbnail_image_url":"http://www.diveboard.com/map_images/map_1.jpg","thumbnail_profile_url":null,"species":[],"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-16","time":"09:40"}}</td>
+    <td>{"success":true,"error":[],"result":{"class":"Dive","flavour":"public","id":10306,"time_in":"2011-10-16T09:40:00Z","duration":120,"maxdepth":"40.0","user_id":32,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"https://www.diveboard.com/duncan.farthing/10306","complete":false,"thumbnail_image_url":"https://www.diveboard.com/map_images/map_1.jpg","thumbnail_profile_url":null,"species":[],"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-16","time":"09:40"}}</td>
   </tr>
 </table>
 
@@ -1292,7 +1292,7 @@ The body of the response is a JSON string, which contains a Hash. The attributes
     <td>Example to log in a user with his facebook ID and facebook token</td>
   </tr>
   <tr>
-    <td>curl -s "http://stage.diveboard.com/api/login_fb"
+    <td>curl -s "https://stage.diveboard.com/api/login_fb"
 -F "fbid=100004637132223"
 -F "fbtoken=AAABzYDF4nt0BAL1e0gF86RRV4xoRu2rZAmXxJerM4IJLbXLZBNm2KiVXYD7ZBakiNgreUP5yPDMwqpYIhKnoNnIK"
 -F "apikey=hwkzq4rhw9lq"</td>
@@ -1312,11 +1312,11 @@ To get an object with a given flavour from an id, you need to call the given API
     <td>Example to get the basic details for a user</td>
   </tr>
   <tr>
-    <td>curl -s "http://stage.diveboard.com/api/V2/user/U3T7iSQ"
+    <td>curl -s "https://stage.diveboard.com/api/V2/user/U3T7iSQ"
 -F "apikey=hwkzq4rhw9lq"</td>
   </tr>
   <tr>
-    <td>{"success":true,"error":[],"result":{"class":"User","flavour":"public","id":12850,"shaken_id":"U3T7iSQ","vanity_url":null,"qualifications":{},"picture":"http://graph.facebook.com/100004637132223/picture?type=normal","picture_small":"http://graph.facebook.com/100004637132223/picture?type=square","picture_large":"http://graph.facebook.com/100004637132223/picture?type=large","full_permalink":"http://stage.diveboard.com/","total_nb_dives":0,"public_nb_dives":0,"public_dive_ids":[],"nickname":"David Narayanansen"},"user_authentified":false}</td>
+    <td>{"success":true,"error":[],"result":{"class":"User","flavour":"public","id":12850,"shaken_id":"U3T7iSQ","vanity_url":null,"qualifications":{},"picture":"http://graph.facebook.com/100004637132223/picture?type=normal","picture_small":"http://graph.facebook.com/100004637132223/picture?type=square","picture_large":"http://graph.facebook.com/100004637132223/picture?type=large","full_permalink":"https://stage.diveboard.com/","total_nb_dives":0,"public_nb_dives":0,"public_dive_ids":[],"nickname":"David Narayanansen"},"user_authentified":false}</td>
   </tr>
 </table>
 
@@ -1330,13 +1330,13 @@ Creating an object is similar to updating an object.... but since you don’t kn
     <td>Example to create a new dive</td>
   </tr>
   <tr>
-    <td>curl -s "http://stage.diveboard.com/api/V2/dive"
+    <td>curl -s "https://stage.diveboard.com/api/V2/dive"
 -F 'auth_token=wtV6sxKrMdXXBV+dVrqhJs936KKrq0TQBw2toWjM+Lk='
 -F "apikey=hwkzq4rhw9lq"
 -F 'arg={"user_id": "U3T7iSQ", "duration": 90, "maxdepth":40, "time_in": "2011-10-16T09:40:00Z", "spot":{"id":1843}}'</td>
   </tr>
   <tr>
-    <td>{"success":true,"error":[],"result":{"class":"Dive","flavour":"public","id":31671,"shaken_id":"D3eyz9U","time_in":"2011-10-16T09:40:00Z","duration":90,"maxdepth":40.0,"user_id":12850,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"http://stage.diveboard.com//D3eyz9U","permalink":"//D3eyz9U","complete":true,"thumbnail_image_url":"http://stage.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":null,"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-16","time":"09:40"},"user_authentified":true}</td>
+    <td>{"success":true,"error":[],"result":{"class":"Dive","flavour":"public","id":31671,"shaken_id":"D3eyz9U","time_in":"2011-10-16T09:40:00Z","duration":90,"maxdepth":40.0,"user_id":12850,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"https://stage.diveboard.com//D3eyz9U","permalink":"//D3eyz9U","complete":true,"thumbnail_image_url":"https://stage.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":null,"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-16","time":"09:40"},"user_authentified":true}</td>
   </tr>
 </table>
 
@@ -1350,13 +1350,13 @@ To update some attributes from an object, you need to pass the ‘id’ of the o
     <td>Example to update the nickname of a user</td>
   </tr>
   <tr>
-    <td>curl -s "http://stage.diveboard.com/api/V2/user"
+    <td>curl -s "https://stage.diveboard.com/api/V2/user"
 -F 'arg={"id":"12850", "nickname":"New Nick"}'
 -F 'auth_token=wtV6sxKrMdXXBV+dVrqhJs936KKrq0TQBw2toWjM+Lk='
 -F "apikey=hwkzq4rhw9lq"</td>
   </tr>
   <tr>
-    <td>{"success":true,"error":[],"result":{"class":"User","flavour":"public","id":12850,"shaken_id":"U3T7iSQ","vanity_url":null,"qualifications":{},"picture":"http://graph.facebook.com/100004637132223/picture?type=normal","picture_small":"http://graph.facebook.com/100004637132223/picture?type=square","picture_large":"http://graph.facebook.com/100004637132223/picture?type=large","full_permalink":"http://stage.diveboard.com/","total_nb_dives":0,"public_nb_dives":0,"public_dive_ids":[],"nickname":"New Nick"},"user_authentified":true}</td>
+    <td>{"success":true,"error":[],"result":{"class":"User","flavour":"public","id":12850,"shaken_id":"U3T7iSQ","vanity_url":null,"qualifications":{},"picture":"http://graph.facebook.com/100004637132223/picture?type=normal","picture_small":"http://graph.facebook.com/100004637132223/picture?type=square","picture_large":"http://graph.facebook.com/100004637132223/picture?type=large","full_permalink":"https://stage.diveboard.com/","total_nb_dives":0,"public_nb_dives":0,"public_dive_ids":[],"nickname":"New Nick"},"user_authentified":true}</td>
   </tr>
 </table>
 
@@ -1366,13 +1366,13 @@ To update some attributes from an object, you need to pass the ‘id’ of the o
     <td>Example to update both the duration and the depth on a dive</td>
   </tr>
   <tr>
-    <td>curl -s "http://stage.diveboard.com/api/V2/dive"
+    <td>curl -s "https://stage.diveboard.com/api/V2/dive"
 -F 'auth_token=wtV6sxKrMdXXBV+dVrqhJs936KKrq0TQBw2toWjM+Lk='
 -F "apikey=hwkzq4rhw9lq"
 -F 'arg={"id": "31671", "duration": 50, "maxdepth":50}'</td>
   </tr>
   <tr>
-    <td>{"success":true,"error":[],"result":{"class":"Dive","flavour":"public","id":31671,"shaken_id":"D3eyz9U","time_in":"2011-10-16T09:40:00Z","duration":50,"maxdepth":50.0,"user_id":12850,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"http://stage.diveboard.com//D3eyz9U","permalink":"//D3eyz9U","complete":true,"thumbnail_image_url":"http://stage.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":null,"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-16","time":"09:40"},"user_authentified":true}</td>
+    <td>{"success":true,"error":[],"result":{"class":"Dive","flavour":"public","id":31671,"shaken_id":"D3eyz9U","time_in":"2011-10-16T09:40:00Z","duration":50,"maxdepth":50.0,"user_id":12850,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"https://stage.diveboard.com//D3eyz9U","permalink":"//D3eyz9U","complete":true,"thumbnail_image_url":"https://stage.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":null,"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-16","time":"09:40"},"user_authentified":true}</td>
   </tr>
 </table>
 
@@ -1382,14 +1382,14 @@ To update some attributes from an object, you need to pass the ‘id’ of the o
     <td>Example to add a dive profile to a dive</td>
   </tr>
   <tr>
-    <td>curl -s "http://stage.diveboard.com/api/V2/dive"
+    <td>curl -s "https://stage.diveboard.com/api/V2/dive"
 -F 'auth_token=z61mYD1bUa7xCJBAfOqcBmy8I/rGGpkMKrQS5dOaHio='
 -F "apikey=76soje9nvcne"
 -F 'flavour=public_with_profile'
 -F 'arg={"id": "31678", "raw_profile":[{"seconds":0, "depth":0}, {"seconds":30, "depth":3}, {"seconds":60, "depth":5}, {"seconds":90, "depth":10}, {"seconds":2900, "depth":10}, {"seconds":3000, "depth":0} ]}'</td>
   </tr>
   <tr>
-    <td>{"success":true,"error":[],"result":{"class":"Dive","flavour":"public_with_profile","id":31678,"shaken_id":"D44ZZwl","time_in":"2011-10-16T09:40:00Z","duration":50,"maxdepth":50.0,"user_id":12855,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"http://stage.diveboard.com//D44ZZwl","permalink":"//D44ZZwl","complete":true,"thumbnail_image_url":"http://stage.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":"http://stage.diveboard.com//31678/profile.png?g=small_or&u=m","guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-16","time":"09:40","raw_profile":[{"class":"ProfileData","flavour":"public","seconds":0,"depth":0.0,"current_water_temperature":null,"main_cylinder_pressure":null,"heart_beats":null,"deco_violation":false,"deco_start":false,"ascent_violation":false,"bookmark":false,"surface_event":false},{"class":"ProfileData","flavour":"public","seconds":30,"depth":3.0,"current_water_temperature":null,"main_cylinder_pressure":null,"heart_beats":null,"deco_violation":false,"deco_start":false,"ascent_violation":false,"bookmark":false,"surface_event":false},{"class":"ProfileData","flavour":"public","seconds":60,"depth":5.0,"current_water_temperature":null,"main_cylinder_pressure":null,"heart_beats":null,"deco_violation":false,"deco_start":false,"ascent_violation":false,"bookmark":false,"surface_event":false},{"class":"ProfileData","flavour":"public","seconds":90,"depth":10.0,"current_water_temperature":null,"main_cylinder_pressure":null,"heart_beats":null,"deco_violation":false,"deco_start":false,"ascent_violation":false,"bookmark":false,"surface_event":false},{"class":"ProfileData","flavour":"public","seconds":2900,"depth":10.0,"current_water_temperature":null,"main_cylinder_pressure":null,"heart_beats":null,"deco_violation":false,"deco_start":false,"ascent_violation":false,"bookmark":false,"surface_event":false},{"class":"ProfileData","flavour":"public","seconds":3000,"depth":0.0,"current_water_temperature":null,"main_cylinder_pressure":null,"heart_beats":null,"deco_violation":false,"deco_start":false,"ascent_violation":false,"bookmark":false,"surface_event":false}]},"user_authentified":true}</td>
+    <td>{"success":true,"error":[],"result":{"class":"Dive","flavour":"public_with_profile","id":31678,"shaken_id":"D44ZZwl","time_in":"2011-10-16T09:40:00Z","duration":50,"maxdepth":50.0,"user_id":12855,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"https://stage.diveboard.com//D44ZZwl","permalink":"//D44ZZwl","complete":true,"thumbnail_image_url":"https://stage.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":"https://stage.diveboard.com//31678/profile.png?g=small_or&u=m","guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-16","time":"09:40","raw_profile":[{"class":"ProfileData","flavour":"public","seconds":0,"depth":0.0,"current_water_temperature":null,"main_cylinder_pressure":null,"heart_beats":null,"deco_violation":false,"deco_start":false,"ascent_violation":false,"bookmark":false,"surface_event":false},{"class":"ProfileData","flavour":"public","seconds":30,"depth":3.0,"current_water_temperature":null,"main_cylinder_pressure":null,"heart_beats":null,"deco_violation":false,"deco_start":false,"ascent_violation":false,"bookmark":false,"surface_event":false},{"class":"ProfileData","flavour":"public","seconds":60,"depth":5.0,"current_water_temperature":null,"main_cylinder_pressure":null,"heart_beats":null,"deco_violation":false,"deco_start":false,"ascent_violation":false,"bookmark":false,"surface_event":false},{"class":"ProfileData","flavour":"public","seconds":90,"depth":10.0,"current_water_temperature":null,"main_cylinder_pressure":null,"heart_beats":null,"deco_violation":false,"deco_start":false,"ascent_violation":false,"bookmark":false,"surface_event":false},{"class":"ProfileData","flavour":"public","seconds":2900,"depth":10.0,"current_water_temperature":null,"main_cylinder_pressure":null,"heart_beats":null,"deco_violation":false,"deco_start":false,"ascent_violation":false,"bookmark":false,"surface_event":false},{"class":"ProfileData","flavour":"public","seconds":3000,"depth":0.0,"current_water_temperature":null,"main_cylinder_pressure":null,"heart_beats":null,"deco_violation":false,"deco_start":false,"ascent_violation":false,"bookmark":false,"surface_event":false}]},"user_authentified":true}</td>
   </tr>
 </table>
 
@@ -1403,14 +1403,14 @@ As for the standard attribute update, you need to pass the ‘id’ of the objec
     <td>Example to add a gear to a dive</td>
   </tr>
   <tr>
-    <td>curl -s "http://stage.diveboard.com/api/V2/user"
+    <td>curl -s "https://stage.diveboard.com/api/V2/user"
 -F 'auth_token=wtV6sxKrMdXXBV+dVrqhJs936KKrq0TQBw2toWjM+Lk='
 -F 'flavour=private'
 -F "apikey=hwkzq4rhw9lq"
 -F 'arg={"id":"12850", "user_gears": [{"category":"Computer", "model":"Vyper", "manufacturer":"Suunto"}]}'</td>
   </tr>
   <tr>
-    <td>{"success":true,"error":[],"result":{"class":"User","flavour":"private","id":12850,"shaken_id":"U3T7iSQ","vanity_url":null,"qualifications":{},"picture":"http://graph.facebook.com/100004637132223/picture?type=normal","picture_small":"http://graph.facebook.com/100004637132223/picture?type=square","picture_large":"http://graph.facebook.com/100004637132223/picture?type=large","full_permalink":"http://stage.diveboard.com/","total_nb_dives":1,"public_nb_dives":1,"public_dive_ids":[31671],"nickname":"New Nick","dan_data":null,"storage_used":{"dive_pictures":0,"monthly_dive_pictures":0,"orphan_pictures":0,"all_pictures":0},"quota_type":"per_month","quota_limit":524288000,"all_dive_ids":[31671],"pict":false,"advertisements":[],"ad_album_id":30711,"user_gears":[{"class":"UserGear","flavour":"private","category":"Computer","id":2106,"manufacturer":"Suunto","model":"Vyper","featured":null,"acquisition":null,"last_revision":null,"reference":null,"auto_feature":"never"}]},"user_authentified":true}</td>
+    <td>{"success":true,"error":[],"result":{"class":"User","flavour":"private","id":12850,"shaken_id":"U3T7iSQ","vanity_url":null,"qualifications":{},"picture":"http://graph.facebook.com/100004637132223/picture?type=normal","picture_small":"http://graph.facebook.com/100004637132223/picture?type=square","picture_large":"http://graph.facebook.com/100004637132223/picture?type=large","full_permalink":"https://stage.diveboard.com/","total_nb_dives":1,"public_nb_dives":1,"public_dive_ids":[31671],"nickname":"New Nick","dan_data":null,"storage_used":{"dive_pictures":0,"monthly_dive_pictures":0,"orphan_pictures":0,"all_pictures":0},"quota_type":"per_month","quota_limit":524288000,"all_dive_ids":[31671],"pict":false,"advertisements":[],"ad_album_id":30711,"user_gears":[{"class":"UserGear","flavour":"private","category":"Computer","id":2106,"manufacturer":"Suunto","model":"Vyper","featured":null,"acquisition":null,"last_revision":null,"reference":null,"auto_feature":"never"}]},"user_authentified":true}</td>
   </tr>
 </table>
 
@@ -1420,14 +1420,14 @@ As for the standard attribute update, you need to pass the ‘id’ of the objec
     <td>Example to remove all user_gears from a dive</td>
   </tr>
   <tr>
-    <td>curl -s "http://stage.diveboard.com/api/V2/user"
+    <td>curl -s "https://stage.diveboard.com/api/V2/user"
 -F 'auth_token=wtV6sxKrMdXXBV+dVrqhJs936KKrq0TQBw2toWjM+Lk='
 -F 'flavour=private'
 -F "apikey=hwkzq4rhw9lq"
 -F 'arg={"id":"12850", "user_gears": []}'</td>
   </tr>
   <tr>
-    <td>{"success":true,"error":[],"result":{"class":"User","flavour":"private","id":12850,"shaken_id":"U3T7iSQ","vanity_url":null,"qualifications":{},"picture":"http://graph.facebook.com/100004637132223/picture?type=normal","picture_small":"http://graph.facebook.com/100004637132223/picture?type=square","picture_large":"http://graph.facebook.com/100004637132223/picture?type=large","full_permalink":"http://stage.diveboard.com/","total_nb_dives":1,"public_nb_dives":1,"public_dive_ids":[31671],"nickname":"New Nick","dan_data":null,"storage_used":{"dive_pictures":0,"monthly_dive_pictures":0,"orphan_pictures":0,"all_pictures":0},"quota_type":"per_month","quota_limit":524288000,"all_dive_ids":[31671],"pict":false,"advertisements":[],"ad_album_id":30711,"user_gears":[]},"user_authentified":true}</td>
+    <td>{"success":true,"error":[],"result":{"class":"User","flavour":"private","id":12850,"shaken_id":"U3T7iSQ","vanity_url":null,"qualifications":{},"picture":"http://graph.facebook.com/100004637132223/picture?type=normal","picture_small":"http://graph.facebook.com/100004637132223/picture?type=square","picture_large":"http://graph.facebook.com/100004637132223/picture?type=large","full_permalink":"https://stage.diveboard.com/","total_nb_dives":1,"public_nb_dives":1,"public_dive_ids":[31671],"nickname":"New Nick","dan_data":null,"storage_used":{"dive_pictures":0,"monthly_dive_pictures":0,"orphan_pictures":0,"all_pictures":0},"quota_type":"per_month","quota_limit":524288000,"all_dive_ids":[31671],"pict":false,"advertisements":[],"ad_album_id":30711,"user_gears":[]},"user_authentified":true}</td>
   </tr>
 </table>
 
@@ -1441,7 +1441,7 @@ To delete an object, the HTTP method to use is DELETE
     <td>Example to delete a dive</td>
   </tr>
   <tr>
-    <td>curl -X DELETE -s "http://stage.diveboard.com/api/V2/dive/31671"
+    <td>curl -X DELETE -s "https://stage.diveboard.com/api/V2/dive/31671"
 -F 'auth_token=wtV6sxKrMdXXBV+dVrqhJs936KKrq0TQBw2toWjM+Lk='
 -F "apikey=hwkzq4rhw9lq"</td>
   </tr>
@@ -1460,13 +1460,13 @@ In order to make batch creation easier, the ‘arg’ parameter may accept an ar
     <td>Example to create 2 different dives at the same time</td>
   </tr>
   <tr>
-    <td>curl -s "http://stage.diveboard.com/api/V2/dive"
+    <td>curl -s "https://stage.diveboard.com/api/V2/dive"
 -F 'auth_token=wtV6sxKrMdXXBV+dVrqhJs936KKrq0TQBw2toWjM+Lk='
 -F "apikey=hwkzq4rhw9lq"
 -F 'arg=[{"user_id": "U3T7iSQ", "duration": 90, "maxdepth":40, "time_in": "2011-10-16T09:40:00Z", "spot":{"id":1843}},{"user_id": "U3T7iSQ", "duration": 50, "maxdepth":50, "time_in": "2011-10-17T09:40:00Z", "spot":{"id":1843}}]'</td>
   </tr>
   <tr>
-    <td>{"success":true,"error":[],"result":[{"class":"Dive","flavour":"public","id":31672,"shaken_id":"D3iddpx","time_in":"2011-10-16T09:40:00Z","duration":90,"maxdepth":40.0,"user_id":12850,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"http://stage.diveboard.com//D3iddpx","permalink":"//D3iddpx","complete":true,"thumbnail_image_url":"http://stage.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":null,"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-16","time":"09:40"},{"class":"Dive","flavour":"public","id":31673,"shaken_id":"D3mIIWQ","time_in":"2011-10-17T09:40:00Z","duration":50,"maxdepth":50.0,"user_id":12850,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"http://stage.diveboard.com//D3mIIWQ","permalink":"//D3mIIWQ","complete":true,"thumbnail_image_url":"http://stage.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":null,"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-17","time":"09:40"}],"user_authentified":true}</td>
+    <td>{"success":true,"error":[],"result":[{"class":"Dive","flavour":"public","id":31672,"shaken_id":"D3iddpx","time_in":"2011-10-16T09:40:00Z","duration":90,"maxdepth":40.0,"user_id":12850,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"https://stage.diveboard.com//D3iddpx","permalink":"//D3iddpx","complete":true,"thumbnail_image_url":"https://stage.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":null,"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-16","time":"09:40"},{"class":"Dive","flavour":"public","id":31673,"shaken_id":"D3mIIWQ","time_in":"2011-10-17T09:40:00Z","duration":50,"maxdepth":50.0,"user_id":12850,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"https://stage.diveboard.com//D3mIIWQ","permalink":"//D3mIIWQ","complete":true,"thumbnail_image_url":"https://stage.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":null,"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-17","time":"09:40"}],"user_authentified":true}</td>
   </tr>
 </table>
 
@@ -1480,13 +1480,13 @@ An array within ‘arg’ can also be used to update several objects of the same
     <td>Example to update 2 different dives at the same time</td>
   </tr>
   <tr>
-    <td>curl -s "http://stage.diveboard.com/api/V2/dive"
+    <td>curl -s "https://stage.diveboard.com/api/V2/dive"
 -F 'auth_token=wtV6sxKrMdXXBV+dVrqhJs936KKrq0TQBw2toWjM+Lk='
 -F "apikey=hwkzq4rhw9lq"
 -F 'arg=[{"id":31672,"duration": 91},{"id":31673,"maxdepth":51}]'</td>
   </tr>
   <tr>
-    <td>{"success":true,"error":[],"result":[{"class":"Dive","flavour":"public","id":31672,"shaken_id":"D3iddpx","time_in":"2011-10-16T09:40:00Z","duration":91,"maxdepth":40.0,"user_id":12850,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"http://stage.diveboard.com//D3iddpx","permalink":"//D3iddpx","complete":true,"thumbnail_image_url":"http://stage.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":null,"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-16","time":"09:40"},{"class":"Dive","flavour":"public","id":31673,"shaken_id":"D3mIIWQ","time_in":"2011-10-17T09:40:00Z","duration":50,"maxdepth":51.0,"user_id":12850,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"http://stage.diveboard.com//D3mIIWQ","permalink":"//D3mIIWQ","complete":true,"thumbnail_image_url":"http://stage.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":null,"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-17","time":"09:40"}],"user_authentified":true}</td>
+    <td>{"success":true,"error":[],"result":[{"class":"Dive","flavour":"public","id":31672,"shaken_id":"D3iddpx","time_in":"2011-10-16T09:40:00Z","duration":91,"maxdepth":40.0,"user_id":12850,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"https://stage.diveboard.com//D3iddpx","permalink":"//D3iddpx","complete":true,"thumbnail_image_url":"https://stage.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":null,"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-16","time":"09:40"},{"class":"Dive","flavour":"public","id":31673,"shaken_id":"D3mIIWQ","time_in":"2011-10-17T09:40:00Z","duration":50,"maxdepth":51.0,"user_id":12850,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"https://stage.diveboard.com//D3mIIWQ","permalink":"//D3mIIWQ","complete":true,"thumbnail_image_url":"https://stage.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":null,"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-17","time":"09:40"}],"user_authentified":true}</td>
   </tr>
 </table>
 
@@ -1500,14 +1500,14 @@ Now comes the tricky part. When you update an object (e.g. a dive) you can at th
     <td>Example to update recursively a dive and a user_gear in the same call</td>
   </tr>
   <tr>
-    <td>curl -s "http://stage.diveboard.com/api/V2/dive"
+    <td>curl -s "https://stage.diveboard.com/api/V2/dive"
 -F 'auth_token=wtV6sxKrMdXXBV+dVrqhJs936KKrq0TQBw2toWjM+Lk='
 -F "apikey=hwkzq4rhw9lq"
 -F 'flavour=private'
 -F 'arg={"id":31672, "duration":55, "user_gears":[{"id":2106, "model":"Vyper Air"}]}'</td>
   </tr>
   <tr>
-    <td>{"success":true,"error":[],"result":{"class":"Dive","flavour":"private","id":31672,"shaken_id":"D3iddpx","time_in":"2011-10-16T09:40:00Z","duration":55,"maxdepth":40.0,"user_id":12850,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"http://stage.diveboard.com//D3iddpx","permalink":"//D3iddpx","complete":true,"thumbnail_image_url":"http://stage.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":null,"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[{"class":"UserGear","flavour":"private","category":"Computer","id":2106,"manufacturer":"Suunto","model":"Vyper Air","featured":false,"acquisition":null,"last_revision":null,"reference":null,"auto_feature":"never"}],"user_gears":[{"class":"UserGear","flavour":"private","category":"Computer","id":2106,"manufacturer":"Suunto","model":"Vyper Air","featured":false,"acquisition":null,"last_revision":null,"reference":null,"auto_feature":"never"}],"dive_gears":[],"date":"2011-10-16","time":"09:40","dan_data":null,"dan_data_sent":null,"storage_used":0,"profile_ref":null},"user_authentified":true}</td>
+    <td>{"success":true,"error":[],"result":{"class":"Dive","flavour":"private","id":31672,"shaken_id":"D3iddpx","time_in":"2011-10-16T09:40:00Z","duration":55,"maxdepth":40.0,"user_id":12850,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"https://stage.diveboard.com//D3iddpx","permalink":"//D3iddpx","complete":true,"thumbnail_image_url":"https://stage.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":null,"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[{"class":"UserGear","flavour":"private","category":"Computer","id":2106,"manufacturer":"Suunto","model":"Vyper Air","featured":false,"acquisition":null,"last_revision":null,"reference":null,"auto_feature":"never"}],"user_gears":[{"class":"UserGear","flavour":"private","category":"Computer","id":2106,"manufacturer":"Suunto","model":"Vyper Air","featured":false,"acquisition":null,"last_revision":null,"reference":null,"auto_feature":"never"}],"dive_gears":[],"date":"2011-10-16","time":"09:40","dan_data":null,"dan_data_sent":null,"storage_used":0,"profile_ref":null},"user_authentified":true}</td>
   </tr>
 </table>
 
@@ -1521,14 +1521,14 @@ This type of call can be very useful to prevent chaining multiple calls. In the 
     <td>Example to create a new user_gear and assigning an existing user_gear to a dive</td>
   </tr>
   <tr>
-    <td>curl -s "http://stage.diveboard.com/api/V2/dive"
+    <td>curl -s "https://stage.diveboard.com/api/V2/dive"
 -F 'auth_token=wtV6sxKrMdXXBV+dVrqhJs936KKrq0TQBw2toWjM+Lk='
 -F "apikey=hwkzq4rhw9lq"
 -F 'flavour=private'
 -F 'arg={"id":31672, "user_gears":[{"id":2106}, {"user_id":12850,"category":"Computer","manufacturer":"Mares","model":"Icon HD"}]}'</td>
   </tr>
   <tr>
-    <td>{"success":true,"error":[],"result":{"class":"Dive","flavour":"private","id":31672,"shaken_id":"D3iddpx","time_in":"2011-10-16T09:40:00Z","duration":91,"maxdepth":40.0,"user_id":12850,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"http://stage.diveboard.com//D3iddpx","permalink":"//D3iddpx","complete":true,"thumbnail_image_url":"http://stage.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":null,"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[{"class":"UserGear","flavour":"private","category":"Computer","id":2106,"manufacturer":"Suunto","model":"Vyper","featured":false,"acquisition":null,"last_revision":null,"reference":null,"auto_feature":"never"},{"class":"UserGear","flavour":"private","category":"Computer","id":2107,"manufacturer":"Mares","model":"Icon HD","featured":false,"acquisition":null,"last_revision":null,"reference":null,"auto_feature":"never"}],"user_gears":[{"class":"UserGear","flavour":"private","category":"Computer","id":2106,"manufacturer":"Suunto","model":"Vyper","featured":false,"acquisition":null,"last_revision":null,"reference":null,"auto_feature":"never"},{"class":"UserGear","flavour":"private","category":"Computer","id":2107,"manufacturer":"Mares","model":"Icon HD","featured":false,"acquisition":null,"last_revision":null,"reference":null,"auto_feature":"never"}],"dive_gears":[],"date":"2011-10-16","time":"09:40","dan_data":null,"dan_data_sent":null,"storage_used":0,"profile_ref":null},"user_authentified":true}</td>
+    <td>{"success":true,"error":[],"result":{"class":"Dive","flavour":"private","id":31672,"shaken_id":"D3iddpx","time_in":"2011-10-16T09:40:00Z","duration":91,"maxdepth":40.0,"user_id":12850,"spot_id":1843,"temp_surface":null,"temp_bottom":null,"privacy":0,"weights":null,"safetystops":null,"divetype":[],"favorite":null,"buddy":[],"visibility":null,"trip_name":null,"water":null,"altitude":0,"fullpermalink":"https://stage.diveboard.com//D3iddpx","permalink":"//D3iddpx","complete":true,"thumbnail_image_url":"https://stage.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":null,"guide":null,"shop_id":null,"notes":null,"public_notes":null,"diveshop":null,"current":null,"species":[],"gears":[{"class":"UserGear","flavour":"private","category":"Computer","id":2106,"manufacturer":"Suunto","model":"Vyper","featured":false,"acquisition":null,"last_revision":null,"reference":null,"auto_feature":"never"},{"class":"UserGear","flavour":"private","category":"Computer","id":2107,"manufacturer":"Mares","model":"Icon HD","featured":false,"acquisition":null,"last_revision":null,"reference":null,"auto_feature":"never"}],"user_gears":[{"class":"UserGear","flavour":"private","category":"Computer","id":2106,"manufacturer":"Suunto","model":"Vyper","featured":false,"acquisition":null,"last_revision":null,"reference":null,"auto_feature":"never"},{"class":"UserGear","flavour":"private","category":"Computer","id":2107,"manufacturer":"Mares","model":"Icon HD","featured":false,"acquisition":null,"last_revision":null,"reference":null,"auto_feature":"never"}],"dive_gears":[],"date":"2011-10-16","time":"09:40","dan_data":null,"dan_data_sent":null,"storage_used":0,"profile_ref":null},"user_authentified":true}</td>
   </tr>
 </table>
 
@@ -1549,7 +1549,7 @@ The file will be analyzed and stored and as an output you get a list of the dive
     <td>$ curl -F "filename=@carlo.zxu" \
      -F "token=tnNxf1D169xCB32RGgQx3b3EcQavksyP5A3ssgLtAj4=" \
      -F "apikey=7hvvgobT6cnios" \
-     http://www.diveboard.com/api/upload_profile</td>
+     https://www.diveboard.com/api/upload_profile</td>
   </tr>
   <tr>
     <td>{"success":"true","nbdives":"13","dive_summary":[{"number":0,"date":"2004-09-07","time":"18:54","duration":8,"max_depth":60.1,"mintemp":25.0,"maxtemp":0.0,"newdive":true},{"number":1,"date":"2004-09-10","time":"17:29","duration":9,"max_depth":10.0,"mintemp":25.0,"maxtemp":0.0,"newdive":true},{"number":2,"date":"2004-09-10","time":"17:40","duration":11,"max_depth":20.1,"mintemp":26.0,"maxtemp":0.0,"newdive":true},{"number":3,"date":"2004-09-10","time":"17:52","duration":11,"max_depth":30.1,"mintemp":26.0,"maxtemp":0.0,"newdive":true},{"number":4,"date":"2004-09-10","time":"18:05","duration":13,"max_depth":40.1,"mintemp":26.0,"maxtemp":0.0,"newdive":true},{"number":5,"date":"2004-09-10","time":"18:19","duration":13,"max_depth":50.0,"mintemp":26.0,"maxtemp":0.0,"newdive":true},{"number":6,"date":"2004-09-10","time":"18:33","duration":23,"max_depth":60.0,"mintemp":26.0,"maxtemp":0.0,"newdive":true},{"number":7,"date":"2004-12-02","time":"17:05","duration":25,"max_depth":50.0,"mintemp":20.0,"maxtemp":0.0,"newdive":true},{"number":8,"date":"2005-09-25","time":"11:02","duration":52,"max_depth":33.2,"mintemp":17.0,"maxtemp":0.0,"newdive":true},{"number":9,"date":"2006-01-15","time":"13:36","duration":51,"max_depth":38.0,"mintemp":12.0,"maxtemp":0.0,"newdive":true},{"number":10,"date":"2006-07-16","time":"12:10","duration":51,"max_depth":33.0,"mintemp":18.0,"maxtemp":0.0,"newdive":true},{"number":11,"date":"2006-07-16","time":"14:41","duration":63,"max_depth":29.1,"mintemp":19.0,"maxtemp":0.0,"newdive":true},{"number":12,"date":"2006-10-15","time":"12:33","duration":73,"max_depth":26.1,"mintemp":20.0,"maxtemp":0.0,"newdive":true}],"fileid":1333}</td>
@@ -1559,17 +1559,17 @@ The file will be analyzed and stored and as an output you get a list of the dive
 
 ## Error catching
 
-$ curl http://www.diveboard.com/api/V2/user
+$ curl https://www.diveboard.com/api/V2/user
 
 {"success":false,"error":[{"error":"What do you want me to do ? you should specify 'arg'","object":null}]}
 
-$ curl "http://www.diveboard.com/api/V2/user?arg=%7Bid:48,nickname:'coucou'%7D&auth_token=ip4rHSSD9/diOWR3szonh7ikbhl0k9g/UgMSTBfjb00=&apikey=xxXXX6XXX6XxxxX6XXXX"
+$ curl "https://www.diveboard.com/api/V2/user?arg=%7Bid:48,nickname:'coucou'%7D&auth_token=ip4rHSSD9/diOWR3szonh7ikbhl0k9g/UgMSTBfjb00=&apikey=xxXXX6XXX6XxxxX6XXXX"
 
-{"success":true,"error":[{"error":"Forbidden","object":{"id":48,"nickname":"coucou"}}],"result":{"class":"User","flavour":"public","id":48,"vanity_url":"pascal","qualifications":{"featured":[{"org":"CMAS","title":"2 stars diver","date":"2011-07-26"},{"org":"PADI","title":"Advanced Open Water","date":"2011-07-25"},{"org":"CMAS","title":"Nitrox","date":"2011-10-17"}],"other":[{"org":"Other","title":"Cayman Island Lionfish Culling License","date":"2011-11-08"},{"org":"CMAS","title":"1 star","date":"2007-06-01"}]},"picture":"http://www.diveboard.com/user_images/48.png","picture_small":"http://www.diveboard.com/user_images/48.png","picture_large":"http://www.diveboard.com/user_images/48.png","full_permalink":"http://www.diveboard.com/pascal","total_nb_dives":66,"public_nb_dives":29,"public_dive_ids":["728","33","34","30","29","28","27","26","25","24","23","22","10305","555","1850","1851","2434","2435","2436","2437","2438","2439","2442","2443","2532","2533","2569","2570","5632"],"nickname":"Pascal"}}
+{"success":true,"error":[{"error":"Forbidden","object":{"id":48,"nickname":"coucou"}}],"result":{"class":"User","flavour":"public","id":48,"vanity_url":"pascal","qualifications":{"featured":[{"org":"CMAS","title":"2 stars diver","date":"2011-07-26"},{"org":"PADI","title":"Advanced Open Water","date":"2011-07-25"},{"org":"CMAS","title":"Nitrox","date":"2011-10-17"}],"other":[{"org":"Other","title":"Cayman Island Lionfish Culling License","date":"2011-11-08"},{"org":"CMAS","title":"1 star","date":"2007-06-01"}]},"picture":"https://www.diveboard.com/user_images/48.png","picture_small":"https://www.diveboard.com/user_images/48.png","picture_large":"https://www.diveboard.com/user_images/48.png","full_permalink":"https://www.diveboard.com/pascal","total_nb_dives":66,"public_nb_dives":29,"public_dive_ids":["728","33","34","30","29","28","27","26","25","24","23","22","10305","555","1850","1851","2434","2435","2436","2437","2438","2439","2442","2443","2532","2533","2569","2570","5632"],"nickname":"Pascal"}}
 
-$ curl "http://www.diveboard.com/api/V2/dive?arg=%7Bid:2434, duration:123%7D&auth_token=ip4rHSSD9/diOWR3szonh7ikbhl0k9g/UgMSTBfjb00=&apikey=xxXXX6XXX6XxxxX6XXXX"
+$ curl "https://www.diveboard.com/api/V2/dive?arg=%7Bid:2434, duration:123%7D&auth_token=ip4rHSSD9/diOWR3szonh7ikbhl0k9g/UgMSTBfjb00=&apikey=xxXXX6XXX6XxxxX6XXXX"
 
-{"success":true,"error":[{"error":"Forbidden","object":{"id":2434,"**duration**":**123**}}],"result":{"class":"Dive","flavour":"public","id":2434,"time_in":"2011-10-16T09:40:00Z","duration":53,"maxdepth":"20.1","user_id":48,"spot_id":1843,"temp_surface":20.0,"temp_bottom":19.0,"privacy":0,"weights":null,"safetystops":"[]","divetype":["recreational","Autonomy"],"favorite":null,"buddy":[],"visibility":null,"trip_name":"Nitrox training - Marseilles","water":null,"altitude":0,"fullpermalink":"http://www.diveboard.com/pascal/2434","complete":true,"thumbnail_image_url":"http://www.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":"http://www.diveboard.com/pascal/2434/profile.png?g=small_or&u=m","species":[],"guide":"","shop_id":812,"notes":null,"public_notes":null,"diveshop":{"name":"ATOLL - DEEP SUB","url":"http://www.atollplongee.com","guide":"","id":812},"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-16","time":"09:40"}}
+{"success":true,"error":[{"error":"Forbidden","object":{"id":2434,"**duration**":**123**}}],"result":{"class":"Dive","flavour":"public","id":2434,"time_in":"2011-10-16T09:40:00Z","duration":53,"maxdepth":"20.1","user_id":48,"spot_id":1843,"temp_surface":20.0,"temp_bottom":19.0,"privacy":0,"weights":null,"safetystops":"[]","divetype":["recreational","Autonomy"],"favorite":null,"buddy":[],"visibility":null,"trip_name":"Nitrox training - Marseilles","water":null,"altitude":0,"fullpermalink":"https://www.diveboard.com/pascal/2434","complete":true,"thumbnail_image_url":"https://www.diveboard.com/map_images/map_1843.jpg","thumbnail_profile_url":"https://www.diveboard.com/pascal/2434/profile.png?g=small_or&u=m","species":[],"guide":"","shop_id":812,"notes":null,"public_notes":null,"diveshop":{"name":"ATOLL - DEEP SUB","url":"http://www.atollplongee.com","guide":"","id":812},"gears":[],"user_gears":[],"dive_gears":[],"date":"2011-10-16","time":"09:40"}}
 
 # Objects
 
@@ -2345,7 +2345,7 @@ true= dive is in the favorite set</td>
     <td></td>
     <td>URL</td>
     <td>all</td>
-    <td>direct full url to the dive (including http://xxx.diveboard.com/....)</td>
+    <td>direct full url to the dive (including https://xxx.diveboard.com/....)</td>
     <td></td>
   </tr>
   <tr>
@@ -2356,7 +2356,7 @@ true= dive is in the favorite set</td>
     <td>STRING</td>
     <td>all</td>
     <td>DEPRECATED
-path to the dive (without the leading http://xxx.diveboard.com)</td>
+path to the dive (without the leading https://xxx.diveboard.com)</td>
     <td></td>
   </tr>
   <tr>

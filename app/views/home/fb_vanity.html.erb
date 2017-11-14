@@ -162,7 +162,7 @@
 					<h1><%= it("Create a new account", scope: ['home', 'fb_vanity']) %></h1>
 					<div id="register_user_info">
 						<div style="text-align:left;"><%= it("The link will point to your logbook homepage, it's your personal Diveboard place so choose it wisely*!", scope: ['home', 'fb_vanity']) %><br/></div>
-						<label>http://www.diveboard.com/</label><%= f.text_field :vanity_url, :class=>"register_main_input register_input_fix", :style => "margin-right:120px !important;", :value => @vanity_url%><div style="position: absolute; margin-top: -44px; margin-left: 820px;"><img id="username_ok" src="/img/ok.png" align="absmiddle" style="display:none;"/><img  id="username_nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/><img  id="username_search" style="display:none;" align="absmiddle" src="/img/indicator.gif"/> </div>
+						<label>https://www.diveboard.com/</label><%= f.text_field :vanity_url, :class=>"register_main_input register_input_fix", :style => "margin-right:120px !important;", :value => @vanity_url%><div style="position: absolute; margin-top: -44px; margin-left: 820px;"><img id="username_ok" src="/img/ok.png" align="absmiddle" style="display:none;"/><img  id="username_nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/><img  id="username_search" style="display:none;" align="absmiddle" src="/img/indicator.gif"/> </div>
 						<span class="register_input_explain"><%= it("* The URL can be changed on the settings pane, but all direct links to your logbook or dives will break upon change. It must be at least 4 character long a-z 0-9 \".-_\".", scope: ['home', 'fb_vanity']) %></span>
 						<%= display_all_error_messages(@user, :vanity_url) %>
 					</div>

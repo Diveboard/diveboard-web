@@ -1090,7 +1090,7 @@ function invite_facebook_buddy(){
     method: 'send',
     to: fb_id,
     name: 'Diveboard: your online scuba logbook',
-    link: 'http://www.diveboard.com'
+    link: 'https://www.diveboard.com'
   },
   function(response){
     if (response.success) {

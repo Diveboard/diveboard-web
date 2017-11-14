@@ -1,4 +1,4 @@
-[![Slack Chat](http://slack.diveboard.com/badge.svg "Join us. Anyone is welcome!")](http://slack.diveboard.com/) ⇦ Join us!
+[![Slack Chat](https://slack.diveboard.com/badge.svg "Join us. Anyone is welcome!")](https://slack.diveboard.com/) ⇦ Join us!
 
 
 ![Diveboard logo](https://cdn.diveboard.com/img/drawer/svg/logo_topbar_mobile.svg "Diveboard")
@@ -13,7 +13,7 @@ As described in the main [documentation](https://github.com/Diveboard/Documentat
 
 It provides:
 * A public API ([documentation](https://github.com/Diveboard/Documentation/API.md)) 
-* A web frontend - the master branch is the current live one on [www.diveboard.com](http://www.diveboard.com)
+* A web frontend - the master branch is the current live one on [www.diveboard.com](https://www.diveboard.com)
   * Translations of the frontend are done through [OneSkyApp](https://diveboard.oneskyapp.com) 
 * a set of jobs a.k.a. workers 
 
@@ -64,4 +64,4 @@ You must forward ports 80>80 and 443>443 otherwise some resources won't load
 
 Need help?
 ------
-Join us on Slack: ![Join our Slack](http://slack.diveboard.com/badge.svg "Diveboard Slack") 
+Join us on Slack: ![Join our Slack](https://slack.diveboard.com/badge.svg "Diveboard Slack") 

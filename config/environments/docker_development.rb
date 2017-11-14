@@ -91,15 +91,15 @@ DiveBoard::Application.configure do
     :delay_pending_before_cancel => 1.day
   }
 
-  config.balancing_roots = ["http://dev.diveboard.com/"]
-  config.explore_balancing_roots = ["http://dev.diveboard.com/"]
+  config.balancing_roots = ["https://dev.diveboard.com/"]
+  config.explore_balancing_roots = ["https://dev.diveboard.com/"]
 
 
-  #config.balancing_roots = ["http://l.dev.diveboard.com/"]
+  #config.balancing_roots = ["https://l.dev.diveboard.com/"]
 end
 
 ROOT_DOMAIN = "dev.diveboard.com" #used for google analytics cookies
-ROOT_URL = "http://dev.diveboard.com/" #used in model from console
+ROOT_URL = "https://dev.diveboard.com/" #used in model from console
 COOKIES_DOMAIN = ".dev.diveboard.com"
 LOCALE_ROOT_URL = "http://%{locale}.dev.diveboard.com/"
 ROOT_TINY_URL = "http://dev.scu.bz/"
@@ -133,7 +133,7 @@ DISQUS_SECRET_KEY = "4xQfOemWuyBC3wrIYPlBdsBzOYq4SPOtPRYr1OW9JoI0juVdfnYKPNmS2tP
 DISQUS_PUBLIC_KEY = "TgLAFm125GpE7ORI7yl3I9jkXc5WaQjISmKtI8XrO4z8mzw7fVOXQF6RraRJLlfl"
 
 
-MOVESCOUNT_REDIRECT_URI = "http://dev.diveboard.com/api/v2/movescount"
+MOVESCOUNT_REDIRECT_URI = "https://dev.diveboard.com/api/v2/movescount"
 MOVESCOUNT_API_KEY = "TJiID2AAOuKqeVCygyltoySOv084oXjIX4cY8FMNSsAsEIin0EyMzTsv0EmM3Gl1"
 MOVESCOUNT_URL = "http://partner-ui.movescount.com/"
 MOVESCOUNT_REST_URL = "http://partner-rest.movescount.com"
