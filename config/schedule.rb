@@ -47,7 +47,8 @@ every :sunday, :at => '3pm' do
 end
 
 every :tuesday, :at => '4am' do
-  nice_rake "assets:all"
+  #TODO Clean up the spots db first....
+  #nice_rake "assets:all"
 end
 every 1.day, :at => '7am' do
   runner "(Picture.where 'thumb_id is null or small_id is null or medium_id is null or large_id is null or original_image_id is null').map &:upload_thumbs"
@@ -64,18 +65,18 @@ end
 # end
 
 ## REFRESHING CACHES
-every 15.minutes do
+every 1.hour do
   #refresh the homepage cache
   rake "cache:homepage"
   #refresh the feed for non logged in users
   runner "ApplicationController.new.render_to_string :partial => 'feeds/default_activity_feed', :locals => {:cookies => {}, :force_refresh => true}"
 end
 every :monday do
-  runner "ApplicationController.new.render_to_string :partial => 'admin/charts', :locals => {:cookies => {}, :force_refresh => true}"
-  runner "ApplicationController.new.render_to_string :partial => 'admin/statistics', :locals => {:cookies => {}, :force_refresh => true}"
+  #runner "ApplicationController.new.render_to_string :partial => 'admin/charts', :locals => {:cookies => {}, :force_refresh => true}"
+  #runner "ApplicationController.new.render_to_string :partial => 'admin/statistics', :locals => {:cookies => {}, :force_refresh => true}"
 end
 every :wednesday do
-  rake "cache:charts"
+  #rake "cache:charts"
 end
 every :tuesday, :at => '1pm' do
   rake "cache:best_pics"
