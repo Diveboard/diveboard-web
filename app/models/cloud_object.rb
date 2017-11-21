@@ -197,9 +197,9 @@ class CloudObject < ActiveRecord::Base
   def url
     begin
       host = Rails.application.config.google_cloud_hosts[self.bucket] || "commondatastorage.googleapis.com/#{self.bucket}"
-      return "//#{host}/#{self.path}"
+      return "https://#{host}/#{self.path}"
     rescue
-      return "//commondatastorage.googleapis.com/#{self.bucket}/#{self.path}"
+      return "https://commondatastorage.googleapis.com/#{self.bucket}/#{self.path}"
     end
   end
 
