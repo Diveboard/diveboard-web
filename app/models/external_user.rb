@@ -95,7 +95,7 @@ class ExternalUser < ActiveRecord::Base
 
   def picture
     if self.fb_id then
-      return "http://graph.facebook.com/v2.0/#{fb_id}/picture?type=normal"
+      return "https://graph.facebook.com/v2.0/#{fb_id}/picture?type=normal"
     elsif self.picturl then
       return self.picturl
     else
@@ -105,7 +105,7 @@ class ExternalUser < ActiveRecord::Base
 
   def picture_small
     if self.fb_id then
-      return "http://graph.facebook.com/v2.0/#{fb_id}/picture?type=square"
+      return "https://graph.facebook.com/v2.0/#{fb_id}/picture?type=square"
     elsif self.picturl then
       return self.picturl
     else
