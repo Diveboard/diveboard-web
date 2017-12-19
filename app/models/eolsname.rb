@@ -200,6 +200,11 @@ class Eolsname < ActiveRecord::Base
   end
 
   def thumbnail_href
+    #enforcing an https response
+    return thumbnail_href_http.gsub(/^http/, "https")
+  enh
+    
+  def thumbnail_href_http
     thurl = read_attribute(:thumbnail_href)
     return thurl unless thurl.nil?
     if self.picture != 0

@@ -264,15 +264,15 @@ class DiveinfoController < ApplicationController
 
   def checkgravatar
     require 'open-uri'
-    base = "http://www.gravatar.com/avatar/"
+    base = "https://www.gravatar.com/avatar/"
     hash = params[:hash]
     if hash.nil?
       render :json => {:success => false}
       return
     end
     begin
-      if Digest::MD5.hexdigest(open("http://www.gravatar.com/avatar/"+hash+".jpg").read) != "d5fe5cbcc31cff5f8ac010db72eb000c"
-        render :json => {:success => true, :url => "http://www.gravatar.com/avatar/"+hash+".jpg"}
+      if Digest::MD5.hexdigest(open("https://www.gravatar.com/avatar/"+hash+".jpg").read) != "d5fe5cbcc31cff5f8ac010db72eb000c"
+        render :json => {:success => true, :url => "https://www.gravatar.com/avatar/"+hash+".jpg"}
       else
         render :json => {:success => false}
       end
