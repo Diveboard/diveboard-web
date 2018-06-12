@@ -254,7 +254,7 @@ class Spot < ActiveRecord::Base
     if cache_static_map
       return (HtmlHelper.lbroot "/map_images/map_#{self.id}.jpg?v=#{self.updated_at.to_i}")
     else
-      return "http://maps.google.com/maps/api/staticmap?center=#{self.lat.to_f},#{self.long.to_f}&zoom=#{zoomfix}&size=128x128&maptype=hybrid&sensor=false&format=jpg"
+      return "https://maps.google.com/maps/api/staticmap?center=#{self.lat.to_f},#{self.long.to_f}&zoom=#{zoomfix}&size=128x128&maptype=hybrid&sensor=false&format=jpg"
     end
   end
 
@@ -268,7 +268,7 @@ class Spot < ActiveRecord::Base
       if zoomfix < 1 then
         zoomfix = 1
       end
-      %x{curl -s -S -o "public/map_images/map_#{self.id}.jpg" "http://maps.google.com/maps/api/staticmap?center=#{self.lat.to_f},#{self.long.to_f}&zoom=#{zoomfix}&size=128x128&maptype=hybrid&sensor=false&format=jpg"}
+      %x{curl -s -S -o "public/map_images/map_#{self.id}.jpg" "https://maps.google.com/maps/api/staticmap?center=#{self.lat.to_f},#{self.long.to_f}&zoom=#{zoomfix}&size=128x128&maptype=hybrid&sensor=false&format=jpg"}
       self.touch
       return check_valid_static_map
     end
@@ -292,7 +292,7 @@ class Spot < ActiveRecord::Base
   def pinned_map_url x,y
 
     if self.lat == 0 && self.lng == 0 then
-      return "http://maps.google.com/maps/api/staticmap?center=#{self.lat.to_f},#{self.long.to_f}&zoom=0&size=#{x}x#{y}&maptype=hybrid&sensor=false&format=jpg"
+      return "https://maps.google.com/maps/api/staticmap?center=#{self.lat.to_f},#{self.long.to_f}&zoom=0&size=#{x}x#{y}&maptype=hybrid&sensor=false&format=jpg"
     end
 
     zoomfix = (self.zoom) -2
@@ -300,7 +300,7 @@ class Spot < ActiveRecord::Base
       zoomfix = 1
     end
 
-    return "http://maps.google.com/maps/api/staticmap?center=#{self.lat.to_f},#{self.long.to_f}&zoom=#{zoomfix}&size=#{x}x#{y}&maptype=hybrid&markers=icon:https://www.diveboard.com/img/marker.png%7C#{self.lat.to_f},#{self.long.to_f}&sensor=false&format=jpg"
+    return "https://maps.google.com/maps/api/staticmap?center=#{self.lat.to_f},#{self.long.to_f}&zoom=#{zoomfix}&size=#{x}x#{y}&maptype=hybrid&markers=icon:https://www.diveboard.com/img/marker.png%7C#{self.lat.to_f},#{self.long.to_f}&sensor=false&format=jpg"
   end
 
   def update_habtm
