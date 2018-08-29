@@ -1240,7 +1240,7 @@ class Divelog
            
 
           temp = normalize_unit(s.xpath("TEMPERATURE").children.to_s.to_f, unit_temperature) unless s.xpath("TEMPERATURE").empty?
-          sample["current_water_temperature"] 
+          sample["current_water_temperature"] = temp
           temperature.push temp unless temp.nil?
 
 
