@@ -5,7 +5,11 @@
 var G_page_fullpermalink = "<%=@owner.fullpermalink%>";
 
 G_user_spots_data = <%=
-  @owner.full_public_dives.map do |dive| {:lat => dive.lat, :lng => dive.lng, :id => dive.spot_id} unless dive.lat.nil? || dive.lng.nil? || (dive.lat == 0 && dive.lng == 0)end .reject(&:nil?).to_json.html_safe;
+	if @user == @owner then
+		@owner.full_dives.map do |dive| {:lat => dive.lat, :lng => dive.lng, :id => dive.spot_id} unless dive.lat.nil? || dive.lng.nil? || (dive.lat == 0 && dive.lng == 0)end .reject(&:nil?).to_json.html_safe;
+	else
+  		@owner.full_public_dives.map do |dive| {:lat => dive.lat, :lng => dive.lng, :id => dive.spot_id} unless dive.lat.nil? || dive.lng.nil? || (dive.lat == 0 && dive.lng == 0)end .reject(&:nil?).to_json.html_safe;
+  	end
 %>;
 
 G_user_extra_spots = <%=
