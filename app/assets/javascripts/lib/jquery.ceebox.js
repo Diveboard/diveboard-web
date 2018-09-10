@@ -116,44 +116,44 @@ $.fn.ceebox.videos = {
 	facebook: {
 		siteRgx: /facebook\.com\/video/i,
 		idRgx: /(?:v=)([a-zA-Z0-9_]+)/i,
-		src: "http://www.facebook.com/v/[id]"
+		src: "https://www.facebook.com/v/[id]"
 	},
 	youtube: {
 		siteRgx : /youtube\.com\/watch/i, 
 		idRgx: /(?:v=)([a-zA-Z0-9_\-]+)/i,
-		src : "http://www.youtube.com/v/[id]&hl=en&fs=1&autoplay=1"
+		src : "https://www.youtube.com/v/[id]&hl=en&fs=1&autoplay=1"
 	},
 	metacafe: {
 		siteRgx : /metacafe\.com\/watch/i, 
 		idRgx: /(?:watch\/)([a-zA-Z0-9_]+)/i,
-		src: "http://www.metacafe.com/fplayer/[id]/.swf"
+		src: "https://www.metacafe.com/fplayer/[id]/.swf"
 	},
 	google: {
 		siteRgx : /google\.com\/videoplay/i,
 		idRgx: /(?:id=)([a-zA-Z0-9_\-]+)/i,
-		src : "http://video.google.com/googleplayer.swf?docId=[id]&hl=en&fs=true",
+		src : "https://video.google.com/googleplayer.swf?docId=[id]&hl=en&fs=true",
 		flashvars: {playerMode: "normal",fs: true}
 	},
 	spike: { //also detects ifilm which was spike's old name
 		siteRgx : /spike\.com\/video|ifilm\.com\/video/i,
 		idRgx: /(?:\/)([0-9]+)/i,
-		src : "http://www.spike.com/efp",
+		src : "https://www.spike.com/efp",
 		flashvars : {flvbaseclip:"[id]"}
 	},
 	vimeo: {
 		siteRgx : /vimeo\.com\/[0-9]+/i,
 		idRgx: /(?:\.com\/)([a-zA-Z0-9_]+)/i,
-		src : "http://www.vimeo.com/moogaloop.swf?clip_id=[id]&server=vimeo.com&show_title=1&show_byline=1&show_portrait=0&color=&fullscreen=1"
+		src : "https://www.vimeo.com/moogaloop.swf?clip_id=[id]&server=vimeo.com&show_title=1&show_byline=1&show_portrait=0&color=&fullscreen=1"
 	},
 	dailymotion: {
 		siteRgx : /dailymotion\.com\/video/i, //one issue is that some dailymotion vids are really atom films
 		idRgx: /(?:video\/)([a-zA-Z0-9_]+)/i,
-		src : "http://www.dailymotion.com/swf/[id]&related=0&autoplay=1"
+		src : "https://www.dailymotion.com/swf/[id]&related=0&autoplay=1"
 	},
 	cnn: {
 		siteRgx : /cnn\.com\/video/i, 
 		idRgx: /(?:\?\/video\/)([a-zA-Z0-9_\/\.]+)/i,
-		src : "http://i.cdn.turner.com/cnn/.element/apps/cvp/3.0/swf/cnn_416x234_embed.swf?context=embed&videoId=[id]",
+		src : "https://i.cdn.turner.com/cnn/.element/apps/cvp/3.0/swf/cnn_416x234_embed.swf?context=embed&videoId=[id]",
 		width:416,
 		height:374
 	}

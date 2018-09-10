@@ -455,22 +455,22 @@ class Picture < ActiveRecord::Base
   def og_tag
     if !href.nil? && !(matchdata = Picture.check_youtube_url href).nil?
       ##this is a youtube video
-      og_tag = "<meta property=\"og:image\" content=\"http://i.ytimg.com/vi/#{matchdata}/maxresdefault.jpg?feature=og\" />"
-      og_tag += "\n<meta property=\"og:video\" content=\"http://www.youtube.com/v/#{matchdata}?version=3&amp;autohide=1\" />"
+      og_tag = "<meta property=\"og:image\" content=\"https://i.ytimg.com/vi/#{matchdata}/maxresdefault.jpg?feature=og\" />"
+      og_tag += "\n<meta property=\"og:video\" content=\"https://www.youtube.com/v/#{matchdata}?version=3&amp;autohide=1\" />"
       og_tag += "\n<meta property=\"og:video:type\" content=\"application/x-shockwave-flash\" />"
       og_tag += "\n<meta property=\"og:video:width\" content=\"398\" />"
       og_tag += "\n<meta property=\"og:video:height\" content=\"224\" />"
 
     elsif !href.nil? && !(matchdata = Picture.check_dailymotion_url href).nil?
-      og_tag = "<meta property=\"og:image\" content=\"http://www.dailymotion.com/thumbnail/320x240/video/#{matchdata}\" />"
-      og_tag += "\n<meta property=\"og:video\" content=\"http://www.dailymotion.com/swf/video/#{matchdata}?autoPlay=1\" />"
+      og_tag = "<meta property=\"og:image\" content=\"https://www.dailymotion.com/thumbnail/320x240/video/#{matchdata}\" />"
+      og_tag += "\n<meta property=\"og:video\" content=\"https://www.dailymotion.com/swf/video/#{matchdata}?autoPlay=1\" />"
       og_tag += "\n<meta property=\"og:video:type\" content=\"application/x-shockwave-flash\" />"
       og_tag += "\n<meta property=\"og:video:width\" content=\"460\" />"
       og_tag += "\n<meta property=\"og:video:height\" content=\"280\" />"
 
     elsif !href.nil? && !(matchdata = Picture.check_vimeo_url href).nil?
       og_tag = "<meta property=\"og:image\" content=\"#{self.medium}\"/>"
-      og_tag += "\n<meta property=\"og:video\" content=\"http://vimeo.com/moogaloop.swf?clip_id=#{matchdata}&amp;server=vimeo.com&amp;show_title=1&amp;show_byline=1&amp;show_portrait=1&amp;color=00ADEF&amp;fullscreen=1&amp;autoplay=0&amp;loop=0\" />"
+      og_tag += "\n<meta property=\"og:video\" content=\"https://vimeo.com/moogaloop.swf?clip_id=#{matchdata}&amp;server=vimeo.com&amp;show_title=1&amp;show_byline=1&amp;show_portrait=1&amp;color=00ADEF&amp;fullscreen=1&amp;autoplay=0&amp;loop=0\" />"
       og_tag += "\n<meta property=\"og:video:type\" content=\"application/x-shockwave-flash\" />"
       og_tag += "\n<meta property=\"og:video:width\" content=\"360\" />"
       og_tag += "\n<meta property=\"og:video:height\" content=\"640\" />"
@@ -1176,12 +1176,12 @@ class Picture < ActiveRecord::Base
     if self.media == "video"
       if !href.nil? && !(matchdata = Picture.check_youtube_url href).nil?
         ##this is a youtube video
-        return code = "<iframe width='#{width}' height='#{height}' src='http://www.youtube.com/embed/#{matchdata}?wmode=opaque&autoplay=0' frameborder='0' allowfullscreen></iframe>"
+        return code = "<iframe width='#{width}' height='#{height}' src='https://www.youtube.com/embed/#{matchdata}?wmode=opaque&autoplay=0' frameborder='0' allowfullscreen></iframe>"
       elsif !href.nil? && !(matchdata = Picture.check_dailymotion_url href).nil?
         ##dailymotion video
-        return code = "<iframe frameborder='0' width='#{width}' height='#{height}' src='http://www.dailymotion.com/embed/video/#{matchdata}?autoplay=1'></iframe>"
+        return code = "<iframe frameborder='0' width='#{width}' height='#{height}' src='https://www.dailymotion.com/embed/video/#{matchdata}?autoplay=1'></iframe>"
       elsif !href.nil? && !(matchdata = Picture.check_vimeo_url href).nil?
-        return code = "<iframe src='http://player.vimeo.com/video/#{matchdata}' width='#{width}' height='#{height}' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>"
+        return code = "<iframe src='https://player.vimeo.com/video/#{matchdata}' width='#{width}' height='#{height}' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>"
       elsif !href.nil? && !(matchdata = Picture.check_facebook_url href).nil?
         code ="<iframe width='#{width}' height='#{height}' src='/api/fbvideo_proxy?id=#{matchdata}&width=#{width}&height=#{height}' frameborder='0'></iframe>"
         return code
