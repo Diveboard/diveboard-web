@@ -23,7 +23,7 @@ function content_initialize() {
 <!-- ###################  HTML  ############### -->
 <div class="main_content_header logbook_header">
     <div class='head_picture'>
-      <img src='<%= @owner.picture_large%>' alt='user picture'>
+      <a href="/<%=@user.vanity_url%>"><img src='<%= @owner.picture_large%>' alt='user picture'></a>
     </div>
     <div class='head_title'><div class='head_title_valign'><ul>
       <li>
