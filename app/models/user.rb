@@ -663,7 +663,17 @@ class User < ActiveRecord::Base
   end
 
   def underwater_time
-    dives.map(&:duration).sum
+    if dives == nil then
+        return 0
+    else
+        total_duration = 0
+        dives.each do |dive|
+          if (dive.duration != nil) then
+            total_duration += dive.duration
+          end
+        end
+        return total_duration
+    end
   end
 
   def region_most_dived
