@@ -627,7 +627,7 @@ ul.plain_links li:hover {opacity: 0.9;}
 #featured_pic {position: relative}
 #featured_pic_container {height: 202px; overflow: hidden; }
 
-.main_content_box ul {display: inline-block; zoom: 1; *display: inline; line-height: 32px;margin-left: 5px; vertical-align: top;}
+.main_content_box ul {display: inline-block; zoom: 1; *display: inline; line-height: 20px;margin-left: 5px; vertical-align: top;}
 .main_content_box ul.compact-list {line-height: 18px;}
 .main_content_box li img {margin-right: 5px; vertical-align: text-bottom;}
 .main_content_box li {text-shadow: 0px 1px #fff;}
@@ -676,7 +676,7 @@ ul.plain_links li:hover {opacity: 0.9;}
 
 .gear_box ul {font-size:0.93em;}
 
-.divers_comments { line-height: 18px; padding-left: 20px; padding-bottom: 10px; padding-right: 20px; padding-top: 25px; background-image: url(/img/divers_comments_bg.png); font-size: 0.93em; width: 295px; height: 149px; position: absolute; right: 5px; top: 75px; text-shadow: 0px 1px #fff; z-index: 10;}
+.divers_comments { line-height: 18px; padding-left: 20px; padding-bottom: 10px; padding-right: 20px; padding-top: 25px; background-image: url(/img/divers_comments_bg.png); font-size: 0.93em; width: 295px; height: 149px; position: absolute; right: 5px; top: 45px; text-shadow: 0px 1px #fff; z-index: 10;}
 .divers_comments p {margin-top: 5px; margin-bottom: 0px; line-height: 1.6em;}
 .divers_comments strong {text-transform: uppercase; }
 
