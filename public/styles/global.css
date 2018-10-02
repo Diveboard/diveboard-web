@@ -629,7 +629,7 @@ ul.plain_links li:hover {opacity: 0.9;}
 
 .main_content_box ul {display: inline-block; zoom: 1; *display: inline; line-height: 20px;margin-left: 5px; vertical-align: top;}
 .main_content_box ul.compact-list {line-height: 18px;}
-.main_content_box li img {margin-right: 5px; vertical-align: text-bottom;}
+.main_content_box li img {margin-right: 5px; vertical-align: middle;}
 .main_content_box li {text-shadow: 0px 1px #fff;}
 .main_content_box li strong {text-transform: uppercase; margin-right: 3px;}
 .main_content_box .header_dive {font-size: 1.1em; width: 320px;}
