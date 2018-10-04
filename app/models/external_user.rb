@@ -153,7 +153,7 @@ class ExternalUser < ActiveRecord::Base
     if res.response_code == 200
       fbdata = JSON.parse res.body_str
       self.nickname = fbdata["name"]
-      self.picturl = "http://graph.facebook.com/v2.0/#{self.fb_id}/picture?type=large" if self.picturl.nil?
+      self.picturl = "https://graph.facebook.com/v2.0/#{self.fb_id}/picture?type=large" if self.picturl.nil?
     else
       self.nickname = "FB user #{self.fb_id}"
     end

@@ -354,7 +354,7 @@ class NotifyUser < ActionMailer::Base
           decoded_graph = JSON.parse(data_graph)
           if decoded_graph["name"] then
             @comment_user = decoded_graph["name"]
-            @comment_picture = 'http://graph.facebook.com/v2.0/#{from_id}/picture?type=square'
+            @comment_picture = 'https://graph.facebook.com/v2.0/#{from_id}/picture?type=square'
           end
         rescue
         end

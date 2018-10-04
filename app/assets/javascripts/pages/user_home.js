@@ -546,7 +546,7 @@ function init_avatar_edit(){
     return;
   G_avatar_edit_init = true;
   G_default_picture_url = G_private_user.picture_large;
-  G_user_facebook_picture = "http://graph.facebook.com/v2.0/"+G_private_user.fb_id+"/picture?type=large";
+  G_user_facebook_picture = "https://graph.facebook.com/v2.0/"+G_private_user.fb_id+"/picture?type=large";
   setup_avatar_upload();
   $("#image_cancel").click(reset_image);
   $("#image_ok_avatar").click(validate_image);
