@@ -852,6 +852,9 @@ li.scroll_active_item a {text-shadow: 0px 1px #faf183;}
 .sb_position_one {top: 15px;}
 .sb_position_two {top: 63px;}
 .sb_position_three {top: 112px;}
+#sb_search_pane {margin-bottom: 5px; padding-left: 10px;}
+#sb_search_pane input {width:230px;}
+#sb_search_pane img {padding-right: 5px;}
 /* End New Scrollbar Stuff */
 .sidebar_upload {margin-bottom: 30px; display: inline-block;}
 img.fade { opacity: 1; -webkit-transition: opacity .08s linear;-moz-webkit-transition: opacity .08s linear; display:inline;}
