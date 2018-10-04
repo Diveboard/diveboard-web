@@ -1,3 +1,4 @@
+<!--
 <% if params[:refer_campaign] == "true" %>
 <script>
 window['friendbuy'] = window['friendbuy'] || [];
@@ -20,6 +21,7 @@ b = f.createElement(r), y = f.getElementsByTagName(r)[0];b.async = 1;b.src = n;y
  </script>
 <div class="friendbuy-bgu-den"></div>       
 <%end%>
+-->
 
 <script type="text/javascript">
 
@@ -124,7 +126,7 @@ function showClassicWidget() {
 }
 </script>
 
-<script type="text/javascript">
+<!--
 /* <![CDATA[ */
 var google_conversion_id = 1045765921;
 var google_custom_params = window.google_tag_params;
@@ -132,6 +134,7 @@ var google_remarketing_only = true;
 $.getScript("//www.googleadservices.com/pagead/conversion.js");
 /* ]]> */
 </script>
+-->
 <%unless @user.nil? %>
   <!-- Facebook Conversion Code for Registration -->
   <script type="text/javascript">
@@ -150,13 +153,15 @@ $.getScript("//www.googleadservices.com/pagead/conversion.js");
   <noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/offsite_event.php?id=6016716489513&amp;value=0&amp;currency=USD" /></noscript>
 <%end%>
 
+<!--
 <noscript>
 <div style="display:inline;">
 <img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/1045765921/?value=0&amp;guid=ON&amp;script=0"/>
 </div>
 </noscript>
+-->
 
-<script type="text/javascript">var _kmq = _kmq || [];
+<!-- <script type="text/javascript">var _kmq = _kmq || [];
 var _kmk = _kmk || '234fee721c87f37f1cde2a5fab07bc498fdd9fe4';
 function _kms(u){
   setTimeout(function(){
@@ -169,7 +174,7 @@ function _kms(u){
 _kms('//i.kissmetrics.com/i.js');
 _kms('//doug1izaerwt3.cloudfront.net/' + _kmk + '.1.js');
 </script>
-
+-->
 
 <!-- Dev Google Analytics --> 
 <!--<script>  

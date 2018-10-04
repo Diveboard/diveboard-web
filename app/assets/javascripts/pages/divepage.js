@@ -154,7 +154,7 @@ function dive_ready(){
       $("input.star").rating();
     });
   //alert("load");
-  //$("head").append($("<link rel='stylesheet' href='http://dev.diveboard.com/js/jquery.rating.3.14.js' type='text/css' media='screen' />"));
+  //$("head").append($("<link rel='stylesheet' href='https://dev.diveboard.com/js/jquery.rating.3.14.js' type='text/css' media='screen' />"));
   //initialize_css();
   // reset_default();
 }

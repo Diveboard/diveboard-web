@@ -31,10 +31,10 @@ en:
         : "The Diveboard team"
         ? |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         : |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         ? "You can view all the previous comments on Diveboard : %{txt_url}"
         : "You can view all the previous comments on Diveboard : %{txt_url}"
     notify_like:
@@ -71,10 +71,10 @@ en:
         : "The Diveboard team"
         ? |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         : |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         ? "You can view the details of that %{type} on %{txt_url}"
         : "You can view the details of that %{type} on %{txt_url}"
         ? "Your %{type} on %{spot} in %{country} just received another 'Like'."
@@ -301,10 +301,10 @@ en:
         : "The Diveboard team"
         ? |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         : |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         ? "View on Diveboard"
         : "View on Diveboard"
         ? "Your order with %{shop} could not be fulfilled. Please check the details online."
@@ -367,10 +367,10 @@ en:
         : "The Diveboard team"
         ? |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         : |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
     notify_new_message:
       ? "%{link:%{name}} has left a message for you:"
       : "%{link:%{name}} has left a message for you:"
@@ -387,10 +387,10 @@ en:
         : "The Diveboard team"
         ? |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         : |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         ? "To see the conversation and reply: %{txt_url}"
         : "To see the conversation and reply: %{txt_url}"
     notify_print_dives:
@@ -407,10 +407,10 @@ en:
         : "The Diveboard team"
         ? |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         : |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         ? |-
             Your logbook is ready to download and will be available for the next 24hrs.
             Hit the link: %{url}
@@ -433,10 +433,10 @@ en:
         : "The Diveboard team"
         ? |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         : |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         ? "You now have the rights to edit the Diveboard page for %{shop}"
         : "You now have the rights to edit the Diveboard page for %{shop}"
   blog:
@@ -2090,10 +2090,10 @@ en:
     register_3:
       ? |-
           If you remember your personal url, we'll be able to email you with your login.%{br}
-          						For instance, if your logbook is located at http://www.diveboard.com/%{strong:ksso}, your personal url will be "%{strong:ksso}".
+          						For instance, if your logbook is located at https://www.diveboard.com/%{strong:ksso}, your personal url will be "%{strong:ksso}".
       : |-
           If you remember your personal url, we'll be able to email you with your login.%{br}
-          						For instance, if your logbook is located at http://www.diveboard.com/%{strong:ksso}, your personal url will be "%{strong:ksso}".
+          						For instance, if your logbook is located at https://www.diveboard.com/%{strong:ksso}, your personal url will be "%{strong:ksso}".
       ? "Create a New Account"
       : "Create a New Account"
       ? "Diveboard is your place to log your scuba memories on the web.%{br}Join an ever growing community of scuba divers sharing their passion."
@@ -2106,12 +2106,12 @@ en:
       : "If you don't, send us an email we'll try to sort things out for you:"
       ? |-
           If you remember your personal url, we'll be able to email you with your login.%{br}
-          						For instance, if your logbook is located at http://www.diveboard.com/%{strong:ksso}, your personal url will be "%{strong:ksso}
+          						For instance, if your logbook is located at https://www.diveboard.com/%{strong:ksso}, your personal url will be "%{strong:ksso}
       :
         ? "\""
         : |-
             If you remember your personal url, we'll be able to email you with your login.%{br}
-            						For instance, if your logbook is located at http://www.diveboard.com/%{strong:ksso}, your personal url will be "%{strong:ksso}".
+            						For instance, if your logbook is located at https://www.diveboard.com/%{strong:ksso}, your personal url will be "%{strong:ksso}".
       ? "JOIN US!"
       : "JOIN US!"
       ? "Lost email"
@@ -4396,10 +4396,10 @@ en:
         : "The order %{order} for %{user} has changed status to : %{status}"
         ? |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         : |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         ? "View on Diveboard: %{txt_url}"
         : "View on Diveboard: %{txt_url}"
     notify_claim:
@@ -4473,10 +4473,10 @@ en:
         : "The Diveboard team"
         ? |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         : |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         ? |-
             Time to take a break from the ocean and gove some love to your customers.
             New actions are waiting in your shop's inbox:
@@ -5059,9 +5059,9 @@ en:
       linux_instruction_html: |-
           <p><b>For deb-based systems (debian, ubuntu...) </b>:<br/>
               Add to you /etc/apt/sources.list file :<br>
-              <code>deb http://packages.diveboard.com/deb stable main</code><br/>
+              <code>deb https://packages.diveboard.com/deb stable main</code><br/>
               then add our signing key by executing the command:<br/>
-              <code>wget -O - http://packages.diveboard.com/pub/RPM-GPG-KEY-diveboard | sudo apt-key add -</code><br/>
+              <code>wget -O - https://packages.diveboard.com/pub/RPM-GPG-KEY-diveboard | sudo apt-key add -</code><br/>
               then do the usuals "apt-get update; apt-get install diveboard-agent"
               </p>
               <br/>
@@ -5069,9 +5069,9 @@ en:
               Add to your /etc/yum.conf file:
               <code>[Diveboard]<br/>
                     name=Diveboard<br/>
-                    baseurl=http://packages.diveboard.com/rpm/<br/>
+                    baseurl=https://packages.diveboard.com/rpm/<br/>
                     gpgcheck=1<br/>
-                    gpgkey=http://packages.diveboard.com/pub/RPM-GPG-KEY-diveboard<br/>
+                    gpgkey=https://packages.diveboard.com/pub/RPM-GPG-KEY-diveboard<br/>
               </code><br/>
               then do the usuals "yum install diveboard-agent"
               </p>

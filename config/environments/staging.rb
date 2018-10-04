@@ -90,7 +90,7 @@ DiveBoard::Application.configure do
 end
 
 ROOT_DOMAIN = "stage.diveboard.com" #used for google analytics cookies
-ROOT_URL = "http://stage.diveboard.com/" #used in model from console
+ROOT_URL = "https://stage.diveboard.com/" #used in model from console
 COOKIES_DOMAIN = ".stage.diveboard.com"
 LOCALE_ROOT_URL = "http://%{locale}.stage.diveboard.com/"
 ROOT_TINY_URL = "http://stage.scu.bz/"
@@ -135,7 +135,7 @@ DISQUS_PUBLIC_KEY = "ggA4DP61P6W26026KGOZtoUm446SM9H4C3nI2NZKLgRI9yJ7zzpFYI6CyKz
 
 MOVESCOUNT_API_KEY = "9WzYYUdJuKjllKLU5OzEQae0y9veHJtlVOvjhqmOcczQIjpvNN1RkkA9SJAYy9cU"
 MOVESCOUNT_URL = "http://partner-ui.movescount.com/"
-MOVESCOUNT_REDIRECT_URI = "http://stage.diveboard.com/api/v2/movescount"
+MOVESCOUNT_REDIRECT_URI = "https://stage.diveboard.com/api/v2/movescount"
 MOVESCOUNT_REST_URL = "http://partner-rest.movescount.com"
 
 TREASURE_SHOPS = [9378, 4288, 943]

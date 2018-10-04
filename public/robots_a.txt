@@ -6,4 +6,4 @@
 
 User-agent: *
 Allow: /
-Sitemap: http://www.diveboard.com/sitemap_index.xml.gz
+Sitemap: https://www.diveboard.com/sitemap_index.xml.gz

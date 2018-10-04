@@ -1027,7 +1027,7 @@ class AdminController < ApplicationController
     #end
   end
   def testfbuserdel
-    #http://dev.diveboard.com/admin/testfbuserdel/all deletes all users
+    #https://dev.diveboard.com/admin/testfbuserdel/all deletes all users
     @test_users = Koala::Facebook::TestUsers.new(:app_id => FB_APP_ID, :secret => FB_APP_SECRET)
     if params[:user_id] == "all"
       begin

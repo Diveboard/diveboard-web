@@ -227,7 +227,7 @@ public class SettingsTest  extends CommonActions{
 		verifyTrue(sel.isElementPresent("username_ok"));
 		
 		//I have to check without last simbol - I think that is selenium problem		
-	//	verifyEquals(sel.getText("username_info"), "Your url will be http://stage.diveboard.com/"+ nativeName.substring(0, (nativeName.length()-1)) );
+	//	verifyEquals(sel.getText("username_info"), "Your url will be https://stage.diveboard.com/"+ nativeName.substring(0, (nativeName.length()-1)) );
 		
 		
 		verifyEquals(sel.getText("//div[@id='Profile']/div[2]/div/div[2]/span[2]"), "WARNING If you change this, all links to your previous url will die.\nSo try to avoid doing that.");

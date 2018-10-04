@@ -264,7 +264,7 @@ class BlogPost < ActiveRecord::Base
 
   def update_fb_comments
     ## will grab the FB comment of the dive and save it
-    ## dive comment link : http://www.diveboard.com/ksso/D25AZIW
+    ## dive comment link : https://www.diveboard.com/ksso/D25AZIW
     require 'curb'
     fburl = "http://graph.facebook.com/v2.0/comments?id=#{fullcommentslink}"
     res = Curl.get(fburl)

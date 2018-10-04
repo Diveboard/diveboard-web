@@ -19,3 +19,4 @@
 config/*.sphinx.conf 
 .sass-cache
 
+/bin/
