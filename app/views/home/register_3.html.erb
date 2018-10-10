@@ -7,8 +7,8 @@
 
     <meta property="og:title" content="<%= it("Sign-up for Diveboard: Your online scuba logbook", scope: ['home', 'register_3']) %>" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="http://www.diveboard.com/login/register" />
-    <meta property="og:image" content="http://www.diveboard.com/img/OG-thumb.png" />
+    <meta property="og:url" content="https://www.diveboard.com/login/register" />
+    <meta property="og:image" content="https://www.diveboard.com/img/OG-thumb.png" />
     <meta property="og:description" content="<%= it("Sign up for diveboard and start looging and sharing your dives now.", scope: ['home', 'register_3']) %>" />
     <meta property="og:site_name" content="<%= it("Diveboard: Your online scuba logbook", scope: ['home', 'register_3']) %>" />
     <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
@@ -345,9 +345,9 @@
             </div>
             <%end%>
             <%= it("If you remember your personal url, we'll be able to email you with your login.%{br}
-            For instance, if your logbook is located at http://www.diveboard.com/%{strong:ksso}, your personal url will be \"%{strong:ksso}\".", scope: ['home', 'register_3'], br: It.tag("br"), strong: It.tag("strong")) %><br/>
+            For instance, if your logbook is located at https://www.diveboard.com/%{strong:ksso}, your personal url will be \"%{strong:ksso}\".", scope: ['home', 'register_3'], br: It.tag("br"), strong: It.tag("strong")) %><br/>
             <div id="register_user_info">
-              <label>http://www.diveboard.com/</label><%= f.text_field :vanity_url,:class => "register_main_input", :style=>"width:230px; background: url(/img/register_main_input_s.png) no-repeat top left;"%><br/>
+              <label>https://www.diveboard.com/</label><%= f.text_field :vanity_url,:class => "register_main_input", :style=>"width:230px; background: url(/img/register_main_input_s.png) no-repeat top left;"%><br/>
             </div>
             <%= it("If you don't, send us an email we'll try to sort things out for you:", scope: ['home', 'register_3']) %> <a href="mailto:support@diveboard.com">support@diveboard.com</a>
           </div>

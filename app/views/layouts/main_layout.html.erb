@@ -28,7 +28,7 @@
   <script type="text/javascript" src="https://getfirebug.com/firebug-lite.js#startOpened=true"></script>
   -->
   <!-- STYLESHEETS -->
-  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+  <link href='//fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
   <%= include_stylesheets :common, :media => :all %>
   <%= stylesheet_link_tag :global_v2, :media => :all %>
 
@@ -383,7 +383,7 @@
     });
   </script>
   <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
-  <script src="http://cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.js"></script>
+  <script src="//cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.js"></script>
   <%= yield :javascripts_v1_patch if content_for? :javascripts_v1_patch %>
   <%= yield :javascripts if content_for? :javascripts %>
 </html>

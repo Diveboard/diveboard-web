@@ -261,7 +261,7 @@ private void viewDive() throws InterruptedException
 				{"http://www.youtube.com/watch?v=dki2v8qoj_w ", "//img[contains(@src,'/user_images/video_')]"},
 				{"https://picasaweb.google.com/106006149916198510480/RAZNIVARIE?feat=featured#5639970005814483490", "//img[contains(@src,'https://lh6.googleusercontent.com/-pE3JmCSxuFc/TkUy1qRuGiI/AAAAAAAAER8/_QHlSH1hkOE/111_1.jpg')]"},
 	//commented until bug with FB video is fixed
-				//			{"http://www.facebook.com/video/video.php?v=179116772166822", "//img[contains(@src,'http://stage.diveboard.com//user_images/video_')]"}
+				//			{"http://www.facebook.com/video/video.php?v=179116772166822", "//img[contains(@src,'https://stage.diveboard.com//user_images/video_')]"}
 				
 				
 		};

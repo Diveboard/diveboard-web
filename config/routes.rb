@@ -9,12 +9,12 @@ DiveBoard::Application.routes.draw do
 
   ## SCU.BZ Routing
   constraints :domain => "scu.bz" do
-    root :to => redirect("http://www.diveboard.com") 
+    root :to => redirect("https://www.diveboard.com") 
     match '/:dive_id' => 'diveinfo#read_tiny', :dive_id => /[0-9]+/
     match '/p/:picture_id' =>  'diveinfo#read_tiny', :picture_id => /[0-9]+/
     match '/u/:vanity' => 'diveinfo#read_tiny_home', :vanity => /[A-Za-z\.0-9\-\_]+/
     match '/:hash' => 'diveinfo#read_tiny_hash', :hash => /[A-Za-z0-9]+/
-    match '/' => redirect("http://www.diveboard.com") 
+    match '/' => redirect("https://www.diveboard.com") 
   end
   ##END SCU.BZ
 

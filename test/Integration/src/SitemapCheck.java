@@ -31,15 +31,15 @@ public class SitemapCheck extends WebdriverMethods {
 @Test
 public void main() throws Exception {
 	open("http://diveboard.com/sitemap.xml");
-	waitForElement("//a[contains(text(),'http://www.diveboard.com')]");
+	waitForElement("//a[contains(text(),'https://www.diveboard.com')]");
 		verifyEquals("XML Sitemap", getText("css=h1"));
 		verifyTrue(getText("id=intro").contains("This is a XML Sitemap which is supposed to be processed by search engines like Google, MSN Search and YAHOO.\n You can find more information about XML sitemaps on sitemaps.org and Google's list of sitemap programs.") );
-		verifyTrue(isElementPresent("link=exact:http://www.diveboard.com"));
+		verifyTrue(isElementPresent("link=exact:https://www.diveboard.com"));
 		verifyEquals("100%", getText("//td[2]"));
 		verifyEquals("Daily", getText("//td[3]"));
-		verifyTrue(isElementPresent("link=exact:http://www.diveboard.com/explore"));
-		verifyTrue(isElementPresent("link=exact:http://www.diveboard.com/blog/about/"));
-		verifyTrue(isElementPresent("link=exact:http://www.diveboard.com/ksso/21"));
+		verifyTrue(isElementPresent("link=exact:https://www.diveboard.com/explore"));
+		verifyTrue(isElementPresent("link=exact:https://www.diveboard.com/blog/about/"));
+		verifyTrue(isElementPresent("link=exact:https://www.diveboard.com/ksso/21"));
 
 		
 		

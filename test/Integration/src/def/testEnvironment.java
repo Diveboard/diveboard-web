@@ -23,7 +23,7 @@ public class testEnvironment {
 		return true;
 		  }
 
-	//returnes http://stage.diveboard.com if not found environment variable  DB_ENV_ROOT_URL 
+	//returnes https://stage.diveboard.com if not found environment variable  DB_ENV_ROOT_URL 
 	// and value if get the environment variable DB_ENV_ROOT_URL
 	public static String checkUrl(){
 		  Map map = System.getenv();
@@ -38,7 +38,7 @@ public class testEnvironment {
 	//	  System.out.println(key);
 		 
 		  }
-		return "http://stage.diveboard.com/";
+		return "https://stage.diveboard.com/";
 		  }
 	
 

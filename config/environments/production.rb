@@ -105,7 +105,7 @@ DiveBoard::Application.configure do
     :delay_pending_before_cancel => 1.day
   }
 
-  #config.balancing_roots = ["http://www1.diveboard.com/", "http://www2.diveboard.com/", "http://www3.diveboard.com/"]
+  #config.balancing_roots = ["https://www1.diveboard.com/", "https://www2.diveboard.com/", "https://www3.diveboard.com/"]
   
   #WARNING // cannot be used here - > it's used when maps are on og:image and fb doesn not recognize //cnd.xxxx as valid URL
   #hence we're defaulting to https
@@ -124,7 +124,7 @@ GOOGLE_MAPS_API = ENV["GOOGLE_MAPS_API"]
 
 
 ROOT_DOMAIN = "www.diveboard.com" #used for google analytics cookies
-ROOT_URL = "http://www.diveboard.com/" #used in model from console
+ROOT_URL = "https://www.diveboard.com/" #used in model from console
 COOKIES_DOMAIN = ".diveboard.com"
 LOCALE_ROOT_URL = "http://%{locale}.diveboard.com/"
 ROOT_TINY_URL = "http://scu.bz/"
@@ -156,6 +156,6 @@ DISQUS_PUBLIC_KEY = ENV["DISQUS_PUBLIC_KEY"]
 MOVESCOUNT_API_KEY = ENV["MOVESCOUNT_API_KEY"]
 MOVESCOUNT_URL = "http://www.movescount.com/"
 MOVESCOUNT_REST_URL = "https://uiservices.movescount.com/"
-MOVESCOUNT_REDIRECT_URI = "http://www.diveboard.com/api/v2/movescount"
+MOVESCOUNT_REDIRECT_URI = "https://www.diveboard.com/api/v2/movescount"
 
 TREASURE_SHOPS = [9378, 4288, 943]

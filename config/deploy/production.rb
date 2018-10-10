@@ -21,7 +21,7 @@ set :bundle_without,      [:development, :test]
 
 set :whenever_roles, :db
 set :whenever_command, "bundle exec whenever"
-set :whenever_identifier, :application
+set :whenever_identifier, "diveboard"
 set :whenever_environment, "production"
 set :whenever_update_flags, "--update-crontab #{whenever_identifier} --set environment=#{whenever_environment}"
 set :whenever_clear_flags, "--clear-crontab #{whenever_identifier}"

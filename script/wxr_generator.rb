@@ -38,7 +38,7 @@ File.open("parsedCommentsWXR.xml", 'w') do |file|
       				user = User.where("fb_id = #{x["from"]["id"]}")
       				if user.empty? then
       					diveboard_id = "#{x["from"]["id"]}"
-      					avatar = "http://graph.facebook.com/v2.0/#{x["from"]["id"]}/picture?width=200&height=200"
+      					avatar = "https://graph.facebook.com/v2.0/#{x["from"]["id"]}/picture?width=200&height=200"
       					author_url = ""
       					author_email = ""
       				else
