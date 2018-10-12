@@ -196,7 +196,11 @@
     var append = function(img){
 	  var url = img.image;
 	  if (img.image == null || img.image == '') {
-	  	url = "/img/picture_placeholder.png";
+		if (img.thumb != null) {
+			url = img.thumb;
+		} else {
+			url = "/img/picture_placeholder.png";	
+		}
 	  }
       var idx = local_data.all_img.length;
 

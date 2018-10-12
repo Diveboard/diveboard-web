@@ -340,6 +340,9 @@ class Picture < ActiveRecord::Base
 
   def get_image size="medium"
     if size == "thumb"
+      if self.media == "video" && !self.href.nil?
+        return Picture.thumb_from_video(self.href)
+      end
       return self.cloud_thumb.url if !self.thumb_id.nil?
       return "#{ROOT_URL.chop}#{cache}_t.jpg" if File.exists?("public#{cache}_t.jpg")
     elsif size == "small"
