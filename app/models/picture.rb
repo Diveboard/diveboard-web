@@ -1230,7 +1230,7 @@ class Picture < ActiveRecord::Base
   end
 
   def self.generate_youtube_thumb id
-    return "http://img.youtube.com/vi/#{id.to_s}/default.jpg"
+    return "https://img.youtube.com/vi/#{id.to_s}/default.jpg"
     begin
       return JSON.parse(Net::HTTP.get URI.parse(jsoncall))["thumbnail_url"]
     rescue
