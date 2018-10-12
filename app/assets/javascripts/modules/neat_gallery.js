@@ -1,7 +1,6 @@
 (function($){
 
   $.fn.neat_gallery = function(argument) {
-	  console.log("START");
     var defaults = {
       source: dive_pictures_data,
       width: 400,
