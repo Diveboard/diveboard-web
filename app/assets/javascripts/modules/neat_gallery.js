@@ -1,7 +1,6 @@
 (function($){
 
   $.fn.neat_gallery = function(argument) {
-
     var defaults = {
       source: dive_pictures_data,
       width: 400,
@@ -195,11 +194,14 @@
 
     //add a picture at the end of the gallery
     var append = function(img){
+	  var url = img.image;
+	  if (img.image == null || img.image == '') {
+	  	url = "/img/picture_placeholder.png";
+	  }
       var idx = local_data.all_img.length;
 
       local_data.options.loading();
 
-      var url = img.image;
       var neobj = $("<img></img>");
       neobj.load(function(){
             var local_idx = idx;
