@@ -340,6 +340,9 @@ class Picture < ActiveRecord::Base
 
   def get_image size="medium"
     if size == "thumb"
+      if self.media == "video" && !self.href.nil?
+        return Picture.thumb_from_video(self.href)
+      end
       return self.cloud_thumb.url if !self.thumb_id.nil?
       return "#{ROOT_URL.chop}#{cache}_t.jpg" if File.exists?("public#{cache}_t.jpg")
     elsif size == "small"
@@ -1230,7 +1233,7 @@ class Picture < ActiveRecord::Base
   end
 
   def self.generate_youtube_thumb id
-    return "http://img.youtube.com/vi/#{id.to_s}/default.jpg"
+    return "https://img.youtube.com/vi/#{id.to_s}/default.jpg"
     begin
       return JSON.parse(Net::HTTP.get URI.parse(jsoncall))["thumbnail_url"]
     rescue
@@ -1435,7 +1438,7 @@ class Picture < ActiveRecord::Base
 
   def update_fb_comments
     ## will grab the FB comment of the dive and save it
-    ## dive comment link : http://www.diveboard.com/ksso/D25AZIW
+    ## dive comment link : https://www.diveboard.com/ksso/D25AZIW
     require 'curb'
     comment_link = self.fullpermalink(:canonical)
     fburl = "http://graph.facebook.com/v2.0/comments?id=#{comment_link}"

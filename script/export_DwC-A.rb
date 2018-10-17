@@ -73,7 +73,7 @@ records.each do |record|
   
   case dive.user.sci_privacy
   when 1
-    citation = "#{dive.user.full_name.titleize} #{dive.time_in.to_date.to_s} through Diveboard : http://www.diveboard.com"
+    citation = "#{dive.user.full_name.titleize} #{dive.time_in.to_date.to_s} through Diveboard : https://www.diveboard.com"
     collector = "#{dive.user.full_name.titleize}"
     permalink = dive.fullpermalink(:canonical)
     ## We have the name and ID of the species
@@ -81,7 +81,7 @@ records.each do |record|
     sheet1.row(line_number).replace record_line
     line_number += 1
   when 2
-    citation = "Anonymous dver #{dive.time_in.to_date.to_s} through Diveboard : http://www.diveboard.com"
+    citation = "Anonymous dver #{dive.time_in.to_date.to_s} through Diveboard : https://www.diveboard.com"
     collector = "Anonymous"
     permalink = ""
     ## We have the name and ID of the species

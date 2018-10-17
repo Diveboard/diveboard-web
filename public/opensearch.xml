@@ -2,6 +2,6 @@
 <ShortName>Diveboard</ShortName> 
 <Description>Explore Diveboard to find interesting dives, places to dive, divers. Find your next dive place.</Description> 
 <InputEncoding>UTF-8</InputEncoding> 
-<Image width="16" height="16" type="image/x-icon">http://www.diveboard.com/favicon.ico</Image> 
-<Url type="text/html" method="get" template="http://www.diveboard.com/search?s={searchTerms}"></Url> 
+<Image width="16" height="16" type="image/x-icon">https://www.diveboard.com/favicon.ico</Image> 
+<Url type="text/html" method="get" template="https://www.diveboard.com/search?s={searchTerms}"></Url> 
 </OpenSearchDescription>

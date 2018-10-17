@@ -10,7 +10,7 @@ var G_cluster_zindex_highlight=50;
 var G_cluster_zindex_lowlight=10;
 var G_min_zoom_shops=10;
 
-var G_root_url = "http://www.diveboard.com";
+var G_root_url = "https://www.diveboard.com";
 var G_locale_root_url = G_root_url;
 
 var G_max_items=70;

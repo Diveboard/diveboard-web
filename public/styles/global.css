@@ -627,9 +627,9 @@ ul.plain_links li:hover {opacity: 0.9;}
 #featured_pic {position: relative}
 #featured_pic_container {height: 202px; overflow: hidden; }
 
-.main_content_box ul {display: inline-block; zoom: 1; *display: inline; line-height: 32px;margin-left: 5px; vertical-align: top;}
+.main_content_box ul {display: inline-block; zoom: 1; *display: inline; line-height: 20px;margin-left: 5px; vertical-align: top;}
 .main_content_box ul.compact-list {line-height: 18px;}
-.main_content_box li img {margin-right: 5px; vertical-align: text-bottom;}
+.main_content_box li img {margin-right: 5px; vertical-align: middle;}
 .main_content_box li {text-shadow: 0px 1px #fff;}
 .main_content_box li strong {text-transform: uppercase; margin-right: 3px;}
 .main_content_box .header_dive {font-size: 1.1em; width: 320px;}
@@ -676,7 +676,7 @@ ul.plain_links li:hover {opacity: 0.9;}
 
 .gear_box ul {font-size:0.93em;}
 
-.divers_comments { line-height: 18px; padding-left: 20px; padding-bottom: 10px; padding-right: 20px; padding-top: 25px; background-image: url(/img/divers_comments_bg.png); font-size: 0.93em; width: 295px; height: 149px; position: absolute; right: 5px; top: 75px; text-shadow: 0px 1px #fff; z-index: 10;}
+.divers_comments { line-height: 18px; padding-left: 20px; padding-bottom: 10px; padding-right: 20px; padding-top: 25px; background-image: url(/img/divers_comments_bg.png); font-size: 0.93em; width: 295px; height: 149px; position: absolute; right: 5px; top: 45px; text-shadow: 0px 1px #fff; z-index: 10;}
 .divers_comments p {margin-top: 5px; margin-bottom: 0px; line-height: 1.6em;}
 .divers_comments strong {text-transform: uppercase; }
 
@@ -852,6 +852,9 @@ li.scroll_active_item a {text-shadow: 0px 1px #faf183;}
 .sb_position_one {top: 15px;}
 .sb_position_two {top: 63px;}
 .sb_position_three {top: 112px;}
+#sb_search_pane {margin-bottom: 5px; padding-left: 10px;}
+#sb_search_pane input {width:230px;}
+#sb_search_pane img {padding-right: 5px;}
 /* End New Scrollbar Stuff */
 .sidebar_upload {margin-bottom: 30px; display: inline-block;}
 img.fade { opacity: 1; -webkit-transition: opacity .08s linear;-moz-webkit-transition: opacity .08s linear; display:inline;}

@@ -11,7 +11,7 @@ public class Blog extends CommonActions {
 		
 		
 		System.out.println("Checking blog..");
-		open("http://www.diveboard.com/blog/");
+		open("https://www.diveboard.com/blog/");
 		//sel.waitForPageToLoad("30000");
 		
 		checkMobileBlog();

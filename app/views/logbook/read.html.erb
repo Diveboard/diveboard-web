@@ -19,6 +19,7 @@
     jsPaneAPI = jsPane.data('jsp');
     autodetect_computer();
   });
+  
 </script>
 
 
@@ -72,6 +73,30 @@ $(document).ready( function () {
       $('#sb_fulldives').css('height',h*46);
       $('.jspContainer').css('height',h*46);
     }
+    $('#sb_search').on("keyup search", function () {
+	  	$("#sb_nosearchresults").hide();
+	  	var keywords = $('#sb_search').val().toLowerCase().split(" ");
+	  	var match = 0;
+	  	$( "#sb_fulldives li" ).each(function( index ) {
+		  	if (keywords.length == 0) {
+	  			$(this).show();
+	  		}
+	  		else {
+	  			for (var i = 0, len = keywords.length; i < len; i++) {
+		  			if ($(this).text().toLowerCase().indexOf(keywords[i]) == -1 && !$(this).hasClass("scroll_active_item")) {
+		  				$(this).hide();
+		  			} else {
+		  				$(this).show();
+		  				match++;
+		  			}
+	  			}
+	  		}
+		});
+		if (match == 0) {
+			$("#sb_nosearchresults").show();
+		}
+	  });
+	  $('#sb_search_pane').show();
 });
 
 //GLOBAL VARIABLE defines if we asked for a bulk upload or not...
@@ -120,6 +145,10 @@ var wizard_bulk_step_load = '<%= @bulk_requested %>';
 
     <!--<span class="main_content_header logbook_header header_title">Dive Logs</span>-->
     <div id="sb_fulldives" class="scroll-pane">
+        <div id="sb_search_pane" style="display:none"><img src="/img/drawer/svg/icon_search_topar_mobile.svg" width="10px" height="10px"><input type="search" id="sb_search" class="sb_search"></div>
+	    <div id="sb_nosearchresults" style="display:none;color:black">
+	    	No search results
+	    </div>
       <%=render partial: 'dive_list_panel'%>
     </div>
   </div>

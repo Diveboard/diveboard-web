@@ -55,7 +55,7 @@ public class SignInTest extends CommonActions{
 		waitForVisible("//div[3]/form/div[2]/div/input");
 		verifyEquals("Lost email", getText("css=#lost_email > div.main_content_header.single_main_header > span.header_title"));
 		verifyTrue(getText("css=#lost_email > #new_user > div.main_content_box").startsWith("If you remember your personal url, we'll be able to email you with your login."));
-		verifyEquals("exact:http://www.diveboard.com/", getText("css=#lost_email > #new_user > div.main_content_box > #register_user_info > label"));
+		verifyEquals("exact:https://www.diveboard.com/", getText("css=#lost_email > #new_user > div.main_content_box > #register_user_info > label"));
 		verifyTrue(isElementPresent("link=support@diveboard.com"));
 		verifyTrue(isElementPresent("document.forms[3].elements[2]"));
 		verifyTrue(isElementPresent("css=#lost_email > #new_user > div.main_content_box > #register_captcha > span > label"));

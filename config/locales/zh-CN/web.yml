@@ -27,10 +27,10 @@ zh-CN:
         : "Diveboard 团队"
         ? |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         : |-
             由于您已注册Diveboard帐户，并启用了时事简讯通知，因此Diveboard向您发送了一封邮件。
-            如果您不想再收到这些邮件，请上 http://www.diveboard.com/settings 更改设置
+            如果您不想再收到这些邮件，请上 https://www.diveboard.com/settings 更改设置
         ? "You can view all the previous comments on Diveboard : %{txt_url}"
         : "您可以查看 Diveboard 上之前的所有评论：%{txt_url}"
     notify_like:
@@ -61,10 +61,10 @@ zh-CN:
         : "Diveboard 团队"
         ? |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         : |-
             由于您已注册Diveboard帐户，并启用了时事简讯通知，因此Diveboard向您发送了一封邮件。
-            如果您不想再收到这些邮件，请上 http://www.diveboard.com/settings 更改设置
+            如果您不想再收到这些邮件，请上 https://www.diveboard.com/settings 更改设置
         ? "You can view the details of that %{type} on %{txt_url}"
         : "您可以上%{txt_url}查看该%{type}的详细信息"
         ? "Your %{type} on %{spot} in %{country} just received another 'Like'."
@@ -289,10 +289,10 @@ zh-CN:
         : "Diveboard 团队"
         ? |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         : |-
             由于您已注册Diveboard帐户，并启用了时事简讯通知，因此Diveboard向您发送了一封邮件。
-            如果您不想再收到这些邮件，请上 http://www.diveboard.com/settings 更改设置
+            如果您不想再收到这些邮件，请上 https://www.diveboard.com/settings 更改设置
         ? "View on Diveboard"
         : "上 Diveboard 查看"
         ? "Your order with %{shop} could not be fulfilled. Please check the details online."
@@ -355,10 +355,10 @@ zh-CN:
         : "Diveboard 团队"
         ? |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         : |-
             由于您已注册Diveboard帐户，并启用了时事简讯通知，因此Diveboard向您发送了一封邮件。
-            如果您不想再收到这些邮件，请上 http://www.diveboard.com/settings 更改设置
+            如果您不想再收到这些邮件，请上 https://www.diveboard.com/settings 更改设置
     notify_new_message:
       ? "%{link:%{name}} has left a message for you:"
       : "%{link:%{name}}给您留言了："
@@ -375,10 +375,10 @@ zh-CN:
         : "Diveboard 团队"
         ? |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         : |-
             由于您已注册Diveboard帐户，并启用了时事简讯通知，因此Diveboard向您发送了一封邮件。
-            如果您不想再收到这些邮件，请上 http://www.diveboard.com/settings 更改设置
+            如果您不想再收到这些邮件，请上 https://www.diveboard.com/settings 更改设置
         ? "To see the conversation and reply: %{txt_url}"
         : "查看会话和回复：%{txt_url}"
     notify_print_dives:
@@ -395,10 +395,10 @@ zh-CN:
         : "Diveboard 团队"
         ? |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         : |-
             由于您已注册Diveboard帐户，并启用了时事简讯通知，因此Diveboard向您发送了一封邮件。
-            如果您不想再收到这些邮件，请上 http://www.diveboard.com/settings 更改设置
+            如果您不想再收到这些邮件，请上 https://www.diveboard.com/settings 更改设置
         ? |-
             Your logbook is ready to download and will be available for the next 24hrs.
             Hit the link: %{url}
@@ -419,10 +419,10 @@ zh-CN:
         : "Diveboard 团队"
         ? |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         : |-
             由于您已注册Diveboard帐户，并启用了时事简讯通知，因此Diveboard向您发送了一封邮件。
-            如果您不想再收到这些邮件，请上 http://www.diveboard.com/settings 更改设置
+            如果您不想再收到这些邮件，请上 https://www.diveboard.com/settings 更改设置
         ? "You now have the rights to edit the Diveboard page for %{shop}"
         : "嘿 ！您现在有权编辑%{shop}的Diveboard 页面了！"
   blog:
@@ -2058,8 +2058,8 @@ zh-CN:
     register_3:
       ? |-
           If you remember your personal url, we'll be able to email you with your login.%{br}
-          						For instance, if your logbook is located at http://www.diveboard.com/%{strong:ksso}, your personal url will be "%{strong:ksso}".
-      : "如果记得您的个人 url，当您登陆时，我们能够给你发电子邮件。%{br}例如，如果您的日志位于http://www.diveboard.com/%{strong:ksso}，您的个人 url 就是\"%{strong:ksso}\"。"
+          						For instance, if your logbook is located at https://www.diveboard.com/%{strong:ksso}, your personal url will be "%{strong:ksso}".
+      : "如果记得您的个人 url，当您登陆时，我们能够给你发电子邮件。%{br}例如，如果您的日志位于https://www.diveboard.com/%{strong:ksso}，您的个人 url 就是\"%{strong:ksso}\"。"
       ? "Create a New Account"
       : 创建新帐户
       ? "Diveboard is your place to log your scuba memories on the web.%{br}Join an ever growing community of scuba divers sharing their passion."
@@ -2072,12 +2072,12 @@ zh-CN:
       : 如果您不，请电邮通知我们，我们将尽力为您理清这些内容：
       ? |-
           If you remember your personal url, we'll be able to email you with your login.%{br}
-          						For instance, if your logbook is located at http://www.diveboard.com/%{strong:ksso}, your personal url will be "%{strong:ksso}
+          						For instance, if your logbook is located at https://www.diveboard.com/%{strong:ksso}, your personal url will be "%{strong:ksso}
       :
         ? "\""
         : |-
             If you remember your personal url, we'll be able to email you with your login.%{br}
-            						For instance, if your logbook is located at http://www.diveboard.com/%{strong:ksso}, your personal url will be "%{strong:ksso}".
+            						For instance, if your logbook is located at https://www.diveboard.com/%{strong:ksso}, your personal url will be "%{strong:ksso}".
       ? "JOIN US!"
       : 加入我们吧！
       ? "Lost email"
@@ -4326,10 +4326,10 @@ zh-CN:
         : "%{user}的订单%{order}状态变为：%{status}"
         ? |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         : |-
             由于您已注册Diveboard帐户，并启用了时事简讯通知，因此Diveboard向您发送了一封邮件。
-            如果您不想再收到这些邮件，请上 http://www.diveboard.com/settings 更改设置
+            如果您不想再收到这些邮件，请上 https://www.diveboard.com/settings 更改设置
         ? "View on Diveboard: %{txt_url}"
         : "上 Diveboard 查看：%{txt_url}"
     notify_claim:
@@ -4398,10 +4398,10 @@ zh-CN:
         : "Diveboard 团队"
         ? |-
             This mail has been sent to you by diveboard because you have an existing account on Diveboard and the notifications on events are enabled.
-            If you don't want to receive these mails anymore, please change the settings on http://www.diveboard.com/settings
+            If you don't want to receive these mails anymore, please change the settings on https://www.diveboard.com/settings
         : |-
             由于您已注册Diveboard帐户，并启用了时事简讯通知，因此Diveboard向您发送了一封邮件。
-            如果您不想再收到这些邮件，请上http://www.diveboard.com/settings更改设置
+            如果您不想再收到这些邮件，请上https://www.diveboard.com/settings更改设置
         ? |-
             Time to take a break from the ocean and gove some love to your customers.
             New actions are waiting in your shop's inbox:
@@ -4967,7 +4967,7 @@ zh-CN:
       bulkimport: "在您的个人电脑上安装代理，打开它，并连接潜水计算机以上传其中的潜水档案。您将能够轻松地将它们连接到已有的潜水、 创建新潜水或放弃已有的潜水档案。"
       downloadagent: "下载代理，选择您的平台，并按照说明进行操作 ！"
       explainagent: "Diveboard 创造了一个小的程序：\"Diveboard 代理\"，它使得直接从您的潜水计算机上传您的潜水档案到Diveboard.com变得相当便捷。"
-      linux_instruction_html: "<p><b>基于 deb 系统 （debian，ubuntu......)</b>：<br/>添加到 /etc/apt/sources.list 文件：<br> <code>deb http://packages.diveboard.com/deb stable main</code> <br/>然后通过执行一下命令添加我们的签名密钥:<br/> <code>wget -O - http://packages.diveboard.com/pub/RPM-GPG-KEY-diveboard | sudo apt-key add -</code> <br/>然后按通常做法\"升级； 安装 diveboard 代理\" </p> <br/> <p><b>基于 rpm 的系统 （redhat） fedora......</b>：<br/>添加到您的 /etc/yum.conf 文件： <code>[Diveboard]<br/>名称 = Diveboard<br/> baseurl = http://packages.diveboard.com/rpm/<br/> gpgcheck = 1<br/> gpgkey = http://packages.diveboard.com/pub/RPM-GPG-KEY-diveboard<br/> </code> <br/>然后按通常做法\"安装 diveboard 代理\" </p> <br/> <p><b>对于其他系统，在这里我们提供了支持各种体系结构支的tgz 档案</b>:<br/> <center> %{link:https://packages.diveboard.com/tgz/} </center> <br/>下载对应于您的体系结构的文件，将其解压后执行存档中提供的 install.sh 脚本 </p>"
+      linux_instruction_html: "<p><b>基于 deb 系统 （debian，ubuntu......)</b>：<br/>添加到 /etc/apt/sources.list 文件：<br> <code>deb https://packages.diveboard.com/deb stable main</code> <br/>然后通过执行一下命令添加我们的签名密钥:<br/> <code>wget -O - https://packages.diveboard.com/pub/RPM-GPG-KEY-diveboard | sudo apt-key add -</code> <br/>然后按通常做法\"升级； 安装 diveboard 代理\" </p> <br/> <p><b>基于 rpm 的系统 （redhat） fedora......</b>：<br/>添加到您的 /etc/yum.conf 文件： <code>[Diveboard]<br/>名称 = Diveboard<br/> baseurl = https://packages.diveboard.com/rpm/<br/> gpgcheck = 1<br/> gpgkey = https://packages.diveboard.com/pub/RPM-GPG-KEY-diveboard<br/> </code> <br/>然后按通常做法\"安装 diveboard 代理\" </p> <br/> <p><b>对于其他系统，在这里我们提供了支持各种体系结构支的tgz 档案</b>:<br/> <center> %{link:https://packages.diveboard.com/tgz/} </center> <br/>下载对应于您的体系结构的文件，将其解压后执行存档中提供的 install.sh 脚本 </p>"
       oldplugin1: "PS： 如果您一直在使用这个插件，您仍然可以继续使用"
       oldplugin2: "旧接口 &amp; 插件"
       osx_instruction_1: "可以在这里下载最新的 OSX 代理"

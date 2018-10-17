@@ -517,11 +517,11 @@ class User < ActiveRecord::Base
   end
 
   def fb_picture
-    "http://graph.facebook.com/v2.0/#{fb_id}/picture?width=200&height=200"
+    "//graph.facebook.com/v2.0/#{fb_id}/picture?width=200&height=200"
   end
 
   def fb_picture_small
-    return "http://graph.facebook.com/v2.0/#{fb_id}/picture?width=100&height=100"
+    return "//graph.facebook.com/v2.0/#{fb_id}/picture?width=100&height=100"
   end
 
   def picture
@@ -530,7 +530,7 @@ class User < ActiveRecord::Base
       if self.fb_id.nil?
         return NO_PICTURE
       else
-        return "http://graph.facebook.com/v2.0/#{fb_id}/picture?width=200&height=200"
+        return "//graph.facebook.com/v2.0/#{fb_id}/picture?width=200&height=200"
       end
     else
       begin
@@ -548,7 +548,7 @@ class User < ActiveRecord::Base
        if self.fb_id.nil?
           return NO_PICTURE
         else
-          return "http://graph.facebook.com/v2.0/#{fb_id}/picture?width=100&height=100"
+          return "//graph.facebook.com/v2.0/#{fb_id}/picture?width=100&height=100"
         end
      else
       begin
@@ -564,7 +564,7 @@ class User < ActiveRecord::Base
       if self.fb_id.nil?
         return NO_PICTURE
       else
-        return "http://graph.facebook.com/v2.0/#{fb_id}/picture?width=200&height=200"
+        return "//graph.facebook.com/v2.0/#{fb_id}/picture?width=200&height=200"
       end
     else
       begin
@@ -580,7 +580,7 @@ class User < ActiveRecord::Base
       if self.fb_id.nil?
         return NO_PICTURE
       else
-        return "http://graph.facebook.com/v2.0/#{fb_id}/picture?width=200&height=200"
+        return "//graph.facebook.com/v2.0/#{fb_id}/picture?width=200&height=200"
       end
     else
       begin
