@@ -121,7 +121,8 @@ class SearchController < ApplicationController
       logger.warn $!.backtrace.join("\n")
       initial_location = {"latitude" => 21.125169323467198, "longitude" => -77.09304003906254, 'zoom' => 7}
     end
-
+    @gmapskey = GOOGLE_MAPS_API
+    
     render :locals => {:initial_location => initial_location, :panel2 => panel2}
   end
 
