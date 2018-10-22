@@ -1,6 +1,8 @@
 var auth_token = $("meta[name='csrf-token']").attr("content");
 var G_facebook_buddy_search_init = false;
 var image_resizer;
+var gmap_markers_simmilar = [];
+var marker_simmilar_highlight = null;
 // if wizard_bulk == true => we're here to bulk create upload
 // if false it's a one-dive creation
 
