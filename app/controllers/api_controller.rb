@@ -744,7 +744,52 @@ class ApiController < ApplicationController
       end
     end
 
-
+    #
+    # :section: searchsimmilarspot
+    #
+    ##Search spots with the same name, country and location
+    
+    def searchsimmilarspot
+      #if params.nil? then params = manual_params end #override params for unitests
+      begin
+        if !params[:n].nil? and !params[:c].nil? and !params[:l].nil?
+          #result = result.where("name LIKE ?", "%#{params[:q]}%")
+          @search_text = params[:n].to_s.downcase
+          if @search_text.length < 3 then
+            render :json => DBArgumentError.new("Search parameter is less than 3 characters").as_json.merge({:success => false, :data => []})
+            return
+          end
+          @country_name = params[:c].to_s.downcase
+          if @country_name.length < 2 then
+            render :json => DBArgumentError.new("Search country is less than 2 characters").as_json.merge({:success => false, :data => []})
+            return
+          end
+          @location_name = params[:l].to_s.downcase
+          if @location_name.length < 2 then
+            render :json => DBArgumentError.new("Search location is less than 2 characters").as_json.merge({:success => false, :data => []})
+            return
+          end
+        logger.debug "User is nil : #{@user.nil?}"
+        result = SearchHelper.spot_simmilar_search (begin @user.id rescue nil end), @search_text, @country_name, @location_name
+    
+        else
+          result = []
+        end
+    
+        resulta = []
+        result.each do |r|
+          api_data = r.to_api(:public, :caller => @user)
+          resulta << {:name => "#{r.name} (#{r.country.cname} - #{r.location.name})", :id => r.id, :data => api_data} unless api_data.nil?
+        end
+        render :json => {:success => true, :data => resulta, :user_authentified => !@user.nil?}
+        return
+      rescue
+       #trace the error
+       logger.debug $!.backtrace
+       render api_exception $!
+       return
+      end
+    end
 
 
   #

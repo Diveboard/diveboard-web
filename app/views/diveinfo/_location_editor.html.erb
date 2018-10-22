@@ -23,9 +23,6 @@
           <button class='yellow_button' id='wizard_spot_remove'><%= it("Search another spot", scope: ['diveinfo', 'location_editor']) %></button>
           <button class='yellow_button' id='wizard_spot_creaspot'><%= it("Create new spot", scope: ['diveinfo', 'location_editor']) %></button>
           <button class='yellow_button' id='wizard_spot_reset'><%= it("Reset to initial spot", scope: ['diveinfo', 'location_editor']) %></button>
-
-          <button class='yellow_button' id='wizard_spot_confirm'><%= it("Confirm", scope: ['diveinfo', 'location_editor']) %></button>
-          <button class='yellow_button' id='wizard_spot_cancel'><%= it("Cancel", scope: ['diveinfo', 'location_editor']) %></button>
         </p>
         <table id="set_spot_details" class='<%if @dive.spot.id != 1%>spot_table_readonly'<%end%>' <%if @dive.spot.id == 1%>style='display:none;'<%end%>>
         <tbody>
@@ -86,10 +83,24 @@
           <input id="spot-long" type="text" value="<%= @dive.spot.long%>" class="wizard_input_25"/>
           <input id="spot-zoom" type="hidden" value="<%= @dive.spot.zoom%>"/>
           </td>
+          <tr>
+          <td class="wizard_input_label">
+          <label>
+          <div id="wizard_simmilar_spots_label" style="display:none;"><%= it("Simmilar spots", scope: ['diveinfo', 'location_editor']) %></div>
+          </label>
+          </td>
+          <td>
+          <div id="wizard_simmilar_spots_loader" style="display: none;"><img src="/img/transparent_loader_2.gif" height='66px' width='66px' alt='#' /></div>
+          <div id="wizard_simmilar_spots" style="height:100px;overflow-y:auto;"></div>
+          </td>
           </tr>
-
         </tbody>
         </table>
+        <p>
+        	<button class='yellow_button' id='wizard_spot_search'><%= it("Search", scope: ['diveinfo', 'location_editor']) %></button>
+        	<button class='yellow_button' id='wizard_spot_confirm'><%= it("Confirm", scope: ['diveinfo', 'location_editor']) %></button>
+          	<button class='yellow_button' id='wizard_spot_cancel'><%= it("Cancel", scope: ['diveinfo', 'location_editor']) %></button>
+        </p>
       </div>
     </div>
 
