@@ -569,6 +569,11 @@ fr:
       : "Ex. République Dominicaine 2013"
       ? "ERROR: Cannot Save. Please correct the fields highlighted in red"
       : "ERREUR : Sauvegarde impossible. Merci de corriger les champs marqués de rouge."
+      Select: Selectionner
+      ? "No simmilar spot found. You can create one."
+      : "Pas de spot simmilaire trouvé. Vous pouvez en créer un."
+      ? "Do you confirm the spot is not available in the database?"
+      : "Confirmez-vous que le spot n'est pas déjà présent dans la base de données?"
       ? "Error loading image"
       : "Erreur au chargement de l'image"
       ? "Example : White River, Cyprus"
