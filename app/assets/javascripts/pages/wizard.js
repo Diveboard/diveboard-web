@@ -84,6 +84,72 @@ var G_picture_cnt = 1;
 var G_tmp_dive_storage = null;
 var G_tmp_user_storage = null;
 
+var G_search_pending = null;
+var G_search_search_ajax_requests = [];
+var geocoder;
+
+//////////////////////////
+//
+// SEARCH
+//
+//////////////////////////
+
+function search_something(text) {
+  if (text == '') {
+    $("#xp_p1_search_result ul").html('');
+    $("#xp_p1_search_result").hide();
+    return;
+  }
+
+  geocoder.geocode(
+      {'address': text},
+      function(results, status) {
+        //Remove the request from the pool and revert the icon if necessary
+        for (var i in G_search_search_ajax_requests)
+          if (G_search_search_ajax_requests[i] == "geocoding request")
+            G_search_search_ajax_requests.splice(i,1);
+        if (G_search_search_ajax_requests.length == 0)
+          $("#search_text_button").attr("src", "/img/black_search_btn.png");
+
+        if (status == google.maps.GeocoderStatus.OK) {
+          var image_url = "/img/world_icon.png";
+          $("#xp_p1_search_result").show();
+          $("#xp_p1_search_result ul").html('');
+          for (var i in results)
+          {
+            //todo put the append outside of the for loop
+            $("#xp_p1_search_result ul").append(
+              $('<li class="xp_p1_search_result"><div class="xp_p1_search_result_letter"></div>'+
+              '<div class="xp_p1_search_result_right"><span class="xp_p1_search_result_name">'+
+              results[i].formatted_address+'</span><span class="xp_p1_search_result_details"></span></div></li>')
+              .data('xp_formatted_address', results[i].formatted_address)
+              .mousedown((function(result) {return function(ev){
+                ev.preventDefault();
+                $('#xp_p1_search').data('xp_search_result', $(this).data('xp_formatted_address'));
+                $('#xp_p1_search').blur();
+                $("#xp_p1_search_result").hide();
+                goto_search_result(result);
+              }})(results[i]))
+            );
+          }
+
+          //initializeLayout();
+
+        } else {
+          //alert("Geocode was not successful for the following reason: " + status);
+        }
+      }
+    );
+}
+
+function goto_search_result(result) {
+	  var lat = result.geometry.location.lat;
+	  var lng = result.geometry.location.lng;
+	  map.fitBounds(result.geometry.viewport);
+	  //display_content();
+	  update_perma_link();
+	}
+
 ///////////////////////////////
 //
 // OPENING AND CLOSING WIZARD
@@ -276,6 +342,178 @@ function set_wizard_bindings(){
     $(".wizard_cancel").click(hide_wizard);
   $(".delete_dive").click(delete_dive);
 
+//SEARCH LOCATION
+  geocoder = new google.maps.Geocoder();
+  //2 behaviours for people who want to click on the icon instead of the list...
+  $('#xp_p1_search_button').click(function(ev) {
+    if ($("#xp_p1_search_result ul li:visible").length == 1) {
+      $("#xp_p1_search_result ul li").mousedown();
+    }
+    else {
+      if (G_search_pending) clearTimeout(G_search_pending);
+      G_search_pending = null;
+      search_something($('#xp_p1_search').val());
+    }
+  });
+
+  $('#xp_p1_search').focus(function(e) {
+    var text = $('#xp_p1_search').data('xp_search_text');
+    if (text) {
+      $('#xp_p1_search').val(text);
+    }
+
+    if ($("#xp_p1_search_result ul li").length > 0)
+      $("#xp_p1_search_result").show();
+  });
+
+  $('#xp_p1_search').blur(function(e) {
+    $('#xp_p1_search').data('xp_search_text', $('#xp_p1_search').val());
+    var result = $('#xp_p1_search').data('xp_search_result');
+    if (result) {
+      $('#xp_p1_search').val(result);
+    }
+    setTimeout(function(){$("#xp_p1_search_result").hide()}, 100);
+  });
+
+  $(document).bind('keydown', function(ev) {
+    if ($('#xp_p1_search').is(':focus')) return;
+    //This shortcut is commented because it didn't help and was blocking some tests
+    //Press F key to activate search
+    //not available when focus is on an input field
+    //if (ev.which == 70 && $("input:focus").length == 0) {
+    //  $('#xp_p1_search').focus();
+    //  ev.preventDefault();
+    //}
+
+    // - for zoom out, + or = for zoom in
+    else if (ev.which == 189) {
+      map.setZoom(map.getZoom()-1);
+      ev.preventDefault();
+    }
+    else if (ev.which == 187) {
+      map.setZoom(map.getZoom()+1);
+      ev.preventDefault();
+    }
+
+    //enter or right arrow shows the second panel
+    else if(ev.which == 13 || ev.which == 39) { //enter
+      if ($("#xp_p1_tab li.xp_panel_list_item.selected").length > 0) {
+        $("#xp_p1_tab li.xp_panel_list_item.selected").click();
+        ev.preventDefault();
+      }
+    }
+
+    //left arrow hides the second panel
+    else if(ev.which == 37) { //enter
+      if ($("#xp_p1_tab li.xp_panel_list_item.selected").length > 0) {
+        hide_panel2();
+        ev.preventDefault();
+      }
+    }
+
+
+
+    //up/down arrows make selection go next/forward in panel 1
+    else if (ev.which == 38) { //up
+      ev.preventDefault();
+      var sel;
+      var list = $("#xp_p1_tab li");
+      for (var i=0;i<list.length; i++) {
+        var e=$(list[i]);
+        if (e.hasClass('selected')) {
+          e.removeClass('selected');
+          if (i)
+            sel = $(list[i-1]).addClass('selected');
+          else
+            sel = list.last().addClass('selected');
+          $("#xp_p1_list").data('jsp').scrollToElement(sel);
+          return;
+        }
+      }
+      sel = list.last().addClass('selected');
+      $("#xp_p1_list").data('jsp').scrollToElement(sel);
+    } else if (ev.which == 40) { //down
+      ev.preventDefault();
+      ev.stopPropagation();
+      var sel;
+      var list = $("#xp_p1_tab li");
+      for (var i=0;i<list.length; i++) {
+        var e=$(list[i]);
+        if (e.hasClass('selected')) {
+          e.removeClass('selected');
+          sel = $(list[(i+1)%(list.length)]).addClass('selected');
+          $("#xp_p1_list").data('jsp').scrollToElement(sel);
+          return;
+        }
+      }
+      sel = list.first().addClass('selected');
+      $("#xp_p1_list").data('jsp').scrollToElement(sel);
+    }
+  });
+
+  $('#xp_p1_search').bind('keyup', function(e) {
+
+    //on enter, either launch a search or click on the elected element
+    if(e.which == 13) { //enter
+      if (G_search_pending) clearTimeout(G_search_pending);
+      G_search_pending = null;
+      if ($("#xp_p1_search_result_list li.selected").length > 0)
+        $("#xp_p1_search_result_list li.selected").removeClass('selected').mousedown();
+      else
+        search_something($('#xp_p1_search').val());
+
+    //escape to blur search
+    } else if (e.which == 27) { //escap
+      $('#xp_p1_search').blur();
+
+    //up/down arrows make selection go next/forward
+    } else if (e.which == 38) { //up
+      e.preventDefault();
+      var sel;
+      var list = $("#xp_p1_search_result_list li");
+      for (var i=0;i<list.length; i++) {
+        var e=$(list[i]);
+        if (e.hasClass('selected')) {
+          e.removeClass('selected');
+          if (i)
+            sel = $(list[i-1]).addClass('selected');
+          else
+            sel = list.last().addClass('selected');
+          $("#xp_p1_search_result").data('jsp').scrollToElement(sel);
+          return;
+        }
+      }
+      sel = list.last().addClass('selected');
+      $("#xp_p1_search_result").data('jsp').scrollToElement(sel);
+    } else if (e.which == 40) { //down
+      e.preventDefault();
+      var sel;
+      var list = $("#xp_p1_search_result_list li");
+      for (var i=0;i<list.length; i++) {
+        var e=$(list[i]);
+        if (e.hasClass('selected')) {
+          e.removeClass('selected');
+          sel = $(list[(i+1)%(list.length)]).addClass('selected');
+          $("#xp_p1_search_result").data('jsp').scrollToElement(sel);
+          return;
+        }
+      }
+      sel = list.first().addClass('selected');
+      $("#xp_p1_search_result").data('jsp').scrollToElement(sel);
+
+    //any other key : trigger a search later
+    } else {
+      $('#xp_p1_search').data('xp_search_result', null);
+      $("#xp_p1_search_result_list li.selected").removeClass('selected');
+      if (G_search_pending) clearTimeout(G_search_pending);
+      G_search_pending = setTimeout(function(){G_search_pending = null; search_something($('#xp_p1_search').val())}, 300);
+    }
+  });
+
+  $("#xp_p1_search_result_list li").live('hover', function(ev){
+    $("#xp_p1_search_result_list li.selected").removeClass('selected');
+    $(this).addClass('selected');
+  });
 
 
 
