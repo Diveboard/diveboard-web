@@ -560,7 +560,7 @@ function set_wizard_bindings(){
 	wizard_gmaps_clear_simmilar_spots();
     $.ajax({
         url: '/api/search/simmilarspot',
-        data: {n: $("#spot-name").val(), c:$("#spot-country").val(), l:$("#spot-location").val()},
+        data: {n: $("#spot-name").val(), c:$("#spot-country").val(), lat:$("#spot-lat").val(), long:$("#spot-long").val(), z:$("#spot-zoom").val()},
         success: function(data){
         	$("#wizard_simmilar_spots_loader").hide();
         	spots = $.map(data.data, function(item){return {label: item.name , value: item.name, id: item.id, lat: item.data.lat, lng: item.data.lng } })

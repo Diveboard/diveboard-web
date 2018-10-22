@@ -752,25 +752,30 @@ class ApiController < ApplicationController
     def searchsimmilarspot
       #if params.nil? then params = manual_params end #override params for unitests
       begin
-        if !params[:n].nil? and !params[:c].nil? and !params[:l].nil?
+        if !params[:n].nil? and !params[:lat].nil? and !params[:long].nil? and !params[:z].nil?
           #result = result.where("name LIKE ?", "%#{params[:q]}%")
           @search_text = params[:n].to_s.downcase
           if @search_text.length < 3 then
             render :json => DBArgumentError.new("Search parameter is less than 3 characters").as_json.merge({:success => false, :data => []})
             return
           end
-          @country_name = params[:c].to_s.downcase
-          if @country_name.length < 2 then
-            render :json => DBArgumentError.new("Search country is less than 2 characters").as_json.merge({:success => false, :data => []})
+          @lat = params[:lat].to_f
+          if @lat == 0 then
+            render :json => DBArgumentError.new("Search latitude can not be 0").as_json.merge({:success => false, :data => []})
             return
           end
-          @location_name = params[:l].to_s.downcase
-          if @location_name.length < 2 then
-            render :json => DBArgumentError.new("Search location is less than 2 characters").as_json.merge({:success => false, :data => []})
+          @long = params[:long].to_f
+          if @long == 0 then
+            render :json => DBArgumentError.new("Search longitude can not be 0").as_json.merge({:success => false, :data => []})
+            return
+          end
+          @zoom = params[:z].to_f
+          if @zoom == 0 then
+            render :json => DBArgumentError.new("Search zoom can not be 0").as_json.merge({:success => false, :data => []})
             return
           end
         logger.debug "User is nil : #{@user.nil?}"
-        result = SearchHelper.spot_simmilar_search (begin @user.id rescue nil end), @search_text, @country_name, @location_name
+        result = SearchHelper.spot_simmilar_search (begin @user.id rescue nil end), @search_text, @lat, @long, @zoom
     
         else
           result = []

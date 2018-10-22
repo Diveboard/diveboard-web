@@ -44,10 +44,9 @@
           </label>
           </td>
           <td>
-          <input id="spot-location" type="text" class="wizard_input_100 wizard_big_input" value="<%= @dive.spot.location.name%>"/>
-          <dic style="position:relative;">
-          <input id="xp_p1_search" title="Enter a destination" class="example" style="position:static;">
-          <input id="xp_p1_search_button" type="image" src="/img/explore/visor_icon.png" width="19px" height="19px" style="position:static;">
+          <div style="position:static;">
+          <input id="xp_p1_search" title="Enter a destination" class="example" style="position:absolute;">
+          <input id="xp_p1_search_button" type="image" src="/img/explore/visor_icon.png" width="19px" height="19px" style="position:absolute;">
           <div id="xp_p1_search_result" class="xp_scrollable" style="overflow: hidden; padding: 0px; width: 268px; display: none; position:absolute;"><div class="jspContainer" style="width: 268px; height: 250px;"><div class="jspPane" style="padding: 0px; top: 0px; width: 268px;"><ul id="xp_p1_search_result_list"></ul></div></div></div>
           </div>
           </td>
@@ -60,16 +59,6 @@
           </td>
           <td>
           <input id="spot-name" type="text" class="wizard_input_100 wizard_big_input" value="<%= @dive.spot.name%>"/>
-          </td>
-          </tr>
-          <tr>
-          <td class="wizard_input_label">
-          <label>
-          <%= it("Sea / Lake Name:", scope: ['diveinfo', 'location_editor']) %>
-          </label>
-          </td>
-          <td>
-          <input id="spot-region" type="text" class="wizard_input_100 wizard_big_input" value="<%= if !@dive.spot.nil? && ! @dive.spot.region.nil? then @dive.spot.region.name end%>"/>
           </td>
           </tr>
           <tr>
