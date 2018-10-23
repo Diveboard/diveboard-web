@@ -1053,7 +1053,7 @@ class Spot < ActiveRecord::Base
       #  sanitized_array.push s
       #  next
       #end
-      if self.flag_moderate_private_to_public == true && !self.dives.empty? && self.within_country_bounds
+      if self.flag_moderate_private_to_public == true && !self.dives.empty?
         return true
       end
       if !userid.nil? && self.private_user_id == userid && !self.dives.empty?

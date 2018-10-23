@@ -96,61 +96,110 @@ var geocoder;
 //
 //////////////////////////
 
+function check_init_geocoder() {
+  if (!geocoder) {
+      try {
+        geocoder = new google.maps.Geocoder(); //load geocoder only once
+      } catch(e) {}
+    }	
+}
+
 function search_something(text) {
   if (text == '') {
     $("#xp_p1_search_result ul").html('');
     $("#xp_p1_search_result").hide();
     return;
   }
-
-  geocoder.geocode(
-      {'address': text},
-      function(results, status) {
-        //Remove the request from the pool and revert the icon if necessary
-        for (var i in G_search_search_ajax_requests)
-          if (G_search_search_ajax_requests[i] == "geocoding request")
-            G_search_search_ajax_requests.splice(i,1);
-        if (G_search_search_ajax_requests.length == 0)
-          $("#search_text_button").attr("src", "/img/black_search_btn.png");
-
-        if (status == google.maps.GeocoderStatus.OK) {
-          var image_url = "/img/world_icon.png";
-          $("#xp_p1_search_result").show();
-          $("#xp_p1_search_result ul").html('');
-          for (var i in results)
-          {
-            //todo put the append outside of the for loop
-            $("#xp_p1_search_result ul").append(
-              $('<li class="xp_p1_search_result"><div class="xp_p1_search_result_letter"></div>'+
-              '<div class="xp_p1_search_result_right"><span class="xp_p1_search_result_name">'+
-              results[i].formatted_address+'</span><span class="xp_p1_search_result_details"></span></div></li>')
-              .data('xp_formatted_address', results[i].formatted_address)
-              .mousedown((function(result) {return function(ev){
-                ev.preventDefault();
-                $('#xp_p1_search').data('xp_search_result', $(this).data('xp_formatted_address'));
-                $('#xp_p1_search').blur();
-                $("#xp_p1_search_result").hide();
-                goto_search_result(result);
-              }})(results[i]))
-            );
-          }
-
-          //initializeLayout();
-
-        } else {
-          //alert("Geocode was not successful for the following reason: " + status);
-        }
-      }
-    );
+  check_init_geocoder();
+  if (geocoder) {
+	  geocoder.geocode(
+	      {'address': text},
+	      function(results, status) {
+	        //Remove the request from the pool and revert the icon if necessary
+	        for (var i in G_search_search_ajax_requests)
+	          if (G_search_search_ajax_requests[i] == "geocoding request")
+	            G_search_search_ajax_requests.splice(i,1);
+	        if (G_search_search_ajax_requests.length == 0)
+	          $("#search_text_button").attr("src", "/img/black_search_btn.png");
+	
+	        if (status == google.maps.GeocoderStatus.OK) {
+	          var image_url = "/img/world_icon.png";
+	          $("#xp_p1_search_result").show();
+	          $("#xp_p1_search_result ul").html('');
+	          for (var i in results)
+	          {
+	            //todo put the append outside of the for loop
+	            $("#xp_p1_search_result ul").append(
+	              $('<li class="xp_p1_search_result"><div class="xp_p1_search_result_letter"></div>'+
+	              '<div class="xp_p1_search_result_right"><span class="xp_p1_search_result_name">'+
+	              results[i].formatted_address+'</span><span class="xp_p1_search_result_details"></span></div></li>')
+	              .data('xp_formatted_address', results[i].formatted_address)
+	              .mousedown((function(result) {return function(ev){
+	                ev.preventDefault();
+	                $('#xp_p1_search').data('xp_search_result', $(this).data('xp_formatted_address'));
+	                $('#xp_p1_search').blur();
+	                $("#xp_p1_search_result").hide();
+	                goto_search_result(result);
+	              }})(results[i]))
+	            );
+	          }
+	
+	          //initializeLayout();
+	
+	        } else {
+	          //alert("Geocode was not successful for the following reason: " + status);
+	        }
+	      }
+	    );
+  	}
 }
 
 function goto_search_result(result) {
-	  var lat = result.geometry.location.lat;
-	  var lng = result.geometry.location.lng;
-	  map.fitBounds(result.geometry.viewport);
-	  //display_content();
-	  update_perma_link();
+  var lat = result.geometry.location.lat;
+  var lng = result.geometry.location.lng;
+  map.fitBounds(result.geometry.viewport);
+  
+  var center = map.getCenter();
+  marker.setMap(map);
+  marker.setPosition(center);
+  $("#spot-lat").val(center.lat());
+  $("#spot-long").val(center.lng());
+  wizard_correct_dive = true;
+  wizard_marker_moved = true;
+  $("#wizardgmaps_placepin").hide();
+  $("#wizardgmaps_removepin").show();
+  $("#spot-zoom").val(map.getZoom());
+}
+
+function reverse_geocode() {
+	check_init_geocoder();
+	if (parseFloat($("#spot-lat").val())!=0 && parseFloat($("#spot-long").val())!=0) {
+	    var latlng = {lat: parseFloat($("#spot-lat").val()), lng: parseFloat($("#spot-long").val())};
+	    if (geocoder) {
+		    geocoder.geocode({'location': latlng}, function(results, status) {
+		      if (status === 'OK') {
+		        if (results[0]) {
+		          results[0].address_components.forEach(function(element) {
+		        	  if (element.types.includes("country")) {
+		        		  $("#spot-country").val(element.long_name);
+		        		  $("#spot-country").attr("shortname", element.short_name);
+		        		  $("#wizard-spot-flag").attr("src","/img/flags/"+element.short_name.toLowerCase()+".gif");
+		        	  }
+		        	  if (element.types.includes("locality")) {
+		        		  $("#spot-location").val(element.long_name);
+		        	  }
+		          });
+		        } else {
+		        	$("#spot-country").val("Unknown");
+		        	$("#spot-location").val("Unknown");
+		        }
+		      } else {
+		        window.alert('Geocoder failed due to: ' + status);
+		      }
+		    });
+	    }
 	}
+}
 
 ///////////////////////////////
 //
@@ -345,7 +394,6 @@ function set_wizard_bindings(){
   $(".delete_dive").click(delete_dive);
 
 //SEARCH LOCATION
-  geocoder = new google.maps.Geocoder();
   //2 behaviours for people who want to click on the icon instead of the list...
   $('#xp_p1_search_button').click(function(ev) {
     if ($("#xp_p1_search_result ul li:visible").length == 1) {
@@ -532,14 +580,16 @@ function set_wizard_bindings(){
     $('#wizard_search_spot').hide();
     $("#wizard_spot_modspot, #wizard_spot_remove").hide();
     $("#wizard_spot_creaspot, #wizard_spot_reset").hide();
-    $("#wizard_spot_confirm, #wizard_spot_cancel").css("display", "inline-block");
+    $("#xp_p1_search, #xp_p1_search_button").show();
+    $("#wizard_spot_confirm, #wizard_spot_cancel, #wizard_spot_search").css("display", "inline-block");
   });
   $("#wizard_spot_modspot").click(function(){
     wizard_spot_make_changeable(true);
     $('#wizard_search_spot').hide();
     $("#wizard_spot_modspot, #wizard_spot_remove").hide();
     $("#wizard_spot_creaspot, #wizard_spot_reset").hide();
-    $("#wizard_spot_confirm, #wizard_spot_cancel").css("display", "inline-block");
+    $("#xp_p1_search, #xp_p1_search_button").show();
+    $("#wizard_spot_confirm, #wizard_spot_cancel, #wizard_spot_search").css("display", "inline-block");
   });
   $('#wizard_spot_remove').click(function(){
     select_spot(1);
@@ -556,11 +606,13 @@ function set_wizard_bindings(){
     $("#wizard_simmilar_spots_label").show();
     $("#wizard_simmilar_spots").html("");
     $("#wizard_simmilar_spots").hide();
+    $("#xp_p1_search, #xp_p1_search_button").hide();
 	wizard_gmaps_simmilar_highlightspotclear();
 	wizard_gmaps_clear_simmilar_spots();
+	$("#spot-zoom").val(map.getZoom());
     $.ajax({
         url: '/api/search/simmilarspot',
-        data: {n: $("#spot-name").val(), c:$("#spot-country").val(), lat:$("#spot-lat").val(), long:$("#spot-long").val(), z:$("#spot-zoom").val()},
+        data: {n: $("#spot-name").val(), lat:$("#spot-lat").val(), long:$("#spot-long").val(), z:$("#spot-zoom").val()},
         success: function(data){
         	$("#wizard_simmilar_spots_loader").hide();
         	spots = $.map(data.data, function(item){return {label: item.name , value: item.name, id: item.id, lat: item.data.lat, lng: item.data.lng } })
@@ -595,7 +647,7 @@ function set_wizard_bindings(){
 	      $("#wizard_spot_reset").hide();
 	    else
 	      $("#wizard_spot_reset").css("display", "inline-block");
-	    $("#wizard_spot_confirm, #wizard_spot_cancel, #wizard_spot_search, #wizard_simmilar_spots_label").hide();
+	    $("#wizard_spot_confirm, #wizard_spot_cancel, #wizard_spot_search, #wizard_simmilar_spots_label, #wizard_simmilar_spots").hide();
     }
   });
   $('#wizard_spot_cancel').click(function(){
@@ -603,6 +655,7 @@ function set_wizard_bindings(){
     $("#wizard_simmilar_spots_label").hide();
     $("#wizard_simmilar_spots").hide();
     $("#wizard_simmilar_locations").hide();
+    $("#xp_p1_search, #xp_p1_search_button").hide();
     wizard_gmaps_clear_simmilar_spots();
   });
 
@@ -629,10 +682,6 @@ function set_wizard_bindings(){
       $("#wizardgmaps_removepin").hide();
   });
 
-  $("#spot-location").change(function(){update_gmaps_from_wizard_edit(true);});
-  $("#spot-name").change(function(){update_gmaps_from_wizard_edit(true);});
-  $("#spot-region").change(function(){update_gmaps_from_wizard_edit(false);});
-  $("#spot-country").change(function(){update_gmaps_from_wizard_edit(true);});
   $("#spot-lat").change(function(){update_gmaps_from_wizard_edit(false);});
   $("#spot-long").change(function(){update_gmaps_from_wizard_edit(false);});
 
@@ -1633,7 +1682,7 @@ function select_spot(spotid){
 
 
   wizard_spot_make_changeable(false);
-
+  
   if (spotid == 1) {
     $('#wizard_search_spot').show();
     $("#wzgmapcontainer").hide();
@@ -1647,7 +1696,7 @@ function select_spot(spotid){
     $("#wizard_spot_modspot, #wizard_spot_remove").css("display", "inline-block");
   }
   $("#wizard_spot_creaspot").show();
-  $("#wizard_spot_confirm, #wizard_spot_cancel").hide();
+  $("#wizard_spot_confirm, #wizard_spot_cancel, #wizard_spot_search, #wizard_simmilar_spots_label, #wizard_simmilar_spots").hide();
   if (G_dive_spot_id == 1)
     $("#wizard_spot_reset").hide();
   else
@@ -1709,16 +1758,15 @@ function wizard_show_spot_data(spot_id){
   $("#spotsearch").val("");
 
   //Set the values of the form
-  $("#spot-location").val(G_wizard_spot_data[spot_id]["location"] || "");
+  //$("#spot-location").val(G_wizard_spot_data[spot_id]["location"] || "");
   $("#spot-name").val(G_wizard_spot_data[spot_id]["name"] || "");
-  $("#spot-region").val(G_wizard_spot_data[spot_id]["region"] || "");
   $("#spot-lat").val(G_wizard_spot_data[spot_id]["lat"] || 0.0);
   $("#spot-long").val(G_wizard_spot_data[spot_id]["long"] || 0.0);
   $("#spot-zoom").val(G_wizard_spot_data[spot_id]["zoom"] || 1);
   //Country needs some more treatment
-  $("#spot-country").val(country_name_from_code(G_wizard_spot_data[spot_id]["country_code"]));
-  $("#wizard-spot-flag").attr("src","/img/flags/"+G_wizard_spot_data[spot_id]["country_code"].toLowerCase()+".gif");
-  $("#spot-country").attr("shortname", G_wizard_spot_data[spot_id]["country_code"].toLowerCase());
+  //$("#spot-country").val(country_name_from_code(G_wizard_spot_data[spot_id]["country_code"]));
+  //$("#wizard-spot-flag").attr("src","/img/flags/"+G_wizard_spot_data[spot_id]["country_code"].toLowerCase()+".gif");
+  //$("#spot-country").attr("shortname", G_wizard_spot_data[spot_id]["country_code"].toLowerCase());
 
   //Reset javascript variables
   wizard_marker_moved = (spot_id!=1);
@@ -1729,6 +1777,7 @@ function wizard_show_spot_data(spot_id){
     wizard_gmaps_init(false);
   $("#spot-id").val(spot_id);
 
+  reverse_geocode();
   //update the Fish list for the local spot
   update_species_list(Number($("#spot-lat").val()), Number($("#spot-long").val()));
 
@@ -2955,6 +3004,10 @@ function wizard_gmaps_simmilar_spots(lat,lng,spot_id) {
         select_spot(spot_id);
       });
     gmap_markers_simmilar.push(marker_2);
+    //Adjust zoom to make sure marker is in viewport
+    while (!map.getBounds().contains(marker_2.getPosition()) && map.getZoom()>1) {
+    	map.setZoom(map.getZoom()-1);
+    }
   } catch(e){
 	  console.log(e.message);
   }
@@ -3003,75 +3056,26 @@ function update_gmaps_from_wizard_edit(dosearch) {
   if (!wizard_maps_loaded)
     wizard_gmaps_init(true);
 
-  wizard_correct_dive = true;
-  // we DID $.CHANGE sth in the spot data form
-  if (dosearch == true && wizard_marker_moved == false) {
-    //When fields are changed, try to research the proper location
-    var address = $("#spot-country").val()+", "+$("#spot-location").val() + ", " + $("#spot-name").val();
-
-    if (!geocoder) {
-      try {
-        geocoder = new google.maps.Geocoder(); //load geocoder only once
-      } catch(e) {}
-    }
-
-    if (geocoder) {
-      geocoder.geocode(
-        { 'address': address },
-        function(results, status) {
-          if (status == google.maps.GeocoderStatus.OK) {
-            $("#wizardgmaps_placepin").hide();
-            $("#wizardgmaps_removepin").show();
-            map.setCenter(results[0].geometry.location);
-            map.setZoom(7);
-            marker.setMap(map);
-            marker.setPosition(results[0].geometry.location);
-            marker.setDraggable(true);
-            $("#spot-lat").val(results[0].geometry.location.lat());
-            $("#spot-long").val(results[0].geometry.location.lng());
-            $("#spot-zoom").val("8");
-          } else {
-            //alert("Geocode was not successful for the following reason: " + status);
-          }
-        }
-      );
-    }
-  } else {
-    //simply update the map to the input coords
-    var lat = parseFloat($("#spot-lat").val());
-    var lng = parseFloat($("#spot-long").val());
-    if (!isNaN(lat)&&!isNaN(lng)) {
-      $("#wizardgmaps_placepin").hide();
-      $("#wizardgmaps_removepin").show();
-      var latlng = new google.maps.LatLng(lat, lng);
-      marker.setMap(map);
-      marker.setPosition(latlng);
-      map.setZoom(8);
-      map.setCenter(marker.position);
-      update_species_list(Number($("#spot-lat").val()), Number($("#spot-long").val()));
-    }
-    else {
-      $("#wizardgmaps_placepin").show();
-      $("#wizardgmaps_removepin").hide();
-      marker.setMap(null);
-    }
-  }
-}
-
-function show_flag(){
-
-  var code = country_code_from_name($("#spot-country").val());
-    if (code != "")
-    {
-      $("#wizard-spot-flag").attr("src","/img/flags/"+code.toLowerCase()+".gif");
-      $("#spot-country").attr("shortname",code.toLowerCase());
-      $("#spot-country").val(country_name_from_code(code));
-    }
-    else
-    {
-      $("#spot-country").attr("shortname","");
-      $("#wizard-spot-flag").attr("src","/img/flags/blank.gif");
-    }
+  	wizard_correct_dive = true;
+  
+	//simply update the map to the input coords
+	var lat = parseFloat($("#spot-lat").val());
+	var lng = parseFloat($("#spot-long").val());
+	if (!isNaN(lat)&&!isNaN(lng)) {
+	  $("#wizardgmaps_placepin").hide();
+	  $("#wizardgmaps_removepin").show();
+	  var latlng = new google.maps.LatLng(lat, lng);
+	  marker.setMap(map);
+	  marker.setPosition(latlng);
+	  map.setCenter(marker.position);
+	  update_species_list(Number($("#spot-lat").val()), Number($("#spot-long").val()));
+	  reverse_geocode();
+	}
+	else {
+	  $("#wizardgmaps_placepin").show();
+	  $("#wizardgmaps_removepin").hide();
+	  marker.setMap(null);
+	}
 }
 
 var G_wizard_values;
@@ -3098,41 +3102,6 @@ function wizard_reset_ui_controls()
     $("#add_gear_model").example(I18n.t(["js","wizard","Model"]));
     $("#add_gear_manufacturer").autocomplete({source:list_of_manufacturers});
 
-    //Setup country
-    $("#spot-country").removeClass('ui-autocomplete-input');
-    $("#spot-country").addClass('ui-autocomplete-input example');
-
-    $("#spot-country").autocomplete({  source : countries,
-      select: function(event, ui) {
-        //get spot details and show them
-        //selected is ui.item.id
-        $("#wizard-spot-flag").attr("src","/img/flags/"+ui.item.name.toLowerCase()+".gif");
-        $("#spot-country").attr("shortname",ui.item.name.toLowerCase());
-      $( "#spot-location" ).autocomplete( "option", "source","/api/search/location.json?ccode="+$("#spot-country").attr("shortname").toUpperCase());
-      update_gmaps_from_wizard_edit(true);
-      },
-      close: function(event, ui){
-      show_flag();
-      },
-      autoFill:true
-    });
-
-    $("#spot-location").autocomplete({  source : "/api/search/location.json?ccode="+$("#spot-country").attr("shortname").toUpperCase(), minLength: 2,
-      select: function(event, ui) {
-        if ($("#spot-country").attr("shortname") == "blank"){
-          $("#wizard-spot-flag").attr("src","/img/flags/"+ui.item.ccode.toLowerCase()+".gif");
-          $("#spot-country").attr("shortname",ui.item.ccode.toLowerCase());
-          $("#spot-country").val(ui.item.cname);
-          show_flag();
-          $( "#spot-location" ).autocomplete( "option", "source","/api/search/location.json?ccode="+$("#spot-country").attr("shortname").toUpperCase());
-        }
-        update_gmaps_from_wizard_edit(true);
-      }
-    });
-
-    $("#spot-region").autocomplete({  source : "/api/search/region.json", minLength: 2,
-      select: function(event, ui){update_gmaps_from_wizard_edit(true);}
-    });
     $("#diveshop-search").autocomplete({ minLength: 2,
       source: function(request, response){
         $.ajax({

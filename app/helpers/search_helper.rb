@@ -54,8 +54,12 @@ module SearchHelper
   end
 
   def SearchHelper.spot_simmilar_search userid, name, lat, long, zoom, limit=20
-    name = name.gsub(/[^a-zA-Z0-9]/," ").gsub(/\ +/, " ") ##replace messy chars by spaces
-    if name.empty? || name == " " || lat  == 0 || long == 0 || zoom == 0  then return [] end
+    if (name.empty? || name == " ")
+      name = ""
+    else
+      name = name.gsub(/[^a-zA-Z0-9]/," ").gsub(/\ +/, " ") ##replace messy chars by spaces
+    end
+    if lat  == 0 || long == 0 || zoom == 0  then return [] end
   
     found_ids = {}
     sanitized_result = []
@@ -64,28 +68,13 @@ module SearchHelper
     lng = (long * 0.0174532925).to_f
     distance=((SearchHelper.gmaps_meter_per_px lat, long, zoom)*660).round() #Calculate radius distance based on the zoom level
     Rails.logger.debug "Checking spot near #{lat} : #{lng} with zoom #{zoom} (#{distance} m radius)"
-    result = Spot.search name, :geo => [lat, lng], :with => {:geodist => 0.0..distance}, :order => "geodist ASC, weight() DESC", :limit=> limit*100, :match_mode => :extended
+    result = Spot.search name, :geo => [lat, lng], :with => {:geodist => 0.0..distance}, :order => "geodist ASC, weight() DESC", :limit=> limit*10, :match_mode => :extended
+    #resulta = result
     resulta = SearchHelper.sanitize_spot_list(userid, result)
     count = resulta.length
     Rails.logger.debug "Found #{count} spots"
-    return resulta;
     
-    #r = Spot.where((['name LIKE ?'] * keywords.size).join(' OR '), *keywords.map{ |key| "%#{key}%" }).where("country_id in (:countries) and location_id in (:locations)", {:countries => country_list, :locations => location_list}).limit(limit)
-    #result = r.to_a.reject {|s| s.blank? || found_ids[s.id]}
-    #result.each do |s| found_ids[s.id] = true end
-    #sanitized_result += SearchHelper.sanitize_spot_list(userid, result)
-    #sanitized_result.uniq!
-    #complete with research without location
-    #if result.count < limit
-    #  r = Spot.where((['name LIKE ?'] * keywords.size).join(' OR '), *keywords.map{ |key| "%#{key}%" }).where("country_id in (:countries)", {:countries => country_list}).limit(limit)
-    #  result = r.to_a.reject {|s| s.blank? || found_ids[s.id]}
-    #  result.each do |s| found_ids[s.id] = true end
-    #  sanitized_result += SearchHelper.sanitize_spot_list(userid, result)
-    #  sanitized_result.uniq!
-    #end
-    #Rails.logger.debug "found #{result.count} spots" and return sanitized_result[0...limit] if sanitized_result.length > limit
-  
-    #return sanitized_result
+    return resulta;
   end
 
   #search from lat and long given in degrees and a distance around in meters
