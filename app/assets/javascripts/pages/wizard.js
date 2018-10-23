@@ -1758,15 +1758,10 @@ function wizard_show_spot_data(spot_id){
   $("#spotsearch").val("");
 
   //Set the values of the form
-  //$("#spot-location").val(G_wizard_spot_data[spot_id]["location"] || "");
   $("#spot-name").val(G_wizard_spot_data[spot_id]["name"] || "");
   $("#spot-lat").val(G_wizard_spot_data[spot_id]["lat"] || 0.0);
   $("#spot-long").val(G_wizard_spot_data[spot_id]["long"] || 0.0);
   $("#spot-zoom").val(G_wizard_spot_data[spot_id]["zoom"] || 1);
-  //Country needs some more treatment
-  //$("#spot-country").val(country_name_from_code(G_wizard_spot_data[spot_id]["country_code"]));
-  //$("#wizard-spot-flag").attr("src","/img/flags/"+G_wizard_spot_data[spot_id]["country_code"].toLowerCase()+".gif");
-  //$("#spot-country").attr("shortname", G_wizard_spot_data[spot_id]["country_code"].toLowerCase());
 
   //Reset javascript variables
   wizard_marker_moved = (spot_id!=1);
@@ -1774,10 +1769,12 @@ function wizard_show_spot_data(spot_id){
 
   //Finalize the display of the form
   if (spot_id != 1)
+  {
     wizard_gmaps_init(false);
+  	reverse_geocode();
+  }
   $("#spot-id").val(spot_id);
 
-  reverse_geocode();
   //update the Fish list for the local spot
   update_species_list(Number($("#spot-lat").val()), Number($("#spot-long").val()));
 
