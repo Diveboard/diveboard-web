@@ -14,7 +14,7 @@ class Location < ActiveRecord::Base
   cattr_accessor :userid  ## this defines the current user context
 
 
-  define_format_api :public => [ :blob, :shaken_id, :name, :permalink, :fullpermalink, :is_public],
+  define_format_api :public => [ :blob, :shaken_id, :name, :name2, :name3, :permalink, :fullpermalink, :is_public],
                     :private => [ ],
                     :search_light => [ {
                       :thumbnail => Proc.new {|p| p.picture.thumbnail rescue nil },
@@ -49,7 +49,7 @@ class Location < ActiveRecord::Base
       if self.id.nil? then
         Rails.logger.debug "trying to dedup Location on name #{self.name}"
         self.name = "" if self.name.nil? # we don't want nil ....
-        old = Location.where(:name => self.name, :country_id => self.country_id).first
+        old = Location.where(:name => self.name, :name2=> self.name2, :name3=> self.name3, :country_id => self.country_id).first
         ##TODO moderate if more than one answer...
         ##TODO Copy other parameters that may have been set...
         if !old.blank? then

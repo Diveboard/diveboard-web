@@ -772,6 +772,8 @@ ActiveRecord::Schema.define(:version => 20150618115053) do
 
   create_table "locations", :force => true do |t|
     t.string   "name"
+    t.string   "name2"
+    t.string   "name3"
     t.integer  "country_id"
     t.datetime "created_at"
     t.datetime "updated_at"
