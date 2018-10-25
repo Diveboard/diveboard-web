@@ -347,7 +347,9 @@ function initialize(params) {
     'mapTypeId': google.maps.MapTypeId.HYBRID
   });
   GP=params;
-  if (params.initial_location.lat_min) {
+  if (params.search_address != "") {
+	  search_something(params.search_address);
+  } else if (params.initial_location.lat_min) {
     var sw = new google.maps.LatLng(params.initial_location.lat_min, params.initial_location.lng_min);
     var ne = new google.maps.LatLng(params.initial_location.lat_max, params.initial_location.lng_max);
     map.panToBounds(new google.maps.LatLngBounds(sw, ne));

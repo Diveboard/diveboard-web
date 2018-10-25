@@ -229,8 +229,6 @@ ga('send', 'pageview');
           <%else%>
             <% if !@dive.spot.name.empty? then%>
             <%= it("%{owner} %{span:in} %{link:%{spot}}", scope: ['diveinfo', 'divepage'], owner: @owner.nickname, span: It.tag("span", style: "color: #555 ; font-size: 23px"), link: @dive.spot.fullpermalink(:locale) || "#", spot: @dive.spot.name) %>
-            <%elsif !@dive.spot.location.name.empty?%>
-            <%= it("%{owner} %{span:in} %{spot}", scope: ['diveinfo', 'divepage'], owner: @owner.nickname, span: It.tag("span", style: "color: #555 ; font-size: 23px"), spot: @dive.spot.location.name) %>
             <%elsif !@dive.spot.country.cname.empty?%>
             <%= it("%{owner} %{span:in} %{country}", scope: ['diveinfo', 'divepage'], owner: @owner.nickname, span: It.tag("span", style: "color: #555 ; font-size: 23px"), country: @dive.spot.country.cname) %>
             <%end %>
@@ -245,12 +243,8 @@ ga('send', 'pageview');
           <%end%>
         <%end%>
         <%if @dive.spot.location_id != 1 then%><a href="<%=@dive.spot.location.fullpermalink(:locale)%>"><%= @dive.spot.location.name%></a><%end%>
-        <% if !@dive.spot.region_id.nil? && @dive.spot.region_id != 1 && @dive.spot.country_id != nil && @dive.spot.country_id != 1 then%>
-          <% geonames_country=GeonamesCountries.where("ISO like ?",@dive.spot.country.ccode).first %>
-          <%if !geonames_country.nil?%>
-          <a href="/area/<%=geonames_country.name.to_url%>-<%=geonames_country.shaken_id %>/<%= @dive.spot.region.name.to_url %>-<%= @dive.spot.region.shaken_id %>"><%= @dive.spot.region.name%></a>
-          <%end%>
-        <%end%>
+        <%if @dive.spot.location_id != 1 then%><%if !@dive.spot.location.name2.nil? then%><a href="/explore?search_address=<%=CGI.escapeHTML(@dive.spot.location.name2)%>"><%= @dive.spot.location.name2%></a><%end%><%end%>
+        <%if @dive.spot.location_id != 1 then%><%if !@dive.spot.location.name3.nil? then%><a href="/explore?search_address=<%=CGI.escapeHTML(@dive.spot.location.name3)%>"><%= @dive.spot.location.name3%></a><%end%><%end%>
         &nbsp;
       </li>
     </ul></div></div>
