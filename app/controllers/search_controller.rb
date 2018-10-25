@@ -125,7 +125,9 @@ class SearchController < ApplicationController
       initial_location = {"latitude" => 21.125169323467198, "longitude" => -77.09304003906254, 'zoom' => 7}
     end
 
-    render :locals => {:initial_location => initial_location, :panel2 => panel2, :search_address => search_address}
+    @gmapskey = GOOGLE_MAPS_API
+    
+    render :locals => {:initial_location => initial_location, :panel2 => panel2}
   end
 
   def explore_missing_asset
