@@ -2427,6 +2427,7 @@ function search_immediately_something(text) {
           var image_url = "/img/world_icon.png";
           if (results.length>0) {
         	  i = results[0];
+        	  $('#xp_p1_search').val(text);
         	  $('#xp_p1_search').data('xp_search_result', $(this).data('xp_formatted_address'));
               $('#xp_p1_search').blur();
               $("#xp_p1_search_result").hide();

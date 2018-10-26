@@ -48,6 +48,10 @@ class Country < ActiveRecord::Base
     alt = Media.select_value_sanitized "select a.name from geonames_countries c, geonames_alternate_names a where c.ISO=:iso and a.geoname_id = c.geonames_id and a.language=:lang order by preferred DESC", iso: self.ccode.upcase, lang: I18n.locale
     alt || read_attribute(:cname)
   end
+  
+  def raw_name
+    return read_attribute(:cname)
+  end
 
   def name
     self.cname
