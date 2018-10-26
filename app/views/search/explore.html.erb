@@ -14,7 +14,8 @@ $(document).ready(function(){
     root_url: "<%=ROOT_URL%>",
     locale_root_url: "<%=root_url%>",
     maxZoomLevel: 15,
-    initial_location: <%=initial_location.to_json.html_safe%>
+    initial_location: <%=initial_location.to_json.html_safe%>,
+    search_address: "<%=escape_javascript search_address%>"
   });
 });
 
