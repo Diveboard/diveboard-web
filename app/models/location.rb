@@ -47,7 +47,7 @@ class Location < ActiveRecord::Base
   def create
     begin
       if self.id.nil? then
-        Rails.logger.debug "trying to dedup Location on name #{self.name}"
+        Rails.logger.debug "trying to dedup Location on names #{self.name},#{self.name2},#{self.name3}"
         self.name = "" if self.name.nil? # we don't want nil ....
         old = Location.where(:name => self.name, :name2=> self.name2, :name3=> self.name3, :country_id => self.country_id).first
         ##TODO moderate if more than one answer...
@@ -69,6 +69,25 @@ class Location < ActiveRecord::Base
 
   def is_public
     true
+  end
+  
+  def full_name
+    ret = ""
+    if !name.blank?
+      ret += name
+    end
+    if !name2.blank?
+      if ret.length > 0
+        ret += ","
+      end
+      ret += name2
+    end
+    if !name3.blank?
+      if ret.length > 0
+        ret += ","
+      end
+      ret += name3
+    end
   end
 
   def wiki userid=nil
