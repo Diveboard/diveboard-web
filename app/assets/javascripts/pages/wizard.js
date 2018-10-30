@@ -159,9 +159,8 @@ function goto_search_result(result) {
   var lng = result.geometry.location.lng;
   map.fitBounds(result.geometry.viewport);
   
-  var latlng = new google.maps.LatLng(lat, lng);
   marker.setMap(map);
-  marker.setPosition(latlng);
+  marker.setPosition(result.geometry.location);
   $("#spot-lat").val(lat);
   $("#spot-long").val(lng);
   wizard_correct_dive = true;
