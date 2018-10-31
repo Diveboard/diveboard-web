@@ -654,15 +654,18 @@ function set_wizard_bindings(){
     select_spot(1);
     $("#spot-lat").val("");
     $("#spot-long").val("");
+    $("#spot-location-1").val("");
+    $("#spot-location-2").val("");
+    $("#spot-location-3").val("");
     wizard_spot_make_changeable(true);
     map.setCenter(new google.maps.LatLng(0,0));
     map.setZoom(1);
     marker.setMap(null);
     $('#wizard_search_spot').hide();
-    $("#wizard_spot_modspot, #wizard_spot_remove").hide();
+    $("#wizard_spot_modspot, #wizard_spot_remove, #wizard_spot_confirm").hide();
     $("#wizard_spot_creaspot, #wizard_spot_reset").hide();
     $("#xp_p1_search, #xp_p1_search_button").show();
-    $("#wizard_spot_confirm, #wizard_spot_cancel, #wizard_spot_search").css("display", "inline-block");
+    $("#wizard_spot_cancel, #wizard_spot_search").css("display", "inline-block");
   });
   $("#wizard_spot_modspot").click(function(){
     wizard_spot_make_changeable(true);
@@ -688,6 +691,7 @@ function set_wizard_bindings(){
     $("#wizard_simmilar_spots").html("");
     $("#wizard_simmilar_spots").hide();
     $("#xp_p1_search, #xp_p1_search_button").hide();
+    $("#wizard_spot_confirm").show();
 	wizard_gmaps_simmilar_highlightspotclear();
 	wizard_gmaps_clear_simmilar_spots();
 	$("#spot-zoom").val(map.getZoom());
@@ -1844,6 +1848,9 @@ function wizard_show_spot_data(spot_id){
 
   //Set the values of the form
   $("#spot-name").val(G_wizard_spot_data[spot_id]["name"] || "");
+  $("#spot-location-1").val(G_wizard_spot_data[spot_id]["location1"] || "");
+  $("#spot-location-2").val(G_wizard_spot_data[spot_id]["location2"] || "");
+  $("#spot-location-3").val(G_wizard_spot_data[spot_id]["location3"] || "");
   $("#spot-lat").val(G_wizard_spot_data[spot_id]["lat"] || 0.0);
   $("#spot-long").val(G_wizard_spot_data[spot_id]["long"] || 0.0);
   $("#spot-zoom").val(G_wizard_spot_data[spot_id]["zoom"] || 1);
