@@ -34,7 +34,6 @@ class Spot < ActiveRecord::Base
   has_many :users, :through => :dives, :uniq => true
   belongs_to :country
   belongs_to :location
-  belongs_to :region
   belongs_to :wiki
   has_many :shops, :through => :dives, :uniq => true
 
@@ -45,7 +44,7 @@ class Spot < ActiveRecord::Base
   validates :name, :exclusion => { :in => [nil], :message => "name cannot be nil"}
 
   #before_validation :enforce_case
-  before_save :enforce_case, :check_country_bounds_if_needed, :check_country_and_region
+  before_save :enforce_case, :check_country_bounds_if_needed, :check_country
   before_create :mark_to_moderate
   after_save :update_habtm    #, :cache_static_map ## not sure it's a good idea...
 
@@ -55,7 +54,7 @@ class Spot < ActiveRecord::Base
 
   define_format_api :public => [
         :id, :shaken_id, :country_name, :country_code, :country_flag_big, :country_flag_small,
-        :within_country_bounds, :region_name, :location_name, :permalink, :fullpermalink, :permalink,
+        :within_country_bounds, :location_name, :permalink, :fullpermalink, :permalink,
         :staticmap,
         {
           :name => Proc.new {|s| s.name.titleize},
@@ -79,29 +78,28 @@ class Spot < ActiveRecord::Base
           :shop_ids => Proc.new {|p| p.shop_ids.reject &:nil?},
           :countryblob => Proc.new do |s|  begin if s.country.id == 1 then nil else s.country.blob end rescue nil end end,
           :locationblob => Proc.new do |s|  begin if s.location.id == 1 then nil else s.location.blob end rescue nil end end,
-          :regionblob => Proc.new do |s|  begin if s.region.id == 1 then nil else s.region.blob end rescue nil end end
         }],
       :search_full => [ :flag_moderate_private_to_public, :wiki_html, {
                       :has_wiki_content => Proc.new {|p| p.wiki.nil?},
                       :best_pics => Proc.new {|p| p.best_pics.to_api :public}
                     }],
       :search_full_server => [
-        :average_current, :average_depth, :average_temp_bottom, :average_temp_surface, :average_visibility, :country_flag_small, :country_name, :dive_count, :id, :lat, :lng, :location_name, :permalink, :region_name, :shaken_id, :user_count,
+        :average_current, :average_depth, :average_temp_bottom, :average_temp_surface, :average_visibility, :country_flag_small, :country_name, :dive_count, :id, :lat, :lng, :location_name, :permalink, :shaken_id, :user_count,
         {
           :shops => lambda {|s| s.shops.joins(:user_proxy).where('users.id is not null').limit(20).map {|shop| shop.to_api :search_full_server_l2}},
           :users => lambda {|s| s.users[0..20].map {|u| u.to_api :search_full_server_l1}},
           :dives => lambda {|s| (s.dives.reject do |d| d.privacy==1 end )[0..20].map {|d| d.to_api :search_full_server_l1}},
           :pictures => lambda {|s| s.pictures[0..20].map {|d| d.to_api :public}}
         }],
-      :search_full_server_l1 => [:country_flag_small, :country_name, :id, :lat, :lng, :location_name, :name, :region_name],
+      :search_full_server_l1 => [:country_flag_small, :country_name, :id, :lat, :lng, :location_name, :name,],
       :search_full_server_l2 => [:id, :name ],
-      :moderation => [:country_id, :location_id, :region_id, :moderate_id, :private_user_id, :verified_user_id, :verified_date, :created_at, :updated_at, :zoom, :description, :staticmap]
+      :moderation => [:country_id, :location_id, :moderate_id, :private_user_id, :verified_user_id, :verified_date, :created_at, :updated_at, :zoom, :description, :staticmap]
 
   define_api_includes :private => [:public], :mobile => [:public], :search_light => [:public], :search_full => [:public], :moderation => [:public, :search_light, :search_full], :search_full => [:search_light]
   define_api_private_attributes :private_user_id, :verified_user_id, :verified_date
 
   define_api_updatable_attributes %w( name country_id country_name country_code lat lng long zoom moderate_id)
-  define_api_updatable_attributes_rec 'location' => Location, 'region' => Region
+  define_api_updatable_attributes_rec 'location' => Location
 
 
   def is_private_for?(options={})
@@ -136,7 +134,6 @@ class Spot < ActiveRecord::Base
           :private_user_id => nil,
           :zoom => self.zoom,
           :location_id => self.location_id,
-          :region_id => self.region_id
           ).where(
           "spots.lat between #{self.lat.to_f-epsilon} and #{self.lat.to_f+epsilon}"
           ).where(
@@ -150,7 +147,6 @@ class Spot < ActiveRecord::Base
           :private_user_id => themaker_id,
           :zoom => self.zoom,
           :location_id => self.location_id,
-          :region_id => self.region_id
           ).where(
           "spots.lat between #{self.lat.to_f-epsilon} and #{self.lat.to_f+epsilon}"
           ).where(
@@ -226,8 +222,7 @@ class Spot < ActiveRecord::Base
     o = JSON.parse(self.to_json)
     ## adding extra data
     o["extra"]={}
-    o["extra"]["region_name"] = self.region.name unless self.region.nil?
-    o["extra"]["location_name"] = self.location.name unless self.location.nil?
+    o["extra"]["location_name"] = self.location.full_name unless self.location.nil?
     o["extra"]["country_name"] = self.country.cname unless self.country.nil?
     o["extra"]["dives"] = self.dives.map{|r| r.id} unless self.dives.empty?
 
@@ -305,8 +300,6 @@ class Spot < ActiveRecord::Base
 
   def update_habtm
     ## this updated the habtm for a given spot
-    self.location.regions << self.region unless self.region.nil? || self.location.nil?
-    self.country.regions << self.region unless self.region.nil? || self.country.nil?
     self.country.locations << self.location unless self.location.nil? || self.country.nil?
   end
 
@@ -320,7 +313,7 @@ class Spot < ActiveRecord::Base
     list_coma = (place || site).downcase.split(/ *, */)
     Rails.logger.debug list_coma
     country_found = Country.where("lower(cname) in (:cname)", {:cname => list_coma})
-    location_found = Location.where("lower(name) in (:name)", {:name => list_coma})
+    location_found = Location.where("lower(name) in (:name) or lower(name2) in (:name) or lower(name3) in (:name2)", {:name => list_coma})
 
     Rails.logger.debug "Name analysed : #{list_coma}"
     Rails.logger.debug "Found : #{spot_found.count} Spots, #{country_found.count} countries, #{location_found.count} locations"
@@ -424,8 +417,8 @@ class Spot < ActiveRecord::Base
         spot_lat = 0
         spot_lng = 0
 
-        Rails.logger.debug ":name => #{spot_name}, :lat => #{spot_lat}, :long => #{spot_lng}, :zoom => #{0}, :precise => #{false}, :location_id => #{new_location.id}, :region_id => nil, :country_id => #{new_country.id}, :private_user_id => #{user_id}, :flag_moderate_private_to_public => true)"
-        new_spot = Spot.create( :name => spot_name, :lat => spot_lat, :long => spot_lng, :zoom => 0, :precise => false, :location_id => new_location.id, :region_id => nil, :country_id => new_country.id, :private_user_id => user_id, :flag_moderate_private_to_public => true, :from_bulk => true)
+        Rails.logger.debug ":name => #{spot_name}, :lat => #{spot_lat}, :long => #{spot_lng}, :zoom => #{0}, :precise => #{false}, :location_id => #{new_location.id}, :country_id => #{new_country.id}, :private_user_id => #{user_id}, :flag_moderate_private_to_public => true)"
+        new_spot = Spot.create( :name => spot_name, :lat => spot_lat, :long => spot_lng, :zoom => 0, :precise => false, :location_id => new_location.id, :country_id => new_country.id, :private_user_id => user_id, :flag_moderate_private_to_public => true, :from_bulk => true)
         new_spot.save if new_spot.id.nil? || new_spot.changed? || new_spot.new_record?
         new_spot.fetch_rough_coords_from_google!
       }
@@ -568,7 +561,6 @@ class Spot < ActiveRecord::Base
     s -= 10 if self.name.blank?
     s -= 5 if self.country.nil? || self.country.name.blank?
     s -= 5 if self.location.nil? || self.location.name.blank?
-    s -= 3 if self.region.nil? || self.region.name.blank?
     update_attributes :score => s unless s == initial_score
     @computed_score = s
     return s
@@ -598,12 +590,8 @@ class Spot < ActiveRecord::Base
     self.country = Country.where(:ccode => code).first
   end
 
-  def  region_name
-    return self.region.name unless self.region.nil?
-  end
-
   def location_name
-    return self.location.name unless self.location.nil?
+    return self.location.full_name unless self.location.nil?
   end
 
   def staticmap
@@ -1110,11 +1098,6 @@ class Spot < ActiveRecord::Base
 
     address_bis = address ## sometime removing the spot name helps
 
-    if !self.region_id.nil? && !self.region_id != 1
-      address += ", " unless address == ""
-      address += self.region.name
-    end
-
     address += ", " unless address == ""
     address += self.name
 
@@ -1330,12 +1313,11 @@ class Spot < ActiveRecord::Base
   end
 
 
-  def check_country_and_region
+  def check_country
     #closest_spot = Spot.search(:geo => [lat, long],:order => "geodist ASC",:limit=>1).first
     begin
       if self.id == 1
         country_id = 1
-        region_id = 1
         location_id = 1
         return
       end
@@ -1346,14 +1328,8 @@ class Spot < ActiveRecord::Base
     step=0.01
     closest_spot=nil
     until !closest_spot.nil?
-      closest_spot = Spot.where("(lat between ? and ?) and (spots.long between ? and ?) and region_id is not null and country_id is not null and country_id != 1 and region_id != 1",lat-step,lat+step,long-step,long+step).first
+      closest_spot = Spot.where("(lat between ? and ?) and (spots.long between ? and ?) and country_id is not null and country_id != 1",lat-step,lat+step,long-step,long+step).first
       step+=step
-    end
-
-    if region.nil? 
-      self.region = closest_spot.region
-    elsif region != closest_spot.region && ((lat - closest_spot.lat).abs < 4 || (long - closest_spot.long).abs < 4) 
-      mark_to_moderate
     end
 
     if country.nil? || country.id==1

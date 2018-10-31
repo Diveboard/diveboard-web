@@ -76,15 +76,6 @@
       add_path c.permalink, :changefreq => 'weekly', :priority => 0.8
     end
   
-    Region.where("id > 1").each do |c|
-      begin
-        add_path c.permalink, :changefreq => 'weekly', :priority => 0.8
-      rescue
-        
-      end
-      
-    end
-  
     Spot.where("id > 1").find_each do |c|
       return unless c.is_visible_for?(nil)
       add_path c.permalink, :changefreq => 'weekly', :priority => 0.8

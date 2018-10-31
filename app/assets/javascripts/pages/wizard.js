@@ -70,8 +70,9 @@ var G_wizard_spot_data = [];
 var G_dive_fishes_backup = [];
 G_wizard_spot_data[1] =  {
   'location': "",
+  'location2': "",
+  'location3': "",
   'name': "",
-  'region': "",
   'country_code': "BLANK",
   'lat': 0.00,
   'long': 0.00,
@@ -1867,9 +1868,10 @@ function wizard_show_spot_data(spot_id){
 function wizard_compare_spot_data(){
   var spotid = $("#spot-id").val();
   return (
-    $("#spot-location").val() == (  G_wizard_spot_data[spotid]["location"] || "") &&
+    $("#spot-location-1").val() == (  G_wizard_spot_data[spotid]["location1"] || "") &&
+    $("#spot-location-2").val() == (  G_wizard_spot_data[spotid]["location2"] || "") &&
+    $("#spot-location-3").val() == (  G_wizard_spot_data[spotid]["location3"] || "") &&
     $("#spot-name").val() == (G_wizard_spot_data[spotid]["name"]  || "") &&
-    $("#spot-region").val() == (G_wizard_spot_data[spotid]["region"]  || "") &&
     $("#spot-country").attr("shortname") == G_wizard_spot_data[spotid]["country_code"].toLowerCase()  &&
     $("#spot-lat").val() == (G_wizard_spot_data[spotid]["lat"]  || 0) &&
     $("#spot-long").val() == (G_wizard_spot_data[spotid]["long"]  || 0)
@@ -1885,9 +1887,10 @@ function wizard_store_current_spot() {
   var spotid = $("#spot-id").val();
   if (G_wizard_spot_data[spotid] == null) {
     G_wizard_spot_data[spotid] = {};
-    G_wizard_spot_data[spotid]["location"] = $("#spot-location").val() ;
+    G_wizard_spot_data[spotid]["location1"] = $("#spot-location-1").val() ;
+    G_wizard_spot_data[spotid]["location2"] = $("#spot-location-2").val() ;
+    G_wizard_spot_data[spotid]["location3"] = $("#spot-location-3").val() ;
     G_wizard_spot_data[spotid]["name"]  = $("#spot-name").val() ;
-    G_wizard_spot_data[spotid]["region"]  = $("#spot-region").val() ;
     G_wizard_spot_data[spotid]["country_code"] = $("#spot-country").attr("shortname");
     G_wizard_spot_data[spotid]["lat"]  = $("#spot-lat").val() ;
     G_wizard_spot_data[spotid]["long"]  = $("#spot-long").val() ;
@@ -1914,24 +1917,27 @@ coco = resume;
 
     var spotid = $("#spot-id").val();
     $("#country-old").html(G_wizard_spot_data[spotid]["country_code"].toUpperCase());
-    $("#location-old").html(G_wizard_spot_data[spotid]["location"]);
+    $("#location-old-1").html(G_wizard_spot_data[spotid]["location1"]);
+    $("#location-old-2").html(G_wizard_spot_data[spotid]["location2"]);
+    $("#location-old-3").html(G_wizard_spot_data[spotid]["location3"]);
     $("#name-old").html(G_wizard_spot_data[spotid]["name"]);
-    $("#region-old").html(G_wizard_spot_data[spotid]["region"]);
     $("#lat-old").html(G_wizard_spot_data[spotid]["lat"]);
     $("#long-old").html(G_wizard_spot_data[spotid]["long"]);
 
     $("#country-new").html($("#spot-country").attr("shortname").toUpperCase());
-    $("#location-new").html($("#spot-location").val());
+    $("#location-new-1").html($("#spot-location-1").val());
+    $("#location-new-2").html($("#spot-location-2").val());
+    $("#location-new-3").html($("#spot-location-3").val());
     $("#name-new").html($("#spot-name").val());
-    $("#region-new").html($("#spot-region").val());
     $("#lat-new").html(Math.round(10000*$("#spot-lat").val())/10000);
     $("#long-new").html(Math.round(10000*$("#spot-long").val())/10000);
 
     $("#spotchanged-table").removeClass("spotchanged-datachanged");
 
-    if ($("#spot-location").val() != (G_wizard_spot_data[spotid]["location"] || "")) $("#location-new").addClass("spotchanged-datachanged");
+    if ($("#spot-location-1").val() != (G_wizard_spot_data[spotid]["location1"] || "")) $("#location-new-1").addClass("spotchanged-datachanged");
+    if ($("#spot-location-2").val() != (G_wizard_spot_data[spotid]["location2"] || "")) $("#location-new-2").addClass("spotchanged-datachanged");
+    if ($("#spot-location-3").val() != (G_wizard_spot_data[spotid]["location3"] || "")) $("#location-new-3").addClass("spotchanged-datachanged");
     if ($("#spot-name").val() != (G_wizard_spot_data[spotid]["name"]  || "")) $("#name-new").addClass("spotchanged-datachanged");
-    if ($("#spot-region").val() != (G_wizard_spot_data[spotid]["region"]  || "")) $("#region-new").addClass("spotchanged-datachanged");
     if ($("#spot-country").attr("shortname") != G_wizard_spot_data[spotid]["country_code"].toLowerCase() ) $("#country-new").addClass("spotchanged-datachanged");
     if ($("#spot-lat").val() != (G_wizard_spot_data[spotid]["lat"]  || "")) $("#lat-new").addClass("spotchanged-datachanged");
     if ($("#spot-long").val() != (G_wizard_spot_data[spotid]["long"]  || "")) $("#long-new").addClass("spotchanged-datachanged");
@@ -1989,9 +1995,10 @@ function wizard_update_or_create_spot(spot_id, as_var){
       //add difference between create and update
       spotid: (spot_id||""),
       diveid: $("#dive-id").val(),
-      location: $("#spot-location").val(),
+      location1: $("#spot-location-1").val(),
+      location2: $("#spot-location-2").val(),
+      location3: $("#spot-location-3").val(),
       country: $("#spot-country").attr("shortname"),
-      region: $("#spot-region").val(),
       name: $("#spot-name").val(),
       lat: $("#spot-lat").val(),
       lng: $("#spot-long").val(),

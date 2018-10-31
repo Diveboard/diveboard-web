@@ -589,15 +589,11 @@ ga('send', 'pageview');
             <% if !@dive.spot.location_id.nil? && @dive.spot.location_id != 1 %>
             <li><strong><%= it("Area:", scope: ['diveinfo', 'divepage']) %></strong> <input type="text" value="<%=@dive.spot.location.fullpermalink(:locale)%>" disabled style="width: 600px;"0></li>
             <%end%>
-            <% if !@dive.spot.region_id.nil? && @dive.spot.region_id != 1 %>
-            <li><strong><%= it("Body of water:", scope: ['diveinfo', 'divepage']) %></strong> <input type="text" value="<%=@dive.spot.region.fullpermalink(:locale)%>" disabled style="width: 600px;"></li>
-            <%end%>
           </ul>
         </div>
         <% if !@user.nil? && @dive.spot_id != 1 then
         does_follow_spot = @user.follow? :spot_id => @dive.spot.id rescue false
         does_follow_location = @user.follow? :location_id => @dive.spot.location.id rescue false
-        does_follow_region = @user.follow? :region_id => @dive.spot.region.id rescue false
         does_follow_country = @user.follow? :country_id => @dive.spot.country.id rescue false
         %>
         <ul id='tab_map_follow'>
@@ -620,17 +616,7 @@ ga('send', 'pageview');
               <span class='text_hover tooltiped'    <%if !does_follow_location then%>style='display:none'<%end%> title='<%= it("Stop being notified when new stuff is added on this spot", scope: ['diveinfo', 'divepage']) %>'><%= it("UN-FOLLOW", scope: ['diveinfo', 'divepage']) %> <span class="symbol">×</span></span>
             </span>
           </a>
-          <br/><%=@dive.spot.location.name%></li>
-          <%end%>
-          <%if !@dive.spot.region.nil? && @dive.spot.region_id != 1 then%>
-          <li><strong><%= it("Body of water:", scope: ['diveinfo', 'divepage']) %></strong> <a href="#" class="follow_link" data-db-follow-what='region_id' data-db-follow-id='<%=@dive.spot.region_id%>' >
-            <span class='text_follow tooltiped'   <%if does_follow_region then%>style='display:none'<%end%> title='<%= it("Be notified when new stuff is logged in this body of water", scope: ['diveinfo', 'divepage']) %>'><%= it("FOLLOW", scope: ['diveinfo', 'divepage']) %> <span class="symbol">+</span></span>
-            <span class='text_unfollow' <%if !does_follow_region then%>style='display:none'<%end%>>
-              <span class='text_nohover' <%if !does_follow_region then%>style='display:none'<%end%>><%= it("FOLLOWING", scope: ['diveinfo', 'divepage']) %> <span class="symbol">.</span></span>
-              <span class='text_hover tooltiped'    <%if !does_follow_region then%>style='display:none'<%end%> title='<%= it("Stop being notified when new stuff is added on this spot", scope: ['diveinfo', 'divepage']) %>'><%= it("UN-FOLLOW", scope: ['diveinfo', 'divepage']) %> <span class="symbol">×</span></span>
-            </span>
-          </a>
-          <br/><%=@dive.spot.region.name%></li>
+          <br/><%=@dive.spot.location.full_name%></li>
           <%end%>
           <%if !@dive.spot.country.nil? && @dive.spot.country_id != 1 then%>
           <li><strong><%= it("Country:", scope: ['diveinfo', 'divepage']) %></strong> <a href="#" class="follow_link" data-db-follow-what='country_id' data-db-follow-id='<%=@dive.spot.country_id%>' >

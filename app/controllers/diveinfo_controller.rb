@@ -136,7 +136,7 @@ class DiveinfoController < ApplicationController
       dive.auto_number
       dive.save
       ret = update_dive(dive, params, owner)
-      Activity.create(:tag => 'add_dive', :user_id => owner.id, :dive_id => dive.id, :spot_id => dive.spot_id, :location_id => dive.spot.location_id, :region_id => dive.spot.region_id, :country_id => dive.spot.country_id ) rescue logger.warn "Activity not saved for add_dive #{dive.id}"
+      Activity.create(:tag => 'add_dive', :user_id => owner.id, :dive_id => dive.id, :spot_id => dive.spot_id, :location_id => dive.spot.location_id, :country_id => dive.spot.country_id ) rescue logger.warn "Activity not saved for add_dive #{dive.id}"
       render ret
     rescue
       render api_exception $!, 'Could not update dive - 500'
@@ -545,7 +545,7 @@ class DiveinfoController < ApplicationController
                     new_dive.save
                     export.toDiveDB(dive_id.to_i, new_dive) unless begin dive["sample"].count <= 1 rescue false end
 
-                    Activity.create(:tag => 'add_dive', :user_id => user.id, :dive_id => new_dive.id, :spot_id => new_dive.spot_id, :location_id => new_dive.spot.location_id, :region_id => new_dive.spot.region_id, :country_id => new_dive.spot.country_id ) rescue logger.warn "Activity not saved for add_dive #{new_dive.id}"
+                    Activity.create(:tag => 'add_dive', :user_id => user.id, :dive_id => new_dive.id, :spot_id => new_dive.spot_id, :location_id => new_dive.spot.location_id, :country_id => new_dive.spot.country_id ) rescue logger.warn "Activity not saved for add_dive #{new_dive.id}"
 
 
                   when "do_nothing"
@@ -1595,7 +1595,7 @@ class DiveinfoController < ApplicationController
         update_errors.push "The pictures have not been updated : you have reached your allowed quota.\n"
       else
         (all_pictures-dive.pictures).each do |picture|
-          Activity.create(:tag => 'add_picture', :user_id => user.id, :dive_id => dive.id, :spot_id => dive.spot_id, :picture_id => picture.id, :location_id => dive.spot.location_id, :region_id => dive.spot.region_id, :country_id => dive.spot.country_id ) rescue logger.warn "Activity not saved for add_picture #{picture.id}"
+          Activity.create(:tag => 'add_picture', :user_id => user.id, :dive_id => dive.id, :spot_id => dive.spot_id, :picture_id => picture.id, :location_id => dive.spot.location_id, :country_id => dive.spot.country_id ) rescue logger.warn "Activity not saved for add_picture #{picture.id}"
         end
 
         dive.pictures = all_pictures

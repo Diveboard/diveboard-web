@@ -103,10 +103,11 @@
   <p class='dialog-text-highlight'><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><%= it("Do you confirm that the details you updated refer to the same initial dive spot?", scope: ['diveinfo', 'location_editor']) %></p>
   <table id=spotchanged-table >
   <tr class='row1'><td></td><th><%= it("Initial spot data", scope: ['diveinfo', 'location_editor']) %></th><th><%= it("Your changes", scope: ['diveinfo', 'location_editor']) %></th></tr>
-  <tr><td class=col1><%= it("Country", scope: ['diveinfo', 'location_editor']) %></td><td id=country-old ></td><td id=country-new ></td></tr>
-  <tr><td class=col1><%= it("Location", scope: ['diveinfo', 'location_editor']) %></td><td id=location-old ></td><td id=location-new ></td></tr>
+  <tr><td class=col1><%= it("Country", scope: ['diveinfo', 'location_editor']) %></td><td id="country-old" ></td><td id="country-new" ></td></tr>
+  <tr><td class=col1><%= it("Location", scope: ['diveinfo', 'location_editor']) %></td><td id="location-old-1" ></td><td id="location-new-1" ></td></tr>
+  <tr><td></td><td id="location-old-2" ></td><td id="location-new-2" ></td></tr>
+  <tr><td></td><td id="location-old-3" ></td><td id="location-new-3" ></td></tr>
   <tr><td class=col1><%= it("Name", scope: ['diveinfo', 'location_editor']) %></td><td id=name-old ></td><td id=name-new ></td></tr>
-  <tr><td class=col1><%= it("Sea / Lake Name", scope: ['diveinfo', 'location_editor']) %></td><td id=region-old ></td><td id=region-new ></td></tr>
   <tr><td class=col1><%= it("Latitude", scope: ['diveinfo', 'location_editor']) %></td><td id=lat-old ></td><td id=lat-new ></td></tr>
   <tr><td class=col1><%= it("Longitude", scope: ['diveinfo', 'location_editor']) %></td><td id=long-old ></td><td id=long-new ></td></tr>
   </table>

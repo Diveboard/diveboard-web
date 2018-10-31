@@ -248,7 +248,6 @@ function wait_until_bg_finished(id, callback)
               <td><a href='/admin/mod_spot/<%=spot.id%>' target='_blank'><%=spot.id%></a></td>
               <td><%=spot.name%></td>
               <td><%=spot.country.cname%></td>
-              <td><%=spot.region.name rescue '<i>not available</i>'.html_safe%></td>
               <td><%=spot.location.name rescue '<i>not available</i>'.html_safe%></td>
               <td><a href='http://maps.google.com.au/maps?q=<%=spot.lat%>,<%=spot.lng%>&amp;t=k' target='_blank'><%=spot.lat%></a></td>
               <td><a href='http://maps.google.com.au/maps?q=<%=spot.lat%>,<%=spot.lng%>&amp;t=k' target='_blank'><%=spot.lng%></a></td>

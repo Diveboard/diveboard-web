@@ -598,6 +598,8 @@ class AdminController < ApplicationController
       errors =[]
       begin
         name = params[:name]
+        name2 = params[:name2]
+        name3 = params[:name3]
         raise DBArgumentError.new "Name can't be empty" if name.blank?
         ccode = params[:country_code]
         raise DBArgumentError.new "Name can't be empty" if ccode.blank?
@@ -609,6 +611,8 @@ class AdminController < ApplicationController
         ##create a new location
         new_location = Location.create {|c|
           c.name = name
+          c.name2 = name2
+          c.name3 = name3
           c.country_id = country.id
           ## TODO handle wiki
         }

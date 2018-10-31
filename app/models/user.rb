@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
   has_many :dives, :class_name => 'Dive'
   has_many :blog_posts
   alias :dive_ids :dife_ids
-  has_many :public_dives, :class_name => 'Dive', :conditions => ['privacy = ?', 0], :include => [:spot=>[:region, :location, :country]]
+  has_many :public_dives, :class_name => 'Dive', :conditions => ['privacy = ?', 0], :include => [:spot=>[:location, :country]]
   # AND spots.flag_moderate_private_to_public IS NULL ????
   alias :public_dive_ids :public_dife_ids
   has_many :spots, :through => :dives
@@ -610,7 +610,7 @@ class User < ActiveRecord::Base
   end
 
   def ordered_dives
-    Dive.unscoped.joins("left join dives d2 on dives.trip_id = d2.trip_id and dives.user_id = d2.user_id").where(:user_id => self.id).group('dives.id').order('ifnull(max(d2.time_in), dives.time_in) DESC, dives.trip_id, dives.time_in DESC').includes([:user, :trip, :spot => [:country, :location, :region]])
+    Dive.unscoped.joins("left join dives d2 on dives.trip_id = d2.trip_id and dives.user_id = d2.user_id").where(:user_id => self.id).group('dives.id').order('ifnull(max(d2.time_in), dives.time_in) DESC, dives.trip_id, dives.time_in DESC').includes([:user, :trip, :spot => [:country, :location]])
   end
 
   def all_dive_ids
@@ -622,19 +622,19 @@ class User < ActiveRecord::Base
   end
 
   def full_public_dives
-    dives.where("privacy = 0 AND spot_id <> 1").includes([:user, :spot => [:country, :location, :region]])
+    dives.where("privacy = 0 AND spot_id <> 1").includes([:user, :spot => [:country, :location]])
   end
 
   def draft_dives
-    dives.where("spot_id = 1").includes([:user, :spot => [:country, :location, :region]])
+    dives.where("spot_id = 1").includes([:user, :spot => [:country, :location]])
   end
 
   def full_dives
-    dives.where("spot_id <> 1").includes([:user, :spot => [:country, :location, :region]])
+    dives.where("spot_id <> 1").includes([:user, :spot => [:country, :location]])
   end
 
   def favorite_dives
-    dives.where("privacy = 0 AND spot_id <> 1 AND favorite = true").includes([:user, :spot => [:country, :location, :region]])
+    dives.where("privacy = 0 AND spot_id <> 1 AND favorite = true").includes([:user, :spot => [:country, :location]])
   end
 
   def longest_dive
@@ -1096,7 +1096,6 @@ class User < ActiveRecord::Base
         topics.push(Dive.find(f.dive_id))  rescue nil
         topics.push(Spot.find(f.spot_id))  rescue nil
         topics.push(Location.find(f.location_id))  rescue nil
-        topics.push(Region.find(f.region_id))  rescue nil
         topics.push(Country.find(f.country_id))  rescue nil
         topics.push(Shop.find(f.shop_id))  rescue nil
         topics.push(Picture.find(f.picture_id))  rescue nil
@@ -1111,13 +1110,12 @@ class User < ActiveRecord::Base
   def following_excludes
     begin
       topics = []
-      ActivityFollowing.where(:follower_id => self.id).includes([:user, :dive, :spot, :location, :region, :country, :shop, :picture]).each do |f|
+      ActivityFollowing.where(:follower_id => self.id).includes([:user, :dive, :spot, :location, :country, :shop, :picture]).each do |f|
         next unless f.exclude
         topics.push(User.find(f.user_id))  rescue nil
         topics.push(Dive.find(f.user_id))  rescue nil
         topics.push(Spot.find(f.spid_id))  rescue nil
         topics.push(Location.find(f.location_id))  rescue nil
-        topics.push(Region.find(f.region_id))  rescue nil
         topics.push(Country.find(f.country_id))  rescue nil
         topics.push(Shop.find(f.shop_id))  rescue nil
         topics.push(Picture.find(f.picture_id))  rescue nil
