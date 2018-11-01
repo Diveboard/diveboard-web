@@ -770,6 +770,7 @@ function set_wizard_bindings(){
       $("#spot-location-3").val("");
   });
 
+  $("#spot-country").change(function(){update_gmaps_from_wizard_edit(true);});
   $("#spot-lat").change(function(){update_gmaps_from_wizard_edit(false);});
   $("#spot-long").change(function(){update_gmaps_from_wizard_edit(false);});
 
@@ -1855,6 +1856,10 @@ function wizard_show_spot_data(spot_id){
   $("#spot-long").val(G_wizard_spot_data[spot_id]["long"] || 0.0);
   $("#spot-zoom").val(G_wizard_spot_data[spot_id]["zoom"] || 1);
 
+  $("#spot-country").val(country_name_from_code(G_wizard_spot_data[spot_id]["country_code"]));
+  $("#wizard-spot-flag").attr("src","/img/flags/"+G_wizard_spot_data[spot_id]["country_code"].toLowerCase()+".gif");
+  $("#spot-country").attr("shortname", G_wizard_spot_data[spot_id]["country_code"].toLowerCase());
+  
   //Reset javascript variables
   wizard_marker_moved = (spot_id!=1);
   wizard_no_spot_on_map = (spot_id==1);
@@ -3196,6 +3201,25 @@ function wizard_reset_ui_controls()
     $("#add_gear_manufacturer").example(I18n.t(["js","wizard","Manufacturer"]));
     $("#add_gear_model").example(I18n.t(["js","wizard","Model"]));
     $("#add_gear_manufacturer").autocomplete({source:list_of_manufacturers});
+ 	
+ 	//Setup country
+    $("#spot-country").removeClass('ui-autocomplete-input');
+    $("#spot-country").addClass('ui-autocomplete-input example');
+
+    $("#spot-country").autocomplete({  source : countries,
+      select: function(event, ui) {
+        //get spot details and show them
+        //selected is ui.item.id
+        $("#wizard-spot-flag").attr("src","/img/flags/"+ui.item.name.toLowerCase()+".gif");
+        $("#spot-country").attr("shortname",ui.item.name.toLowerCase());
+      $( "#spot-location" ).autocomplete( "option", "source","/api/search/location.json?ccode="+$("#spot-country").attr("shortname").toUpperCase());
+      update_gmaps_from_wizard_edit(true);
+      },
+      close: function(event, ui){
+      show_flag();
+      },
+      autoFill:true
+    });
 
     $("#diveshop-search").autocomplete({ minLength: 2,
       source: function(request, response){
