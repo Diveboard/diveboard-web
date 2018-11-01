@@ -1207,7 +1207,6 @@ ActiveRecord::Schema.define(:version => 20150618115053) do
     t.text     "description"
     t.string   "map"
     t.integer  "location_id",                     :default => 1,     :null => false
-    t.integer  "region_id"
     t.integer  "country_id",                      :default => 1,     :null => false
     t.integer  "private_user_id"
     t.boolean  "flag_moderate_private_to_public"
@@ -1225,7 +1224,6 @@ ActiveRecord::Schema.define(:version => 20150618115053) do
   add_index "spots", ["delta"], :name => "index_spots_on_delta"
   add_index "spots", ["lat", "long"], :name => "index_spots_on_lat_and_long"
   add_index "spots", ["location_id"], :name => "index_spots_on_location_id"
-  add_index "spots", ["region_id"], :name => "index_spots_on_region_id"
 
   create_table "stats_sums", :id => false, :force => true do |t|
     t.string   "aggreg"

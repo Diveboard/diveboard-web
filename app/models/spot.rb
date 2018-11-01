@@ -91,7 +91,7 @@ class Spot < ActiveRecord::Base
           :dives => lambda {|s| (s.dives.reject do |d| d.privacy==1 end )[0..20].map {|d| d.to_api :search_full_server_l1}},
           :pictures => lambda {|s| s.pictures[0..20].map {|d| d.to_api :public}}
         }],
-      :search_full_server_l1 => [:country_flag_small, :country_name, :id, :lat, :lng, :location_name, :name,],
+      :search_full_server_l1 => [:country_flag_small, :country_name, :id, :lat, :lng, :location_name, :name],
       :search_full_server_l2 => [:id, :name ],
       :moderation => [:country_id, :location_id, :moderate_id, :private_user_id, :verified_user_id, :verified_date, :created_at, :updated_at, :zoom, :description, :staticmap]
 
@@ -133,7 +133,7 @@ class Spot < ActiveRecord::Base
           :country_id => self.country_id,
           :private_user_id => nil,
           :zoom => self.zoom,
-          :location_id => self.location_id,
+          :location_id => self.location_id
           ).where(
           "spots.lat between #{self.lat.to_f-epsilon} and #{self.lat.to_f+epsilon}"
           ).where(
@@ -146,7 +146,7 @@ class Spot < ActiveRecord::Base
           :country_id => self.country_id,
           :private_user_id => themaker_id,
           :zoom => self.zoom,
-          :location_id => self.location_id,
+          :location_id => self.location_id
           ).where(
           "spots.lat between #{self.lat.to_f-epsilon} and #{self.lat.to_f+epsilon}"
           ).where(
