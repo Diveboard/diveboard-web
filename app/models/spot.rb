@@ -439,7 +439,7 @@ class Spot < ActiveRecord::Base
       if self.country.id > 1 then
         address += " " + self.country.name
       end
-      uri_val = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=#{address}&key=#{GOOGLE_MAPS_API}")
+      uri_val = URI.escape("https://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=#{address}&key=#{GOOGLE_MAPS_API}")
       uri = URI.parse(uri_val)
       logger.debug "Calling google's geoname with URL #{uri_val}"
       http = Net::HTTP.new(uri.host, uri.port)
@@ -1083,122 +1083,126 @@ class Spot < ActiveRecord::Base
 
   end
 
-
-  def google_fix_location
-    logger.debug "Trying to fix location for spot #{self.id}"
-    address = ""
-    if !self.country_id.nil? && !self.country_id != 1
-      address += self.country.cname
-    end
-
-    if !self.location_id.nil? && !self.location_id != 1 && !self.location.name.nil?
-      address += ", " unless address == ""
-      address += self.location.name
-    end
-
-    address_bis = address ## sometime removing the spot name helps
-
-    address += ", " unless address == ""
-    address += self.name
-
-    #we can try splitting this
-    subnames = self.name.split(/\ *,\ */)
-
-
-    new_country = nil
-    new_location = nil
-    new_location_0 = nil
-    new_location_1 = nil
-    new_location_2 = nil
-    new_location_3 = nil
-    spot_lat = nil
-    spot_lng = nil
-    uri_val = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=#{address}&key=#{GOOGLE_MAPS_API}")
-    uri = URI.parse(uri_val)
-    logger.debug "Calling google's geoname with URL #{uri_val}"
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = false
-    request = Net::HTTP::Get.new(uri.path + "?" + uri.query)
-    response = http.request(request)
-    data = response.body
-    results = JSON.parse(data.force_encoding("UTF-8"))
-    if results["results"].length == 0
-      logger.debug " ZERO_RESULTS, trying with address bis"
-      uri_val = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=#{address_bis}&key=#{GOOGLE_MAPS_API}")
+  def google_get_location
+    if !self.lat.nil? and !self.lng.nil? and self.lat != 0 and self.lng != 0 then
+      logger.debug "Trying to get location for spot #{self.id}"
+  
+      new_country = nil
+      new_admin_l1 = nil
+      new_admin_l2 = nil
+      new_admin_l3 = nil
+      new_formatted_address = nil
+      new_locality = nil;
+      new_poi = nil
+  
+      spot_lat = self.lat
+      spot_lng = self.long
+      uri_val = URI.escape("https://maps.googleapis.com/maps/api/geocode/json?sensor=false&key=#{GOOGLE_MAPS_API}&latlng=#{spot_lat},#{spot_lng}")
       uri = URI.parse(uri_val)
       logger.debug "Calling google's geoname with URL #{uri_val}"
       http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = false
+      http.use_ssl = true
       request = Net::HTTP::Get.new(uri.path + "?" + uri.query)
       response = http.request(request)
       data = response.body
       results = JSON.parse(data.force_encoding("UTF-8"))
+      if results["results"].length == 0
+        logger.debug " ZERO_RESULTS, trying with address bis"
+        return
+      end
+      if results["results"].length == 0
+        #nothing to do
+        logger.debug "ZERO_RESULTS, Could not fix spot's position"
+        return
+      end
+  
+      #let's find the country now
+      results["results"].each do |res|
+        res["address_components"].each do |c|
+          if c["types"].include? "country" and new_country.nil?
+            new_country = c["long_name"]
+          end
+          if c["types"].include? "locality" and new_locality.nil?
+            new_locality = c["long_name"]
+          end
+          if c["types"].include? "administrative_area_level_1" and new_admin_l1.nil?
+            new_admin_l1 = c["long_name"]
+          end
+          if c["types"].include? "administrative_area_level_2" and new_admin_l2.nil?
+            new_admin_l2 = c["long_name"]
+          end
+          if c["types"].include? "administrative_area_level_3" and new_admin_l3.nil?
+            new_admin_l3 = c["long_name"]
+          end
+          if (c["types"].include? "park" or c["types"].include? "point_of_interest") and new_poi.nil?
+            new_poi = c["long_name"]
+          end
+        end
+      end
+      
+      name1 = nil
+      name2 = nil
+      name3 = nil
+      if name1.nil? and !new_poi.nil? then
+        name1 = new_poi
+        new_poi = nil
+      end
+      if name1.nil? and !new_locality.nil? then
+        name1 = new_locality
+        new_locality = nil
+      end
+      if name1.nil? and !new_admin_l1.nil? then
+        name1 = new_admin_l1
+        new_admin_l1 = nil
+      end
+      if name1.nil? and !new_formatted_address.nil? then
+        name1 = new_formatted_address
+        new_formatted_address = nil
+      end
+      if name2.nil? and !new_locality.nil? then
+        name2 = new_locality
+        new_locality = nil
+      end
+      if name2.nil? and !new_admin_l1.nil? then
+        name2 = new_admin_l1;
+        new_admin_l1 = nil
+      end
+      if name2.nil? and !new_admin_l2.nil? then
+        name2 = new_admin_l2
+        new_admin_l2 = nil
+      end
+      if name3.nil and !new_admin_l1.nil? then
+        name3 = new_admin_l1
+        new_admin_l1 = nil
+      end
+      if name3.nil? and !new_admin_l2.nil then
+        name3 = new_admin_l2
+        new_admin_l2 = nil
+      end
+      if name3.nil? and !admin_l3.nil? then
+        name3 = new_admin_l3
+        new_admin_l3 = nil
+      end
+      
+      logger.debug "Google gave us country: #{new_country}, location: #{name1 || ""}, #{name2 || ""}, #{name3 || ""}"
+  
+      if self.country_id.nil? || self.country_id == 1
+        self.country_id = Country.find_by_cname(new_country).id rescue 1
+      end
+  
+      if self.location_id.nil? || self.location_id == 1 || self.location.name.blank?
+        if name1.nil?  || name1 == ""
+          self.location_id = 1
+        else
+          loc = Location.where(:name => name1, :name2 => name2, :name3 => name3, :country_id => self.country_id).first rescue nil
+          loc = Location.create(:name => name1, :name2 => name2, :name3 => name3, :country_id => self.country_id) if loc.nil?
+          self.location_id = loc.id rescue 1
+        end
+      end
+      self.save
     end
-    if subnames.length > 0
-      subnames.each do |s|
-        logger.debug " ZERO_RESULTS, trying with address bis + subname #{s}"
-        uri_val = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?sensor=false&key=#{GOOGLE_MAPS_API}&address=#{address_bis}, #{s}")
-        uri = URI.parse(uri_val)
-        logger.debug "Calling google's geoname with URL #{uri_val}"
-        http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = false
-        request = Net::HTTP::Get.new(uri.path + "?" + uri.query)
-        response = http.request(request)
-        data = response.body
-        results = JSON.parse(data.force_encoding("UTF-8"))
-        break if results["results"].length > 0
-      end
-    end
-    if results["results"].length == 0
-      #nothing to do
-      logger.debug "ZERO_RESULTS, Could not fix spot's position"
-      basicfix00
-      return
-    end
-
-    #results = JSON.parse(data)
-    spot_lat = results["results"][0]['geometry']['location']['lat']
-    spot_lng = results["results"][0]['geometry']['location']['lng']
-    #let's find the country now
-    results["results"][0]["address_components"].each do |c|
-      if c["types"].include? "country"
-        new_country = c["long_name"]
-      end
-      if c["types"].include? "locality"
-        new_location_0 = c["long_name"]
-      end
-      if c["types"].include? "administrative_area_level_2"
-        new_location_1 = c["long_name"]
-      end
-      if c["types"].include?("administrative_area_level_1")
-        new_location_2 = c["long_name"]
-      end
-      if c["types"].include?("administrative_area_level_3")
-        new_location_3 = c["long_name"]
-      end
-    end
-    new_location = new_location_0 || new_location_1 || new_location_2 || new_location_3 || nil
-    logger.debug "Google gave us country: #{new_country}, location: #{new_location || ""}, lat/lng #{spot_lat} / #{spot_lng}"
-
-    self.lat = spot_lat
-    self.long = spot_lng
-    if self.country_id.nil? || self.country_id == 1
-      self.country_id = Country.find_by_cname(new_country).id rescue 1
-    end
-
-    if self.location_id.nil? || self.location_id == 1 || self.location.name.blank?
-      if new_location.nil?  || new_location == ""
-        self.location_id = 1
-      else
-        loc = Location.where(:name => new_location, :country_id => self.country_id).first rescue nil
-        loc = Location.create(:name => new_location, :country_id => self.country_id) if loc.nil?
-        self.location_id = loc.id rescue 1
-      end
-    end
-    self.save
 
   end
-
 
   def average_visibility
     vals = Media.select_values_sanitized('select visibility from dives where spot_id = :id and visibility is not null', :id => self.id)
