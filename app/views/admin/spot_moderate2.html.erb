@@ -90,42 +90,6 @@ var G_current_user = <%=@user.id%>;
       }
     });
 
-    $("#region").autocomplete({
-      source: function(request, response){
-        $.ajax({
-          url:"/api/search/region.json",
-          data:({
-            q: request.term
-          }),
-          dataType: "json",
-          open: function(event, ui){
-            if(!$("#region").is(":selected")){
-              $("#region").autocomplete( "close" );
-            }
-          },
-          success: function(data){
-            response( $.map( data, function( item ) {
-              return {
-                label: item.name+" - id:"+item.id,
-                value: item.name,
-                id: item.id
-              }
-            }));
-          },
-          error: function(data) { diveboard.alert("A technical error happened while trying to connect to Facebook."); }
-        });
-      },
-      minLength: 2,
-      select: function(event, ui){
-        $("#printed_region_id").html(ui.item.id);
-        $("#region_id").val(ui.item.id);
-        set_master_spot_data(get_master_spot_data());
-        //$("#region").autocomplete( "close" )
-        unvalidate_spot();
-      }
-    });
-
-
 
     check_country();
     $("#country_code").keyup(check_country);
@@ -143,12 +107,7 @@ var G_current_user = <%=@user.id%>;
         $(".printed_location_id").html("");
         $("#master_spot .location").html("");
     });
-    $("#region").keypress(function(e){
-        //erase id for manually inputed locations
-        $("#region_id").val("");
-        $("#printed_region_id").html("");
-        $("#master_spot .region").html("");
-    });
+
     $("#reset_master").click(reset_master);
     $("#merge").click(do_merge);
     $("#merge_private").click(do_merge_private);
@@ -192,16 +151,6 @@ function update_map(){
   map.setZoom(Number($("#spot_zoom").val()));
 
 
-}
-function clear_region(e){
-  if(e)
-    e.preventDefault();
-  $("#printed_region_id").html("");
-  $("#region_id").val("");
-  $("#region").val("");
-  set_master_spot_data(get_master_spot_data());
-  unvalidate_spot();
-  return false;
 }
 
 function check_country(e){
@@ -318,15 +267,6 @@ function set_master_spot_data(spot_data){
   $(".printed_location_id").html(spot_data.location_id);
   $("#master_spot .location").html(spot_data.location_id);
 
-  //region
-  if(spot_data.region_id == null || spot_data.region_id == "")
-    $("#region_id").val("");
-  else
-    $("#region_id").val(spot_data.region_id);
-  $("#region").val(spot_data.region_name);
-  $("#printed_region_id").html(spot_data.region_id);
-  $("#master_spot .region").html(spot_data.region_id);
-
   //latitude
   $("#spot_lat").val(spot_data.lat);
   $("#master_spot .lat").html(diveboard.round(spot_data.lat,3));
@@ -357,8 +297,6 @@ function get_master_spot_data(){
   spot_data["name"] = $("#spot_name").val();
   spot_data["location_id"] = $("#location_id").val();
   spot_data["location_name"] = $("#location").val();
-  spot_data["region_id"] = $("#region_id").val();
-  spot_data["region_name"] = $("#region").val();
   spot_data["lat"] = $("#spot_lat").val();
   spot_data["lng"] = $("#spot_long").val();
   spot_data["zoom"] = $("#spot_zoom").val();
@@ -597,13 +535,6 @@ var spot_data_similar = new Object();
     <input type="hidden" id="location_id" name="location_id" value="<%=@user_spot.location_id%>" country="<%=@user_spot.location.country.ccode.upcase%>"/>
     <div class="varline_large"><div class="tag"><b>Location :</b></div><div class="field"><input type="text" id="location" name="location" value="<%=@user_spot.location.name%>"/> (<span class="printed_location_id"><%=@user_spot.location.id%> - country: <%=@user_spot.location.country.ccode%></span>)</div></div>
     <%end%>
-    <%if @user_spot.region.nil?%>
-    <input type="hidden" id="region_id" name="region_id" value=""/>
-    <div class="varline_large"><div class="tag"><b>Body of Water :</b></div><div class="field"><input type="text" id="region" name="region"/> (<span id="printed_region_id"></span>)</div><a href="#" onclick="clear_region(); return false;">clear</a></div>
-    <%else%>
-    <input type="hidden" id="region_id" name="region_id" value="<%=@user_spot.region_id%>"/>
-    <div class="varline_large"><div class="tag"><b>Body of Water :</b></div><div class="field"><input type="text" id="region" name="region" value="<%=@user_spot.region.name%>"/> (<span id="printed_region_id"><%=@user_spot.region.id%></span>)</div><a href="#" onclick="clear_region(); return false;">clear</a></div>
-    <%end%>
     <%if @user_spot.country.nil?%>
     <div class="varline_large"><div class="tag"><b>Country code :</b></div><div class="field"><input type="text" id="country_code" name="country_code"/></div></div>
     <%else%>
@@ -666,14 +597,6 @@ var spot_data_similar = new Object();
   <div class="varline_large">
     <div class="tag"><b>Location :</b></div>
     <div class="field"><$=location_name$> (<$=location_id$>)</div>
-  </div>
-  <div class="varline_large">
-    <div class="tag"><b>Body of Water :</b></div>
-    <$if(region_id == null){$>
-    <div class="field">null (null)</div>
-    <$}else{$>
-    <div class="field"><$=region_name$> (<$=region_id$>)</div>
-    <$}$>
   </div>
   <div class="varline_large">
     <div class="tag"><b>Description :</b></div>

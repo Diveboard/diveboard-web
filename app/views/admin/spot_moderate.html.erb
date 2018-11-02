@@ -52,7 +52,6 @@ $(document).ready( function () {
 function set_original(){
 	$("#spot_name").val($("#oname").text());
 	$("#location").val($("#olocation").text());
-	$("#region").val($("#oregion").text());
 	$("#country_code").val($("#occode").text());
 	$("#spot_lat").val($("#olat").text());
 	$("#spot_long").val($("#olong").text());
@@ -65,7 +64,6 @@ function set_original(){
 function set_modified(){
 	$("#spot_name").val($("#mname").text());
 	$("#location").val($("#mlocation").text());
-	$("#region").val($("#mregion").text());
 	$("#country_code").val($("#mccode").text());
 	$("#spot_lat").val($("#mlat").text());
 	$("#spot_long").val($("#mlong").text());
@@ -117,11 +115,6 @@ function check_country(){
 			<div class="varline"><div class="tag"><b>ID :</b></div><div class="field"><%=@original_spot.id%></div> <a href="/admin/spot-edit/<%=@original_spot.id%>">EDIT</a></div>
 			<div class="varline"><div class="tag"><b>Name :</b></div><div class="field" id="oname"><%= @original_spot.name%></div></div>
 			<div class="varline"><div class="tag"><b>Localization :</b></div><div class="field" id="olocation"><%= @original_spot.location.name%></div></div>
-			<%if @original_spot.region_id.nil?%>
-			<div class="varline"><div class="tag"><b>Sea :</b></div><div class="field" id="oregion"></div></div>
-			<%else%>
-			<div class="varline"><div class="tag"><b>Sea :</b></div><div class="field" id="oregion"><%= @original_spot.region.name unless @original_spot.region.nil?%></div></div>
-			<%end%>
 			<div class="varline"><div class="tag"><b>Country code :</b></div><div class="field" id="occode"><%= @original_spot.country.ccode%></div></div>
 			<div class="varline"><div class="tag"><b>latitude :</b></div><div class="field" id="olat"><%= @original_spot.lat%></div></div>
 			<div class="varline"><div class="tag"><b>longitude :</b></div><div class="field" id="olong"><%= @original_spot.long%></div></div>
@@ -134,11 +127,6 @@ function check_country(){
 			<div class="varline"><div class="tag"><b>ID :</b></div><div class="field"><%=@user_spot.id%></div> <a href="/admin/spot-edit/<%=@user_spot.id%>">EDIT</a></div>
 			<div class="varline"><div class="tag"><b>Name :</b></div><div class="field" id="mname" ><%=@user_spot.name%></div></div>
 			<div class="varline"><div class="tag"><b>Localization :</b></div><div class="field" id="mlocation"><%= @user_spot.location.name%></div></div>
-			<%if @user_spot.region_id.nil?%>
-			<div class="varline"><div class="tag"><b>Sea :</b></div><div class="field" id="mregion"><%= @user_spot.region.name unless @user_spot.region.nil?%></div></div>
-			<%else%>
-			<div class="varline"><div class="tag"><b>Sea :</b></div><div class="field" id="mregion"><%= @user_spot.region.name unless @user_spot.region.nil?%></div></div>
-			<%end%>
 			<div class="varline"><div class="tag"><b>Country code :</b></div><div class="field" id="mccode"><%= @user_spot.country.ccode%></div></div>
 			<div class="varline"><div class="tag"><b>latitude :</b></div><div class="field" id="mlat"><%= @user_spot.lat%></div></div>
 			<div class="varline"><div class="tag"><b>longitude :</b></div><div class="field" id="mlong"><%= @user_spot.long%></div></div>
@@ -154,7 +142,6 @@ function check_country(){
 			<div class="varline"><div class="tag"><b>ID :</b></div><div class="field"><%=@original_spot.id%></div></div>
 			<div class="varline"><div class="tag"><b>Name :</b></div><div class="field"><%=f.text_field :name%></div></div>
 			<div class="varline"><div class="tag"><b>Localization :</b></div><div class="field"><input type="text" id="location" name="location"/></div></div>
-			<div class="varline"><div class="tag"><b>Sea :</b></div><div class="field"><input type="text" id="region" name="region"/></div></div>
 			<div class="varline"><div class="tag"><b>Country code :</b></div><div class="field"><input type="text" id="country_code" name="country_code"/></div></div>
 			<div class="varline"><div class="tag"><b>Code checked :</b></div><div class="field" id="country"></div></div>
 			<div class="varline"><div class="tag"><b>latitude :</b></div><div class="field"><%= f.text_field :lat%></div></div>
