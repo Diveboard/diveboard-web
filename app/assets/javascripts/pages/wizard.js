@@ -750,6 +750,7 @@ function set_wizard_bindings(){
 	    else
 	      $("#wizard_spot_reset").css("display", "inline-block");
 	    $("#wizard_spot_confirm, #wizard_spot_cancel, #wizard_spot_search, #wizard_simmilar_spots_label, #wizard_simmilar_spots").hide();
+	    $("#xp_p1_search, #xp_p1_search_button").hide();
     }
   });
   $('#wizard_spot_cancel').click(function(){
