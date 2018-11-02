@@ -94,6 +94,7 @@ class Location < ActiveRecord::Base
       end
       ret += name3
     end
+    return ret
   end
 
   def wiki userid=nil
