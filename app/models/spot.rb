@@ -77,7 +77,7 @@ class Spot < ActiveRecord::Base
           :user_ids => Proc.new do |s| begin (s.dives.reject do |d| d.privacy==1 end).map(&:user_id).uniq rescue [] end end,
           :shop_ids => Proc.new {|p| p.shop_ids.reject &:nil?},
           :countryblob => Proc.new do |s|  begin if s.country.id == 1 then nil else s.country.blob end rescue nil end end,
-          :locationblob => Proc.new do |s|  begin if s.location.id == 1 then nil else s.location.blob end rescue nil end end,
+          :locationblob => Proc.new do |s|  begin if s.location.id == 1 then nil else s.location.blob end rescue nil end end
         }],
       :search_full => [ :flag_moderate_private_to_public, :wiki_html, {
                       :has_wiki_content => Proc.new {|p| p.wiki.nil?},
