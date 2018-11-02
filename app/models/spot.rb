@@ -439,7 +439,7 @@ class Spot < ActiveRecord::Base
       if self.country.id > 1 then
         address += " " + self.country.name
       end
-      uri_val = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=#{address}")
+      uri_val = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=#{address}&key=#{GOOGLE_MAPS_API}")
       uri = URI.parse(uri_val)
       logger.debug "Calling google's geoname with URL #{uri_val}"
       http = Net::HTTP.new(uri.host, uri.port)
@@ -1113,7 +1113,7 @@ class Spot < ActiveRecord::Base
     new_location_3 = nil
     spot_lat = nil
     spot_lng = nil
-    uri_val = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=#{address}")
+    uri_val = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=#{address}&key=#{GOOGLE_MAPS_API}")
     uri = URI.parse(uri_val)
     logger.debug "Calling google's geoname with URL #{uri_val}"
     http = Net::HTTP.new(uri.host, uri.port)
@@ -1124,7 +1124,7 @@ class Spot < ActiveRecord::Base
     results = JSON.parse(data.force_encoding("UTF-8"))
     if results["results"].length == 0
       logger.debug " ZERO_RESULTS, trying with address bis"
-      uri_val = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=#{address_bis}")
+      uri_val = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=#{address_bis}&key=#{GOOGLE_MAPS_API}")
       uri = URI.parse(uri_val)
       logger.debug "Calling google's geoname with URL #{uri_val}"
       http = Net::HTTP.new(uri.host, uri.port)
@@ -1137,7 +1137,7 @@ class Spot < ActiveRecord::Base
     if subnames.length > 0
       subnames.each do |s|
         logger.debug " ZERO_RESULTS, trying with address bis + subname #{s}"
-        uri_val = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=#{address_bis}, #{s}")
+        uri_val = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?sensor=false&key=#{GOOGLE_MAPS_API}&address=#{address_bis}, #{s}")
         uri = URI.parse(uri_val)
         logger.debug "Calling google's geoname with URL #{uri_val}"
         http = Net::HTTP.new(uri.host, uri.port)

@@ -752,7 +752,7 @@ class ApplicationController < ActionController::Base
     ##Location must exist
     location = Location.where(:name => params[:location1], :name2=> params[:location2], :name3=> params[:location3], :country_id => country.id).first
     if params[:location1] != "" && !params[:location1].nil? && location.nil?
-      location = Location.create(:name => params[:location], :name2 => params[:location2], :name3 => params[:location3], :country_id => country.id)
+      location = Location.create(:name => params[:location1], :name2 => params[:location2], :name3 => params[:location3], :country_id => country.id)
     end
     if location.nil?
       location = Location.find(1)

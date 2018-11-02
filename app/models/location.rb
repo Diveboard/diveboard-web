@@ -47,6 +47,12 @@ class Location < ActiveRecord::Base
   def create
     begin
       if self.id.nil? then
+        if self.name.downcase == "unknown" then
+          self.id = 1
+          self.reload
+          @new_record = false ## I'm lying
+          return self.id
+        end
         Rails.logger.debug "trying to dedup Location on names #{self.name},#{self.name2},#{self.name3}"
         self.name = "" if self.name.nil? # we don't want nil ....
         old = Location.where(:name => self.name, :name2=> self.name2, :name3=> self.name3, :country_id => self.country_id).first

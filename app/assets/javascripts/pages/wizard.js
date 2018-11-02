@@ -178,110 +178,127 @@ function reverse_geocode() {
     $("#spot-location-3").val("");
 	check_init_geocoder();
 	if (parseFloat($("#spot-lat").val())!=0 && parseFloat($("#spot-long").val())!=0) {
-	    var latlng = {lat: parseFloat($("#spot-lat").val()), lng: parseFloat($("#spot-long").val())};
-	    var spot_country_code = null;
-	    var spot_country_name = null;
-	    var admin_l1 = null;
-	    var admin_l2 = null;
-	    var admin_l3 = null;
-	    var formatted_address = null;
-	    var locality = null;
-	    var poi = null;
-	    if (geocoder) {
-		    geocoder.geocode({'location': latlng}, function(results, status) {
-		      if (status == google.maps.GeocoderStatus.OK) {
-		        for (var i = 0; i < results.length; i++) {
-		          var result = results[i];
-		          if (formatted_address == null) {
-		        	  formatted_address = result.formatted_address;
-		          }
-		          for (var j = 0; j < result.address_components.length; j++) {
-			          var element = result.address_components[j];
-		        	  if (element.types.includes("country") && spot_country_code == null) {
-		        		  spot_country_code = element.short_name;
-		        		  spot_country_name = element.long_name;
-		        	  }
-		        	  if (element.types.includes("locality") && locality == null) {
-		        		  locality = element.long_name;
-		        	  }
-		        	  if (element.types.includes("administrative_area_level_1") && admin_l1 == null) {
-		        		  admin_l1 = element.long_name;
-		        	  }
-		        	  if (element.types.includes("administrative_area_level_2") && admin_l2 == null) {
-		        		  admin_l2 = element.long_name;
-		        	  }
-		        	  if (element.types.includes("administrative_area_level_3") && admin_l3 == null) {
-		        		  admin_l3 = element.long_name;
-		        	  }
-		        	  if ((element.types.includes("park") || element.types.includes("point_of_interest")) && poi == null) {
-		        		  poi = element.long_name;
-		        	  }
-		          }
-		        }
-		        var name1 = null;
-		        var name2 = null;
-		        var name3 = null;
-		        if (spot_country_code != null) {
-	    		  $("#spot-country").val(spot_country_name);
-	    		  $("#spot-country").attr("shortname", spot_country_code);
-	    		  $("#wizard-spot-flag").attr("src","/img/flags/"+spot_country_code.toLowerCase()+".gif");
-		        }
-		        if (name1 == null && poi != null) {
-		        	name1 = poi;
-		        	poi = null;
-		        }
-		        if (name1 == null && locality != null) {
-		        	name1 = locality;
-		        	locality = null;
-		        }
-		        if (name1 == null && admin_l1 != null) {
-		        	name1 = admin_l1;
-		        	admin_l1 = null;
-		        }
-		        if (name1 == null && formatted_address != null) {
-		        	name1 = formatted_address;
-		        	formatted_address = null;
-		        }
-		        if (name2 == null && locality != null) {
-		        	name2 = locality;
-		        	locality = null;
-		        }
-		        if (name2 == null && admin_l1 != null) {
-		        	name2 = admin_l1;
-		        	admin_l1 = null;
-		        }
-		        if (name2 == null && admin_l2 != null) {
-		        	name2 = admin_l2;
-		        	admin_l2 = null;
-		        }
-		        if (name3 == null && admin_l1 != null) {
-		        	name3 = admin_l1;
-		        	admin_l1 = null;
-		        }
-		        if (name3 == null && admin_l2 != null) {
-		        	name3 = admin_l2;
-		        	admin_l2 = null;
-		        }
-		        if (name3 == null && admin_l3 != null) {
-		        	name3 = admin_l3;
-		        	admin_l3 = null;
-		        }
-		        $("#spot-location-1").val(name1);
-		        if (name2 != null) {
-		        	$("#spot-location-2").val(name2);
-		        }
-		        if (name3 != null) {
-		        	$("#spot-location-3").val(name3);
-		        }
-		      } else {
-		        	$("#spot-country").val("Unknown");
-		        	$("#spot-location-1").val("Unknown");
-		        }
-		    });
-	      }
-	    }
+	    reverse_geocode_for_latlng(parseFloat($("#spot-lat").val()), parseFloat($("#spot-lng").val()));
+	    //Trying to find something around
+	    /*if ($("#spot-location-1").val().lower() == "unknown") {
+	    	var epsilon = 0.00001;
+	    	reverse_geocode_for_latlng(parseFloat($("#spot-lat").val())-epsilon, parseFloat($("#spot-lng").val()));
+	    	if ($("#spot-location-1").val().lower() == "unknown") {
+		    	reverse_geocode_for_latlng(parseFloat($("#spot-lat").val())+epsilon, parseFloat($("#spot-lng").val()));
+		    	if ($("#spot-location-1").val().lower() == "unknown") {
+			    	reverse_geocode_for_latlng(parseFloat($("#spot-lat").val()), parseFloat($("#spot-lng").val())-epsilon);
+			    	if ($("#spot-location-1").val().lower() == "unknown") {
+				    	reverse_geocode_for_latlng(parseFloat($("#spot-lat").val()), parseFloat($("#spot-lng").val())+epsilon);
+			    	}
+		    	}
+	    	}
+	    }*/
+	}
 }
 
+function reverse_geocode_for_latlng(lat_var, lng_var) {
+	var latlng = {lat: lat_var, lng: lng_var};
+    var spot_country_code = null;
+    var spot_country_name = null;
+    var admin_l1 = null;
+    var admin_l2 = null;
+    var admin_l3 = null;
+    var formatted_address = null;
+    var locality = null;
+    var poi = null;
+    if (geocoder) {
+	    geocoder.geocode({'location': latlng}, function(results, status) {
+	      if (status == google.maps.GeocoderStatus.OK) {
+	        for (var i = 0; i < results.length; i++) {
+	          var result = results[i];
+	          if (formatted_address == null) {
+	        	  formatted_address = result.formatted_address;
+	          }
+	          for (var j = 0; j < result.address_components.length; j++) {
+		          var element = result.address_components[j];
+	        	  if (element.types.includes("country") && spot_country_code == null) {
+	        		  spot_country_code = element.short_name;
+	        		  spot_country_name = element.long_name;
+	        	  }
+	        	  if (element.types.includes("locality") && locality == null) {
+	        		  locality = element.long_name;
+	        	  }
+	        	  if (element.types.includes("administrative_area_level_1") && admin_l1 == null) {
+	        		  admin_l1 = element.long_name;
+	        	  }
+	        	  if (element.types.includes("administrative_area_level_2") && admin_l2 == null) {
+	        		  admin_l2 = element.long_name;
+	        	  }
+	        	  if (element.types.includes("administrative_area_level_3") && admin_l3 == null) {
+	        		  admin_l3 = element.long_name;
+	        	  }
+	        	  if ((element.types.includes("park") || element.types.includes("point_of_interest")) && poi == null) {
+	        		  poi = element.long_name;
+	        	  }
+	          }
+	        }
+	        var name1 = null;
+	        var name2 = null;
+	        var name3 = null;
+	        if (spot_country_code != null) {
+    		  $("#spot-country").val(spot_country_name);
+    		  $("#spot-country").attr("shortname", spot_country_code);
+    		  $("#wizard-spot-flag").attr("src","/img/flags/"+spot_country_code.toLowerCase()+".gif");
+	        }
+	        if (name1 == null && poi != null) {
+	        	name1 = poi;
+	        	poi = null;
+	        }
+	        if (name1 == null && locality != null) {
+	        	name1 = locality;
+	        	locality = null;
+	        }
+	        if (name1 == null && admin_l1 != null) {
+	        	name1 = admin_l1;
+	        	admin_l1 = null;
+	        }
+	        if (name1 == null && formatted_address != null) {
+	        	name1 = formatted_address;
+	        	formatted_address = null;
+	        }
+	        if (name2 == null && locality != null) {
+	        	name2 = locality;
+	        	locality = null;
+	        }
+	        if (name2 == null && admin_l1 != null) {
+	        	name2 = admin_l1;
+	        	admin_l1 = null;
+	        }
+	        if (name2 == null && admin_l2 != null) {
+	        	name2 = admin_l2;
+	        	admin_l2 = null;
+	        }
+	        if (name3 == null && admin_l1 != null) {
+	        	name3 = admin_l1;
+	        	admin_l1 = null;
+	        }
+	        if (name3 == null && admin_l2 != null) {
+	        	name3 = admin_l2;
+	        	admin_l2 = null;
+	        }
+	        if (name3 == null && admin_l3 != null) {
+	        	name3 = admin_l3;
+	        	admin_l3 = null;
+	        }
+	        $("#spot-location-1").val(name1);
+	        if (name2 != null) {
+	        	$("#spot-location-2").val(name2);
+	        }
+	        if (name3 != null) {
+	        	$("#spot-location-3").val(name3);
+	        }
+	      } else {
+	        	$("#spot-country").val("Unknown");
+	        	$("#spot-location-1").val("Unknown");
+	        }
+	    });
+      }
+}
 ///////////////////////////////
 //
 // OPENING AND CLOSING WIZARD
@@ -1827,6 +1844,7 @@ function wizard_spot_make_changeable(readwrite){
     $('#set_spot_details input[type="checkbox"]').attr('disabled', false);
     $("#wizard_zoom_set").show();
     $("#wzgmapcontainer").show();
+    $("#xp_p1_search").val("");
     wizard_gmaps_init(true);
   }
   else {
