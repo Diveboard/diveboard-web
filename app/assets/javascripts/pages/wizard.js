@@ -293,7 +293,6 @@ function reverse_geocode_for_latlng(lat_var, lng_var) {
 	        	$("#spot-location-3").val(name3);
 	        }
 	      } else {
-	        	$("#spot-country").val("Unknown");
 	        	$("#spot-location-1").val("Unknown");
 	        }
 	    });
@@ -788,9 +787,9 @@ function set_wizard_bindings(){
       $("#spot-location-3").val("");
   });
 
-  $("#spot-country").change(function(){update_gmaps_from_wizard_edit(true);});
-  $("#spot-lat").change(function(){update_gmaps_from_wizard_edit(false);});
-  $("#spot-long").change(function(){update_gmaps_from_wizard_edit(false);});
+  $("#spot-country").change(function(){update_gmaps_from_wizard_edit(false);});
+  $("#spot-lat").change(function(){update_gmaps_from_wizard_edit(true);});
+  $("#spot-long").change(function(){update_gmaps_from_wizard_edit(true);});
 
   $("input").live('change',function(){
     if ($(this).attr('type') != 'number')
@@ -3171,7 +3170,7 @@ function wizard_gmaps_clear_simmilar_spots() {
 }
 
 
-function update_gmaps_from_wizard_edit(dosearch) {
+function update_gmaps_from_wizard_edit(execute_reverse_geocode) {
   if (!wizard_maps_loaded)
     wizard_gmaps_init(true);
 
@@ -3188,13 +3187,31 @@ function update_gmaps_from_wizard_edit(dosearch) {
 	  marker.setPosition(latlng);
 	  map.setCenter(marker.position);
 	  update_species_list(Number($("#spot-lat").val()), Number($("#spot-long").val()));
-	  reverse_geocode();
+	  if (execute_reverse_geocode) {
+	  	reverse_geocode();
+	  }
 	}
 	else {
 	  $("#wizardgmaps_placepin").show();
 	  $("#wizardgmaps_removepin").hide();
 	  marker.setMap(null);
 	}
+}
+
+function show_flag(){
+
+  var code = country_code_from_name($("#spot-country").val());
+    if (code != "")
+    {
+      $("#wizard-spot-flag").attr("src","/img/flags/"+code.toLowerCase()+".gif");
+      $("#spot-country").attr("shortname",code.toLowerCase());
+      $("#spot-country").val(country_name_from_code(code));
+    }
+    else
+    {
+      $("#spot-country").attr("shortname","");
+      $("#wizard-spot-flag").attr("src","/img/flags/blank.gif");
+    }
 }
 
 var G_wizard_values;
@@ -3232,7 +3249,7 @@ function wizard_reset_ui_controls()
         $("#wizard-spot-flag").attr("src","/img/flags/"+ui.item.name.toLowerCase()+".gif");
         $("#spot-country").attr("shortname",ui.item.name.toLowerCase());
       $( "#spot-location" ).autocomplete( "option", "source","/api/search/location.json?ccode="+$("#spot-country").attr("shortname").toUpperCase());
-      update_gmaps_from_wizard_edit(true);
+      update_gmaps_from_wizard_edit(false);
       },
       close: function(event, ui){
       show_flag();
