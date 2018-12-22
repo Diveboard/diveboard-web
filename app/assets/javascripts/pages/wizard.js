@@ -3,6 +3,10 @@ var G_facebook_buddy_search_init = false;
 var image_resizer;
 var gmap_markers_simmilar = [];
 var marker_simmilar_highlight = null;
+var alternate_position_marker = null;
+var alternate_position_markers = null;
+var rever_geocode_debug = true;
+var reverse_geocode_latest_result = null;
 // if wizard_bulk == true => we're here to bulk create upload
 // if false it's a one-dive creation
 
@@ -13,6 +17,14 @@ function highlight_term(value, term) {
   return value.replace(new RegExp("(?![^&;]+;)(?!<[^<>]*)(" + $.ui.autocomplete.escapeRegex(term) + ")(?![^<>]*>)(?![^&;]+;)", "gi"), "<b>$1</b>");
   //return value;
 
+}
+
+function sleep(millis)
+{
+    var date = new Date();
+    var curDate = null;
+    do { curDate = new Date(); }
+    while(curDate-date < millis);
 }
 
 function unit_temp_n(temperature, full_precision){
@@ -172,32 +184,146 @@ function goto_search_result(result) {
   reverse_geocode();
 }
 
-function reverse_geocode() {
-    $("#spot-location-1").val("");
-    $("#spot-location-2").val("");
-    $("#spot-location-3").val("");
-	check_init_geocoder();
-	if (parseFloat($("#spot-lat").val())!=0 && parseFloat($("#spot-long").val())!=0) {
-	    reverse_geocode_for_latlng(parseFloat($("#spot-lat").val()), parseFloat($("#spot-lng").val()));
-	    //Trying to find something around
-	    /*if ($("#spot-location-1").val().lower() == "unknown") {
-	    	var epsilon = 0.00001;
-	    	reverse_geocode_for_latlng(parseFloat($("#spot-lat").val())-epsilon, parseFloat($("#spot-lng").val()));
-	    	if ($("#spot-location-1").val().lower() == "unknown") {
-		    	reverse_geocode_for_latlng(parseFloat($("#spot-lat").val())+epsilon, parseFloat($("#spot-lng").val()));
-		    	if ($("#spot-location-1").val().lower() == "unknown") {
-			    	reverse_geocode_for_latlng(parseFloat($("#spot-lat").val()), parseFloat($("#spot-lng").val())-epsilon);
-			    	if ($("#spot-location-1").val().lower() == "unknown") {
-				    	reverse_geocode_for_latlng(parseFloat($("#spot-lat").val()), parseFloat($("#spot-lng").val())+epsilon);
-			    	}
-		    	}
-	    	}
-	    }*/
+function clearPositionDelta() {
+	if (alternate_position_marker != null) {
+		alternate_position_marker.setMap(null);
 	}
 }
 
-function reverse_geocode_for_latlng(lat_var, lng_var) {
-	var latlng = {lat: lat_var, lng: lng_var};
+function markPositionDelta(lat, long) {
+    var image = new google.maps.MarkerImage('/img/explore/marker_shop.png',
+    	      new google.maps.Size(15, 15),
+    	      new google.maps.Point(0,0),
+    	      new google.maps.Point(7, 7)
+    	    );
+	var myLatLng = {lat: parseFloat(lat), lng: parseFloat(long)};
+	clearPositionDelta();
+	alternate_position_marker = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        icon: image,
+        draggable: false
+      });
+	reverse_geocode_clear_wait();
+}
+
+function markNewPositionDelta(lat, long) {
+	if (rever_geocode_debug) {
+	    var image = new google.maps.MarkerImage('/img/explore/marker_shop_grey.png',
+	    	      new google.maps.Size(15, 15),
+	    	      new google.maps.Point(0,0),
+	    	      new google.maps.Point(7, 7)
+	    	    );
+		var myLatLng = {lat: parseFloat(lat), lng: parseFloat(long)};
+		clearPositionDelta();
+		alternate_position_markers.push(new google.maps.Marker({
+	        position: myLatLng,
+	        map: map,
+	        icon: image,
+	        draggable: false
+	      }));
+	}
+}
+
+function clearPositionDeltaMarkers() {
+	if (alternate_position_markers!=null) {
+		for (var i = 0; i< alternate_position_markers.length; i++) {
+			alternate_position_markers[i].setMap(null);
+		}
+	}
+	alternate_position_markers = [];
+}
+
+function reverse_geocode_for_deltas(lat, long, deltas, i) {
+	if (i>=deltas.length) {
+		if (reverse_geocode_latest_result != null) {
+			$("#spot-location-1").val(reverse_geocode_latest_result.level1);
+			$("#spot-location-2").val(reverse_geocode_latest_result.level2);
+			$("#spot-location-3").val(reverse_geocode_latest_result.level3);
+			markPositionDelta(reverse_geocode_latest_result.lat, reverse_geocode_latest_result.long);
+		} else {
+			$("#spot-location-1").val("Unknown");
+		}
+		clearPositionDelta();
+		reverse_geocode_clear_wait();
+		return;
+	}
+	var r_earth = 6371000;
+	var d_lat = deltas[i].d_lat;
+	var d_long = deltas[i].d_long;
+	var new_latitude  = lat  + (d_long / r_earth) * (180 / Math.PI);
+	var new_longitude = long + (d_lat / r_earth) * (180 / Math.PI) / Math.cos(lat * Math.PI/180);
+	reverse_geocode_for_latlng({lat: parseFloat(new_latitude), lng: parseFloat(new_longitude)}, function (ret_value) {
+		if (ret_value.status) {
+			if (ret_value.level2 == null || ret_value.level3 == null) {
+					//check if the new result is better than the old one
+				if (reverse_geocode_latest_result == null || (reverse_geocode_latest_result.level2 == null && ret_value.level2 != null) || (reverse_geocode_latest_result.level3 == null && ret_value.level3 != null)) {
+					reverse_geocode_latest_result = ret_value;
+					reverse_geocode_latest_result.lat = new_latitude;
+					reverse_geocode_latest_result.long = new_longitude;
+				}
+				markNewPositionDelta(new_latitude, new_longitude);
+				reverse_geocode_for_deltas(lat, long, deltas, i+1);
+			}
+			else {
+				$("#spot-location-1").val(ret_value.level1);
+				$("#spot-location-2").val(ret_value.level2);
+				$("#spot-location-3").val(ret_value.level3);
+				markPositionDelta(new_latitude, new_longitude);
+			}
+    	} else {
+    		markNewPositionDelta(new_latitude, new_longitude);
+    		reverse_geocode_for_deltas(lat, long, deltas, i+1);
+    	}
+	});
+}
+
+function reverse_geocode_wait() {
+    $("#spot-location-1").val("");
+    $("#spot-location-2").val("");
+    $("#spot-location-3").val("");
+    $("#wizard_spot_search #wizard_spot_confirm #wizard_spot_cancel").hide();
+    $("#reverse_geeocode_loader").show();
+}
+
+function reverse_geocode_clear_wait() {
+	$("#wizard_spot_search #wizard_spot_confirm #wizard_spot_cancel").show();
+	$("#reverse_geeocode_loader").hide();
+}
+
+function reverse_geocode() {
+	reverse_geocode_wait();
+    var epsilon = 1000;
+    var epsilon2 = 5000;
+    reverse_geocode_latest_result = null;
+    clearPositionDeltaMarkers();
+	//Page timeout on the google API limits the options to only explore 4 other positions
+    var deltas = [{d_lat:epsilon,d_long:0},{d_lat:-epsilon,d_long:0},{d_lat:0,d_long:epsilon},{d_lat:0,d_long:-epsilon},{d_lat:epsilon,d_long:epsilon},{d_lat:epsilon,d_long:-epsilon},{d_lat:-epsilon,d_long:epsilon},{d_lat:-epsilon,d_long:-epsilon},{d_lat:epsilon2,d_long:0},{d_lat:-epsilon2,d_long:0},{d_lat:0,d_long:epsilon2},{d_lat:0,d_long:-epsilon2},{d_lat:epsilon2,d_long:epsilon2},{d_lat:epsilon2,d_long:-epsilon2},{d_lat:-epsilon2,d_long:epsilon2},{d_lat:-epsilon2,d_long:-epsilon2}];
+    //var deltas = [{d_lat:epsilon2,d_long:0},{d_lat:-epsilon2,d_long:0},{d_lat:0,d_long:epsilon2},{d_lat:0,d_long:-epsilon2}];
+    var lat = parseFloat($("#spot-lat").val());
+    var long = parseFloat($("#spot-long").val());
+	if (parseFloat($("#spot-lat").val())!=0 && parseFloat($("#spot-long").val())!=0) {
+		reverse_geocode_for_latlng({lat: parseFloat(lat), lng:parseFloat(long)}, function (ret_value) {
+			if (ret_value.status) {
+				if (ret_value.level2 == null || ret_value.level3 == null) {
+					reverse_geocode_latest_result = ret_value;
+					reverse_geocode_latest_result.lat = lat;
+					reverse_geocode_latest_result.long = long;
+					reverse_geocode_for_deltas(lat, long, deltas, 0);
+				} else {
+					$("#spot-location-1").val(ret_value.level1);
+					$("#spot-location-2").val(ret_value.level2);
+					$("#spot-location-3").val(ret_value.level3);
+					clearPositionDelta();
+				}
+			} else {
+				reverse_geocode_for_deltas(lat, long, deltas, 0);
+			}
+	    });
+	}
+}
+
+function reverse_geocode_for_latlng(latlng, callback) {
     var spot_country_code = null;
     var spot_country_name = null;
     var admin_l1 = null;
@@ -206,8 +332,10 @@ function reverse_geocode_for_latlng(lat_var, lng_var) {
     var formatted_address = null;
     var locality = null;
     var poi = null;
+	check_init_geocoder();
     if (geocoder) {
 	    geocoder.geocode({'location': latlng}, function(results, status) {
+	      var ret_value = {status:false};
 	      if (status == google.maps.GeocoderStatus.OK) {
 	        for (var i = 0; i < results.length; i++) {
 	          var result = results[i];
@@ -285,16 +413,14 @@ function reverse_geocode_for_latlng(lat_var, lng_var) {
 	        	name3 = admin_l3;
 	        	admin_l3 = null;
 	        }
-	        $("#spot-location-1").val(name1);
-	        if (name2 != null) {
-	        	$("#spot-location-2").val(name2);
-	        }
-	        if (name3 != null) {
-	        	$("#spot-location-3").val(name3);
-	        }
+	        ret_value = {status:true, level1:name1, level2:name2, level3: name3};
+	        callback(ret_value);
+	      } else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {
+	    	  sleep(2100);
+	    	  return reverse_geocode_for_latlng(latlng, callback);
 	      } else {
-	        	$("#spot-location-1").val("Unknown");
-	        }
+	    	  callback(ret_value);
+	      }
 	    });
       }
 }
