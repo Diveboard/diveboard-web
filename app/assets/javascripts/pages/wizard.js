@@ -282,12 +282,12 @@ function reverse_geocode_wait() {
     $("#spot-location-1").val("");
     $("#spot-location-2").val("");
     $("#spot-location-3").val("");
-    $("#wizard_spot_search #wizard_spot_confirm #wizard_spot_cancel").hide();
+    $("#wizard_spot_search, #wizard_spot_confirm, #wizard_spot_cancel").hide();
     $("#reverse_geeocode_loader").show();
 }
 
 function reverse_geocode_clear_wait() {
-	$("#wizard_spot_search #wizard_spot_confirm #wizard_spot_cancel").show();
+	$("#wizard_spot_search, #wizard_spot_confirm, #wizard_spot_cancel").show();
 	$("#reverse_geeocode_loader").hide();
 }
 
@@ -315,6 +315,7 @@ function reverse_geocode() {
 					$("#spot-location-2").val(ret_value.level2);
 					$("#spot-location-3").val(ret_value.level3);
 					clearPositionDelta();
+					reverse_geocode_clear_wait();
 				}
 			} else {
 				reverse_geocode_for_deltas(lat, long, deltas, 0);
