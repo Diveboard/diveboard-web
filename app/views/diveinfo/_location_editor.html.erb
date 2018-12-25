@@ -49,9 +49,9 @@
           <div id="xp_p1_search_result" class="xp_scrollable" style="overflow: hidden; padding: 0px; width: 268px; display: none; position:relative; top:0px; left:0px; background:white;"><div class="jspContainer" style="width: 268px; height: 250px; background:white;"><div class="jspPane" style="padding: 0px; top: 0px; width: 268px; background:white;"><ul id="xp_p1_search_result_list"></ul></div></div></div>
           <div id="reverse_geeocode_loader" style="display:none;"><img src="/img/ajax-loader-small.gif" alt='#' />Finding position, please wait...</div>
           <div>
-          	<input id="spot-location-1" type="text" class="wizard_input_50 wizard_big_input" style="font-style: normal; border:0px;" value="<%=@dive.spot.location.name unless @dive.spot.location.nil?%>" readonly/>
-          	<input id="spot-location-2" type="text" class="wizard_input_50 wizard_big_input" style="font-style: normal; border:0px;" value="<%=@dive.spot.location.name2 unless @dive.spot.location.nil?%>" readonly/>
-          	<input id="spot-location-3" type="text" class="wizard_input_50 wizard_big_input" style="font-style: normal; border:0px;" value="<%=@dive.spot.location.name3 unless @dive.spot.location.nil?%>" readonly/>
+          	<span><input id="spot-location-1" type="text" class="wizard_big_input" style="font-style: normal; border:0px;width:100%; padding:0px;margin:2px;margin-left:18px;" value="<%=@dive.spot.location.name unless @dive.spot.location.nil?%>" readonly/></span>
+          	<span><input id="spot-location-2" type="text" class="wizard_big_input" style="font-style: normal; border:0px;width:100%; padding:0px;margin:2px;margin-left:18px;" value="<%=@dive.spot.location.name2 unless @dive.spot.location.nil?%>" readonly/></span>
+          	<span><input id="spot-location-3" type="text" class="wizard_big_input" style="font-style: normal; border:0px;width:100%; padding:0px;margin:2px;margin-left:18px;" value="<%=@dive.spot.location.name3 unless @dive.spot.location.nil?%>" readonly/></span>
           </div>
           </td>
           </tr>
