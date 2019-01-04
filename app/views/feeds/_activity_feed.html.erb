@@ -216,28 +216,6 @@
       </ul>
     <%end%>
 
-    <% list = follow.reject {|f| f.class.to_s != 'Region' }
-    suggest = user.following_suggest('region_id')
-    if list.count > 0 || suggest.count > 0 then %>
-      <h4><%= it("BODIES OF WATER", scope: ['feeds', 'activity_feed']) %></h4>
-      <ul>
-        <%list.each do |region| %>
-          <% next if region.name.blank? %>
-          <li>
-            <span class='feed_follow_title'><%=region.name%></span>
-            <div class='feed_config_follow'><%= render :partial => 'feeds/follow_button', :locals => {:what => 'region_id', :id => region.id, :name => region.name, :does_follow => true} %></div>
-          </li>
-        <%end%>
-        <%suggest.each do |region| %>
-          <% next if region.name.blank? %>
-          <li>
-            <span class='feed_follow_title'><%=region.name%></span>
-            <div class='feed_config_follow'><%= render :partial => 'feeds/follow_button', :locals => {:what => 'region_id', :id => region.id, :name => region.name, :does_follow => false} %></div>
-          </li>
-        <%end%>
-      </ul>
-    <%end%>
-
     <% list = follow.reject {|f| f.class.to_s != 'Dive' }
     suggest = user.following_suggest('dive_id')
     if list.count > 0 || suggest.count > 0 then %>

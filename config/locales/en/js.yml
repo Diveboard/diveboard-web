@@ -569,6 +569,11 @@ en:
       : "E.g. Hawai 2011"
       ? "ERROR: Cannot Save. Please correct the fields highlighted in red"
       : "ERROR: Cannot Save. Please correct the fields highlighted in red"
+      Select: Select
+      ? "No simmilar spot found. You can create one."
+      : "No simmilar spot found. You can create one."
+      ? "Do you confirm the spot is not available in the database?"
+      : "Do you confirm the spot is not available in the database?"
       ? "Error loading image"
       : "Error loading image"
       ? "Example : White River, Cyprus"

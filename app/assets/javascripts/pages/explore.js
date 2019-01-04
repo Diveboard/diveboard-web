@@ -41,7 +41,7 @@ function initialize(params) {
   if (!jQuery.support.cors) G_balanced_roots = [ "//"+window.location.host+"/" ];
 
   //keep url if there are stuff that are meaningful
-  if(window.history.pushState && !window.location.href.match(/\/explore\/spots\/.+/) ){
+  if(window.history.pushState && !window.location.href.match(/\/explore\/spots\/.+/) && !window.location.href.match(/\/explore\?search_address\=.+/) ){
     $("#xp_p2_like").hide();
     window.history.pushState("", "", "/explore");
   }
@@ -347,7 +347,9 @@ function initialize(params) {
     'mapTypeId': google.maps.MapTypeId.HYBRID
   });
   GP=params;
-  if (params.initial_location.lat_min) {
+  if (params.search_address != "") {
+	  search_immediately_something(params.search_address);
+  } else if (params.initial_location.lat_min) {
     var sw = new google.maps.LatLng(params.initial_location.lat_min, params.initial_location.lng_min);
     var ne = new google.maps.LatLng(params.initial_location.lat_max, params.initial_location.lng_max);
     map.panToBounds(new google.maps.LatLngBounds(sw, ne));
@@ -2393,6 +2395,43 @@ function search_something(text) {
                 goto_search_result(result);
               }})(results[i]))
             );
+          }
+
+          initializeLayout();
+
+        } else {
+          //alert("Geocode was not successful for the following reason: " + status);
+        }
+      }
+    );
+}
+
+function search_immediately_something(text) {
+  if (text == '') {
+    $("#xp_p1_search_result ul").html('');
+    $("#xp_p1_search_result").hide();
+    return;
+  }
+
+  geocoder.geocode(
+      {'address': text},
+      function(results, status) {
+        //Remove the request from the pool and revert the icon if necessary
+        for (var i in G_search_search_ajax_requests)
+          if (G_search_search_ajax_requests[i] == "geocoding request")
+            G_search_search_ajax_requests.splice(i,1);
+        if (G_search_search_ajax_requests.length == 0)
+          $("#search_text_button").attr("src", "/img/black_search_btn.png");
+
+        if (status == google.maps.GeocoderStatus.OK) {
+          var image_url = "/img/world_icon.png";
+          if (results.length>0) {
+        	  i = results[0];
+        	  $('#xp_p1_search').val(text);
+        	  $('#xp_p1_search').data('xp_search_result', $(this).data('xp_formatted_address'));
+              $('#xp_p1_search').blur();
+              $("#xp_p1_search_result").hide();
+              goto_search_result(i);
           }
 
           initializeLayout();

@@ -555,6 +555,11 @@ zh-CN:
       : "例如：夏威夷 2011"
       ? "ERROR: Cannot Save. Please correct the fields highlighted in red"
       : "错误: 无法保存。请更正以红色突出显示的字段"
+      Select: Select
+      ? "No simmilar spot found. You can create one."
+      : "No simmilar spot found. You can create one."
+      ? "Do you confirm the spot is not available in the database?"
+      : "Do you confirm the spot is not available in the database?"
       ? "Error loading image"
       : 加载图像出错
       ? "Example : White River, Cyprus"

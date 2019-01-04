@@ -2,7 +2,6 @@ ThinkingSphinx::Index.define :spot, :with => :active_record, :delta => ThinkingS
   set_property :min_infix_len => 2
   indexes name
   indexes location.name, :as => :location_name
-  indexes region.name, :as => :region_name
   indexes country.cname, :as => :country_name
   indexes lat
   indexes long

@@ -36,11 +36,6 @@ if @meta_obj.nil? then
   <%
 
 elsif @meta_obj.class.to_s == 'Dive' then
-  if !@meta_obj.spot.region.nil? then
-    region = @meta_obj.spot.region.name
-  else
-    region = @meta_obj.spot.area_name
-  end
 
   buddies = []+@meta_obj.buddies.map(&:nickname)
   buddies.push @meta_obj.guide unless @meta_obj.guide.blank?
@@ -60,8 +55,8 @@ elsif @meta_obj.class.to_s == 'Dive' then
   end
 
 
-  title = it("Dive review of %{spot_name} in %{spot_area} - Discover where to dive in %{region} with Diveboard", scope: ['search', 'meta_tags'], spot_name: @meta_obj.spot.name, spot_area: @meta_obj.spot.area_name, region: region)
-  description = it("%{user}'s scuba dive in %{country}, %{location}: %{spot} - Depth: %{maxdepth}, duration: %{duration} - buddies: %{buddies} - species spotted : %{species} - Notes: %{notes}", scope: ['search', 'meta_tags'], user: @meta_obj.user.nickname, country: @meta_obj.spot.country.cname.titleize, location: @meta_obj.spot.location.name.titleize, spot: @meta_obj.spot.name.titleize, maxdepth: it("meter", scope: ['units'], count: @meta_obj.maxdepth), duration: it("min", scope: ['units'], count: @meta_obj.duration), buddies: buddies, species: species, notes: notes)
+  title = it("Dive review of %{spot_name} in %{spot_area}", scope: ['search', 'meta_tags'], spot_name: @meta_obj.spot.name, spot_area: @meta_obj.spot.area_name)
+  description = it("%{user}'s scuba dive in %{country}, %{location}: %{spot} - Depth: %{maxdepth}, duration: %{duration} - buddies: %{buddies} - species spotted : %{species} - Notes: %{notes}", scope: ['search', 'meta_tags'], user: @meta_obj.user.nickname, country: @meta_obj.spot.country.cname.titleize, location: @meta_obj.spot.location.full_name.titleize, spot: @meta_obj.spot.name.titleize, maxdepth: it("meter", scope: ['units'], count: @meta_obj.maxdepth), duration: it("min", scope: ['units'], count: @meta_obj.duration), buddies: buddies, species: species, notes: notes)
   %>
   <title><%=title%></title>
   <META NAME="Title" CONTENT="<%=title%>">
@@ -135,8 +130,6 @@ elsif @meta_obj.class.to_s == 'User' then
   <%end%>
 
   <%
-
-
 elsif @meta_obj.class.to_s == 'Country' then
   title = it("Scuba diving in %{name} - Discover where to dive in %{name} with Diveboard", scope: ['search', 'meta_tags'], name: @meta_obj.name)
   description = it("Find out where to dive in %{name} with Diveboard - Get the feedback and reviews of other divers through real dive logs", scope: ['search', 'meta_tags'], name: @meta_obj.name)
@@ -167,49 +160,7 @@ elsif @meta_obj.class.to_s == 'Country' then
   <% @meta_obj.locations.each do |l| %>
   <meta property="diveboard:sub_zones" content="<%=l.fullpermalink(:canonical)%>" />
   <%end%>
-  <% @meta_obj.regions.each do |l| %>
-  <meta property="diveboard:sub_zones" content="<%=l.fullpermalink(:canonical)%>" />
-  <%end%>
-  <%
-
-
-elsif @meta_obj.class.to_s == 'Region' then
-  title = it("Scuba diving in %{name} - Discover where to dive in %{name} with Diveboard", scope: ['search', 'meta_tags'], name: @meta_obj.name)
-  description = it("Find out where to dive in %{name} with Diveboard - Get the feedback and reviews of other divers through real dive logs", scope: ['search', 'meta_tags'], name: @meta_obj.name)
-  %>
-  <title><%=title%></title>
-  <META NAME="Title" CONTENT="<%=title%>">
-  <meta name="description" content="<%=description%>"/>
-
-  <meta property="fb:app_id" content="<%=FB_APP_ID%>" />
-  <meta property="fb:admins" content="680251975" />
-  <meta property="fb:admins" content="1077557400" />
-  <meta property="og:site_name" content="<%= it("Diveboard : Track and share your scuba diving experiences - Explore new spots and destinations", scope: ['search', 'meta_tags']) %>" />
-
-  <meta property="og:type" content="diveboard:zone" />
-  <meta property="og:url" content="<%=@meta_obj.fullpermalink(:canonical)%>" />
-  <meta property="og:title" content="<%=title%>" />
-  <meta property="og:description" content="<%=description%>" />
-  <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-  <%I18n.available_locales.each do |locale|%>
-    <link rel='alternate' href='<%=@meta_obj.fullpermalink(locale)%>' hreflang="<%=locale%>" />
-    <%if locale != I18n.locale then%>
-      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
-    <%end%>
-  <%end%>
-
-  <meta property="diveboard:type"      content="Body of Water" />
-  <% @meta_obj.locations.each do |l| %>
-  <%
-  begin
-    if l.id != 1 && l.country.id != 1%>
-  <meta property="diveboard:sub_zones" content="<%=l.fullpermalink(:canonical)%>" />
-  <%
-    end
-  rescue
-  end
-  end%>
-
+  
   <%
 elsif @meta_obj.class.to_s == 'Location' then
   title = it("Scuba diving in %{name}, %{country} - Discover where to dive near %{name} with Diveboard", scope: ['search', 'meta_tags'], name: @meta_obj.name, country: @meta_obj.country.name)
@@ -276,17 +227,12 @@ elsif @meta_obj.class.to_s == 'Spot' then
   <meta property="diveboard:zones"              content="<%=@meta_obj.country.fullpermalink(:canonical)%>" />
   <meta property="diveboard:zones"              content="<%=@meta_obj.location.fullpermalink(:canonical)%>" />
   <meta property="diveboard:location"           content="<%=@meta_obj.location.name%>" />
-  <% if !@meta_obj.region.blank?%>
-  <meta property="diveboard:body_of_water"      content="<%=@meta_obj.region.name%>" />
-  <meta property="diveboard:zones"              content="<%=@meta_obj.region.fullpermalink(:canonical)%>" />
-  <%end%>
 
   <% @meta_obj.dives.each do |d|%>
   <% if d.privacy == 0%>
   <meta property="diveboard:dives"              content="<%=d.fullpermalink(:canonical)%>" />
   <%end%>
   <%end%>
-
 
 <%elsif @meta_obj.class.to_s == 'Shop' then
   title = it("%{name} on Diveboard", scope: ['search', 'meta_tags'], name: @meta_obj.name)

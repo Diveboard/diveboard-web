@@ -14,7 +14,8 @@ $(document).ready(function(){
     root_url: "<%=ROOT_URL%>",
     locale_root_url: "<%=root_url%>",
     maxZoomLevel: 15,
-    initial_location: <%=initial_location.to_json.html_safe%>
+    initial_location: <%=initial_location.to_json.html_safe%>,
+    search_address: "<%=escape_javascript search_address%>"
   });
 });
 
@@ -66,7 +67,7 @@ var G_balanced_roots = <%= begin Rails.configuration.explore_balancing_roots res
             <h1 id='xp_p2h_head'/><%=
               if panel2.class.to_s == 'User' then panel2.nickname
               elsif panel2.class.to_s == 'Dive' then panel2.user.nickname + " @ " + panel2.spot.name
-              elsif ['Country', 'Region', 'Location', 'Spot', 'Shop'].include? panel2.class.to_s  then panel2.name
+              elsif ['Country', 'Location', 'Spot', 'Shop'].include? panel2.class.to_s  then panel2.name
               end
             %></h1>
           </div>
@@ -93,7 +94,7 @@ var G_balanced_roots = <%= begin Rails.configuration.explore_balancing_roots res
             if panel2.class.to_s == 'User' then pic_url = panel2.picture_large
             elsif panel2.class.to_s == 'Shop' then pic_url = panel2.logo_url
             elsif panel2.class.to_s == 'Dive' && ! panel2.featured_picture.nil? then pic_url = panel2.featured_picture.large
-            elsif ['Country', 'Region', 'Location', 'Spot'].include? panel2.class.to_s  then
+            elsif ['Country', 'Location', 'Spot'].include? panel2.class.to_s  then
               pic_url = panel2.picture.large rescue nil
             end
           %>
@@ -115,7 +116,7 @@ var G_balanced_roots = <%= begin Rails.configuration.explore_balancing_roots res
             </span>
             <span id='xp_p2_info_link' class='xp_panel_tab_link selected'><%= it("INFO", scope: ['search', 'explore']) %></span>
             <span id='xp_p2_dives_link' class='xp_panel_tab_link' <%if panel2.class.to_s == 'Dive' then%>style='display:none'<%end%>><%= it("DIVES", scope: ['search', 'explore']) %></span>
-            <span id='xp_p2_divers_link' class='xp_panel_tab_link' <%if ['Shop', 'User', 'Country', 'Region', 'Location'].include? panel2.class.to_s then%>style='display:none'<%end%>><%= it("DIVERS", scope: ['search', 'explore']) %></span>
+            <span id='xp_p2_divers_link' class='xp_panel_tab_link' <%if ['Shop', 'User', 'Country', 'Location'].include? panel2.class.to_s then%>style='display:none'<%end%>><%= it("DIVERS", scope: ['search', 'explore']) %></span>
             <span id='xp_p2_pictures_link' class='xp_panel_tab_link' <%if !['User', 'Dive', 'Spot', 'Country'].include?(panel2.class.to_s) || panel2.pictures.count==0 then%>style='display:none'<%end%>><%= it("PICTURES", scope: ['search', 'explore']) %></span>
           </div>
           <div id='xp_p2_pages_out'>
@@ -125,7 +126,7 @@ var G_balanced_roots = <%= begin Rails.configuration.explore_balancing_roots res
               elsif panel2.class.to_s == 'Dive' then render :partial => 'explore/xp2_dive.jst.ejs', :locals => {dive: panel2.to_api(:search_full_server).except(:class)}
               elsif panel2.class.to_s == 'Spot' then render :partial => 'explore/xp2_spotinfo.jst.ejs', :locals => {spot: panel2.to_api(:search_full_server).except(:class)}
               elsif panel2.class.to_s == 'Shop' then render :partial => 'explore/xp2_shop.jst.ejs', :locals => {shop: panel2.to_api(:search_full_server)}
-              elsif ['Country', 'Region', 'Location'].include? panel2.class.to_s  then render :partial => 'explore/xp2_zone.jst.ejs', :locals => {:zone => panel2.to_api(:search_full_server)}
+              elsif ['Country', 'Location'].include? panel2.class.to_s  then render :partial => 'explore/xp2_zone.jst.ejs', :locals => {:zone => panel2.to_api(:search_full_server)}
               end
             %>
             </div>

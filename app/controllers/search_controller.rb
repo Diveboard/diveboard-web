@@ -39,7 +39,10 @@ class SearchController < ApplicationController
     Rails.logger.debug "panel2: #{panel2.inspect} ; meta_obj: #{@meta_obj.inspect}"
 
     begin
-      if !params[:lat].nil? && !params[:lng].nil? then
+      search_address = ""
+      if !params[:search_address].nil? then
+        search_address = params[:search_address]
+      elsif !params[:lat].nil? && !params[:lng].nil? then
         initial_location = {"latitude" => params[:lat].to_f, "longitude" => params[:lng], "zoom" => 6}
         initial_location['zoom'] = params[:zoom] unless params[:lng].nil?
       elsif !panel2.nil? then
@@ -121,9 +124,10 @@ class SearchController < ApplicationController
       logger.warn $!.backtrace.join("\n")
       initial_location = {"latitude" => 21.125169323467198, "longitude" => -77.09304003906254, 'zoom' => 7}
     end
+
     @gmapskey = GOOGLE_MAPS_API
     
-    render :locals => {:initial_location => initial_location, :panel2 => panel2}
+    render :locals => {:initial_location => initial_location, :panel2 => panel2, :search_address => search_address}
   end
 
   def explore_missing_asset

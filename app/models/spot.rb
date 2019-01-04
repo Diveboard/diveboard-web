@@ -34,7 +34,6 @@ class Spot < ActiveRecord::Base
   has_many :users, :through => :dives, :uniq => true
   belongs_to :country
   belongs_to :location
-  belongs_to :region
   belongs_to :wiki
   has_many :shops, :through => :dives, :uniq => true
 
@@ -45,7 +44,7 @@ class Spot < ActiveRecord::Base
   validates :name, :exclusion => { :in => [nil], :message => "name cannot be nil"}
 
   #before_validation :enforce_case
-  before_save :enforce_case, :check_country_bounds_if_needed, :check_country_and_region
+  before_save :enforce_case, :check_country_bounds_if_needed, :check_country
   before_create :mark_to_moderate
   after_save :update_habtm    #, :cache_static_map ## not sure it's a good idea...
 
@@ -55,7 +54,7 @@ class Spot < ActiveRecord::Base
 
   define_format_api :public => [
         :id, :shaken_id, :country_name, :country_code, :country_flag_big, :country_flag_small,
-        :within_country_bounds, :region_name, :location_name, :permalink, :fullpermalink, :permalink,
+        :within_country_bounds, :location_name, :permalink, :fullpermalink, :permalink,
         :staticmap,
         {
           :name => Proc.new {|s| s.name.titleize},
@@ -78,30 +77,29 @@ class Spot < ActiveRecord::Base
           :user_ids => Proc.new do |s| begin (s.dives.reject do |d| d.privacy==1 end).map(&:user_id).uniq rescue [] end end,
           :shop_ids => Proc.new {|p| p.shop_ids.reject &:nil?},
           :countryblob => Proc.new do |s|  begin if s.country.id == 1 then nil else s.country.blob end rescue nil end end,
-          :locationblob => Proc.new do |s|  begin if s.location.id == 1 then nil else s.location.blob end rescue nil end end,
-          :regionblob => Proc.new do |s|  begin if s.region.id == 1 then nil else s.region.blob end rescue nil end end
+          :locationblob => Proc.new do |s|  begin if s.location.id == 1 then nil else s.location.blob end rescue nil end end
         }],
       :search_full => [ :flag_moderate_private_to_public, :wiki_html, {
                       :has_wiki_content => Proc.new {|p| p.wiki.nil?},
                       :best_pics => Proc.new {|p| p.best_pics.to_api :public}
                     }],
       :search_full_server => [
-        :average_current, :average_depth, :average_temp_bottom, :average_temp_surface, :average_visibility, :country_flag_small, :country_name, :dive_count, :id, :lat, :lng, :location_name, :permalink, :region_name, :shaken_id, :user_count,
+        :average_current, :average_depth, :average_temp_bottom, :average_temp_surface, :average_visibility, :country_flag_small, :country_name, :dive_count, :id, :lat, :lng, :location_name, :permalink, :shaken_id, :user_count,
         {
           :shops => lambda {|s| s.shops.joins(:user_proxy).where('users.id is not null').limit(20).map {|shop| shop.to_api :search_full_server_l2}},
           :users => lambda {|s| s.users[0..20].map {|u| u.to_api :search_full_server_l1}},
           :dives => lambda {|s| (s.dives.reject do |d| d.privacy==1 end )[0..20].map {|d| d.to_api :search_full_server_l1}},
           :pictures => lambda {|s| s.pictures[0..20].map {|d| d.to_api :public}}
         }],
-      :search_full_server_l1 => [:country_flag_small, :country_name, :id, :lat, :lng, :location_name, :name, :region_name],
+      :search_full_server_l1 => [:country_flag_small, :country_name, :id, :lat, :lng, :location_name, :name],
       :search_full_server_l2 => [:id, :name ],
-      :moderation => [:country_id, :location_id, :region_id, :moderate_id, :private_user_id, :verified_user_id, :verified_date, :created_at, :updated_at, :zoom, :description, :staticmap]
+      :moderation => [:country_id, :location_id, :moderate_id, :private_user_id, :verified_user_id, :verified_date, :created_at, :updated_at, :zoom, :description, :staticmap]
 
   define_api_includes :private => [:public], :mobile => [:public], :search_light => [:public], :search_full => [:public], :moderation => [:public, :search_light, :search_full], :search_full => [:search_light]
   define_api_private_attributes :private_user_id, :verified_user_id, :verified_date
 
   define_api_updatable_attributes %w( name country_id country_name country_code lat lng long zoom moderate_id)
-  define_api_updatable_attributes_rec 'location' => Location, 'region' => Region
+  define_api_updatable_attributes_rec 'location' => Location
 
 
   def is_private_for?(options={})
@@ -135,8 +133,7 @@ class Spot < ActiveRecord::Base
           :country_id => self.country_id,
           :private_user_id => nil,
           :zoom => self.zoom,
-          :location_id => self.location_id,
-          :region_id => self.region_id
+          :location_id => self.location_id
           ).where(
           "spots.lat between #{self.lat.to_f-epsilon} and #{self.lat.to_f+epsilon}"
           ).where(
@@ -149,8 +146,7 @@ class Spot < ActiveRecord::Base
           :country_id => self.country_id,
           :private_user_id => themaker_id,
           :zoom => self.zoom,
-          :location_id => self.location_id,
-          :region_id => self.region_id
+          :location_id => self.location_id
           ).where(
           "spots.lat between #{self.lat.to_f-epsilon} and #{self.lat.to_f+epsilon}"
           ).where(
@@ -226,8 +222,7 @@ class Spot < ActiveRecord::Base
     o = JSON.parse(self.to_json)
     ## adding extra data
     o["extra"]={}
-    o["extra"]["region_name"] = self.region.name unless self.region.nil?
-    o["extra"]["location_name"] = self.location.name unless self.location.nil?
+    o["extra"]["location_name"] = self.location.full_name unless self.location.nil?
     o["extra"]["country_name"] = self.country.cname unless self.country.nil?
     o["extra"]["dives"] = self.dives.map{|r| r.id} unless self.dives.empty?
 
@@ -305,8 +300,6 @@ class Spot < ActiveRecord::Base
 
   def update_habtm
     ## this updated the habtm for a given spot
-    self.location.regions << self.region unless self.region.nil? || self.location.nil?
-    self.country.regions << self.region unless self.region.nil? || self.country.nil?
     self.country.locations << self.location unless self.location.nil? || self.country.nil?
   end
 
@@ -320,7 +313,7 @@ class Spot < ActiveRecord::Base
     list_coma = (place || site).downcase.split(/ *, */)
     Rails.logger.debug list_coma
     country_found = Country.where("lower(cname) in (:cname)", {:cname => list_coma})
-    location_found = Location.where("lower(name) in (:name)", {:name => list_coma})
+    location_found = Location.where("lower(name) in (:name) or lower(name2) in (:name) or lower(name3) in (:name2)", {:name => list_coma})
 
     Rails.logger.debug "Name analysed : #{list_coma}"
     Rails.logger.debug "Found : #{spot_found.count} Spots, #{country_found.count} countries, #{location_found.count} locations"
@@ -424,8 +417,8 @@ class Spot < ActiveRecord::Base
         spot_lat = 0
         spot_lng = 0
 
-        Rails.logger.debug ":name => #{spot_name}, :lat => #{spot_lat}, :long => #{spot_lng}, :zoom => #{0}, :precise => #{false}, :location_id => #{new_location.id}, :region_id => nil, :country_id => #{new_country.id}, :private_user_id => #{user_id}, :flag_moderate_private_to_public => true)"
-        new_spot = Spot.create( :name => spot_name, :lat => spot_lat, :long => spot_lng, :zoom => 0, :precise => false, :location_id => new_location.id, :region_id => nil, :country_id => new_country.id, :private_user_id => user_id, :flag_moderate_private_to_public => true, :from_bulk => true)
+        Rails.logger.debug ":name => #{spot_name}, :lat => #{spot_lat}, :long => #{spot_lng}, :zoom => #{0}, :precise => #{false}, :location_id => #{new_location.id}, :country_id => #{new_country.id}, :private_user_id => #{user_id}, :flag_moderate_private_to_public => true)"
+        new_spot = Spot.create( :name => spot_name, :lat => spot_lat, :long => spot_lng, :zoom => 0, :precise => false, :location_id => new_location.id, :country_id => new_country.id, :private_user_id => user_id, :flag_moderate_private_to_public => true, :from_bulk => true)
         new_spot.save if new_spot.id.nil? || new_spot.changed? || new_spot.new_record?
         new_spot.fetch_rough_coords_from_google!
       }
@@ -446,7 +439,7 @@ class Spot < ActiveRecord::Base
       if self.country.id > 1 then
         address += " " + self.country.name
       end
-      uri_val = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=#{address}")
+      uri_val = URI.escape("https://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=#{address}&key=#{GOOGLE_MAPS_API}")
       uri = URI.parse(uri_val)
       logger.debug "Calling google's geoname with URL #{uri_val}"
       http = Net::HTTP.new(uri.host, uri.port)
@@ -568,7 +561,6 @@ class Spot < ActiveRecord::Base
     s -= 10 if self.name.blank?
     s -= 5 if self.country.nil? || self.country.name.blank?
     s -= 5 if self.location.nil? || self.location.name.blank?
-    s -= 3 if self.region.nil? || self.region.name.blank?
     update_attributes :score => s unless s == initial_score
     @computed_score = s
     return s
@@ -598,12 +590,8 @@ class Spot < ActiveRecord::Base
     self.country = Country.where(:ccode => code).first
   end
 
-  def  region_name
-    return self.region.name unless self.region.nil?
-  end
-
   def location_name
-    return self.location.name unless self.location.nil?
+    return self.location.full_name unless self.location.nil?
   end
 
   def staticmap
@@ -1053,7 +1041,7 @@ class Spot < ActiveRecord::Base
       #  sanitized_array.push s
       #  next
       #end
-      if self.flag_moderate_private_to_public == true && !self.dives.empty? && self.within_country_bounds
+      if self.flag_moderate_private_to_public == true && !self.dives.empty?
         return true
       end
       if !userid.nil? && self.private_user_id == userid && !self.dives.empty?
@@ -1095,127 +1083,126 @@ class Spot < ActiveRecord::Base
 
   end
 
-
-  def google_fix_location
-    logger.debug "Trying to fix location for spot #{self.id}"
-    address = ""
-    if !self.country_id.nil? && !self.country_id != 1
-      address += self.country.cname
-    end
-
-    if !self.location_id.nil? && !self.location_id != 1 && !self.location.name.nil?
-      address += ", " unless address == ""
-      address += self.location.name
-    end
-
-    address_bis = address ## sometime removing the spot name helps
-
-    if !self.region_id.nil? && !self.region_id != 1
-      address += ", " unless address == ""
-      address += self.region.name
-    end
-
-    address += ", " unless address == ""
-    address += self.name
-
-    #we can try splitting this
-    subnames = self.name.split(/\ *,\ */)
-
-
-    new_country = nil
-    new_location = nil
-    new_location_0 = nil
-    new_location_1 = nil
-    new_location_2 = nil
-    new_location_3 = nil
-    spot_lat = nil
-    spot_lng = nil
-    uri_val = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=#{address}")
-    uri = URI.parse(uri_val)
-    logger.debug "Calling google's geoname with URL #{uri_val}"
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = false
-    request = Net::HTTP::Get.new(uri.path + "?" + uri.query)
-    response = http.request(request)
-    data = response.body
-    results = JSON.parse(data.force_encoding("UTF-8"))
-    if results["results"].length == 0
-      logger.debug " ZERO_RESULTS, trying with address bis"
-      uri_val = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=#{address_bis}")
+  def google_get_location
+    if !self.lat.nil? and !self.lng.nil? and self.lat != 0 and self.lng != 0 then
+      logger.debug "Trying to get location for spot #{self.id}"
+  
+      new_country = nil
+      new_admin_l1 = nil
+      new_admin_l2 = nil
+      new_admin_l3 = nil
+      new_formatted_address = nil
+      new_locality = nil;
+      new_poi = nil
+  
+      spot_lat = self.lat
+      spot_lng = self.long
+      uri_val = URI.escape("https://maps.googleapis.com/maps/api/geocode/json?sensor=false&key=#{GOOGLE_MAPS_API}&latlng=#{spot_lat},#{spot_lng}")
       uri = URI.parse(uri_val)
       logger.debug "Calling google's geoname with URL #{uri_val}"
       http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = false
+      http.use_ssl = true
       request = Net::HTTP::Get.new(uri.path + "?" + uri.query)
       response = http.request(request)
       data = response.body
       results = JSON.parse(data.force_encoding("UTF-8"))
+      if results["results"].length == 0
+        logger.debug " ZERO_RESULTS, trying with address bis"
+        return
+      end
+      if results["results"].length == 0
+        #nothing to do
+        logger.debug "ZERO_RESULTS, Could not fix spot's position"
+        return
+      end
+  
+      #let's find the country now
+      results["results"].each do |res|
+        res["address_components"].each do |c|
+          if c["types"].include? "country" and new_country.nil?
+            new_country = c["long_name"]
+          end
+          if c["types"].include? "locality" and new_locality.nil?
+            new_locality = c["long_name"]
+          end
+          if c["types"].include? "administrative_area_level_1" and new_admin_l1.nil?
+            new_admin_l1 = c["long_name"]
+          end
+          if c["types"].include? "administrative_area_level_2" and new_admin_l2.nil?
+            new_admin_l2 = c["long_name"]
+          end
+          if c["types"].include? "administrative_area_level_3" and new_admin_l3.nil?
+            new_admin_l3 = c["long_name"]
+          end
+          if (c["types"].include? "park" or c["types"].include? "point_of_interest") and new_poi.nil?
+            new_poi = c["long_name"]
+          end
+        end
+      end
+      
+      name1 = nil
+      name2 = nil
+      name3 = nil
+      if name1.nil? and !new_poi.nil? then
+        name1 = new_poi
+        new_poi = nil
+      end
+      if name1.nil? and !new_locality.nil? then
+        name1 = new_locality
+        new_locality = nil
+      end
+      if name1.nil? and !new_admin_l1.nil? then
+        name1 = new_admin_l1
+        new_admin_l1 = nil
+      end
+      if name1.nil? and !new_formatted_address.nil? then
+        name1 = new_formatted_address
+        new_formatted_address = nil
+      end
+      if name2.nil? and !new_locality.nil? then
+        name2 = new_locality
+        new_locality = nil
+      end
+      if name2.nil? and !new_admin_l1.nil? then
+        name2 = new_admin_l1;
+        new_admin_l1 = nil
+      end
+      if name2.nil? and !new_admin_l2.nil? then
+        name2 = new_admin_l2
+        new_admin_l2 = nil
+      end
+      if name3.nil and !new_admin_l1.nil? then
+        name3 = new_admin_l1
+        new_admin_l1 = nil
+      end
+      if name3.nil? and !new_admin_l2.nil then
+        name3 = new_admin_l2
+        new_admin_l2 = nil
+      end
+      if name3.nil? and !admin_l3.nil? then
+        name3 = new_admin_l3
+        new_admin_l3 = nil
+      end
+      
+      logger.debug "Google gave us country: #{new_country}, location: #{name1 || ""}, #{name2 || ""}, #{name3 || ""}"
+  
+      if self.country_id.nil? || self.country_id == 1
+        self.country_id = Country.find_by_cname(new_country).id rescue 1
+      end
+  
+      if self.location_id.nil? || self.location_id == 1 || self.location.name.blank?
+        if name1.nil?  || name1 == ""
+          self.location_id = 1
+        else
+          loc = Location.where(:name => name1, :name2 => name2, :name3 => name3, :country_id => self.country_id).first rescue nil
+          loc = Location.create(:name => name1, :name2 => name2, :name3 => name3, :country_id => self.country_id) if loc.nil?
+          self.location_id = loc.id rescue 1
+        end
+      end
+      self.save
     end
-    if subnames.length > 0
-      subnames.each do |s|
-        logger.debug " ZERO_RESULTS, trying with address bis + subname #{s}"
-        uri_val = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=#{address_bis}, #{s}")
-        uri = URI.parse(uri_val)
-        logger.debug "Calling google's geoname with URL #{uri_val}"
-        http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = false
-        request = Net::HTTP::Get.new(uri.path + "?" + uri.query)
-        response = http.request(request)
-        data = response.body
-        results = JSON.parse(data.force_encoding("UTF-8"))
-        break if results["results"].length > 0
-      end
-    end
-    if results["results"].length == 0
-      #nothing to do
-      logger.debug "ZERO_RESULTS, Could not fix spot's position"
-      basicfix00
-      return
-    end
-
-    #results = JSON.parse(data)
-    spot_lat = results["results"][0]['geometry']['location']['lat']
-    spot_lng = results["results"][0]['geometry']['location']['lng']
-    #let's find the country now
-    results["results"][0]["address_components"].each do |c|
-      if c["types"].include? "country"
-        new_country = c["long_name"]
-      end
-      if c["types"].include? "locality"
-        new_location_0 = c["long_name"]
-      end
-      if c["types"].include? "administrative_area_level_2"
-        new_location_1 = c["long_name"]
-      end
-      if c["types"].include?("administrative_area_level_1")
-        new_location_2 = c["long_name"]
-      end
-      if c["types"].include?("administrative_area_level_3")
-        new_location_3 = c["long_name"]
-      end
-    end
-    new_location = new_location_0 || new_location_1 || new_location_2 || new_location_3 || nil
-    logger.debug "Google gave us country: #{new_country}, location: #{new_location || ""}, lat/lng #{spot_lat} / #{spot_lng}"
-
-    self.lat = spot_lat
-    self.long = spot_lng
-    if self.country_id.nil? || self.country_id == 1
-      self.country_id = Country.find_by_cname(new_country).id rescue 1
-    end
-
-    if self.location_id.nil? || self.location_id == 1 || self.location.name.blank?
-      if new_location.nil?  || new_location == ""
-        self.location_id = 1
-      else
-        loc = Location.where(:name => new_location, :country_id => self.country_id).first rescue nil
-        loc = Location.create(:name => new_location, :country_id => self.country_id) if loc.nil?
-        self.location_id = loc.id rescue 1
-      end
-    end
-    self.save
 
   end
-
 
   def average_visibility
     vals = Media.select_values_sanitized('select visibility from dives where spot_id = :id and visibility is not null', :id => self.id)
@@ -1330,12 +1317,11 @@ class Spot < ActiveRecord::Base
   end
 
 
-  def check_country_and_region
+  def check_country
     #closest_spot = Spot.search(:geo => [lat, long],:order => "geodist ASC",:limit=>1).first
     begin
       if self.id == 1
         country_id = 1
-        region_id = 1
         location_id = 1
         return
       end
@@ -1346,14 +1332,8 @@ class Spot < ActiveRecord::Base
     step=0.01
     closest_spot=nil
     until !closest_spot.nil?
-      closest_spot = Spot.where("(lat between ? and ?) and (spots.long between ? and ?) and region_id is not null and country_id is not null and country_id != 1 and region_id != 1",lat-step,lat+step,long-step,long+step).first
+      closest_spot = Spot.where("(lat between ? and ?) and (spots.long between ? and ?) and country_id is not null and country_id != 1",lat-step,lat+step,long-step,long+step).first
       step+=step
-    end
-
-    if region.nil? 
-      self.region = closest_spot.region
-    elsif region != closest_spot.region && ((lat - closest_spot.lat).abs < 4 || (long - closest_spot.long).abs < 4) 
-      mark_to_moderate
     end
 
     if country.nil? || country.id==1

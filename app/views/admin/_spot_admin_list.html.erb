@@ -12,9 +12,9 @@ spot_data_similar[<%=s.id%>] = <%=(s.to_api(:moderation, :caller => @user)).to_j
   <td style="padding-left: 5px;" class="show_spot">
     id: <%=s.id%> - name : <b class="spot_name"><%=s.name%></b><br/>
     <table class="spot_line_details"><tr>
-      <td>cn</td><td>loc</td><td>reg</td><td>lat</td><td>long</td><td>zoom</td><td>#dives</td><td>owner</td>
+      <td>cn</td><td>loc</td><td>lat</td><td>long</td><td>zoom</td><td>#dives</td><td>owner</td>
     </tr><tr>
-      <td class="ccode"><%=s.country.ccode.upcase || "none"%></td><td class="location"><%=s.location_id || "none"%></td><td class="region"><%=s.region_id || "none"%></td><td class="lat"><%=s.lat.round(3).to_f%></td><td class="long"><%=s.long.round(3).to_f%></td><td class="zoom"><%=s.zoom%></td><td class="dives_count"><%=s.dives.count%></td><td class="verified"><span class="default"><%if s.flag_moderate_private_to_public.nil?%><span class="green">public</span><%else%><%=s.private_user_id || "disabled"%><%end%></span><span class="updated" style="display:none;"></span></td>
+      <td class="ccode"><%=s.country.ccode.upcase || "none"%></td><td class="location"><%=s.location_id || "none"%></td><td class="lat"><%=s.lat.round(3).to_f%></td><td class="long"><%=s.long.round(3).to_f%></td><td class="zoom"><%=s.zoom%></td><td class="dives_count"><%=s.dives.count%></td><td class="verified"><span class="default"><%if s.flag_moderate_private_to_public.nil?%><span class="green">public</span><%else%><%=s.private_user_id || "disabled"%><%end%></span><span class="updated" style="display:none;"></span></td>
     </tr></table>
   </td>
   <td style="width: 20px;" class="show_spot"><span class="symbol right_align">)</span></td>

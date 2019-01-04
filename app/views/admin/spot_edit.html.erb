@@ -91,14 +91,9 @@ function check_country(){
 			<div class="varline"><div class="tag"><b>ID :</b></div><div class="field"><%= @spot.id or "NA"%></div></div>
 			<div class="varline"><div class="tag"><b>Name :</b></div><div class="field"><%= f.text_field :name%></div></div>
 			<%if @spot.location.nil?%>
-			<div class="varline"><div class="tag"><b>Location :</b></div><div class="field"><input type="text" id="location" name="location" /></div></div>
+			<div class="varline"><div class="tag"><b>Location :</b></div><div class="field"><input type="text" id="location1" name="location" /></div></div>
 			<%else%>
-			<div class="varline"><div class="tag"><b>Location :</b></div><div class="field"><input type="text" id="location" name="location" value="<%=@spot.location.name%>"/> (<%=@spot.location.id%>)</div></div>
-			<%end%>
-			<%if @spot.region.nil?%>
-			<div class="varline"><div class="tag"><b>Body of Water :</b></div><div class="field"><input type="text" id="region" name="region"/></div></div>
-			<%else%>
-			<div class="varline"><div class="tag"><b>Body of Water :</b></div><div class="field"><input type="text" id="region" name="region" value="<%=@spot.region.name%>"/> (<%=@spot.region.id%>)</div></div>
+			<div class="varline"><div class="tag"><b>Location :</b></div><div class="field"><input type="text" id="location1" name="location" value="<%=@spot.location.name%>"/> (<%=@spot.location.id%>)</div></div>
 			<%end%>
 			<%if @spot.country.nil?%>
 			<div class="varline"><div class="tag"><b>Country code :</b></div><div class="field"><input type="text" id="country_code" name="country_code"/></div></div>

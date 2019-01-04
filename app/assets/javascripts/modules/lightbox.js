@@ -646,8 +646,6 @@ function fill_infos(image){
     $("#lightbox_controls .box_exif").show();
 
   var spot_data = "<p><img src='"+image.spot.staticmap+"'/>"+image.spot.country_name+", "+image.spot.location_name+", "+image.spot.name;
-  if(image.spot.region_name != null && image.spot.region_name != "")
-    spot_data += "<br/>"+image.spot.region_name;
   spot_data += "<br/>"+image.dive.date;
 
   $("#lightbox_controls .info_box_spot").empty().html(spot_data);

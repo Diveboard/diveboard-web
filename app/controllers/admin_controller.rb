@@ -396,18 +396,6 @@ class AdminController < ApplicationController
 
           @errors.push moderation_location[:error] unless moderation_location[:error].blank?
 
-
-          if params[:region_id].blank? && params[:region].blank?
-            moderation_region = nil
-          else
-            arg = {
-              'name' => params[:region]
-            }
-            if !params[:region_id].blank? then arg["id"] = params[:region_id].to_i end
-            moderation_region = Region.create_or_update_from_api(arg, :caller => @user)
-            @errors.push moderation_region[:error] unless moderation_region[:error].blank?
-            Rails.logger.debug "region done, id => #{moderation_region[:target].id} - errors : #{moderation_region[:error].to_s}"
-          end
           arg = {
             'id' => params[:id].to_i,
             'name' => params[:spot_name],
@@ -419,9 +407,6 @@ class AdminController < ApplicationController
               'id' => moderation_location[:target].id,
             }
           }
-          if !moderation_region.nil?
-            arg["region"]={"id" => moderation_region[:target].id}
-          end
           moderation_spot = Spot.create_or_update_from_api(arg, :caller => @user)
           @errors.push moderation_spot[:error] unless moderation_spot[:error].blank?
           Rails.logger.debug "spot done, id => #{moderation_spot[:target].id} - errors : #{moderation_spot[:error].to_s}"
@@ -598,6 +583,8 @@ class AdminController < ApplicationController
       errors =[]
       begin
         name = params[:name]
+        name2 = params[:name2]
+        name3 = params[:name3]
         raise DBArgumentError.new "Name can't be empty" if name.blank?
         ccode = params[:country_code]
         raise DBArgumentError.new "Name can't be empty" if ccode.blank?
@@ -609,6 +596,8 @@ class AdminController < ApplicationController
         ##create a new location
         new_location = Location.create {|c|
           c.name = name
+          c.name2 = name2
+          c.name3 = name3
           c.country_id = country.id
           ## TODO handle wiki
         }
@@ -1586,7 +1575,6 @@ class AdminController < ApplicationController
     params[:zoom] =  params[:spot]["zoom"]
     params[:country] = params["country_code"]
     params[:location] = params["location"]
-    params[:region] = params["region"]
 
   end
 

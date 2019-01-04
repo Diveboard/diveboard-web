@@ -313,8 +313,8 @@ class GeonamesCore < ActiveRecord::Base
         maxLng += step
         spot = Spot.where("(spots.lat BETWEEN ? AND ?) AND (spots.long BETWEEN ? AND ?)", minLat, maxLat, minLng, maxLng).first
       end
-      region = spot.region
-      return "/area/#{geonames_country.name.to_url}-#{geonames_country.shaken_id}/#{region.name.to_url}-#{region.shaken_id}/#{self.name.to_url}-#{self.shaken_id}"
+
+      return "/area/#{geonames_country.name.to_url}-#{geonames_country.shaken_id}/#{self.name.to_url}-#{self.shaken_id}"
 =begin
       regions.each do |r|
 

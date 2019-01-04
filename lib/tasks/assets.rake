@@ -178,18 +178,6 @@ namespace :cleanup do
     puts "#{locs_destroyed.count} unused locations cleaned up: #{locs_destroyed.to_s}"
   end
 
-  desc "Removes locations with no spots attached and no wiki entry"
-  task :regions => :environment do |t, args|
-    regs_destroyed = []
-    Region.all.each do |r|
-      if r.spots.count == 0 && r.wiki.nil? && r.nesw_bounds.blank?
-        regs_destroyed.push r.id
-        r.destroy
-      end
-    end
-    puts "#{regs_destroyed.count} unused regions cleaned up: #{regs_destroyed.to_s}"
-  end
-
   desc "Ensure no moderate_id points to a spot that doesn't exist and fix flags"
   task :moderate_id_check => :environment do |t, args|
     spots_fixed = []

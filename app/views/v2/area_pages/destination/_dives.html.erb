@@ -48,8 +48,6 @@
     <% @spots.each do |s| %>
       <% if s != nil && s.best_pics.first!=nil%>
             <% count +=1 %>
-
-      <a class="spot" href="/area/<%= @geonames_country.name.to_url %>-<%= @geonames_country.shaken_id%>/<%= @region.name.to_url %>-<%= @region.shaken_id%>/<%= s.name.to_url %>-<%= s.shaken_id%>" <% if count > 4 %> style="display:none" <% end %>>
       <div class="destination_spot">
         <img src=<%= s.best_pics.first.large %> >
         <div class="spot_infos_holder">

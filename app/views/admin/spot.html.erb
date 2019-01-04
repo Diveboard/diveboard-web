@@ -28,7 +28,7 @@ function search_spots(){
 		success: function(data) {
 			$("#results").empty();
 			$.each(data, function(key, val){
-				$("#results").append(val.spot.id+", "+val.spot.name+", "+val.spot.location_name+", "+val.spot.region_name+", "+val.spot.country_code+" <a href=\"/admin/spot-edit/"+val.spot.id+"\">EDIT</a><br/>");
+				$("#results").append(val.spot.id+", "+val.spot.name+", "+val.spot.location_name+", "+val.spot.country_code+" <a href=\"/admin/spot-edit/"+val.spot.id+"\">EDIT</a><br/>");
 				});
 			
 			}

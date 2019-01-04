@@ -109,8 +109,8 @@ class SpotinfoController < ApplicationController
   begin
     respond_to do |format|
       format.json {
-        s= Spot.includes(:country).includes(:location).includes(:region).where(:id => params[:spotid]).first
-        render :json => {:success => true, :spot => {:id => s.id, :shaken_id => s.shaken_id, :name => s.name, :location => s.location.name, :region => if s.region.nil? then nil else s.region.name end, :country_code => s.country.ccode, :lat => s.lat, :long => s.long, :zoom => s.zoom, :precise => s.precise}}
+        s= Spot.includes(:country).includes(:location).where(:id => params[:spotid]).first
+        render :json => {:success => true, :spot => {:id => s.id, :shaken_id => s.shaken_id, :name => s.name, :location1 => s.location.name, :location2 => s.location.name2, :location3 => s.location.name3, :country_code => s.country.ccode, :lat => s.lat, :long => s.long, :zoom => s.zoom, :precise => s.precise}}
       }
       format.html {
       }
@@ -195,7 +195,7 @@ class SpotinfoController < ApplicationController
           spot.save
 
           logger.debug "Rendering spot as json : #{spot.to_json}"
-          render :json => {:success => true, :spot => {:id => spot.id, :shaken_id => spot.shaken_id, :name => spot.name, :location => spot.location.name, :region => if spot.region.nil? then nil else spot.region.name end, :country_code => spot.country.ccode, :lat => spot.lat, :long => spot.long, :zoom => spot.zoom, :precise => spot.precise}}
+          render :json => {:success => true, :spot => {:id => spot.id, :shaken_id => spot.shaken_id, :name => spot.name, :location1 => spot.location.name, :location2 => spot.location.name2, :location3 => spot.location.name3, :country_code => spot.country.ccode, :lat => spot.lat, :long => spot.long, :zoom => spot.zoom, :precise => spot.precise}}
           return
         rescue
           render api_exception $!

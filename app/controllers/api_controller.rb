@@ -744,7 +744,53 @@ class ApiController < ApplicationController
       end
     end
 
-
+    #
+    # :section: searchsimmilarspot
+    #
+    ##Search spots with the same name, country and location
+    
+    def searchsimmilarspot
+      #if params.nil? then params = manual_params end #override params for unitests
+      begin
+        if !params[:n].nil? and !params[:lat].nil? and !params[:long].nil? and !params[:z].nil?
+          #result = result.where("name LIKE ?", "%#{params[:q]}%")
+          @search_text = params[:n].to_s
+          @lat = params[:lat].to_f
+          if @lat == 0 then
+            render :json => DBArgumentError.new("Search latitude can not be 0").as_json.merge({:success => false, :data => []})
+            return
+          end
+          @long = params[:long].to_f
+          if @long == 0 then
+            render :json => DBArgumentError.new("Search longitude can not be 0").as_json.merge({:success => false, :data => []})
+            return
+          end
+          @zoom = params[:z].to_f
+          if @zoom == 0 then
+            render :json => DBArgumentError.new("Search zoom can not be 0").as_json.merge({:success => false, :data => []})
+            return
+          end
+        logger.debug "User is nil : #{@user.nil?}"
+        result = SearchHelper.spot_simmilar_search (begin @user.id rescue nil end), @search_text, @lat, @long, @zoom
+    
+        else
+          result = []
+        end
+    
+        resulta = []
+        result.each do |r|
+          api_data = r.to_api(:public, :caller => @user)
+          resulta << {:name => "#{r.name} (#{r.country.cname} - #{r.location.name})", :id => r.id, :data => api_data} unless api_data.nil?
+        end
+        render :json => {:success => true, :data => resulta, :user_authentified => !@user.nil?}
+        return
+      rescue
+       #trace the error
+       logger.debug $!.backtrace
+       render api_exception $!
+       return
+      end
+    end
 
 
   #

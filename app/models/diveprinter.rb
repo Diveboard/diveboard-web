@@ -316,10 +316,6 @@ class Diveprinter
        if spot_s != "" then spot_s += " - " end
        spot_s += begin @dive.spot.location.name.titleize rescue "" end
      end
-     if !@dive.spot.region.nil? && @dive.spot.region.id != 1
-       if spot_s != "" then spot_s += " - " end
-       spot_s += begin @dive.spot.region.name.titleize rescue "" end
-     end
 
      e = Prawn::Text::Box.new( spot_s, :at => [(@left_offset + @page_line_width/2), (@page_height - @top_position-10.mm)], :width=>  (@page_line_width/2 -10), :align => :left, :size => 8, :document => p, :style => :bold)
      e.render(:dry_run => true)

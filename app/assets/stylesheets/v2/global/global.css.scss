@@ -828,6 +828,21 @@ body
     width:60%;
   }
 }
+.spot_simmilar {
+	border-spacing:0;
+}
+.spot_simmilar tr {
+	padding: 0px;
+	border-spacing:0;
+	&:hover {
+	  background-color: #3c4245;
+	  color: #fdc90c;
+	}
+}
+.spot_simmilar td {
+	padding: 0px;
+}
+
 /* jQuery.Rating Plugin CSS - http://www.fyneworks.com/jquery/star-rating/ */
 div.rating-cancel,div.star-rating{float:left;width:17px;height:15px;text-indent:-999em;cursor:pointer;display:block;background:transparent;overflow:hidden}
 div.rating-cancel,div.rating-cancel a{background:url(/img/rating_delete.gif) no-repeat 0 -16px}

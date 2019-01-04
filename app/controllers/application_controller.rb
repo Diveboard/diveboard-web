@@ -750,29 +750,14 @@ class ApplicationController < ActionController::Base
     spot.country_id = country.id
 
     ##Location must exist
-    location = Location.find_by_name(params[:location])
-    if params[:location] != "" && !params[:location].nil? && location.nil?
-      location = Location.create(:name => params[:location], :country_id => country.id)
+    location = Location.where(:name => params[:location1], :name2=> params[:location2], :name3=> params[:location3], :country_id => country.id).first
+    if params[:location1] != "" && !params[:location1].nil? && location.nil?
+      location = Location.create(:name => params[:location1], :name2 => params[:location2], :name3 => params[:location3], :country_id => country.id)
     end
     if location.nil?
       location = Location.find(1)
     end
     spot.location_id = location.id
-
-    if params[:region] == ""
-      spot.region_id = nil
-    else
-      region = Region.find_by_name(params[:region])
-      if params[:region] != "" && region.nil?
-        region = Region.create(:name => params[:region])
-      end
-      if !region.nil?
-        spot.region_id = region.id
-        ##link country/region/location together !
-        location.regions << region
-        country.regions << region
-      end
-    end
 
     spot.lat = params[:lat].to_f
     spot.long = params[:lng].to_f
