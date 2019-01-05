@@ -17,39 +17,6 @@ class SpotinfoController < ApplicationController
       }
     end
   end
-  def searchlocation
-    respond_to do |format|
-      format.json {
-        term = params[:q] || params[:term]
-        country = Country.find_by_ccode(params[:ccode])
-        if country.nil?
-          result = Location.where("name LIKE ? AND id > 1", "%#{term}%")
-        else
-          result = Location.where("name LIKE ? AND id > 1", "%#{term}%").where("country_id=?", country.id)
-        end
-        resulta = []
-        result.each do |r|
-            if country.nil?
-              resulta << {:name => "#{r.name} (#{r.country.cname})", :id => r.id, :shaken_id => r.shaken_id, :label => "#{r.name} (#{r.country.cname})", :value => r.name, :ccode => r.country.ccode.upcase, :cname => r.country.cname, :fullpermalink => r.fullpermalink}
-            else
-              resulta << {:name => r.name, :id => r.id, :shaken_id => r.shaken_id, :label => r.name, :value => r.name, :ccode => r.country.ccode.upcase, :cname => r.country.cname, :fullpermalink => r.fullpermalink}
-            end
-          end
-        render :json => resulta
-      }
-    end
-  end
-  def searchregion
-    respond_to do |format|
-      format.json {
-        term = params[:q] || params[:term]
-        result = Region.where("name LIKE ? AND id > 1", "%#{term}%")
-        resulta = []
-        result.each do |r| resulta << {:name => r.name, :id => r.id, :shaken_id => r.shaken_id, :label => r.name, :value => r.name, :fullpermalink => r.fullpermalink} end
-        render :json => resulta
-      }
-    end
-  end
 
   def searchshop
     respond_to do |format|
@@ -110,7 +77,7 @@ class SpotinfoController < ApplicationController
     respond_to do |format|
       format.json {
         s= Spot.includes(:country).includes(:location).where(:id => params[:spotid]).first
-        render :json => {:success => true, :spot => {:id => s.id, :shaken_id => s.shaken_id, :name => s.name, :location1 => s.location.name, :location2 => s.location.name2, :location3 => s.location.name3, :country_code => s.country.ccode, :lat => s.lat, :long => s.long, :zoom => s.zoom, :precise => s.precise}}
+        render :json => {:success => true, :spot => {:id => s.id, :shaken_id => s.shaken_id, :name => s.name, :location1 => s.location1, :location2 => s.location2, :location3 => s.location3, :country_code => s.country.ccode, :lat => s.lat, :long => s.long, :zoom => s.zoom, :precise => s.precise}}
       }
       format.html {
       }
@@ -195,7 +162,7 @@ class SpotinfoController < ApplicationController
           spot.save
 
           logger.debug "Rendering spot as json : #{spot.to_json}"
-          render :json => {:success => true, :spot => {:id => spot.id, :shaken_id => spot.shaken_id, :name => spot.name, :location1 => spot.location.name, :location2 => spot.location.name2, :location3 => spot.location.name3, :country_code => spot.country.ccode, :lat => spot.lat, :long => spot.long, :zoom => spot.zoom, :precise => spot.precise}}
+          render :json => {:success => true, :spot => {:id => spot.id, :shaken_id => spot.shaken_id, :name => spot.name, :location1 => spot.location1, :location2 => spot.location2, :location3 => spot.location3, :country_code => spot.country.ccode, :lat => spot.lat, :long => spot.long, :zoom => spot.zoom, :precise => spot.precise}}
           return
         rescue
           render api_exception $!

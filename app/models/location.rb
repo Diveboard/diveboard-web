@@ -3,8 +3,6 @@ class Location < ActiveRecord::Base
 
 
   belongs_to :country
-  has_and_belongs_to_many :regions, :join_table => "locations_regions", :uniq => true
-  has_many :spots
   has_many :dives, :through => :spots
   alias :dive_ids :dife_ids
   #has_many :users, :through => :dives # will work with rails 3.1...

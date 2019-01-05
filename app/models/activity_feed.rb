@@ -9,8 +9,6 @@ class ActivityFeed
       (activity_followings.user_id IS NULL        OR activity_followings.user_id = activities.user_id) AND
       (activity_followings.dive_id IS NULL        OR activity_followings.dive_id = activities.dive_id) AND
       (activity_followings.spot_id IS NULL        OR activity_followings.spot_id = activities.spot_id) AND
-      (activity_followings.location_id IS NULL    OR activity_followings.location_id = activities.location_id) AND
-      (activity_followings.region_id IS NULL      OR activity_followings.region_id = activities.region_id) AND
       (activity_followings.country_id IS NULL     OR activity_followings.country_id = activities.country_id) AND
       (activity_followings.shop_id IS NULL        OR activity_followings.shop_id = activities.shop_id) AND
       (activity_followings.picture_id IS NULL     OR activity_followings.picture_id = activities.picture_id)
@@ -25,8 +23,6 @@ class ActivityFeed
       (activity_followings.user_id IS NULL        OR activity_followings.user_id = activities.user_id) AND
       (activity_followings.dive_id IS NULL        OR activity_followings.dive_id = activities.dive_id) AND
       (activity_followings.spot_id IS NULL        OR activity_followings.spot_id = activities.spot_id) AND
-      (activity_followings.location_id IS NULL    OR activity_followings.location_id = activities.location_id) AND
-      (activity_followings.region_id IS NULL      OR activity_followings.region_id = activities.region_id) AND
       (activity_followings.country_id IS NULL     OR activity_followings.country_id = activities.country_id) AND
       (activity_followings.shop_id IS NULL        OR activity_followings.shop_id = activities.shop_id) AND
       (activity_followings.picture_id IS NULL     OR activity_followings.picture_id = activities.picture_id)'

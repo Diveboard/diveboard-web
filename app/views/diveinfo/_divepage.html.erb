@@ -242,9 +242,9 @@ ga('send', 'pageview');
           <a href="/area/<%=geonames_country.name.to_url rescue "missing_name"%>-<%=geonames_country.shaken_id %>" id="country_title"><img src="<%=@dive.spot.country.path_to_flag%>"/> <%=@dive.spot.country.cname%></a>
           <%end%>
         <%end%>
-        <%if @dive.spot.location_id != 1 then%><a href="<%=@dive.spot.location.fullpermalink(:locale)%>"><%= @dive.spot.location.name%></a><%end%>
-        <%if @dive.spot.location_id != 1 then%><%if !@dive.spot.location.name2.nil? then%><a href="/explore?search_address=<%=CGI.escapeHTML(@dive.spot.location.name2)%><%if !@dive.spot.location.country.nil? then%><%=CGI.escapeHTML(","+@dive.spot.location.country.raw_name)%><%end%>"><%= @dive.spot.location.name2%></a><%end%><%end%>
-        <%if @dive.spot.location_id != 1 then%><%if !@dive.spot.location.name3.nil? then%><a href="/explore?search_address=<%=CGI.escapeHTML(@dive.spot.location.name3)%><%if !@dive.spot.location.country.nil? then%><%=CGI.escapeHTML(","+@dive.spot.location.country.raw_name)%><%end%>"><%= @dive.spot.location.name3%></a><%end%><%end%>
+        <%if @dive.spot != 1 then%><a href="<%=@dive.spot.fullpermalink(:locale)%>"><%= @dive.spot.location1%></a><%end%>
+        <%if @dive.spot != 1 then%><%if !@dive.spot.location2.nil? then%><a href="/explore?search_address=<%=CGI.escapeHTML(@dive.spot.location2)%><%if !@dive.spot.country.nil? then%><%=CGI.escapeHTML(","+@dive.spot.country.raw_name)%><%end%>"><%= @dive.spot.location2%></a><%end%><%end%>
+        <%if @dive.spot != 1 then%><%if !@dive.spot.location3.nil? then%><a href="/explore?search_address=<%=CGI.escapeHTML(@dive.spot.location3)%><%if !@dive.spot.country.nil? then%><%=CGI.escapeHTML(","+@dive.spot.country.raw_name)%><%end%>"><%= @dive.spot.location3%></a><%end%><%end%>
         &nbsp;
       </li>
     </ul></div></div>
@@ -466,15 +466,15 @@ ga('send', 'pageview');
     <% Rails.logger.debug "Time elapsed : #{Time.now - log_time}"
     log_time = Time.now  %>
 
-      <% if !@dive.recent_unique_divers(4).empty? && @dive.spot.location_id != 1 then%>
+      <% if !@dive.recent_unique_divers(4).empty? && @dive.spot != 1 then%>
       <div class="triple_box">
-                <strong><%= it("Recent Divers in %{spot}", scope: ['diveinfo', 'divepage'], spot: @dive.spot.location.name) %></strong>
+                <strong><%= it("Recent Divers in %{spot}", scope: ['diveinfo', 'divepage'], spot: @dive.spot.location_name) %></strong>
                 <ul class="small_pic_row">
                     <% counter = 0%>
                     <% @dive.recent_unique_divers(4).each do |recentdive| %>
                     <li>
                         <a href="<%= recentdive.fullpermalink(:locale) %>">
-                        <img src="<%= recentdive.user.picture_small%>" width="44px" height="44px" alt="#" class="triple_box_content tooltiped-js" title='<%= it("%{user} in %{spot}", scope: ['diveinfo', 'divepage'], user: recentdive.user.nickname, spot: recentdive.spot.location.name) %>'/>
+                        <img src="<%= recentdive.user.picture_small%>" width="44px" height="44px" alt="#" class="triple_box_content tooltiped-js" title='<%= it("%{user} in %{spot}", scope: ['diveinfo', 'divepage'], user: recentdive.user.nickname, spot: recentdive.spot.location_name) %>'/>
                         </a>
                     </li>
                     <% end %>
@@ -482,15 +482,15 @@ ga('send', 'pageview');
             </div>
             <%end%>
 
-      <% if !@dive.recent_unique_pictures(8).empty? && @dive.spot.location_id != 1 then%>
+      <% if !@dive.recent_unique_pictures(8).empty? && @dive.spot != 1 then%>
             <div class="triple_box">
-                <strong><%= it("Recent Pictures in %{spot}", scope: ['diveinfo', 'divepage'], spot: @dive.spot.location.name) %></strong>
+                <strong><%= it("Recent Pictures in %{spot}", scope: ['diveinfo', 'divepage'], spot: @dive.spot.location_name) %></strong>
                 <ul class="small_pic_row">
           <% counter = 0%>
                     <% @dive.recent_unique_pictures(8).each do |pict| %>
                     <li>
                         <a href="<%=pict.dive.fullpermalink(:locale)%>">
-                        <img src="<%= pict.thumbnail%>" width="44px" height="44px" alt="#" class="triple_box_content  tooltiped-js" title='<%= it("%{user} in %{spot}", scope: ['diveinfo', 'divepage'], user: pict.user.nickname, spot: pict.dive.spot.location.name) %>'/>
+                        <img src="<%= pict.thumbnail%>" width="44px" height="44px" alt="#" class="triple_box_content  tooltiped-js" title='<%= it("%{user} in %{spot}", scope: ['diveinfo', 'divepage'], user: pict.user.nickname, spot: pict.dive.spot.location_name) %>'/>
                         </a>
                     </li>
                     <% end %>
@@ -586,14 +586,10 @@ ga('send', 'pageview');
             <% if !@dive.spot.country_id.nil? && @dive.spot.country_id != 1 %>
             <li><strong><%= it("Country:", scope: ['diveinfo', 'divepage']) %></strong> <input type="text" value="<%=@dive.spot.country.fullpermalink(:locale)%>" disabled style="width: 600px;"></li>
             <%end%>
-            <% if !@dive.spot.location_id.nil? && @dive.spot.location_id != 1 %>
-            <li><strong><%= it("Area:", scope: ['diveinfo', 'divepage']) %></strong> <input type="text" value="<%=@dive.spot.location.fullpermalink(:locale)%>" disabled style="width: 600px;"0></li>
-            <%end%>
           </ul>
         </div>
         <% if !@user.nil? && @dive.spot_id != 1 then
         does_follow_spot = @user.follow? :spot_id => @dive.spot.id rescue false
-        does_follow_location = @user.follow? :location_id => @dive.spot.location.id rescue false
         does_follow_country = @user.follow? :country_id => @dive.spot.country.id rescue false
         %>
         <ul id='tab_map_follow'>
@@ -607,16 +603,6 @@ ga('send', 'pageview');
             </span>
           </a>
           <br/><%=@dive.spot.name%></li>
-          <%end%>
-          <%if !@dive.spot.location.nil? && @dive.spot.location_id != 1 then%>
-          <li><strong><%= it("Location:", scope: ['diveinfo', 'divepage']) %></strong> <a href="#" class="follow_link" data-db-follow-what='location_id' data-db-follow-id='<%=@dive.spot.location_id%>' >
-            <span class='text_follow tooltiped'   <%if does_follow_location then%>style='display:none'<%end%> title='<%= it("Be notified when new stuff is logged in this area", scope: ['diveinfo', 'divepage']) %>'><%= it("FOLLOW", scope: ['diveinfo', 'divepage']) %> <span class="symbol">+</span></span>
-            <span class='text_unfollow' <%if !does_follow_location then%>style='display:none'<%end%>>
-              <span class='text_nohover' <%if !does_follow_location then%>style='display:none'<%end%>><%= it("FOLLOWING", scope: ['diveinfo', 'divepage']) %> <span class="symbol">.</span></span>
-              <span class='text_hover tooltiped'    <%if !does_follow_location then%>style='display:none'<%end%> title='<%= it("Stop being notified when new stuff is added on this spot", scope: ['diveinfo', 'divepage']) %>'><%= it("UN-FOLLOW", scope: ['diveinfo', 'divepage']) %> <span class="symbol">×</span></span>
-            </span>
-          </a>
-          <br/><%=@dive.spot.location.full_name%></li>
           <%end%>
           <%if !@dive.spot.country.nil? && @dive.spot.country_id != 1 then%>
           <li><strong><%= it("Country:", scope: ['diveinfo', 'divepage']) %></strong> <a href="#" class="follow_link" data-db-follow-what='country_id' data-db-follow-id='<%=@dive.spot.country_id%>' >

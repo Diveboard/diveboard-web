@@ -750,15 +750,16 @@ class ApplicationController < ActionController::Base
     spot.country_id = country.id
 
     ##Location must exist
-    location = Location.where(:name => params[:location1], :name2=> params[:location2], :name3=> params[:location3], :country_id => country.id).first
-    if params[:location1] != "" && !params[:location1].nil? && location.nil?
-      location = Location.create(:name => params[:location1], :name2 => params[:location2], :name3 => params[:location3], :country_id => country.id)
+    if !params[:location1].nil? && !params[:location1].blank? then
+      spot.location1 = params[:location1]
     end
-    if location.nil?
-      location = Location.find(1)
+    if !params[:location2].nil? && !params[:location2].blank? then
+      spot.location2 = params[:location2]
     end
-    spot.location_id = location.id
-
+    if !params[:location3].nil? && !params[:location3].blank? then
+      spot.location3 = params[:location3]
+    end
+    
     spot.lat = params[:lat].to_f
     spot.long = params[:lng].to_f
     begin spot.zoom = params[:zoom].to_i rescue spot.zoom = 9 end

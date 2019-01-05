@@ -184,11 +184,11 @@ function content_initialize()
           <% deepest_dive = @owner.deepest_dive
             if !deepest_dive.nil? then 
           %>
-          <li class='editable'><strong><%= it("Deepest Dive", scope: ['logbook', 'user_home']) %>:</strong><br/><%= it("%{maxdepth} in %{spot_location}", scope: ['logbook', 'user_home'], maxdepth: content_tag(:span, unit_distance(deepest_dive.maxdepth,true,1), class: "half_box_data"), spot_location: content_tag(:span, deepest_dive.spot.location.name + (", " + deepest_dive.spot.country.cname rescue ""), class: "half_box_data")) %></li>
+          <li class='editable'><strong><%= it("Deepest Dive", scope: ['logbook', 'user_home']) %>:</strong><br/><%= it("%{maxdepth} in %{spot_location}", scope: ['logbook', 'user_home'], maxdepth: content_tag(:span, unit_distance(deepest_dive.maxdepth,true,1), class: "half_box_data"), spot_location: content_tag(:span, deepest_dive.spot.location_name + (", " + deepest_dive.spot.country.cname rescue ""), class: "half_box_data")) %></li>
           <%end%>
 
           <li class='editable'><strong><%= it("Longest Dive", scope: ['logbook', 'user_home']) %>:</strong><br/>
-          <%= it("%{box_data}%{duration}%{c_box_data}   in %{box_data}%{location}, %{country}%{c_box_data}", scope: ['logbook', 'user_home'], location: @owner.longest_dive.spot.location.name, country: (@owner.longest_dive.spot.country.cname rescue ""), box_data: "<span class=\"half_box_data\">".html_safe, c_box_data: "</span>".html_safe, duration: t("min", scope: ['units'], count: @owner.longest_dive.duration)) %>
+          <%= it("%{box_data}%{duration}%{c_box_data}   in %{box_data}%{location}, %{country}%{c_box_data}", scope: ['logbook', 'user_home'], location: @owner.longest_dive.spot.location_name, country: (@owner.longest_dive.spot.country.cname rescue ""), box_data: "<span class=\"half_box_data\">".html_safe, c_box_data: "</span>".html_safe, duration: t("min", scope: ['units'], count: @owner.longest_dive.duration)) %>
           </li>
 
           <li class='editable'><strong><%= it("Pictures in logbook", scope: ['logbook', 'user_home']) %>:</strong><span class="half_box_data"><%=@owner.dive_picture_count%></span></li>
@@ -257,7 +257,7 @@ function content_initialize()
             <a href="<%=dive.fullpermalink(:locale)%>" onclick='showDive(<%=dive.id%>); return(false);'>
             <img src="<%=if dive.featured_picture.nil? then dive.static_map_url else dive.featured_picture.thumbnail end%>" class='thumb_fav_dive' alt="#" /></a>
             <div class="fav_dive_body_inner">
-              <span><h3 class='unstyle'><a href="<%=dive.fullpermalink(:locale)%>" onclick='showDive(<%=dive.id%>); return(false);'><%=dive.date %> <%=dive.spot.country.cname rescue ""%> <%=dive.spot.location.name%><br/><%=dive.spot.name%></a></h3></span>
+              <span><h3 class='unstyle'><a href="<%=dive.fullpermalink(:locale)%>" onclick='showDive(<%=dive.id%>); return(false);'><%=dive.date %> <%=dive.spot.country.cname rescue ""%> <%=dive.spot.location_name%><br/><%=dive.spot.name%></a></h3></span>
               <p><%if (@user != @owner && @owner.share_details_notes) || (!@user.nil? && @user.can_edit?(@owner))%><%=dive.notes%><%end%></p>
             </div>
 
@@ -434,7 +434,7 @@ function content_initialize()
                 </div>
                 <div class="fav_dive_body_inner">
                   <img src="<%=if dive.featured_picture.nil? then dive.static_map_url else dive.featured_picture.thumbnail end%>" class='thumb_fav_dive' alt="#" style="float: left;"/>
-                  <span><a href="#"><%=dive.date %> <%=dive.spot.country.cname rescue ""%> <%=dive.spot.location.name%> <%=dive.spot.name%></a></span>
+                  <span><a href="#"><%=dive.date %> <%=dive.spot.country.cname rescue ""%> <%=dive.spot.location_name%> <%=dive.spot.name%></a></span>
                   <br/><p style="display:inline;"><%=dive.notes%></p>
                 </div>
                 </div>

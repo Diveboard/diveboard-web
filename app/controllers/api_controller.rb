@@ -1327,7 +1327,7 @@ private
                 }
               }
 
-      if f_params[:user_id].nil? && f_params[:dive_id].nil? && f_params[:picture_id].nil? && f_params[:shop_id].nil? && f_params[:spot_id].nil? && f_params[:location_id].nil? && f_params[:region_id].nil? && f_params[:country_id].nil?then
+      if f_params[:user_id].nil? && f_params[:dive_id].nil? && f_params[:picture_id].nil? && f_params[:shop_id].nil? && f_params[:spot_id].nil? && f_params[:country_id].nil?then
         return {:success => true, :following => ActivityFollowing.where(:follower_id => @user.id) }
       end
 

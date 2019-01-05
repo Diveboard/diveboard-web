@@ -187,7 +187,6 @@ DiveBoard::Application.routes.draw do
   match '/api/invite_buddy' => 'api#invite_buddy'
   match '/api/search_spot_coord' => 'search#search_spot_coord'
   match '/api/search_spot_text' => 'search#search_spot_text'
-  match '/api/search_region_text' => 'search#search_region_text'
   match '/api/search_shop_text' => 'search#search_shop_text'
   match '/api/search_diver_coord' => 'search#search_diver_coord'
   match '/api/search_diver_text' => 'search#search_diver_text'

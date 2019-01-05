@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
   has_many :dives, :class_name => 'Dive'
   has_many :blog_posts
   alias :dive_ids :dife_ids
-  has_many :public_dives, :class_name => 'Dive', :conditions => ['privacy = ?', 0], :include => [:spot=>[:location, :country]]
+  has_many :public_dives, :class_name => 'Dive', :conditions => ['privacy = ?', 0], :include => [:spot=>[:country]]
   # AND spots.flag_moderate_private_to_public IS NULL ????
   alias :public_dive_ids :public_dife_ids
   has_many :spots, :through => :dives
@@ -622,19 +622,19 @@ class User < ActiveRecord::Base
   end
 
   def full_public_dives
-    dives.where("privacy = 0 AND spot_id <> 1").includes([:user, :spot => [:country, :location]])
+    dives.where("privacy = 0 AND spot_id <> 1").includes([:user, :spot => [:country]])
   end
 
   def draft_dives
-    dives.where("spot_id = 1").includes([:user, :spot => [:country, :location]])
+    dives.where("spot_id = 1").includes([:user, :spot => [:country]])
   end
 
   def full_dives
-    dives.where("spot_id <> 1").includes([:user, :spot => [:country, :location]])
+    dives.where("spot_id <> 1").includes([:user, :spot => [:country]])
   end
 
   def favorite_dives
-    dives.where("privacy = 0 AND spot_id <> 1 AND favorite = true").includes([:user, :spot => [:country, :location]])
+    dives.where("privacy = 0 AND spot_id <> 1 AND favorite = true").includes([:user, :spot => [:country]])
   end
 
   def longest_dive
@@ -1042,7 +1042,7 @@ class User < ActiveRecord::Base
         end
 
         #find all the users we know on diveboard that are not already followed (or excluded)
-        missing_friends = User.joins("LEFT JOIN activity_followings ON follower_id = #{self.id} AND tag is NULL and dive_id is null and spot_id is null and location_id is null and region_id is null and country_id IS NULL and shop_id is null and picture_id is null and user_id = users.id").where(:fb_id => searched_friends).where('activity_followings.id IS NULL')
+        missing_friends = User.joins("LEFT JOIN activity_followings ON follower_id = #{self.id} AND tag is NULL and dive_id is null and spot_id is null and country_id IS NULL and shop_id is null and picture_id is null and user_id = users.id").where(:fb_id => searched_friends).where('activity_followings.id IS NULL')
 
         missing_friends.each do |db_friend|
           begin
@@ -1070,8 +1070,6 @@ class User < ActiveRecord::Base
       where[:user_id] = nil unless where.include? :user_id
       where[:dive_id] = nil unless where.include? :dive_id
       where[:spot_id] = nil unless where.include? :spot_id
-      where[:location_id] = nil unless where.include? :location_id
-      where[:region_id] = nil unless where.include? :region_id
       where[:country_id] = nil unless where.include? :country_id
       where[:shop_id] = nil unless where.include? :shop_id
       where[:picture_id] = nil unless where.include? :picture_id
@@ -1095,7 +1093,6 @@ class User < ActiveRecord::Base
         topics.push(User.find(f.user_id))  rescue nil
         topics.push(Dive.find(f.dive_id))  rescue nil
         topics.push(Spot.find(f.spot_id))  rescue nil
-        topics.push(Location.find(f.location_id))  rescue nil
         topics.push(Country.find(f.country_id))  rescue nil
         topics.push(Shop.find(f.shop_id))  rescue nil
         topics.push(Picture.find(f.picture_id))  rescue nil
@@ -1115,7 +1112,6 @@ class User < ActiveRecord::Base
         topics.push(User.find(f.user_id))  rescue nil
         topics.push(Dive.find(f.user_id))  rescue nil
         topics.push(Spot.find(f.spid_id))  rescue nil
-        topics.push(Location.find(f.location_id))  rescue nil
         topics.push(Country.find(f.country_id))  rescue nil
         topics.push(Shop.find(f.shop_id))  rescue nil
         topics.push(Picture.find(f.picture_id))  rescue nil
