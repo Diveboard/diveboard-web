@@ -778,18 +778,18 @@ class Dive < ActiveRecord::Base
 
   def recent_unique_divers(nb)
     #gives back an arrray of divers who went in the same :spot order by date desc and with no duplicated divers
-    Dive.select('dives.*').joins(:spot,:user).where("spots_id = ? and users.fb_id != ? and dives.privacy = 0", "#{self.spot.id}",  user_id).group("user_id").limit(nb).to_ary
+    Dive.select('dives.*').joins(:spot,:user).where("dives.spot_id = ? and users.fb_id != ? and dives.privacy = 0", "#{self.spot_id}",  user_id).group("user_id").limit(nb).to_ary
   end
 
   def recent_unique_pictures(nb)
     ## pictures in a given spot but not from the dive's owner
     #Dive.from("picture_album_pictures, dives, spots").where("picture_album_pictures.picture_album_id=dives.id and dives.spot_id=spots.id").where("spots.location_id = ? and dives.user_id != ? and dives.privacy = 0", "#{self.spot.location_id}",  user_id).group("user_id").limit(4).to_ary
     Picture.select('pictures.*')
-      .joins("dives, picture_album_pictures")
+      .joins("JOIN spots, dives, picture_album_pictures")
       .where("pictures.id = picture_album_pictures.picture_id")
       .where("picture_album_pictures.picture_album_id=dives.album_id")
       .where("dives.spot_id = spots.id")
-      .where("dives.privacy <> 1 AND dives.user_id != ?",  self.user_id)
+      .where("dives.privacy <> 1 AND spots.id = ? AND dives.user_id != ?", self.spot.id,  self.user_id)
       .order("pictures.created_at").group('dives.id').limit(nb)
   end
 
