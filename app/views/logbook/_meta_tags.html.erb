@@ -76,9 +76,9 @@
   species = species.chop.chop
 
   if @picture.notes.blank?
-    title= it("Picture Taken during a scuba dive in %{dive_spot_name}, %{dive_spot_location_name}, %{picture_dive_spot_country_cname} by %{owner_nickname}", scope: ['logbook', 'meta_tags'], dive_spot_name: @dive.spot.name.titleize, dive_spot_location_name: @dive.spot.location.name.titleize, picture_dive_spot_country_cname: @picture.dive.spot.country.cname.titleize, owner_nickname: @owner.nickname)
+    title= it("Picture Taken during a scuba dive in %{dive_spot_name}, %{dive_spot_location_name}, %{picture_dive_spot_country_cname} by %{owner_nickname}", scope: ['logbook', 'meta_tags'], dive_spot_name: @dive.spot.name.titleize, dive_spot_location_name: @dive.spot.location_name.titleize, picture_dive_spot_country_cname: @picture.dive.spot.country.cname.titleize, owner_nickname: @owner.nickname)
   else
-    title= it("'%{picture_notes}' - Taken during a scuba dive in %{dive_spot_name}, %{dive_spot_location_name}, %{picture_dive_spot_country_cname} by %{owner_nickname}", scope: ['logbook', 'meta_tags'], picture_notes: @picture.notes.html_safe.gsub(/[\r|\t|\n]/," "), dive_spot_name: @dive.spot.name.titleize, dive_spot_location_name: @dive.spot.location.name.titleize, picture_dive_spot_country_cname: @picture.dive.spot.country.cname.titleize, owner_nickname: @owner.nickname)
+    title= it("'%{picture_notes}' - Taken during a scuba dive in %{dive_spot_name}, %{dive_spot_location_name}, %{picture_dive_spot_country_cname} by %{owner_nickname}", scope: ['logbook', 'meta_tags'], picture_notes: @picture.notes.html_safe.gsub(/[\r|\t|\n]/," "), dive_spot_name: @dive.spot.name.titleize, dive_spot_location_name: @dive.spot.location_name.titleize, picture_dive_spot_country_cname: @picture.dive.spot.country.cname.titleize, owner_nickname: @owner.nickname)
   end
 
   begin
@@ -105,7 +105,7 @@
     <%end%>
   <%end%>
   <%=@picture.og_tag.html_safe%>
-  <meta property="og:description" content="<%= it("Picture from %{dive_user_nickname}'s scuba dive in %{dive_spot_country_cname}, %{dive_spot_location_name}: %{dive_spot_name} - species spotted : %{species} - Title: %{notes}", scope: ['logbook', 'meta_tags'], dive_user_nickname: @dive.user.nickname, dive_spot_country_cname: @dive.spot.country.cname.titleize, dive_spot_location_name: @dive.spot.location.name.titleize, dive_spot_name: @dive.spot.name.titleize, species: species, notes: notes) %>" />
+  <meta property="og:description" content="<%= it("Picture from %{dive_user_nickname}'s scuba dive in %{dive_spot_country_cname}, %{dive_spot_location_name}: %{dive_spot_name} - species spotted : %{species} - Title: %{notes}", scope: ['logbook', 'meta_tags'], dive_user_nickname: @dive.user.nickname, dive_spot_country_cname: @dive.spot.country.cname.titleize, dive_spot_location_name: @dive.spot.location_name.titleize, dive_spot_name: @dive.spot.name.titleize, species: species, notes: notes) %>" />
   <meta property="diveboard:spot"        content="<%=ROOT_URL%><%=@dive.spot.fullpermalink(:canonical)%>" />
   <meta property="diveboard:date"        content="<%=@dive.time_in.iso8601%>" />
   <meta property="diveboard:dive"    content="<%=@picture.dive.fullpermalink(:canonical)%>" />
@@ -182,15 +182,15 @@
     elsif @dive.spot.country.nil? || @dive.spot.country.id == 1 then
       translation_key         = 1
       dive_spot_name          = @dive.spot.name.titleize
-    elsif @dive.spot.location.nil? || @dive.spot.location.id == 1 then
+    elsif @dive.spot.location_name.nil? || @dive.spot.id == 1 then
       translation_key         = 2
-      dive_spot_name          = @dive.spot.name.titleize
+      dive_spot_name          = @dive.spot.location_name.titleize
       dive_spot_country_cname = @dive.spot.country.cname.titleize
     else
       translation_key         = 3
       dive_spot_name          = @dive.spot.name.titleize
       dive_spot_country_cname = @dive.spot.country.cname.titleize
-      dive_spot_location_name = @dive.spot.location.name.titleize
+      dive_spot_location_name = @dive.spot.location_name.titleize
     end
 
     page_title = it("divepage_title#{translation_key}", scope: ['logbook', 'meta_tags'], dive_spot_country_cname: dive_spot_country_cname, dive_spot_location_name: dive_spot_location_name, dive_spot_name: dive_spot_name, owner_nickname: @owner.nickname)
@@ -214,7 +214,7 @@
   <!-- og:image tag-->
   <%=@dive.generate_image_tag.html_safe%>
   <!-- end of og:image tag-->
-  <meta property="og:description" content="<%= it("Scuba diver: %{dive_user_nickname} - Dive spot: %{dive_spot_country_cname}, %{dive_spot_location_name}, %{dive_spot_name} - Species spotted : %{species} - Notes: %{notes}", scope: ['logbook', 'meta_tags'], dive_user_nickname: @dive.user.nickname, dive_spot_country_cname: @dive.spot.country.cname.titleize, dive_spot_location_name: @dive.spot.location.name.titleize, dive_spot_name: @dive.spot.name.titleize, species: species, notes: notes) %>" />
+  <meta property="og:description" content="<%= it("Scuba diver: %{dive_user_nickname} - Dive spot: %{dive_spot_country_cname}, %{dive_spot_location_name}, %{dive_spot_name} - Species spotted : %{species} - Notes: %{notes}", scope: ['logbook', 'meta_tags'], dive_user_nickname: @dive.user.nickname, dive_spot_country_cname: @dive.spot.country.cname.titleize, dive_spot_location_name: @dive.spot.location_name.titleize, dive_spot_name: @dive.spot.name.titleize, species: species, notes: notes) %>" />
   <meta property="diveboard:spot"        content="<%=@dive.spot.fullpermalink(:canonical)%>" />
   <meta property="diveboard:date"        content="<%=@dive.time_in.iso8601%>" />
   <meta property="diveboard:duration"    content="<%=@dive.duration%>" />
@@ -230,7 +230,7 @@
   <%@dive.pictures.each do |p|%>
   <meta property="diveboard:pictures"    content="<%=p.fullpermalink(@dive.user, :canonical)%>" />
   <%end%>
-  <meta name="description" content="<%= it("%{dive_user_nickname}'s scuba dive in %{dive_spot_country_cname}, %{dive_spot_location_name}: %{dive_spot_name} - Species spotted : %{species} - Notes: %{notes}", scope: ['logbook', 'meta_tags'], dive_user_nickname: @dive.user.nickname, dive_spot_country_cname: @dive.spot.country.cname.titleize, dive_spot_location_name: @dive.spot.location.name.titleize, dive_spot_name: @dive.spot.name.titleize, species: species, notes: notes) %>"/>
+  <meta name="description" content="<%= it("%{dive_user_nickname}'s scuba dive in %{dive_spot_country_cname}, %{dive_spot_location_name}: %{dive_spot_name} - Species spotted : %{species} - Notes: %{notes}", scope: ['logbook', 'meta_tags'], dive_user_nickname: @dive.user.nickname, dive_spot_country_cname: @dive.spot.country.cname.titleize, dive_spot_location_name: @dive.spot.location_name.titleize, dive_spot_name: @dive.spot.name.titleize, species: species, notes: notes) %>"/>
   <meta property="og:site_name" content="<%=diveboard_short_tagline%>" />
   <%if !@dive.user.fb_id.nil?%><meta property="fb:admins" content="<%=@dive.user.fb_id%>" /><%end%>
   <!-- END Tags -->
