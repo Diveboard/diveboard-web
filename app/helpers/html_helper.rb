@@ -79,10 +79,6 @@ module HtmlHelper
         return if node['href'].blank?
         if m=node['href'].match(/spot\:\/\/(.+)$/)
           p = Spot.fromshake(m[1])
-        elsif m=node['href'].match(/location\:\/\/(.+)$/)
-          p = Location.fromshake(m[1])
-        elsif m=node['href'].match(/region\:\/\/(.+)$/)
-          p = Region.fromshake(m[1])
         elsif m=node['href'].match(/country\:\/\/(.+)$/)
           p = Country.fromshake(m[1])
         elsif m=node['href'].match(/dive\:\/\/(.+)$/)

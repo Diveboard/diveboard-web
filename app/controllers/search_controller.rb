@@ -21,8 +21,6 @@ class SearchController < ApplicationController
         panel2 = Dive.fromshake(params[:dive_id])
       elsif params[:spot_blob] then
         panel2 = Spot.fromshake(params[:spot_blob].match(/\-([a-zA-Z0-9]+)$/)[1])
-      elsif params[:location_blob] then
-        panel2 = Location.fromshake(params[:location_blob].match(/\-([a-zA-Z0-9]+)$/)[1])
       elsif params[:region_blob] then
         panel2 = Region.fromshake(params[:region_blob].match(/\-([a-zA-Z0-9]+)$/)[1])
       elsif params[:country_blob] then
@@ -230,10 +228,8 @@ class SearchController < ApplicationController
   end
 
   def search_and_render_spots(where_close, attributes, order_close=nil)
-    select_close = "SELECT spots.id, spots.name, spots.lat, spots.long, locations.name AS location, regions.name AS region, countries.cname AS cname, count(dives.id) AS dive_count
+    select_close = "SELECT spots.id, spots.name, spots.lat, spots.long, spots.location1, spots.location2, spots.location3, countries.cname AS cname, count(dives.id) AS dive_count
                     FROM `spots`
-                      LEFT JOIN locations ON spots.location_id = locations.id
-                      LEFT JOIN regions ON spots.region_id = regions.id
                       LEFT JOIN countries ON spots.country_id = countries.id
                       LEFT JOIN dives ON dives.spot_id = spots.id and dives.privacy=0
                     WHERE spots.id != 1
@@ -254,143 +250,6 @@ class SearchController < ApplicationController
 
     render :text => {"success" => true, "spots" => @result}.to_s.gsub('=>', ':').gsub('nil', 'null'), :content_type=>"application/json"
   end
-
-
-
-  def search_region_text
-    where_close = " true "
-    attributes = {}
-
-    #Using multi-word search
-    variable_where = "true"
-    if !params[:term].nil? then
-      i=0
-      params[:term].gsub(/([0-9]+)/,' \0 ').split(/[ ,;:\t\n\r]+/).each { |word|
-        variable_where = "%s like :param#{i}"
-        attributes[:"param#{i}"] = "%#{word}%"
-        i+=1
-      }
-    end
-
-    #Ordering by distance if lat/lng provided
-    order_close = nil
-    if params[:lat] && params[:lng] then
-      lat = params[:lat].to_f*Math::PI/180
-      lng = params[:lng].to_f*Math::PI/180
-      where_close += " AND ABS(spots.lat - #{params[:lat].to_f}) < :latlng_delta AND ABS(spots.`long` - #{params[:lng].to_f}) < :latlng_delta "
-      order_close = "ACOS(SIN(spots.lat*PI()/180)*SIN(#{lat})+COS(spots.lat*PI()/180)*COS(#{lat})*COS((spots.`long`*PI()/180)-#{lng}))*6371"
-    end
-
-    #filtering by min/max if provided
-    if !params[:latSW].blank? && !params[:latNE].blank? && !params[:lngSW].blank? && !params[:lngNE].blank? then
-      logger.debug "Latitude requested : #{params[:latSW]} - #{params[:latNE]}"
-      if params[:latSW].to_f < params[:latNE].to_f then
-        where_close += " AND spots.lat between :latSW and :latNE "
-      else
-        where_close += " AND (spots.lat > :latSW or spots.lat < :latNE) "
-      end
-
-      logger.debug "Longitude requested : #{params[:lngSW]} - #{params[:lngNE]}"
-      if params[:lngSW].to_f < params[:lngNE].to_f then
-        where_close += " and spots.long between :lngSW and :lngNE "
-      else
-        where_close += " and (spots.long > :lngSW or spots.long < :lngNE) "
-      end
-
-      attributes[:latNE] = params[:latNE].to_f
-      attributes[:latSW] = params[:latSW].to_f
-      attributes[:lngNE] = params[:lngNE].to_f
-      attributes[:lngSW] = params[:lngSW].to_f
-    end
-
-
-    attributes[:latlng_delta] = 2
-    attributes[:user_id] = @user.id rescue nil
-
-    #adjusting the query radius depending on how many spots in the area
-    select_delta_query = "SELECT COUNT(*) from spots
-                          WHERE spots.id != 1
-                            and spots.moderate_id is null and spots.redirect_id is null
-                            and (spots.flag_moderate_private_to_public IS NULL OR spots.private_user_id = :user_id)
-                            AND (#{where_close})"
-    5.times do |t|
-      nb = Media.select_value_sanitized(select_delta_query, attributes)
-      break if nb > 0
-      attributes[:latlng_delta] *= 2
-    end
-    Rails.logger.debug "Using latlng_delta of #{attributes[:latlng_delta]}"
-
-
-    select_close = "SELECT locations.id as id, locations.name as name
-                    FROM `spots`
-                      JOIN locations ON spots.location_id = locations.id
-                    WHERE spots.id != 1
-                      and spots.moderate_id is null and spots.redirect_id is null
-                      and (spots.flag_moderate_private_to_public IS NULL OR spots.private_user_id = :user_id)
-                      AND (#{where_close}) AND #{variable_where % 'locations.name'}
-                    GROUP BY locations.id
-                    ORDER BY "
-    select_close += " #{order_close}, " if order_close
-    select_close += " count(distinct spots.id) DESC "
-    select_close += " limit 10 "
-
-
-    @locations = Media.select_all_sanitized(
-                  select_close,
-                  attributes)
-
-
-
-    select_close = "SELECT regions.id as id, regions.name as name
-                    FROM `spots`
-                      JOIN regions ON spots.region_id = regions.id
-                    WHERE spots.id != 1
-                      and spots.moderate_id is null and spots.redirect_id is null
-                      and (spots.flag_moderate_private_to_public IS NULL OR spots.private_user_id = :user_id)
-                      AND (#{where_close}) AND #{variable_where % 'regions.name'}
-                    GROUP BY regions.id
-                    ORDER BY "
-    select_close += " #{order_close}, " if order_close
-    select_close += " count(distinct spots.id) DESC "
-    select_close += " limit 10 "
-
-
-    @regions = Media.select_all_sanitized(
-                  select_close,
-                  attributes)
-
-
-
-    select_close = "SELECT countries.id as id, countries.ccode as code, countries.cname as name
-                    FROM `spots`
-                      JOIN countries ON spots.country_id = countries.id
-                    WHERE spots.id != 1
-                      and spots.moderate_id is null and spots.redirect_id is null
-                      and (spots.flag_moderate_private_to_public IS NULL OR spots.private_user_id = :user_id)
-                      AND (#{where_close}) AND #{variable_where % 'countries.cname'}
-                    GROUP BY countries.id
-                    ORDER BY "
-    select_close += " #{order_close}, " if order_close
-    select_close += " count(distinct spots.id) DESC "
-    select_close += " limit 10 "
-
-
-    @countries = Media.select_all_sanitized(
-                  select_close,
-                  attributes)
-
-
-
-
-
-
-    render :json => {"success" => true, "locations" => @locations, 'regions' => @regions, 'countries' => @countries}
-
-  end
-
-
-
-
 
  def search_shop_text
     where_close = " true "

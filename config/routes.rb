@@ -65,8 +65,6 @@ DiveBoard::Application.routes.draw do
   #match '/admin/moderate_spot' => 'admin#spot_moderate'
   match '/admin/mod_spot/:spot' => 'admin#spot_moderate2', :spot => /[0-9]+/
   match '/admin/mod_spot' => 'admin#spot_moderate2'
-  match '/admin/mod_location/:id' => 'admin#location_moderate', :id => /[a-z]+/
-  match '/admin/mod_location' => 'admin#location_moderate'
   match '/admin/mod_history' => 'admin#mod_history'
   match '/admin/save_moderate_spot' => 'admin#save_spot_moderate'
   match '/admin/save-spot' => 'admin#save_spot'
@@ -187,7 +185,6 @@ DiveBoard::Application.routes.draw do
   match '/api/invite_buddy' => 'api#invite_buddy'
   match '/api/search_spot_coord' => 'search#search_spot_coord'
   match '/api/search_spot_text' => 'search#search_spot_text'
-  match '/api/search_region_text' => 'search#search_region_text'
   match '/api/search_shop_text' => 'search#search_shop_text'
   match '/api/search_diver_coord' => 'search#search_diver_coord'
   match '/api/search_diver_text' => 'search#search_diver_text'

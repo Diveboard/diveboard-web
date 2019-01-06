@@ -2306,7 +2306,7 @@ class Divelog
       if dive.spot_id == 1
         dive_h["location"] = "UnknownPlace, Unknown Location, Unknown Country"
       else
-        dive_h["location"] = "#{dive.spot.name}, #{dive.spot.location.name}, #{dive.spot.country.cname}"
+        dive_h["location"] = "#{dive.spot.name}, #{dive.spot.location_name}, #{dive.spot.country.cname}"
       end
       ## TODO : add diver name, add dive location
 

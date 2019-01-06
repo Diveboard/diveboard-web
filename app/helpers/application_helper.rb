@@ -48,25 +48,6 @@ module ApplicationHelper
           c = ROOT_URL+"pages/spots"
         end
       }
-    wikitext = wikitext.gsub(/location\:\/\/[0-9]*/){|c|
-        begin
-          location = Location.find(c.match("\/([0-9]*)$")[1])
-          country = location.country.blob
-          c = ROOT_URL+"pages/spots/"+country+"/"+location.blob
-        rescue
-          c = ROOT_URL+"pages/spots"
-        end
-
-      }
-      wikitext = wikitext.gsub(/region\:\/\/[0-9]*/){|c|
-        begin
-          region = Region.find(c.match("\/([0-9]*)$")[1])
-          c = ROOT_URL+"pages/spots/zone/"+region.blob
-        rescue
-          c = ROOT_URL+"pages/spots"
-        end
-
-      }
       wikitext = wikitext.gsub(/spot\:\/\/[0-9]*/){|c|
           begin
             spot = Spot.find(c.match("\/([0-9]*)$")[1])

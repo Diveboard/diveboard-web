@@ -379,7 +379,7 @@ class Dive < ActiveRecord::Base
   end
 
   def label
-    [spot.name, spot.location.name, spot.country.name].reject(&:blank?).join ", "
+    [spot.name, spot.location_name, spot.country.name].reject(&:blank?).join ", "
   end
 
 
@@ -777,19 +777,19 @@ class Dive < ActiveRecord::Base
   end
 
   def recent_unique_divers(nb)
-    #gives back an arrray of divers who went in the same :location order by date desc and with no duplicated divers
-    Dive.select('dives.*').joins(:spot,:user).where("spots.location_id = ? and users.fb_id != ? and dives.privacy = 0", "#{self.spot.location_id}",  user_id).group("user_id").limit(nb).to_ary
+    #gives back an arrray of divers who went in the same :spot order by date desc and with no duplicated divers
+    Dive.select('dives.*').joins(:spot,:user).where("dives.spot_id = ? and users.fb_id != ? and dives.privacy = 0", "#{self.spot_id}",  user_id).group("user_id").limit(nb).to_ary
   end
 
   def recent_unique_pictures(nb)
     ## pictures in a given spot but not from the dive's owner
     #Dive.from("picture_album_pictures, dives, spots").where("picture_album_pictures.picture_album_id=dives.id and dives.spot_id=spots.id").where("spots.location_id = ? and dives.user_id != ? and dives.privacy = 0", "#{self.spot.location_id}",  user_id).group("user_id").limit(4).to_ary
     Picture.select('pictures.*')
-      .joins("JOIN spots USE INDEX (index_spots_on_location_id), dives, picture_album_pictures")
+      .joins("JOIN spots, dives, picture_album_pictures")
       .where("pictures.id = picture_album_pictures.picture_id")
       .where("picture_album_pictures.picture_album_id=dives.album_id")
       .where("dives.spot_id = spots.id")
-      .where("dives.privacy <> 1 AND spots.location_id = ? AND dives.user_id != ?", self.spot.location_id,  self.user_id)
+      .where("dives.privacy <> 1 AND spots.id = ? AND dives.user_id != ?", self.spot.id,  self.user_id)
       .order("pictures.created_at").group('dives.id').limit(nb)
   end
 
@@ -938,7 +938,7 @@ class Dive < ActiveRecord::Base
       #TODO find a nicer way to handle ROOT_URL than define it in development.rb ...
       #TODO change the link to a post with more details http://developers.facebook.com/docs/reference/api/post/
 
-      logger.debug "posting with those args : "+ { :name => "#{user.nickname}'s dive in #{self.spot.name.titleize} - #{self.spot.location.name.titleize}",
+      logger.debug "posting with those args : "+ { :name => "#{user.nickname}'s dive in #{self.spot.name.titleize} - #{self.spot.location_name.titleize}",
         :link => "#{ROOT_URL}#{self.user.vanity_url}/#{self.id.to_s}",
         :icon =>"#{ROOT_URL}fb_ico.gif",
         :actions => {:name => "View Dive", :link => "#{ROOT_URL}#{self.user.vanity_url}?dive=#{self.id.to_s}"},
@@ -947,7 +947,7 @@ class Dive < ActiveRecord::Base
         }.to_s
 
       @graph_object = @graph.put_wall_post("#{user.nickname} has just shared a new scuba dive on Diveboard",
-                            { :name => "#{user.nickname}'s scuba dive in #{self.spot.name.titleize} - #{self.spot.location.name.titleize}",
+                            { :name => "#{user.nickname}'s scuba dive in #{self.spot.name.titleize} - #{self.spot.location_name.titleize}",
                               :link => "#{ROOT_URL}#{self.user.vanity_url}/#{self.id.to_s}",
                               :icon =>"#{ROOT_URL}fb_ico.gif",
                               :actions => {:name => "View Dive", :link => "#{ROOT_URL}#{self.user.vanity_url}?dive=#{self.id.to_s}"},

@@ -477,16 +477,6 @@ class DiveinfoController < ApplicationController
                       :spot_id => 1
                     )
                     new_dive.auto_number
-                    if !dive["site"].nil? || !dive["place"].blank?
-                      begin
-                        Rails.logger.debug "Creating a spot matching the saved name #{dive["site"]} - #{dive["place"]}"
-                        s = Spot.find_or_create_by_name(dive["site"], dive["place"], new_dive.user_id)
-                        new_dive.spot_id = s.id unless s.nil?
-                      rescue
-                        Rails.logger.warn "Error creating spot while importing dive: #{$!.message}"
-                        Rails.logger.debug $!.backtrace.join "\n"
-                      end
-                    end
 
                     if new_dive.spot_id.nil?
                       new_dive.spot_id = 1 #assign default blank spot if none found
