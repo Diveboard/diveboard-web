@@ -242,7 +242,7 @@ ga('send', 'pageview');
           <a href="/area/<%=geonames_country.name.to_url rescue "missing_name"%>-<%=geonames_country.shaken_id %>" id="country_title"><img src="<%=@dive.spot.country.path_to_flag%>"/> <%=@dive.spot.country.cname%></a>
           <%end%>
         <%end%>
-        <%if @dive.spot != 1 then%><a href="<%=@dive.spot.fullpermalink(:locale)%>"><%= @dive.spot.location1%></a><%end%>
+        <%if @dive.spot != 1 then%><%if !@dive.spot.location1.nil? then%><a href="/explore?search_address=<%=CGI.escapeHTML(@dive.spot.location1)%><%if !@dive.spot.country.nil? then%><%=CGI.escapeHTML(","+@dive.spot.country.raw_name)%><%end%>"><%= @dive.spot.location1%></a><%end%><%end%>
         <%if @dive.spot != 1 then%><%if !@dive.spot.location2.nil? then%><a href="/explore?search_address=<%=CGI.escapeHTML(@dive.spot.location2)%><%if !@dive.spot.country.nil? then%><%=CGI.escapeHTML(","+@dive.spot.country.raw_name)%><%end%>"><%= @dive.spot.location2%></a><%end%><%end%>
         <%if @dive.spot != 1 then%><%if !@dive.spot.location3.nil? then%><a href="/explore?search_address=<%=CGI.escapeHTML(@dive.spot.location3)%><%if !@dive.spot.country.nil? then%><%=CGI.escapeHTML(","+@dive.spot.country.raw_name)%><%end%>"><%= @dive.spot.location3%></a><%end%><%end%>
         &nbsp;

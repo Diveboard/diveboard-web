@@ -52,45 +52,6 @@ var G_current_user = <%=@user.id%>;
       console.log("Could not initiate gmaps error: "+e.message);
     }
 
-    try{
-    $("#location").autocomplete({
-      source: function(request, response){
-        $.ajax({
-          url:"/api/search/location.json",
-          data:({
-            q: request.term,
-            ccode: $("#country_code").val().toUpperCase()
-          }),
-          dataType: "json",
-          open: function(event, ui){
-            if(!$("#location").is(":selected")){
-              $("#location").autocomplete( "close" );
-            }
-          },
-          success: function(data){
-            response( $.map( data, function( item ) {
-              return {
-                label: item.name+" - id:"+item.id,
-                value: item.name,
-                id: item.id
-              }
-            }));
-          },
-          error: function(data) { diveboard.alert("A technical error happened while trying to connect to Facebook."); }
-        });
-      },
-      minLength: 2,
-      select: function(event, ui) {
-        $("#printed_location_id").html(ui.item.id);
-        $("#location_id").val(ui.item.id);
-        set_master_spot_data(get_master_spot_data());
-        $("#location").attr("country", $("#country_code").val().toUpperCase());
-        //$("#location").autocomplete( "close" )
-        unvalidate_spot();
-      }
-    });
-
-
     check_country();
     $("#country_code").keyup(check_country);
     $("#country_code").change(check_location_country);
@@ -101,12 +62,6 @@ var G_current_user = <%=@user.id%>;
     $("#edit_master_spot input").keyup(unvalidate_spot);
     $("#edit_master_spot input").change(unvalidate_spot);
     $(".copy_slave_to_master").live("click", copy_slave_to_master);
-    $("#location").keypress(function(e){
-      //erase id for manually inputed locations
-        $("#location_id").val("");
-        $(".printed_location_id").html("");
-        $("#master_spot .location").html("");
-    });
 
     $("#reset_master").click(reset_master);
     $("#merge").click(do_merge);
@@ -165,17 +120,6 @@ function check_country(e){
     $("#country").css("color", "red");
   }
 }
-
-function check_location_country(e){
-  if ($("#location").attr("country") != $("#country_code").val()){
-    console.log("Country has changed");
-    $("#location").val(null);
-    $("#location_id").val(null);
-    $(".printed_location_id").html("");
-    $("#master_spot .location").html("");
-  }
-}
-
 
 function show_spot_details(e){
   e.preventDefault();
@@ -258,15 +202,6 @@ function set_master_spot_data(spot_data){
   $("#spot_name").val(spot_data.name);
   $("#master_spot .spot_name").html(spot_data.name);
 
-  //location
-  if(spot_data.location_id == null || spot_data.location_id == "")
-    $("#location_id").val("");
-  else
-    $("#location_id").val(spot_data.location_id);
-  $("#location").val(spot_data.location_name);
-  $(".printed_location_id").html(spot_data.location_id);
-  $("#master_spot .location").html(spot_data.location_id);
-
   //latitude
   $("#spot_lat").val(spot_data.lat);
   $("#master_spot .lat").html(diveboard.round(spot_data.lat,3));
@@ -295,7 +230,6 @@ function get_master_spot_data(){
   var spot_data = new Object;
   spot_data["country_code"] = $("#country_code").val();
   spot_data["name"] = $("#spot_name").val();
-  spot_data["location_id"] = $("#location_id").val();
   spot_data["location_name"] = $("#location").val();
   spot_data["lat"] = $("#spot_lat").val();
   spot_data["lng"] = $("#spot_long").val();
@@ -528,13 +462,6 @@ var spot_data_similar = new Object();
       <div class="varline_large"><div class="tag"><b>Name :</b></div><div class="field">
       <input type="text" id="spot_name" name="spot_name" value="<%=@user_spot.name%>"/>
     </div></div>
-    <%if @user_spot.location.nil?%>
-    <input type="hidden" id="location_id" name="location_id" value=""/>
-    <div class="varline_large"><div class="tag"><b>Location :</b></div><div class="field"><input type="text" id="location" name="location" /></div></div>
-    <%else%>
-    <input type="hidden" id="location_id" name="location_id" value="<%=@user_spot.location_id%>" country="<%=@user_spot.location.country.ccode.upcase%>"/>
-    <div class="varline_large"><div class="tag"><b>Location :</b></div><div class="field"><input type="text" id="location" name="location" value="<%=@user_spot.location.name%>"/> (<span class="printed_location_id"><%=@user_spot.location.id%> - country: <%=@user_spot.location.country.ccode%></span>)</div></div>
-    <%end%>
     <%if @user_spot.country.nil?%>
     <div class="varline_large"><div class="tag"><b>Country code :</b></div><div class="field"><input type="text" id="country_code" name="country_code"/></div></div>
     <%else%>

@@ -15,7 +15,7 @@
 			<div style="font-size:18px; text-align: center;"><%=@spots_to_moderate_total%> spots to moderate</div>
 			<ul style="list-style-type:disc; border-style:solid; border-width:3px; border-color:#ccc; border-radius: 15px; font-size:11px; padding-left:10px">
 				<% @spots_to_moderate.each do |spot|%>
-				<li style="margin-top:5px;"><div style="width:230px;display:inline-block;"><%=truncate("<b>#{spot.name}</b>,#{spot.country.ccode},#{spot.location.name}", :length=>50).html_safe%></div><a  style="display:inline-block;" href="/admin/mod_spot?spot=<%=spot.id%> ">Moderate</a></li>
+				<li style="margin-top:5px;"><div style="width:230px;display:inline-block;"><%=truncate("<b>#{spot.name}</b>,#{spot.country.ccode},#{spot.location_name}", :length=>50).html_safe%></div><a  style="display:inline-block;" href="/admin/mod_spot?spot=<%=spot.id%> ">Moderate</a></li>
 				<%end%>
 			</ul>
 		</div>
@@ -96,7 +96,7 @@
 			<div style="font-size:18px; text-align: center;">Latest public dives</div>
 			<ul style="list-style-type:disc; border-style:solid; border-width:3px; border-color:#ccc; border-radius: 15px; font-size:11px; padding-left:10px">
 				<% @latest_5_public_dives.each do |dive|%>
-				<li style="margin-top:5px;"><div style="width:250px;display:inline-block;"><%="<b>#{dive.created_at.to_date}</b> #{dive.user.nickname} #{dive.spot.name},#{dive.spot.country.ccode},#{dive.spot.location.name}".html_safe%></div><a  style="display:inline-block;" href="/<%=dive.user.vanity_url%>/<%=dive.id%> ">View</a></li>
+				<li style="margin-top:5px;"><div style="width:250px;display:inline-block;"><%="<b>#{dive.created_at.to_date}</b> #{dive.user.nickname} #{dive.spot.name},#{dive.spot.country.ccode},#{dive.spot.location_name}".html_safe%></div><a  style="display:inline-block;" href="/<%=dive.user.vanity_url%>/<%=dive.id%> ">View</a></li>
 				<%end%>
         <li>&nbsp;</li>
         <li style='font-size: small; text-align: center;'><a href='/admin/dives?search_privacy=0'>List all public dives</a></li>
@@ -106,7 +106,7 @@
 			<div style="font-size:18px; text-align: center;">Latest created dives</div>
 			<ul style="list-style-type:disc; border-style:solid; border-width:3px; border-color:#ccc; border-radius: 15px; font-size:11px; padding-left:10px">
 				<% @latest_5_dives.each do |dive|%>
-				<li style="margin-top:5px;"><div style="width:250px;display:inline-block;"><%="<b>#{dive.created_at.to_date}</b> #{dive.user.nickname} #{dive.spot.name},#{dive.spot.country.ccode},#{dive.spot.location.name}".html_safe%></div><a  style="display:inline-block;" href="/<%=dive.user.vanity_url%>/<%=dive.id%> ">View</a></li>
+				<li style="margin-top:5px;"><div style="width:250px;display:inline-block;"><%="<b>#{dive.created_at.to_date}</b> #{dive.user.nickname} #{dive.spot.name},#{dive.spot.country.ccode},#{dive.spot.location_name}".html_safe%></div><a  style="display:inline-block;" href="/<%=dive.user.vanity_url%>/<%=dive.id%> ">View</a></li>
 				<%end%>
         <li>&nbsp;</li>
         <li style='font-size: small; text-align: center;'><a href='/admin/dives'>List all latest dives</a></li>

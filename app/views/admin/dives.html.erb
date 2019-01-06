@@ -50,7 +50,7 @@
         <div style='display: inline-block;border: solid 1px; width:200px; height:340px'>
           <p><strong>Spot</strong></p>
           <% if dive.spot_id != 1 then %>
-            <p><%= dive.spot.name%>, <%=dive.spot.location.full_name unless dive.spot.location.nil?%>, <%=dive.spot.fullcname%></p>
+            <p><%= dive.spot.name%>, <%=dive.spot.location_name unless dive.spot.location_name.nil?%>, <%=dive.spot.fullcname%></p>
             <img src='<%=dive.thumbnail_image_url%>' width='150' alt='favpic'/>
           <%else%>
           <p>No spot entered</p>
