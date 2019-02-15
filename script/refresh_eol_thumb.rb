@@ -36,7 +36,7 @@ ids_to_reprocess.each do |id|
       sql = "UPDATE eolsnames SET eolsnames.picture = '0', eolsnames.thumbnail_href = NULL WHERE eolsnames.id = #{id}"
     end
     result = client.query(sql)
-
+    sleep 0.25
   rescue
   	puts "\n>>>>>>>>>>>>>>>incorrect data #{id}<<<<<<<<<<<<<<<<"
   	print sql
