@@ -31,9 +31,9 @@ ids_to_reprocess.each do |id|
     begin
       thumbnail_href = doc.css("a.hero-link img")[0]["src"]
       throw if thumbnail_href.nil?
-      sql = "UPDATE eolsnames SET eolsnames.picture = '1', eolsname.thumbnail_href = '#{thumbnail_href}' WHERE eolsnames.id = #{id}"
+      sql = "UPDATE eolsnames SET eolsnames.picture = '1', eolsnames.thumbnail_href = '#{thumbnail_href}' WHERE eolsnames.id = #{id}"
     rescue
-      sql = "UPDATE eolsnames SET eolsnames.picture = '0', eolsname.thumbnail_href = NULL WHERE eolsnames.id = #{id}"
+      sql = "UPDATE eolsnames SET eolsnames.picture = '0', eolsnames.thumbnail_href = NULL WHERE eolsnames.id = #{id}"
     end
     result = client.query(sql)
 
