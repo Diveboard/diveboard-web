@@ -130,7 +130,7 @@ class FishinfoController < ApplicationController
 
   def add_missing_species
     ##EOL has changed ids - we can't ensure consistency
-    render api_exception {:success => false, :message => "functions temporarily disabled"}
+    render :json => {:success => false, :error => "functions temporarily disabled"}
     return
     if params[:species_eol_id].nil? || params[:species_eol_id].to_i.to_s != params[:species_eol_id]
       render :json => {:success => false, :error => "invalid species_eol_id"}
