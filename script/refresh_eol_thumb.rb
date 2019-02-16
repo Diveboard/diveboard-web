@@ -32,7 +32,7 @@ ids_to_reprocess.to_a.each do |entry|
     data = open("https://eol.org/api/search/1.0.json?q=#{sname.gsub(/ /, "%20")}&exact=1")
     jsondata = JSON.parse(data.read)
     new_id = jsondata["results"][0]["id"]
-
+    print " new id: #{new_id}"
 
     doc = Nokogiri::HTML(open("https://eol.org/pages/#{new_id}"))
     begin
