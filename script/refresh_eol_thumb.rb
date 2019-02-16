@@ -18,16 +18,23 @@ socket = "/var/run/mysqld/mysqld.sock"
 client = Mysql2::Client.new(:database => database, :username => username, :password => password, :socket => socket)
 
 ###gets the IDS that have photos
-ids_to_reprocess = client.query("SELECT id FROM eolsnames")
-ids_to_reprocess = ids_to_reprocess.to_a.map{|t| t["id"]}
+ids_to_reprocess = client.query("SELECT sname,id FROM eolsnames")
+#ids_to_reprocess = ids_to_reprocess.to_a.map{|t| t["id"]}
 
 
 
-ids_to_reprocess.each do |id|
+ids_to_reprocess.to_a.each do |entry|
+  id = entry["id"]
+  sname = entry["sname"]
   sql = ""
   print "\rprocessing id #{id}"
   begin
-    doc = Nokogiri::HTML(open("https://eol.org/pages/#{id}"))
+    data = open("https://eol.org/api/search/1.0.json?q=#{sname.gsub(/ /, "%20")}&exact=1")
+    jsondata = JSON.parse(data.read)
+    new_id = jsondata["results"][0]["id"]
+
+
+    doc = Nokogiri::HTML(open("https://eol.org/pages/#{new_id}"))
     begin
       thumbnail_href = doc.css("a.hero-link img")[0]["src"]
       throw if thumbnail_href.nil?
