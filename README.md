@@ -1,4 +1,4 @@
-[![Slack Chat](https://slack.diveboard.com/badge.svg "Join us. Anyone is welcome!")](https://slack.diveboard.com/) ⇦ Join us!
+[![Slack Chat](http://slack.diveboard.com/badge.svg "Join us. Anyone is welcome!")](http://slack.diveboard.com/) ⇦ Join us!
 
 
 ![Diveboard logo](https://cdn.diveboard.com/img/drawer/svg/logo_topbar_mobile.svg "Diveboard")
@@ -64,4 +64,4 @@ You must forward ports 80>80 and 443>443 otherwise some resources won't load
 
 Need help?
 ------
-Join us on Slack: ![Join our Slack](https://slack.diveboard.com/badge.svg "Diveboard Slack") 
+Join us on Slack: ![Join our Slack](http://slack.diveboard.com/badge.svg "Diveboard Slack") 
