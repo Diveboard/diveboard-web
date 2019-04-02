@@ -186,7 +186,7 @@ class SettingsController < ApplicationController
           return
         end
 
-        if new_pwd.length > 4 && new_pwd.length < 20 && new_pwd.match(/\ /).nil?
+        if new_pwd.length > 4 && new_pwd.length < 21 && new_pwd.match(/\ /).nil?
           ##new_pwd seems ok
           u.password = Password::update(new_pwd)
           u.save
