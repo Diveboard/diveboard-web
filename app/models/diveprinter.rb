@@ -325,7 +325,7 @@ class Diveprinter
      e.render(:dry_run => true)
 
 
-     map_image = Tempfile.new(['map', '.png'])
+     map_image = Tempfile.new(['map', '.jpg'])
      map_w = 250
      map_h = 250/(@page_line_width/2-10)*(@dive_info_height - e.height - 2 )
      zoomfix = (@dive.spot.zoom) -2
