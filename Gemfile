@@ -54,7 +54,7 @@ gem 'spreadsheet', '=0.6.5.8'
 #gem 'rubyXL', :git => "git://github.com/jonhinson/rubyXL.git", :ref => "ca7f3f9ad3cbe35114cded7f721adc479056274c"
 gem 'rubyXL',:git =>"git://github.com/Diveboard/rubyXL.git", :ref => "a95334a5cf17b1698829033131ef5e03917a8f55"
 gem 'stringex' ####, :git =>"git://github.com/rsl/stringex.git"
-gem 'rubyzip', '=0.9.4'
+gem 'rubyzip', '2.2.0'
 gem 'RedCloth', '=4.2.9'
 #gem 'ruby-units'   #slow and fucks up with rationals....
 gem 'recaptcha', :require => 'recaptcha/rails'

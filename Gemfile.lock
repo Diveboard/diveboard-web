@@ -280,7 +280,7 @@ GEM
     rmagick (2.15.2)
     ruby-filemagic (0.6.3)
     ruby-ole (1.2.11.8)
-    rubyzip (0.9.4)
+    rubyzip (2.2.0)
     safe_yaml (1.0.4)
     sanitize (4.0.0)
       crass (~> 1.0.2)
@@ -413,7 +413,7 @@ DEPENDENCIES
   riddle!
   ruby-filemagic
   rubyXL!
-  rubyzip (= 0.9.4)
+  rubyzip (= 2.2.0)
   sanitize
   sass-rails (~> 3.2.3)
   sitemap_generator
