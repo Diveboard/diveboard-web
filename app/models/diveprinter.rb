@@ -361,7 +361,6 @@ class Diveprinter
       else
         graphunits = "m"
       end
-      profile_image = Tempfile.new(['profile', '.png'])
       Rails.logger.debug "getting graph at : #{@dive.fullpermalink(:locale)}/profile.png?g=pdf_print&u=#{graphunits}&locale=#{I18n.locale}"
       #File.open(profile_image,"wb"){|f| f.write(Net::HTTP.get URI.parse("#{@dive.fullpermalink(:locale)}/profile.png?g=pdf_print&u=#{graphunits}&locale=#{I18n.locale}"))}
       profile = p.image open(URI.parse("#{@dive.fullpermalink(:locale)}/profile.png?g=pdf_print&u=#{graphunits}&locale=#{I18n.locale}")), :at => [@left_offset-10, @page_height - @top_position-10], :width => @page_line_width+5
