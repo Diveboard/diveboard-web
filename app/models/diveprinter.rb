@@ -335,10 +335,11 @@ class Diveprinter
      
      ## Keep maps as http not https or HTTP.get will fail
      ## todo: support https
-     url = "http://maps.google.com/maps/api/staticmap?center=#{@dive.spot.lat.to_f},#{@dive.spot.long.to_f}&zoom=#{zoomfix}&size=#{map_w.to_i}x#{map_h.to_i}&maptype=terrain&markers=icon:https://www.diveboard.com/img/marker.png|#{@dive.spot.lat.to_f},#{@dive.spot.long.to_f}&sensor=false&format=jpg&key=#{@gmapskey}"
-     File.open(map_image,"wb"){|f| f.write(Net::HTTP.get URI.parse(URI.encode url))}
-     p.image map_image, :at => [(@left_offset + @page_line_width/2), (@page_height - @top_position-10.mm)], :width => (@page_line_width/2-10), :height => (@dive_info_height-e.height)
-     map_image.unlink
+     url = "https://maps.google.com/maps/api/staticmap?center=#{@dive.spot.lat.to_f},#{@dive.spot.long.to_f}&zoom=#{zoomfix}&size=#{map_w.to_i}x#{map_h.to_i}&maptype=terrain&markers=icon:https://www.diveboard.com/img/marker.png|#{@dive.spot.lat.to_f},#{@dive.spot.long.to_f}&sensor=false&format=jpg&key=#{GOOGLE_MAPS_API}"
+     Rails.logger.debug "Getting map at url #{url}"
+     #File.open(map_image,"wb"){|f| f.write(Net::HTTP.get URI.parse(URI.encode url))}
+     p.image open(URI.encode url), :at => [(@left_offset + @page_line_width/2), (@page_height - @top_position-10.mm)], :width => (@page_line_width/2-10), :height => (@dive_info_height-e.height)
+     #map_image.unlink
 
      f = Prawn::Text::Box.new( spot_s, :at => [(@left_offset + @page_line_width/2), (@page_height - @top_position-10.mm - @dive_info_height + e.height - 2)], :width=>  (@page_line_width/2 -10), :align => :left, :size => 8, :document => p, :style => :bold)
      f.render()
@@ -362,8 +363,8 @@ class Diveprinter
       end
       profile_image = Tempfile.new(['profile', '.png'])
       Rails.logger.debug "getting graph at : #{@dive.fullpermalink(:locale)}/profile.png?g=pdf_print&u=#{graphunits}&locale=#{I18n.locale}"
-      File.open(profile_image,"wb"){|f| f.write(Net::HTTP.get URI.parse("#{@dive.fullpermalink(:locale)}/profile.png?g=pdf_print&u=#{graphunits}&locale=#{I18n.locale}"))}
-      profile = p.image profile_image.path, :at => [@left_offset-10, @page_height - @top_position-10], :width => @page_line_width+5
+      #File.open(profile_image,"wb"){|f| f.write(Net::HTTP.get URI.parse("#{@dive.fullpermalink(:locale)}/profile.png?g=pdf_print&u=#{graphunits}&locale=#{I18n.locale}"))}
+      profile = p.image open(URI.parse("#{@dive.fullpermalink(:locale)}/profile.png?g=pdf_print&u=#{graphunits}&locale=#{I18n.locale}")), :at => [@left_offset-10, @page_height - @top_position-10], :width => @page_line_width+5
       profile_image.unlink
 
      ##END OF DIVE PROFILE BOX
