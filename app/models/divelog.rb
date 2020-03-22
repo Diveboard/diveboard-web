@@ -1591,7 +1591,7 @@ class Divelog
         end
 
         # if we think the dive lasts more than 200 minutes, it's most probably seconds and not minutes....
-        if dive["duration"] > 12000 then
+        if dive["duration"] > 43000 then
           dive["duration"] /= 60.0
           dive["sample"].each do |sample|
             sample["time"] /= 60.0
