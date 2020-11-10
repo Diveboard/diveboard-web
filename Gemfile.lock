@@ -129,7 +129,7 @@ GEM
       thor (>= 0.14, < 2.0)
     faraday (0.8.9)
       multipart-post (~> 1.2.0)
-    ffi (1.9.8)
+    ffi (1.12.2)
     flickraw (0.9.8)
     geoip (1.1.1)
     highline (1.7.2)
