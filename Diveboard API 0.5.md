@@ -1920,7 +1920,7 @@ DO NOT USE</td>
     <td></td>
   </tr>
   <tr>
-    <td>wallet_pictures_id</td>
+    <td>wallet_picture_ids</td>
     <td></td>
     <td>X</td>
     <td></td>
