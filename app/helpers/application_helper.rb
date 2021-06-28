@@ -83,7 +83,7 @@ module ApplicationHelper
     return wikitext.html_safe ## needed since the latest update on rails
   end
   def ensure_url url
-    if url.match(/^http:\/\//)
+    if url.match(/^(http|https):\/\//)
       return url
     else
       return "http://"+url

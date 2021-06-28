@@ -1040,6 +1040,7 @@ class Dive < ActiveRecord::Base
       s['id'] = self.shop.id
       s['name'] = self.shop.name
       s['url'] = self.shop.fullpermalink(:locale) unless self.shop.fullpermalink(:locale).blank? #
+      s['home'] = self.shop.fullpermalink(:locale) unless self.shop.fullpermalink(:locale).blank? #
     end
 
     s['guide'] = self.guide unless self.guide.nil?
