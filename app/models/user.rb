@@ -279,6 +279,19 @@ class User < ActiveRecord::Base
     else
       write_attribute(:settings, val.to_json)
     end
+    begin
+      opt_out = 0
+      if val.nil? 
+        opt_out = 0 
+      elsif val.class.to_s == 'String' then
+        opt_out = JSON.parse(val).opt_in==true?0:1
+      else
+        opt_out = val.opt_in==true ? 0:1
+      end
+    rescue
+      opt_out = 0
+    end
+    write_attribute(:opt_out, opt_out)
   end
 
   def settings
