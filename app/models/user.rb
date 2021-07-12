@@ -280,17 +280,9 @@ class User < ActiveRecord::Base
       write_attribute(:settings, val.to_json)
     end
     begin
-      opt_out = 0
-      if val.nil? 
-        opt_out = 0 
-      elsif val.class.to_s == 'String' then
-        opt_out = JSON.parse(val)["opt_in"] == true ? 0:1
-      else
-        opt_out = val["opt_in"] == true ? 0:1
-      end
-      write_attribute(:optout, opt_out)
+      write_attribute(:privacy, self.sci_privacy)
     rescue
-      opt_out = 0
+      write_attribute(:privacy, 0)
     end
   end
 
