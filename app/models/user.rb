@@ -284,9 +284,9 @@ class User < ActiveRecord::Base
       if val.nil? 
         opt_out = 0 
       elsif val.class.to_s == 'String' then
-        opt_out = JSON.parse(val).opt_in==true ? 0:1
+        opt_out = JSON.parse(val)["opt_in"] == true ? 0:1
       else
-        opt_out = val.opt_in==true ? 0:1
+        opt_out = val["opt_in"] == true ? 0:1
       end
       write_attribute(:optout, opt_out)
     rescue
