@@ -288,10 +288,10 @@ class User < ActiveRecord::Base
       else
         opt_out = val.opt_in==true ? 0:1
       end
+      write_attribute(:optout, opt_out)
     rescue
       opt_out = 0
     end
-    write_attribute(:opt_out, opt_out)
   end
 
   def settings
