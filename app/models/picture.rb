@@ -64,7 +64,7 @@ class Picture < ActiveRecord::Base
 
 
   define_format_api :public => [
-          :thumbnail, :medium, :large, :small, :notes, :media, :player, :full_redirect_link, :fullpermalink, :permalink, :created_at
+          :original, :thumbnail, :medium, :large, :small, :notes, :media, :player, :full_redirect_link, :fullpermalink, :permalink, :created_at
           ],
       :private => [:id, :cropable, :original_document_url, :original_document_download_url],
       :mobile => [:id],
@@ -348,8 +348,6 @@ class Picture < ActiveRecord::Base
     elsif size == "small"
       return self.cloud_small.url if !self.small_id.nil?
       return "#{ROOT_URL.chop}#{cache}_s.jpg" if File.exists?("public#{cache}_s.jpg")
-    elsif size == "medium"
-      return self.cloud_medium.url if !self.medium_id.nil?
       return "#{ROOT_URL.chop}#{cache}_m.jpg" if File.exists?("public#{cache}_m.jpg")
     elsif size =="large"
       return self.cloud_large.url if !self.large_id.nil?

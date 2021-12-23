@@ -256,7 +256,7 @@ class BlogController < ApplicationController
       @latest_posts = BlogPost.where(:published => true).where(:user_id => @author.id ).order("published_at DESC").limit(5)
       @questions = BlogPost.where(:published => true).where(:user_id => @author.id ).where("blog_category_id = #{question_category}").order("created_at DESC").limit(5)
       @post_history = (BlogPost.where(:published=>true).where(:user_id => @author.id ).order("published_at DESC").group_by{ |c| [c.published_at.year,c.published_at.month] })
-      @categories = BlogPost.where(:user_id => @author.id ).where("blog_category_id is not null").select("blog_category_id, count(*) as post_count").group("blog_category_id").order("post_count DESC").map{|u|
+      @categories = BlogPost.where(:user_id => @author.id ).where("blog_category_id is not null").where(:published => true).select("blog_category_id, count(*) as post_count").group("blog_category_id").order("post_count DESC").map{|u|
         if u.post_count > @max_weight then @max_weight = u.post_count end
           {:weight => u.post_count, :text => BlogCategory.find(u.blog_category_id).name.titleize, :link => BlogCategory.find(u.blog_category_id).permalink}
       }
@@ -264,7 +264,7 @@ class BlogController < ApplicationController
       @latest_posts = BlogPost.where(:published => true).order("published_at DESC").limit(5)
       @questions = BlogPost.where(:published => true).where("blog_category_id = #{question_category}").order("created_at DESC").limit(5)
       @post_history = (BlogPost.where(:published=>true).order("published_at DESC").group_by{ |c| [c.published_at.year,c.published_at.month] })
-      @categories = BlogPost.where("blog_category_id is not null").select("blog_category_id, count(*) as post_count").group("blog_category_id").order("post_count DESC").map{|u|
+      @categories = BlogPost.where("blog_category_id is not null").where(:published => true).select("blog_category_id, count(*) as post_count").group("blog_category_id").order("post_count DESC").map{|u|
         if u.post_count > @max_weight then @max_weight = u.post_count end
           {:weight => u.post_count, :text => BlogCategory.find(u.blog_category_id).name.titleize, :link => BlogCategory.find(u.blog_category_id).permalink}
       }
