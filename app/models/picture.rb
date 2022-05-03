@@ -355,7 +355,7 @@ class Picture < ActiveRecord::Base
     elsif size =="large_fb"
       return self.cloud_large_fb.url if !self.large_fb_id.nil?
       return "#{ROOT_URL.chop}#{cache}_f.jpg" if File.exists?("public#{cache}_f.jpg")
-    elsif size =="original"
+    else ## return original
       return self.cloud_original_image.url unless self.cloud_original_image.nil?
       return ROOT_URL+self.original_image_path.gsub(/^public\//,"") if !self.original_image_path.nil? && File.exists?(self.original_image_path)
     end
