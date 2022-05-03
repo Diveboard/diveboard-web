@@ -64,7 +64,7 @@ class Picture < ActiveRecord::Base
 
 
   define_format_api :public => [
-          :original, :thumbnail, :medium, :large, :small, :notes, :media, :player, :full_redirect_link, :fullpermalink, :permalink, :created_at
+          :thumbnail, :medium, :large, :small, :notes, :media, :player, :full_redirect_link, :fullpermalink, :permalink, :created_at
           ],
       :private => [:id, :cropable, :original_document_url, :original_document_download_url],
       :mobile => [:id],
@@ -349,15 +349,19 @@ class Picture < ActiveRecord::Base
       return self.cloud_small.url if !self.small_id.nil?
       return "#{ROOT_URL.chop}#{cache}_s.jpg" if File.exists?("public#{cache}_s.jpg")
       return "#{ROOT_URL.chop}#{cache}_m.jpg" if File.exists?("public#{cache}_m.jpg")
-    elsif size =="large" || size == "medium"
+    elsif size =="large"
       return self.cloud_large.url if !self.large_id.nil?
       return "#{ROOT_URL.chop}#{cache}_l.jpg" if File.exists?("public#{cache}_l.jpg")
     elsif size =="large_fb"
       return self.cloud_large_fb.url if !self.large_fb_id.nil?
       return "#{ROOT_URL.chop}#{cache}_f.jpg" if File.exists?("public#{cache}_f.jpg")
-    else ## size =="original"
-      return self.cloud_original_image.url unless self.cloud_original_image.nil?
-      return ROOT_URL+self.original_image_path.gsub(/^public\//,"") if !self.original_image_path.nil? && File.exists?(self.original_image_path)
+    ## Disabled because the call was way too expensive
+      #elsif size =="original"
+    #  return self.cloud_original_image.url unless self.cloud_original_image.nil?
+    #  return ROOT_URL+self.original_image_path.gsub(/^public\//,"") if !self.original_image_path.nil? && File.exists?(self.original_image_path)
+    else  ## default to large
+      return self.cloud_large.url if !self.large_id.nil?
+      return "#{ROOT_URL.chop}#{cache}_l.jpg" if File.exists?("public#{cache}_l.jpg")
     end
     raise DBArgumentError
   end
