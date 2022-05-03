@@ -432,7 +432,7 @@ class Picture < ActiveRecord::Base
 
   def original
     begin
-      return get_image "large"
+      return get_image "original"
     rescue
       return fallback
     end
