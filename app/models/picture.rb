@@ -348,6 +348,8 @@ class Picture < ActiveRecord::Base
     elsif size == "small"
       return self.cloud_small.url if !self.small_id.nil?
       return "#{ROOT_URL.chop}#{cache}_s.jpg" if File.exists?("public#{cache}_s.jpg")
+    elsif size == "medium"
+      return self.cloud_medium.url if !self.medium_id.nil?
       return "#{ROOT_URL.chop}#{cache}_m.jpg" if File.exists?("public#{cache}_m.jpg")
     elsif size =="large"
       return self.cloud_large.url if !self.large_id.nil?
@@ -355,10 +357,9 @@ class Picture < ActiveRecord::Base
     elsif size =="large_fb"
       return self.cloud_large_fb.url if !self.large_fb_id.nil?
       return "#{ROOT_URL.chop}#{cache}_f.jpg" if File.exists?("public#{cache}_f.jpg")
-    ## Disabled because the call was way too expensive
-      #elsif size =="original"
-    #  return self.cloud_original_image.url unless self.cloud_original_image.nil?
-    #  return ROOT_URL+self.original_image_path.gsub(/^public\//,"") if !self.original_image_path.nil? && File.exists?(self.original_image_path)
+    elsif size =="original"
+      return self.cloud_original_image.url unless self.cloud_original_image.nil?
+      return ROOT_URL+self.original_image_path.gsub(/^public\//,"") if !self.original_image_path.nil? && File.exists?(self.original_image_path)
     else  ## default to large
       return self.cloud_large.url if !self.large_id.nil?
       return "#{ROOT_URL.chop}#{cache}_l.jpg" if File.exists?("public#{cache}_l.jpg")
