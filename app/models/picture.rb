@@ -360,9 +360,6 @@ class Picture < ActiveRecord::Base
     elsif size =="original"
       return self.cloud_original_image.url unless self.cloud_original_image.nil?
       return ROOT_URL+self.original_image_path.gsub(/^public\//,"") if !self.original_image_path.nil? && File.exists?(self.original_image_path)
-    else  ## default to large
-      return self.cloud_large.url if !self.large_id.nil?
-      return "#{ROOT_URL.chop}#{cache}_l.jpg" if File.exists?("public#{cache}_l.jpg")
     end
     raise DBArgumentError
   end
