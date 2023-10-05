@@ -71,7 +71,7 @@ Package Control will automatically keep Rails I18n Helper up to date with the la
 This method required a little more work, but simply clone this repo into your Sublime Text 2 Package directory.
 
 ``` bash
-$ git clone git://github.com/adeptus/rails-i18n-helper.git "Rails I18n Helper"
+$ git clone https://github.com/adeptus/rails-i18n-helper.git "Rails I18n Helper"
 ```
 
 Further instructions below.
@@ -81,7 +81,7 @@ Execute the commands below one by one in your Command prompt.
 
 ``` bash
 $ cd "%APPDATA%\Sublime Text 2\Packages"
-$ git clone git://github.com/adeptus/rails-i18n-helper.git "Rails I18n Helper"
+$ git clone https://github.com/adeptus/rails-i18n-helper.git "Rails I18n Helper"
 ```
 
 #### Linux
@@ -89,5 +89,5 @@ Execute the commands below one by one in your terminal.
 
 ``` bash
 $ cd ~/.config/sublime-text-2/Packages/
-$ git clone git://github.com/adeptus/rails-i18n-helper.git "Rails I18n Helper"
+$ git clone https://github.com/adeptus/rails-i18n-helper.git "Rails I18n Helper"
 ```

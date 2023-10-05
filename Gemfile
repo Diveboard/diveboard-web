@@ -46,14 +46,14 @@ gem 'railties'#, '~>3.2.16'
 gem 'rails', '~>3.2.16'
 gem 'rails-i18n', '~> 3.0.0'
 #gem 'riddle', '=1.5.0'
-gem 'riddle', :git => 'git://github.com/pat/riddle.git'
+gem 'riddle', :git => 'https://github.com/pat/riddle.git'
 gem 'geoip', '=1.1.1'
 gem 'whenever', '=0.6.8'
 gem 'spreadsheet', '=0.6.5.8'
-#gem 'rubyXL', :git => "git://github.com/jeremyz/rubyXL.git", :ref => "c71c05a5a8d7014080eb04117c329b0c13a64648"
-#gem 'rubyXL', :git => "git://github.com/jonhinson/rubyXL.git", :ref => "ca7f3f9ad3cbe35114cded7f721adc479056274c"
-gem 'rubyXL',:git =>"git://github.com/Diveboard/rubyXL.git", :ref => "a95334a5cf17b1698829033131ef5e03917a8f55"
-gem 'stringex' ####, :git =>"git://github.com/rsl/stringex.git"
+#gem 'rubyXL', :git => "https://github.com/jeremyz/rubyXL.git", :ref => "c71c05a5a8d7014080eb04117c329b0c13a64648"
+#gem 'rubyXL', :git => "https://github.com/jonhinson/rubyXL.git", :ref => "ca7f3f9ad3cbe35114cded7f721adc479056274c"
+gem 'rubyXL',:git =>"https://github.com/Diveboard/rubyXL.git", :ref => "a95334a5cf17b1698829033131ef5e03917a8f55"
+gem 'stringex' ####, :git =>"https://github.com/rsl/stringex.git"
 gem 'rubyzip', '=0.9.4'
 gem 'RedCloth', '=4.2.9'
 #gem 'ruby-units'   #slow and fucks up with rationals....
@@ -66,7 +66,7 @@ gem 'sitemap_generator'
 
 #https://github.com/2potatocakes/google_storage
 #gem 'google_storage'
-gem 'google_storage', :git => 'git://github.com/2potatocakes/google_storage.git'
+gem 'google_storage', :git => 'https://github.com/2potatocakes/google_storage.git'
 
 #For mac : 
 # sudo port install file
@@ -76,24 +76,25 @@ gem 'google_storage', :git => 'git://github.com/2potatocakes/google_storage.git'
 #For linux:
 # apt-get install libmagic-dev
 gem 'ruby-filemagic'
+gem 'rmagick', '2.15.2'
 
 gem 'delayed_job_active_record'
 
 
 gem 'exception_notification_rails3', :require => 'exception_notifier'
-gem 'thinking-sphinx', '~> 3.1.0'#, :git => "git://github.com/pat/thinking-sphinx.git"  ###, :branch=>"rails3"
+gem 'thinking-sphinx', '~> 3.1.0'#, :git => "https://github.com/pat/thinking-sphinx.git"  ###, :branch=>"rails3"
 #gem 'ts-delayed-delta', '1.1.2', :require => 'thinking_sphinx/deltas/delayed_delta'
 gem 'ts-delayed-delta', '~> 2.0.0'
 
 
 #gem 'gollum', '=1.3.1'
-#gem 'grit', :git => "git://github.com/mojombo/grit.git"
+#gem 'grit', :git => "https://github.com/mojombo/grit.git"
 #gem 'rdiscount' ## the support for markdown
 #gem 'redcarpet'#, '=1.17.2'
 
 gem 'facebox-rails'
 
-gem 'prawn', :git => "git://github.com/prawnpdf/prawn.git"
+gem 'prawn', :git => "https://github.com/prawnpdf/prawn.git"
 gem 'prawn-fast-png'
 
 gem 'rack-throttle'

@@ -1,25 +1,25 @@
 GIT
-  remote: git://github.com/2potatocakes/google_storage.git
+  remote: https://github.com/2potatocakes/google_storage.git
   revision: 9dd672ea2561822ec2515be03afa805a00905ea6
   specs:
     google_storage (0.2.0)
       crack
 
 GIT
-  remote: git://github.com/Diveboard/rubyXL.git
+  remote: https://github.com/Diveboard/rubyXL.git
   revision: a95334a5cf17b1698829033131ef5e03917a8f55
   ref: a95334a5cf17b1698829033131ef5e03917a8f55
   specs:
     rubyXL (1.2.7)
 
 GIT
-  remote: git://github.com/pat/riddle.git
+  remote: https://github.com/pat/riddle.git
   revision: 8a70d0d65867ded7143edced7847b654e920bbbe
   specs:
     riddle (1.5.12)
 
 GIT
-  remote: git://github.com/prawnpdf/prawn.git
+  remote: https://github.com/prawnpdf/prawn.git
   revision: 71fcce7e0bf06c17145965d709fb647680cfb523
   specs:
     prawn (2.0.2)
