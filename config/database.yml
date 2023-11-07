@@ -38,4 +38,4 @@ production:
     blog_database: diveboard_blog
     blog_username: db_blog
     blog_password: 0Q4o8V27k
-#    host: optional.external.mysqlserver.hostname.com
+    host: localhost

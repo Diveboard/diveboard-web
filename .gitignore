@@ -20,3 +20,5 @@ config/*.sphinx.conf
 .sass-cache
 
 /bin/
+config/database.yml
+config/google_storage.yml

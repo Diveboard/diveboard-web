@@ -310,7 +310,7 @@ class Picture < ActiveRecord::Base
       end
       begin
         if ex.nil? && !self.url.nil?
-          ex = MiniExiftool.new open(self.url).path
+          ex = MiniExiftool.new open(self.url.gsub('http://','https://')).path
         end
       rescue
         logger.debug "exif data from url failed"
@@ -375,7 +375,7 @@ class Picture < ActiveRecord::Base
     return self.cloud_small.url if !self.small_id.nil?
     return "#{ROOT_URL.chop}#{cache}_s.jpg" if File.exists?("public#{cache}_s.jpg")
 
-    return self.url if begin MiniMagick::Image.open(self.url) rescue false end
+    return self.url.gsub('http://','https://') if begin MiniMagick::Image.open(self.url.gsub('http://','https://')) rescue false end
 
     ##we can't really answer with a thumbnail... it would suck .. but last resort...
     return self.cloud_thumb.url if !self.thumb_id.nil?
@@ -515,9 +515,9 @@ class Picture < ActiveRecord::Base
     elsif !self.original_image_id.nil?
       ## or an original file stored on the cloud
       jpeg = self.cloud_original_image.url
-    elsif !self.url.nil? && begin !MiniMagick::Image.open(self.url.gsub("https\:\/\/", "http\:\/\/")).nil? rescue false end
+    elsif !self.url.nil? && begin !MiniMagick::Image.open(self.url.gsub("http://", "https://")).nil? rescue false end
       ## or a link to the original file after checking that such file still exists
-      jpeg = self.url
+      jpeg = self.url.gsub('http://','https://')
     elsif !cache.nil? && File.exists?("public#{cache}_l.jpg")
       ## or the large file
       jpeg = "public#{cache}_l.jpg"

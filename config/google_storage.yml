@@ -5,15 +5,13 @@ google_config:
 
 #Client ID for web applications
 web_applications:
-  client_id: 82584081796-iosf3bu5dtm46s622bsog8eigfmmulsk.apps.googleusercontent.com
-  client_secret: HaKUSkWCywi4WIm0naFMnAfT
+  client_id: <%= ENV['GOOGLE_CLIENT_ID'] %>
+  client_secret: <%= ENV['GOOGLE_CLIENT_SECRET'] %>
   redirect_uris: 'http://localhost'
   js_origins: 'http://localhost:3000'
 
-refresh_token: 1//0doI3tycVQ4LUCgYIARAAGA0SNwF-L9Irx13-Uy5sd4gYpmGrMyUmsb6B5jOYAGzi095eRxc43OyLf5ghLUTQpG7t6ygYdzth-0A
-#refresh_token: replace this line with a refresh token from google, read below on how to get one
-#refresh_token: 1/m-_dF9nP4PCnEQLpbDidcd2pN_8OH9YKucVhxYDNVCA
-#refresh_token: 4/0AX4XfWhCZNJRZzReDJm6zZsggiluySu9FmXovlR-gyVVJzE0H1LjXNQQCvDx-qNdBwFZ-Q
+refresh_token: <%= ENV['GOOGLE_REFRESH_TOKEN'] %>
+
 
 #You need to acquire a refresh token from google so that the google_storage gem
 #can acquire access tokens whenever it needs to make new requests

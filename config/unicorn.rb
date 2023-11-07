@@ -26,7 +26,7 @@ user "diveboard", "diveboard" unless ENV['RAILS_ENV'] == 'docker_development'
 
 # Help ensure your application will always spawn in the symlinked
 # "current" directory that Capistrano sets up.
-working_directory "/home/diveboard/diveboard-web/current" # available in 0.94.0+
+working_directory "/data/diveboard/diveboard-web/current" # available in 0.94.0+
 
 # listen on both a Unix domain socket and a TCP port,
 # we use a shorter backlog for quicker failover when busy
@@ -34,16 +34,16 @@ working_directory "/home/diveboard/diveboard-web/current" # available in 0.94.0+
 listen "127.0.0.1:8080", :tcp_nopush => true
 
 # nuke workers after 30 seconds instead of 60 seconds (the default)
-timeout 300
+timeout 1200
 
 # feel free to point this anywhere accessible on the filesystem
-pid "/home/diveboard/diveboard-web/shared/pids/unicorn.pid" unless ENV['RAILS_ENV'] == 'docker_development'
+pid "/data/diveboard/diveboard-web/shared/pids/unicorn.pid" unless ENV['RAILS_ENV'] == 'docker_development'
 
 # By default, the Unicorn logger will write to stderr.
 # Additionally, ome applications/frameworks log to stderr or stdout,
 # so prevent them from going to /dev/null when daemonized here:
-stderr_path "/home/diveboard/diveboard-web/shared/log/unicorn.stderr.log" unless ENV['RAILS_ENV'] == 'docker_development'
-stdout_path "/home/diveboard/diveboard-web/shared/log/unicorn.stdout.log" unless ENV['RAILS_ENV'] == 'docker_development'
+stderr_path "/tmp/unicorn.stderr.log" unless ENV['RAILS_ENV'] == 'docker_development'
+stdout_path "/tmp/unicorn.stdout.log" unless ENV['RAILS_ENV'] == 'docker_development'
 
 # combine Ruby 2.0.0dev or REE with "preload_app true" for memory savings
 # http://rubyenterpriseedition.com/faq.html#adapt_apps_for_cow
