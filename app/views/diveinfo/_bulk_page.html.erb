@@ -9,7 +9,7 @@
 *
 */
 
-var G_all_dive_data = { <% if !@owner.nil? then @owner.dives.paginate(page: params[:page]||1, per_page: 100).each_with_index do |dive, idx| %>
+var G_all_dive_data = { <% if !@owner.nil? then @dives.each_with_index do |dive, idx| %>
   <%= if idx > 0 then ',' end%> <%=dive.id%> : <%= (dive.to_api :private, :caller => @owner).to_json.html_safe %>
 <%end end%>};
 
@@ -36,7 +36,7 @@ var privacy = 1;
 var G_unit_temperature = "<%= if @user.nil? then "C" else @user.preferred_units["temperature"] end %>";
 var G_unit_distance = "<%= if @user.nil? then "m" else @user.preferred_units["distance"] end %>";
 var G_has_profile = false
-var G_has_dives = <%= !@owner.dives.empty?%>;
+var G_has_dives = <%= !@dives.empty?%>;
 var G_dive_id = null;
 var G_content = "new";
 var G_user_setting_auto_share = <%=@user.auto_fb_share %>;
@@ -48,13 +48,13 @@ var G_diveuser_vanity_url = "<%= if @dive.nil? || @dive.user.nil? then "" else @
 var G_user_vanity_url = "<%=@user.vanity_url%>";
 var G_owner_id = <%= @owner.id || 'null' %>;
 var wizard_bulk = true;
-var G_private_dives_digest = <%= ((@owner.dives.paginate(page: params[:page]||1, per_page: 100).sort{|u,v| v.time_in<=>u.time_in}).map{|d| {:date => d.time_in, :maxdepth => d.maxdepth.to_f, :duration => d.duration, :id => d.shaken_id, :has_uploaded_profile => !d.uploaded_profile_id.nil?}}).to_json.html_safe  %>;
+var G_private_dives_digest = <%= ((@dives.sort{|u,v| v.time_in<=>u.time_in}).map{|d| {:date => d.time_in, :maxdepth => d.maxdepth.to_f, :duration => d.duration, :id => d.shaken_id, :has_uploaded_profile => !d.uploaded_profile_id.nil?}}).to_json.html_safe  %>;
 var G_user_skipped_dives = <%=(@owner.skip_import_dives || "").split(",").to_json.html_safe%>;
 
 
 var G_user_first_dive = <%=
-  if !@owner.dives.empty?
-    @owner.dives.first.id
+  if !@dives.empty?
+    @dives.first.id
   else
     0
   end %>;
@@ -258,6 +258,9 @@ function content_initialize() {
   <div id=tab_bulklist_content>
     <%= render :partial => 'diveinfo/bulk_listing' %>
   </div>
+  <div>
+    <%= will_paginate @dives %>
+  </div>
 </div>
 </div>
 
@@ -364,7 +367,7 @@ padding-right: 15px;'>
     <ul id="wizard_bulk_numbering_data" style="padding-left:20px;">
     </ul>
     <ul id="wizard_bulk_numbering_template" style="display:none;">
-      <% @owner.dives.paginate(page: params[:page]||1, per_page: 100).each do |d|%>
+      <% @dives.each do |d|%>
         <li name="<%=d.id%>"><input type="number" size="3" value="<%=d.number%>" min=0> <%= d.time_in.strftime("%Y-%m-%d") %> <%= d.time_in.strftime("%H:%M") %> - <%=d.spot.name%>
       <%end%>
     </ul>

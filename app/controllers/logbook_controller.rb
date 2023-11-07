@@ -120,6 +120,7 @@ class LogbookController < ApplicationController
            @pagename = "MANAGER"
 
            @dive = Dive.new
+           @dives = @owner.dives.paginate(page: params[:page]||1, per_page: 100)
            @content = 'diveinfo/bulk_page'
          end
        elsif params[:content] == :new_dive then

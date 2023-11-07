@@ -1,5 +1,5 @@
   <div id="wizard_export_list">
-    <% @owner.dives.paginate(page: params[:page]||1, per_page: 100).sort{|a,b| a.time_in <=> b.time_in}.reverse_each { |dive| %>
+    <% @dives.sort{|a,b| a.time_in <=> b.time_in}.reverse_each { |dive| %>
     <div class='export_list_item export_list_item_folded'>
       <div class='exitem_check'><input type=checkbox name='<%=dive.id%>' class='wizard_export_checkbox' <%if @selected_dives.include? dive.id then%>SELECTED="true" checked="yes"<%end%> privacy="<%=dive.privacy%>" graph_id="<%=dive.graph_id%>" number="<%=dive.number%>"/></div>
       <div class='exitem_switch'><img src='/img/folding_left.png' alt='V'/></div>
