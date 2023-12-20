@@ -166,7 +166,7 @@ class AdminController < ApplicationController
             user_parse = user_parse.joins("left join dives on users.id = dives.user_id left join pictures on users.id = pictures.user_id").group("users.id").order(params[:sort].to_s)
           end
 
-          @limit = 50
+          @limit = 10
           if !params[:limit].nil? then
             @limit = params[:limit].to_i
           end
