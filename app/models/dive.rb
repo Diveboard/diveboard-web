@@ -851,14 +851,17 @@ class Dive < ActiveRecord::Base
     Picture.transaction {
       self.class.connection.execute("DELETE FROM picture_album_pictures WHERE picture_album_id = #{self.album_id}")
       args = []
+      ordnum = 1 # Initialize counter
       added_pictures.each do |pic|
         pic.save if pic.new_record?
-        args.push "(#{self.album_id}, #{pic.id})"
+        args.push "(#{self.album_id}, #{pic.id}, #{ordnum})"
+        ordnum += 1 # Increment counter
       end
-      self.class.connection.execute("INSERT INTO picture_album_pictures (picture_album_id, picture_id) VALUES #{ args.join(',') }") unless args.count == 0
+      self.class.connection.execute("INSERT INTO picture_album_pictures (picture_album_id, picture_id, ordnum) VALUES #{ args.join(',') }") unless args.count == 0
     }
     return added_pictures
   end
+
 
   def featured_picture
     return self.pictures.first
