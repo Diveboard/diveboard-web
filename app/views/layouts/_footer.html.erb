@@ -1,36 +1,28 @@
 
 <div id="footer_container">
     <div class="footer_one">
-      <div style='text-align:left; margin-left: 26px; font-size: 0.87em;'><strong><%= it("Follow us", scope: ['layouts', 'footer']) %></strong></div>
 
-      <div class='footer_follow_media'>
-        <div class='icon'><img src='<%=HtmlHelper.lbroot "/img/brands/facebook_square.png"%>'/></div>
-        <div style='margin-top: -2px'><fb:follow href="http://www.facebook.com/Diveboard" colorscheme="dark" layout="button" show_faces="false"></fb:follow></div>
-      </div>
+<table class="social" style="
+    margin-left: 15px;
+    margin-top: 18px;
+">
+    <tbody><tr style="
+    /* margin-left: 10px; */
+">
+      <td><a href="https://twitter.com/diveboard" target="_blank"><img src="https://cdn1.diveboard.com/img/home/twitter_icon.svg" alt="Twitter" style="
+    width: 50px;
+    margin-right: 11px;
+"></a></td>
+      <td><a href="https://discord.gg/bSEpRv77sv" target="_blank"><img src="https://cdn4.diveboard.com/img/home/discord_icon.svg" alt="Discord" style="
+    width: 50px;
+    margin-right: 13px;
+"></a></td>
+      <td><a href="https://github.com/diveboard" target="_blank"><img src="https://cdn1.diveboard.com/img/home/github_icon.svg" alt="Github" style="
+    width: 50px;
+"></a></td>
+    </tr>
+  </tbody></table>
 
-      <div class='footer_follow_media'>
-        <div class='icon'><img src='<%=HtmlHelper.lbroot "/img/brands/gplus_square.png"%>'/></div>
-        <div class="g-follow" data-annotation="none" data-height="20" data-href="https://plus.google.com/116225854981085548287" data-rel="publisher"></div>
-      </div>
-
-      <div class='footer_follow_media'>
-        <div class='icon'><img src='<%=HtmlHelper.lbroot "/img/brands/twitter_square.png"%>'/></div>
-        <a href="https://twitter.com/diveboard" class="twitter-follow-button" data-show-count="false"><%= it("Follow @diveboard", scope: ['layouts', 'footer']) %></a>
-      </div>
-
-      <div class='footer_follow_media'>
-        <div class='icon'><img src='<%=HtmlHelper.lbroot "/img/brands/pinterest_square.png"%>'/></div>
-        <div style='margin-top: -1px'><a data-pin-do="buttonFollow" href="http://www.pinterest.com/diveboard/">Diveboard</a></div>
-      </div>
-
-
-      <%content_for :scripts do %>
-      <script type="text/javascript">
-        diveboard.require('plusone', function(){
-          gapi.follow.go();
-        })
-      </script>
-      <%end%>
 
     </div>
 
