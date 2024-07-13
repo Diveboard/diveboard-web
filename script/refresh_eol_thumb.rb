@@ -3,29 +3,20 @@ require 'active_support'
 require 'mysql2'
 require 'net/http'
 require 'uri'
-#require 'iconv'
 require 'open-uri'
 require 'nokogiri'
-
-#output_sname = File.new("database_sname.sql", "wb")
-#output_cname = File.new("database_cname.sql", "wb")
-
+require 'json'
 
 database = "diveboard"
 username = "dbuser"
 password = ENV["PROD_DB"]
-socket = "/var/run/mysqld/mysqld.sock"
-client = Mysql2::Client.new(:database => database, :username => username, :password => password, :socket => socket)
+client = Mysql2::Client.new(:database => database, :username => username, :password => password, :host => "localhost")
 
 ###gets the IDS that have photos
 ids_to_reprocess = client.query("SELECT sname,id FROM eolsnames")
 #ids_to_reprocess = ids_to_reprocess.to_a.map{|t| t["id"]}
 
-
-
-ids_to_reprocess.to_a.each do |entry|
-  id = entry["id"]
-  sname = entry["sname"]
+def process_id(id, sname)
   encoded_sname = URI.encode_www_form_component(sname)
 
   sql = ""
@@ -45,12 +36,17 @@ ids_to_reprocess.to_a.each do |entry|
       sql = "UPDATE eolsnames SET eolsnames.picture = '0', eolsnames.thumbnail_href = NULL, eol_id = '#{new_id}' WHERE eolsnames.id = #{id}"
     end
     result = client.query(sql)
-    sleep 0.25
   rescue
   	puts "\n>>>>>>>>>>>>>>>incorrect data #{id}<<<<<<<<<<<<<<<<"
   	print sql
   	puts $!
   end
+end
 
+
+
+ids_to_reprocess.to_a.each do |entry|
+ process_id(entry["id"], entry["sname"])
+ sleep 0.25
 end
 
