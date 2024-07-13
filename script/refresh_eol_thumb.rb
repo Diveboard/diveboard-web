@@ -26,10 +26,12 @@ ids_to_reprocess = client.query("SELECT sname,id FROM eolsnames")
 ids_to_reprocess.to_a.each do |entry|
   id = entry["id"]
   sname = entry["sname"]
+  encoded_sname = URI.encode_www_form_component(sname)
+
   sql = ""
   print "\rprocessing id #{id}"
   begin
-    data = open("https://eol.org/api/search/1.0.json?q=#{sname.gsub(/ /, "%20")}&exact=1")
+    data = open("https://eol.org/api/search/1.0.json?q=#{encoded_sname}&exact=1")
     jsondata = JSON.parse(data.read)
     new_id = jsondata["results"][0]["id"]
     print " new id: #{new_id}"
@@ -38,9 +40,9 @@ ids_to_reprocess.to_a.each do |entry|
     begin
       thumbnail_href = doc.css("a.hero-link img")[0]["src"]
       throw if thumbnail_href.nil?
-      sql = "UPDATE eolsnames SET eolsnames.picture = '1', eolsnames.thumbnail_href = '#{thumbnail_href}' WHERE eolsnames.id = #{id}"
+      sql = "UPDATE eolsnames SET eolsnames.picture = '1', eolsnames.thumbnail_href = '#{thumbnail_href}', eol_id = '#{new_id}' WHERE eolsnames.id = #{id}"
     rescue
-      sql = "UPDATE eolsnames SET eolsnames.picture = '0', eolsnames.thumbnail_href = NULL WHERE eolsnames.id = #{id}"
+      sql = "UPDATE eolsnames SET eolsnames.picture = '0', eolsnames.thumbnail_href = NULL, eol_id = '#{new_id}' WHERE eolsnames.id = #{id}"
     end
     result = client.query(sql)
     sleep 0.25

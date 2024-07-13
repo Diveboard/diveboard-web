@@ -9,8 +9,6 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     sudo \
     vim \
-    mysql-server \
-    mysql-client \
     ntpdate \
     openssl \
     libxml2 \
@@ -22,7 +20,6 @@ RUN apt-get update && apt-get install -y \
     nginx-extras \
     ffmpeg2theora \
     libpq5 \
-    libmysqlclient-dev \
     libxslt-dev \
     libmagickwand-dev \
     spawn-fcgi \
@@ -35,7 +32,6 @@ RUN apt-get update && apt-get install -y \
     autotools-dev \
     nginx-common \
     git \
-    sphinxsearch \
     libssl-dev \
     libreadline-dev \
     zlib1g-dev \
@@ -43,6 +39,11 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     curl libcurl4 libcurl4-gnutls-dev \
     && apt-get clean
+
+## TODO Install Sphinx and Mysql manually
+# wget https://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-server_5.6.48-1debian9_amd64.deb-bundle.tar
+# install everything 
+# complie sphinx
 
 
 # Generating self-signed certificate
@@ -66,7 +67,9 @@ WORKDIR /tmp
 ADD Gemfile Gemfile
 ADD Gemfile.lock Gemfile.lock
 ENV PATH /usr/local/rvm/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-RUN /bin/bash -l -c "gem install bundler -v 1.3.6"
+#RUN /bin/bash -l -c "gem install bundler -v 1.3.6
+## Need a later version for deprleciation issues
+RUN /bin/bash -l -c "gem install bundler -v 1.12.6"
 
 # Customize Bundler to use the correct paths
 ENV LANG=en_US.UTF-8
