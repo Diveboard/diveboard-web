@@ -38,7 +38,7 @@ class Eolsname < ActiveRecord::Base
   end
 
   def url
-    "http://www.eol.org/pages/#{self.id}"
+    begin "https://www.eol.org/pages/#{self.eol_id}" rescue nil end
   end
 
   def self.import_from_eol id

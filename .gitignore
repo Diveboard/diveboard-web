@@ -22,3 +22,6 @@ config/*.sphinx.conf
 /bin/
 config/database.yml
 config/google_storage.yml
+.gitsecret/keys/random_seed
+!*.secret
+diveboard_env

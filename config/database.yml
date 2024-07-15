@@ -8,34 +8,24 @@ docker_development:
     pool: 5
     username: root
     password: 
-    blog_database: diveboard_blog
-    blog_username: root
-    blog_password: 
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
-staging:
-    adapter: mysql2
-    encoding: utf8
-    database: diveboard
-    pool: 5
-    username: dbusertest
-    password: <%= "TkVvfuqxkxc97FzGjrPPokpYUu" if `/usr/bin/whoami`.chomp == 'diveboard' %>
-    socket: /var/run/mysqld/mysqld.sock
-    blog_database: diveboard_blog
-    blog_username: db_blog
-    blog_password: 0Q4o8V27k
-
+# staging:
+#     adapter: mysql2
+#     encoding: utf8
+#     database: diveboard
+#     pool: 5
+#     username: dbusertest
+#     password: <%= "TkVvfuqxkxc97FzGjrPPokpYUu" if `/usr/bin/whoami`.chomp == 'diveboard' %>
+#     socket: /var/run/mysqld/mysqld.sock
+    
 production:
     adapter: mysql2
     encoding: utf8
     database: diveboard
     pool: 5
-    username: dbuser
-    password: <%= ENV["PROD_DB"] if `/usr/bin/whoami`.chomp == 'diveboard' %>
-    socket: /var/run/mysqld/mysqld.sock
-    blog_database: diveboard_blog
-    blog_username: db_blog
-    blog_password: 0Q4o8V27k
-    host: localhost
+    username: <%= ENV["DB_USER"] %>
+    password: <%= ENV["DB_PASSWORD"] if `/usr/bin/whoami`.chomp == 'diveboard' %>
+    host: <%= ENV["DB_HOST"] %>

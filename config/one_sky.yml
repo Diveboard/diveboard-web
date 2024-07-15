@@ -8,7 +8,7 @@
 #   platform_id: <%= ENV["ONESKY_PLATFORM_ID"] %>
 #
 ---
-api_key: ZfF7zS5zb0eS987E7VfaikhtEVxClF1b
-api_secret: Bz8ghtm7at4OQj4oE8YLdxfhltNe8Ahz
+api_key: <%= ENV["ONESKY_API_KEY"] %>
+api_secret: <%= ENV["ONESKY_API_SECRET"] %>
 project: Diveboard Web
 platform_id: 17859

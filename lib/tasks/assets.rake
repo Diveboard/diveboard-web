@@ -47,6 +47,92 @@ namespace :assets do
     eu_bank.save_rates('tmp/exchange_rates.xml')
   end
 
+  desc "Generating the fish occurrence JS data for the species picker"
+  task :speciesv2 => :environment do |t, args|
+      radius = 5
+  sh "mkdir -p public/assets/species"
+  
+  (-90..90).step(radius).each do |lat|
+    (-180..180).step(radius).each do |lng|
+      filename = "public/assets/species/species_data_#{lat}_#{lng}_#{radius}.js"
+      puts "processing #{filename}\n"
+      lat_clause = if lat + radius > 90
+                     "lat >= #{lat - radius}"
+                   elsif lat - radius < -90
+                     "lat <= #{lat + radius}"
+                   else
+                     "lat <= #{lat + radius} AND lat >= #{lat - radius}"
+                   end
+      lng_clause = if lng + radius > 180
+                     "lng >= #{lng - radius} OR lng <= #{lng + radius - 360}"
+                   elsif lng - radius < -180
+                     "lng >= #{lng - radius + 360} OR lng <= #{lng + radius}"
+                   else
+                     "lng >= #{lng - radius} AND lng <= #{lng + radius}"
+                   end
+
+      begin
+        fish_list = FishFrequency.where(
+          "#{lat_clause} AND #{lng_clause} AND eolsnames.taxonrank = 'species'"
+        ).joins(:eolsnames).group("fish_frequencies.gbif_id").order("count(*) desc")
+
+        species = {}
+        fish_list.each do |o|
+          begin
+            s = o.eolsnames.first
+            species[s.category] ||= []
+            species[s.category] << {
+              :id => "s-#{s.id}",
+              :sname => s.sname,
+              :cnames => s.eolcnames.map(&:cname),
+              :preferred_name => s.preferred_cname,
+              :picture => s.thumbnail_href,
+              :bio => s.eol_description,
+              :url => s.url,
+              :rank => s.taxonrank
+            }
+          rescue => e
+            puts "Failed to process fish list entry with error: #{e.message}"
+          end
+        end
+
+        File.open(filename, "w") { |f| f.write "species_data=#{species.to_json.html_safe};" }
+        sh "cat #{filename} | gzip -9 > #{filename}.gz"
+      rescue => e
+        puts "Failed to fetch fish list for lat: #{lat}, lng: #{lng} with error: #{e.message}"
+      end
+    end
+  end
+
+  # Finally build a list of all species
+  species = {}
+  filename = "public/assets/species/species_data_all.js"
+  puts "processing #{filename}\n"
+  
+  Eolsname.where(
+    "taxonrank = 'species' AND category IS NOT NULL AND category NOT LIKE 'other' AND category NOT LIKE 'undefined'"
+  ).find_each do |s|
+    begin
+      species[s.category] ||= []
+      species[s.category] << {
+        :id => "s-#{s.id}",
+        :sname => s.sname,
+        :cnames => s.eolcnames.map(&:cname),
+        :preferred_name => s.preferred_cname,
+        :picture => s.thumbnail_href,
+        :bio => s.eol_description,
+        :url => s.url,
+        :rank => s.taxonrank
+      }
+    rescue => e
+      puts "#{s.id} failed: #{e.message}"
+    end
+  end
+
+  File.open(filename, "w") { |f| f.write "species_data_all=#{species.to_json.html_safe};" }
+  sh "cat #{filename} | gzip -9 > #{filename}.gz"
+end
+
 
   desc "Generating the fish occurence JS data for the species picker"
   task :species => :environment do |t, args|
@@ -73,7 +159,14 @@ namespace :assets do
           lng_clause ="lng >= #{(lng-radius)} AND lng <= #{(lng+radius)}"
         end
 
-        fish_list = FishFrequency.all(:conditions => "(#{lat_clause}) AND (#{lng_clause}) AND eolsnames.taxonrank = 'species'", :group => "gbif_id", :order => "count(*) desc", :joins => :eolsnames, :include => :eolsnames)
+        #fish_list = FishFrequency.all(:conditions => "(#{lat_clause}) AND (#{lng_clause}) AND eolsnames.taxonrank = 'species'", :group => "gbif_id", :order => "count(*) desc", :joins => :eolsnames, :include => :eolsnames)
+        fish_list = FishFrequency.all(
+        :conditions => "(#{lat_clause}) AND (#{lng_clause}) AND eolsnames.taxonrank = 'species'",
+        :group => "fish_frequencies.gbif_id",
+        :order => "count(*) desc",
+        :joins => :eolsnames,
+        :include => :eolsnames
+      )
         species = {}
         fish_list.each do |o|
           begin

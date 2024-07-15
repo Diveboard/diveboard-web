@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150618115053) do
+ActiveRecord::Schema.define(:version => 20240710174748) do
 
   create_table "ZZ_users_fb_data", :id => false, :force => true do |t|
     t.integer "user_id",                                  :null => false
@@ -510,6 +510,7 @@ ActiveRecord::Schema.define(:version => 20150618115053) do
     t.text     "eol_description",    :limit => 2147483647
     t.string   "thumbnail_href"
     t.string   "category_inspire"
+    t.integer  "eol_id"
   end
 
   add_index "eolsnames", ["category"], :name => "index_eolsnames_2_on_category"
@@ -577,6 +578,59 @@ ActiveRecord::Schema.define(:version => 20150618115053) do
 
   add_index "fish_frequencies", ["gbif_id"], :name => "index_fish_frequencies_on_gbif_id"
   add_index "fish_frequencies", ["lat", "lng", "count"], :name => "index_fish_frequencies_on_lat_and_lng_and_count"
+
+  create_table "gbif", :id => false, :force => true do |t|
+    t.string "modified"
+    t.string "institutionCode",               :limit => 9,   :default => "", :null => false
+    t.string "collectionCode",                :limit => 9,   :default => "", :null => false
+    t.string "samplingProtocol",              :limit => 38,  :default => "", :null => false
+    t.string "references"
+    t.string "scientificName"
+    t.string "basisOfRecord"
+    t.string "nameAccordingTo"
+    t.string "dateIdentified"
+    t.string "kingdom"
+    t.string "phylum"
+    t.string "class"
+    t.string "order"
+    t.string "family"
+    t.string "genus"
+    t.string "identifiedBy"
+    t.string "recordedBy"
+    t.string "eventDate"
+    t.string "waterBody"
+    t.string "country"
+    t.string "verbatimLocality",              :limit => 512
+    t.string "locality"
+    t.string "decimalLongitude"
+    t.string "decimallatitude"
+    t.string "coordinateUncertaintyInMeters"
+    t.string "minimumDepthInMeters"
+    t.string "maximumDepthInMeters"
+    t.string "Temperature"
+    t.string "eventRemarks"
+    t.string "fieldnotes"
+    t.string "locationRemarks"
+    t.string "type"
+    t.string "language"
+    t.string "rights"
+    t.string "rightsholder"
+    t.string "datasetID"
+    t.string "datasetName"
+    t.string "ownerinstitutionCode",          :limit => 9,   :default => "", :null => false
+    t.string "countryCode"
+    t.string "geodeticDatum"
+    t.string "georeferenceSources"
+    t.string "minimumElevationInMeters"
+    t.string "maximumElevationInMeters"
+    t.string "taxonRank"
+    t.string "taxonID"
+    t.string "occurrenceID"
+    t.string "catalogNumber"
+    t.string "associatedMedia"
+    t.string "eventID"
+    t.string "habitat"
+  end
 
   create_table "gbif_ipts", :force => true do |t|
     t.integer "dive_id"
@@ -682,6 +736,8 @@ ActiveRecord::Schema.define(:version => 20150618115053) do
   add_index "geonames_cores", ["feature_class"], :name => "index_geonames_cores_on_feature_class"
   add_index "geonames_cores", ["feature_code"], :name => "index_geonames_cores_on_feature_code"
   add_index "geonames_cores", ["latitude", "longitude"], :name => "index_geonames_cores_on_latitude_and_longitude"
+  add_index "geonames_cores", ["latitude"], :name => "index_geonames_cores_on_latitude"
+  add_index "geonames_cores", ["longitude"], :name => "index_geonames_cores_on_longitude"
   add_index "geonames_cores", ["name", "country_code"], :name => "index_geonames_cores_on_name_and_country_code"
   add_index "geonames_cores", ["parent_id"], :name => "index_geonames_cores_on_parent_id"
 
@@ -871,12 +927,12 @@ ActiveRecord::Schema.define(:version => 20150618115053) do
   add_index "payments", ["user_id", "status"], :name => "index_payments_on_user_id_and_status"
 
   create_table "picture_album_pictures", :id => false, :force => true do |t|
-    t.integer "picture_album_id", :null => false
-    t.integer "picture_id",       :null => false
-    t.integer "ordnum",           :null => false
+    t.integer "picture_album_id",                :null => false
+    t.integer "picture_id",                      :null => false
+    t.integer "ordnum",           :default => 0, :null => false
   end
 
-  add_index "picture_album_pictures", ["picture_album_id", "ordnum", "picture_id"], :name => "picture_album_pictures_on_album"
+  add_index "picture_album_pictures", ["ordnum"], :name => "index_picture_album_pictures_on_ordnum"
   add_index "picture_album_pictures", ["picture_id"], :name => "index_picture_album_pictures_on_picture_id"
 
   create_table "pictures", :force => true do |t|
@@ -1038,17 +1094,6 @@ ActiveRecord::Schema.define(:version => 20150618115053) do
     t.integer  "stuff_id",      :limit => 8
   end
 
-  create_table "shop_customers", :id => false, :force => true do |t|
-    t.integer "id",                 :limit => 8
-    t.integer "shop_id"
-    t.integer "user_id",            :limit => 8
-    t.integer "dive_count",         :limit => 8, :default => 0, :null => false
-    t.integer "review_id"
-    t.integer "basket_count",       :limit => 8, :default => 0, :null => false
-    t.integer "message_to_count",   :limit => 8, :default => 0, :null => false
-    t.integer "message_from_count", :limit => 8, :default => 0, :null => false
-  end
-
   create_table "shop_densities", :force => true do |t|
     t.float    "minLat"
     t.float    "minLng"
@@ -1183,6 +1228,19 @@ ActiveRecord::Schema.define(:version => 20150618115053) do
   add_index "spot_compare", ["b_id", "match_class", "a_id"], :name => "spot_compare_idx2"
   add_index "spot_compare", ["cluster_id", "match_class"], :name => "spot_compare_idx3"
 
+  create_table "spot_compare_tmp", :id => false, :force => true do |t|
+    t.integer "a_id",             :default => 0, :null => false
+    t.integer "b_id",             :default => 0, :null => false
+    t.integer "dl_dst",           :default => 0, :null => false
+    t.float   "1_dst"
+    t.integer "untrusted_coord",  :default => 0, :null => false
+    t.integer "included"
+    t.integer "country_included"
+    t.integer "same_country"
+    t.integer "same_region"
+    t.integer "same_location"
+  end
+
   create_table "spot_moderations", :force => true do |t|
     t.integer  "a_id"
     t.integer  "b_id"
@@ -1224,6 +1282,18 @@ ActiveRecord::Schema.define(:version => 20150618115053) do
   add_index "spots", ["lat", "long"], :name => "index_spots_on_lat_and_long"
   add_index "spots", ["location_id"], :name => "index_spots_on_location_id"
   add_index "spots", ["region_id"], :name => "index_spots_on_region_id"
+
+  create_table "stats_logs", :id => false, :force => true do |t|
+    t.datetime "time"
+    t.integer  "sub_count"
+    t.string   "ip"
+    t.string   "method"
+    t.string   "url"
+    t.string   "params"
+    t.string   "ref"
+    t.string   "status"
+    t.string   "user_agent"
+  end
 
   create_table "stats_sums", :id => false, :force => true do |t|
     t.string   "aggreg"
@@ -1376,6 +1446,7 @@ ActiveRecord::Schema.define(:version => 20150618115053) do
     t.string   "preferred_locale",                         :default => "en"
     t.string   "movescount_email"
     t.string   "movescount_userkey"
+    t.integer  "privacy",            :limit => 1,          :default => 1
   end
 
   add_index "users", ["contact_email"], :name => "contact_email"
