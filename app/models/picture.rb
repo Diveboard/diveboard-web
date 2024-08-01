@@ -64,7 +64,7 @@ class Picture < ActiveRecord::Base
 
 
   define_format_api :public => [
-          :thumbnail, :medium, :large, :small, :notes, :media, :player, :full_redirect_link, :fullpermalink, :permalink, :created_at
+          :id, :thumbnail, :medium, :large, :small, :notes, :media, :player, :full_redirect_link, :fullpermalink, :permalink, :created_at
           ],
       :private => [:id, :cropable, :original_document_url, :original_document_download_url],
       :mobile => [:id],

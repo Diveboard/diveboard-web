@@ -98,7 +98,7 @@ class User < ActiveRecord::Base
 
   define_api_private_attributes :dan_data, :storage_used, :quota_type, :quota_limit, :all_dive_ids, :dives_abstract, :total_ext_dives, :email, :contact_email, :pict, :trip_names, :units, :auto_public, :admin_rights, :wallet_picture_ids
 
-  define_api_includes :private => [:public, :mobile], :user_with_dives => [:public], :mobile => [:public], :search_light => [:public], :pictures => [:public], :search_full => [:search_light]
+  define_api_includes :private => [:public, :mobile], :user_with_dives => [:public], :mobile => [:public], :search_light => [:public], :pictures => [:private], :search_full => [:search_light]
 
   define_api_updatable_attributes %w( last_name first_name nickname about email contact_email vanity_url location dan_data settings currency total_ext_dives buddies units wallet_picture_ids preferred_locale)
   define_api_updatable_attributes_rec 'dives' => Dive, 'user_gears' => UserGear, 'db_buddies' => User, 'ext_buddies' => ExternalUser
