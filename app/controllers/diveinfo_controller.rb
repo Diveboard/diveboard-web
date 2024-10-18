@@ -1134,7 +1134,8 @@ class DiveinfoController < ApplicationController
     png_file_path = svg_file.path.sub(/\.svg$/, '.png')
 
     # Use convert to generate PNG from SVG
-    ret = system('convert', '-background', 'none', svg_file.path, png_file_path)
+    #system('convert', '-background', 'none', svg_file.path, png_file_path)
+    system('rsvg-convert', svg_file.path, '-o', png_file_path)    
 
     # If a logo is provided, composite it on top of the PNG
     if @graph_attributes["logo"]

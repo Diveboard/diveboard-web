@@ -354,7 +354,7 @@ class Diveprinter
      check_space_or_newpage p, 25
       p.image "public/img/pdf/profile.png", :at => [@left_offset, @page_height - @top_position-13], :width => 10, :height => 9
       p.text_box "DIVE PROFILE", :at => [@left_offset +15, @page_height - @top_position-5.mm], :size => 11, :style => :bold
-      @top_position = @top_position + 10
+      @top_position = @top_position + 20
 
       if @user.preferred_units["distance"]=="ft"
         graphunits = "i"
