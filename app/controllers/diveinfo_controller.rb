@@ -1093,25 +1093,7 @@ class DiveinfoController < ApplicationController
         end
       }
       format.png {
-        version = "default"
-        if !params[:g].nil? && !profile_yml[params[:g]].nil? then
-          version = params[:g]
-        end
-
-        cachedFilename = "uploads/profiles/#{@dive.id}_#{version}_#{@unit}_#{I18n.locale}.png"
-
-        begin
-          cachedFile = File.new(cachedFilename, "r")
-          if @dive.updated_at.to_f < cachedFile.mtime.to_f then
-            cachedFile.close
-            send_file cachedFile.path, {:type => 'image/png', :disposition => 'inline'}
-            logger.debug "cache profile rendered #{Time.now.to_f}"
-            return
-          end
-          cachedFile.close
-        rescue Errno::ENOENT => e
-          #Do nothing if file does not exists
-        end
+        # disable caching of png
       }
     end
 
@@ -1142,32 +1124,29 @@ class DiveinfoController < ApplicationController
             logger.debug "cached file saved #{Time.now.to_f}"
           }
       format.png {
-          svg_file = Tempfile.new('svg_to_png')
-          begin
-            svg_file.write render_to_string :template => false, :action => 'diveinfo/profile.svg'
-            svg_file.close
 
+  svg_file = Tempfile.new(['svg_to_png', '.svg']) # Create Tempfile with .svg extension
+  begin
+    svg_file.write render_to_string template: false, action: 'diveinfo/profile.svg'
+    svg_file.close
 
-            png_file = nil
-            begin
-              png_file = File.new(cachedFilename, "w")
-            rescue Errno::ENOENT => e
-              dirname = File.dirname(cachedFilename)
-              FileUtils.mkdir_p(dirname)
-              png_file = File.new(cachedFilename, "w")
-            end
-            png_file.close
-            ret = system('mogrify', '-format', 'png', '-background', 'none', '-write', png_file.path, "svg:"+svg_file.path)
-            raise DBTechnicalError.new "Failed to generate PNG for SVG" unless ret
+    # Create the PNG filename by replacing the .svg extension with .png
+    png_file_path = svg_file.path.sub(/\.svg$/, '.png')
 
-            if !@graph_attributes["logo"].nil? then
-              system('composite', '-gravity', 'center', '-blend', '16,100', "#{Rails.root}/#{@graph_attributes['logo']}", png_file.path, png_file.path)
-            end
+    # Use convert to generate PNG from SVG
+    ret = system('convert', '-background', 'none', svg_file.path, png_file_path)
 
-            send_file png_file.path, {:type => 'image/png', :disposition => 'inline'}
-          ensure
-            svg_file.unlink rescue Rails.logger.warn $!.message
-          end
+    # If a logo is provided, composite it on top of the PNG
+    if @graph_attributes["logo"]
+      system('composite', '-gravity', 'center', '-blend', '16,100', "#{Rails.root}/#{@graph_attributes['logo']}", png_file_path, png_file_path)
+    end
+
+    # Send the generated PNG file
+    send_file png_file_path, type: 'image/png', disposition: 'inline'
+  ensure
+    svg_file.unlink rescue Rails.logger.warn $!.message
+  end
+
       }
     end
 

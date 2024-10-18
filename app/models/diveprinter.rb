@@ -363,11 +363,11 @@ class Diveprinter
       end
       Rails.logger.debug "getting graph at : #{@dive.fullpermalink(:locale)}/profile.png?g=pdf_print&u=#{graphunits}&locale=#{I18n.locale}"
       #File.open(profile_image,"wb"){|f| f.write(Net::HTTP.get URI.parse("#{@dive.fullpermalink(:locale)}/profile.png?g=pdf_print&u=#{graphunits}&locale=#{I18n.locale}"))}
-      profile = p.image open(URI.parse("#{@dive.fullpermalink(:locale)}/profile.png?g=pdf_print&u=#{graphunits}&locale=#{I18n.locale}")), :at => [@left_offset-10, @page_height - @top_position-10], :width => @page_line_width+5
+      profile = p.image open(URI.parse("#{@dive.fullpermalink(:locale)}/profile.png?u=#{graphunits}&locale=#{I18n.locale}")), :at => [@left_offset-10, @page_height - @top_position-10], :width => @page_line_width+5 rescue nil
       #profile_image.unlink
 
      ##END OF DIVE PROFILE BOX
-     @top_position  = @top_position + profile.scaled_height
+     @top_position  = @top_position + profile.scaled_height unless profile.nil?
      Rails.logger.debug "after profile top position is #{@top_position}"
 
      ## DIVE NOTES BOX
