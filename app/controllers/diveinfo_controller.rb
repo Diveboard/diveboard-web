@@ -120,7 +120,8 @@ class DiveinfoController < ApplicationController
     #sends out the empty template to be filled in with user data and enabling the creation of a new dive
 
     begin
-      owner = User.find(params[:user_id]) rescue nil
+      #owner = User.find(params[:user_id]) rescue nil
+      owner = @user
       if owner.nil? then
         raise DBArgumentError.new "Target owner does not exist", owner: params[:user_id]
       end
