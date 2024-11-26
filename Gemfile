@@ -153,7 +153,7 @@ gem 'airbrake'
 
 group :development do
  #http://railscasts.com/episodes/402-better-errors-railspanel
- gem 'better_errors', '1.1.0'
+ gem 'better_errors', '2.9.1'
  #gem 'binding_of_caller'
  gem 'meta_request'
 end
