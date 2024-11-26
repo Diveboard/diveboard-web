@@ -36,7 +36,7 @@ gem 'composite_primary_keys'
 gem 'faraday', "=0.8.9"
 gem 'koala'
 gem 'subexec'#, '=0.1.0'
-gem 'mini_magick', '=3.4'
+gem 'mini_magick', '4.10.1'
 gem 'mini_exiftool'
 #gem 'mysql2', '~> 0.3.10'
 gem 'mysql2', '~> 0.3.21'
