@@ -171,7 +171,7 @@ GEM
       addressable
       faraday
       multi_json
-    mail (2.5.4)
+    mail (2.5.5)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     memoist (0.12.0)
