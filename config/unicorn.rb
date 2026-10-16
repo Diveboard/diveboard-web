@@ -33,8 +33,8 @@ working_directory "/data/diveboard/diveboard-web/current" # available in 0.94.0+
 #listen "/tmp/.sock", :backlog => 64
 listen "127.0.0.1:8080", :tcp_nopush => true
 
-# nuke workers after 30 seconds instead of 60 seconds (the default)
-timeout 1200
+# nuke workers after 75 seconds; nginx already gives up on the request at 60s
+timeout 75
 
 # feel free to point this anywhere accessible on the filesystem
 pid "/data/diveboard/diveboard-web/shared/pids/unicorn.pid" unless ENV['RAILS_ENV'] == 'docker_development'
