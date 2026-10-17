@@ -23,7 +23,7 @@ docker_development:
     
 production:
     adapter: mysql2
-    encoding: utf8
+    encoding: utf8mb4
     database: diveboard
     pool: 5
     username: <%= ENV["DB_USER"] %>
