@@ -124,18 +124,6 @@ $( function() {
   }
 
   try {
-    initialize_login_popup();
-  }catch (err){
-    track_exception_global(err);
-  }
-
-  try {
-    Header.initialize_inbox();
-  }catch (err){
-    track_exception_global(err);
-  }
-
-  try {
     Header.initialize_header();
   } catch(e){}
 
