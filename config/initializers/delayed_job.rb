@@ -27,6 +27,22 @@ Delayed::Worker.max_attempts = 3
 Delayed::Worker.max_run_time = 60.minutes
 Delayed::Worker.delay_jobs = !Rails.env.test?
 Delayed::Worker.default_queue_name = 'default'
+# TERM raises SignalException, which the retry loop in job_runner.rake does not rescue,
+# so `rake jobs:stop` actually stops the forked workers
+Delayed::Worker.raise_signal_exceptions = :term
+
+# The DB connection is utf8 (3-byte), so a 4-byte character (emoji) in an error message
+# made saving last_error fail. That crashed the worker, which then picked the same job
+# again forever and blocked the whole queue. Replace those characters before saving.
+Delayed::Backend::ActiveRecord::Job.class_eval do
+  def last_error=(value)
+    unless value.nil?
+      value = value.to_s.encode('UTF-8', :invalid => :replace, :undef => :replace)
+      value = value.each_char.map { |ch| ch.ord > 0xFFFF ? '?' : ch }.join
+    end
+    write_attribute(:last_error, value)
+  end
+end
 
 
 #reloading the model every time the worker is woken up
