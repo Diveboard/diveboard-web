@@ -30,7 +30,8 @@ namespace :jobs do
           worker.start
         rescue
           Rails.logger.error "Delayed job wants to quit... But I own him, so work again bitch ! (#{$!.message})"
-          sleep 5
+          # back off so a job that keeps crashing the worker can't hammer the database
+          sleep 30
           begin
             ActiveRecord::Base.connection.reconnect!
           rescue
