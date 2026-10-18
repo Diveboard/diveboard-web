@@ -11,6 +11,13 @@ include_pictures = false
 
 SitemapGenerator::Sitemap.create do
 
+  # Skip empty links and the homepage: some shops and areas have no permalink, which
+  # produced the bare root URL more than once.
+  def add_page path, opts
+    return if path.blank? || path == '/'
+    add path, opts
+  end
+
   add '/', :changefreq => 'daily', :priority => 0.9
   add '/explore', :changefreq => 'daily', :priority => 0.9
   add '/explore/gallery', :changefreq => 'daily', :priority => 0.9
@@ -68,23 +75,23 @@ SitemapGenerator::Sitemap.create do
         lastmod = u.updated_at
       end
     end
-    add u.user_proxy.permalink, :changefreq => 'weekly', :priority => 0.6, :lastmod => lastmod
+    add_page u.user_proxy.permalink, :changefreq => 'weekly', :priority => 0.6, :lastmod => lastmod
   end
 
   BlogPost.where(:published => true).find_each do |b|
-    add b.permalink, :changefreq => 'weekly', :priority => 0.6
+    add_page b.permalink, :changefreq => 'weekly', :priority => 0.6
   end
   Country.where("id > 1").find_each do |c|
-    add c.permalink, :changefreq => 'weekly', :priority => 0.8
+    add_page c.permalink, :changefreq => 'weekly', :priority => 0.8
   end
 
   Location.where("id > 1 && country_id is not null").find_each do |c|
-    add c.permalink, :changefreq => 'weekly', :priority => 0.8
+    add_page c.permalink, :changefreq => 'weekly', :priority => 0.8
   end
 
   Region.where("id > 1").find_each do |c|
     begin
-      add c.permalink, :changefreq => 'weekly', :priority => 0.8
+      add_page c.permalink, :changefreq => 'weekly', :priority => 0.8
     rescue
 
     end
@@ -94,12 +101,12 @@ SitemapGenerator::Sitemap.create do
   # `next`, not `return`: returning from this block aborted the whole sitemap at the first hidden spot.
   Spot.where("id > 1 AND redirect_id IS NULL AND (flag_moderate_private_to_public IS NULL OR flag_moderate_private_to_public = 1)").find_each do |c|
     next unless c.is_visible_for?(nil)
-    add c.permalink, :changefreq => 'weekly', :priority => 0.8
+    add_page c.permalink, :changefreq => 'weekly', :priority => 0.8
   end
 
   Area.all.each do |a|
     begin
-      add a.permalink, :changefreq => 'weekly', :priority => 0.9
+      add_page a.permalink, :changefreq => 'weekly', :priority => 0.9
     rescue Exception => e
 
     end
