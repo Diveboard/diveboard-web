@@ -1,3 +1,7 @@
+# NOTE: this deny-all file is the default for staging, testing and forks.
+# Production does NOT serve it: the production nginx config maps /robots.txt to
+# public/robots_a.txt (allow), so crawling stays enabled even with plain git-pull deploys.
+#
 # See http://www.robotstxt.org/wc/norobots.html for documentation on how to use the robots.txt file
 #
 # To ban all spiders from the entire site uncomment the next two lines:
