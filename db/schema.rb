@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20240710174748) do
+ActiveRecord::Schema.define(:version => 20261018020000) do
 
   create_table "ZZ_users_fb_data", :id => false, :force => true do |t|
     t.integer "user_id",                                  :null => false
@@ -964,6 +964,7 @@ ActiveRecord::Schema.define(:version => 20240710174748) do
     t.string   "fb_graph_id"
   end
 
+  add_index "pictures", ["great_pic", "updated_at"], :name => "index_pictures_on_great_pic_and_updated_at"
   add_index "pictures", ["large_id"], :name => "index_pictures_on_large_id"
   add_index "pictures", ["medium_id"], :name => "index_pictures_on_medium_id"
   add_index "pictures", ["mp4"], :name => "index_pictures_on_mp4"
