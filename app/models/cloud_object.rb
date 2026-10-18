@@ -2,15 +2,24 @@ require 'filemagic'
 require 'google_storage'
 
 class CloudObject < ActiveRecord::Base
-  after_initialize :get_client
   before_destroy :remove
 
   @@client = nil
+  @@client_failed_at = nil
+  # Created lazily, only by the methods that actually talk to Google Storage. It used to be
+  # created in after_initialize, i.e. for every CloudObject loaded from the DB, and a failed
+  # creation (sign-in to accounts.google.com refused) was retried for each object: pages that
+  # list a few hundred photos made thousands of sign-in attempts and took minutes to render.
+  # After a failure, wait 10 minutes before trying again.
   def get_client
-    # OK, it's dirty... but it's the only way that the object won't get thrown at every request in dev env
+    return @@client if @@client
+    return nil if @@client_failed_at && @@client_failed_at > 10.minutes.ago
     # If the client were re-created each time, it would overflow the quota of authent
-    @@client ||= Thread.main[:gs_client] || GoogleStorage::Client.new({:timeout => 180, :debug => false}) rescue nil
+    @@client = Thread.main[:gs_client] || GoogleStorage::Client.new({:timeout => 180, :debug => false})
     Thread.main[:gs_client] ||= @@client
+  rescue
+    @@client_failed_at = Time.now
+    nil
   end
 
   def self.create_bucket(bucket)
@@ -141,11 +150,11 @@ class CloudObject < ActiveRecord::Base
     # Uploading the file
     begin
       logger.debug "Uploading to google : #{dst_bucket}, #{dst_path}, #{src_path}, #{content_type}"
-      r = @@client.upload_object(dst_bucket, dst_path, :path_to_file => src_path, :content_type => content_type , :x_goog_acl => 'public-read', :headers => {'Cache-Control' => 'public, max-age=315360000'})
+      r = get_client.upload_object(dst_bucket, dst_path, :path_to_file => src_path, :content_type => content_type , :x_goog_acl => 'public-read', :headers => {'Cache-Control' => 'public, max-age=315360000'})
       logger.debug r
       if !r['Error'].nil? && r['Error']['Code'].match(/AuthenticationRequired/) then
         logger.debug "Retrying after AuthenticationRequired"
-        r = @@client.upload_object(dst_bucket, dst_path, :path_to_file => src_path, :content_type => content_type , :x_goog_acl => 'public-read', :headers => {'Cache-Control' => 'public, max-age=315360000'})
+        r = get_client.upload_object(dst_bucket, dst_path, :path_to_file => src_path, :content_type => content_type , :x_goog_acl => 'public-read', :headers => {'Cache-Control' => 'public, max-age=315360000'})
         logger.debug r
       end
       raise DBTechnicalError.new "Error while uploading picture to google", error: r['Error'].to_s if !r['Error'].nil?
@@ -162,7 +171,7 @@ class CloudObject < ActiveRecord::Base
       logger.debug $!.backtrace
       begin
         if Rails.application.config.google_cloud_buckets.values.flatten.include? dst_bucket then
-          @@client.delete_object(dst_bucket, dst_path)
+          get_client.delete_object(dst_bucket, dst_path)
           logger.debug "Object '#{dst_path}' correctly deleted from bucket #{dst_bucket} after exception"
         else
           logger.warn "Object '#{dst_path}' has NOT been deleted from bucket #{dst_bucket} because this bucket does not belong to us !"
@@ -177,7 +186,7 @@ class CloudObject < ActiveRecord::Base
 
   def check
 
-    info = @@client.object_head(self.bucket, self.path)
+    info = get_client.object_head(self.bucket, self.path)
 
     info.class == Hash && info[:etag] == "\"" + self.etag + "\""
   end
@@ -257,7 +266,7 @@ private
       }
       logger.debug "deleting '#{self.path}' from '#{self.bucket}'"
       if Rails.application.config.google_cloud_buckets.values.flatten.include? self.bucket then
-        r=@@client.delete_object(self.bucket, self.path)
+        r=get_client.delete_object(self.bucket, self.path)
         logger.debug "Object '#{self.path}' correctly deleted from bucket #{self.bucket} after exception"
       else
         logger.warn "Object '#{self.path}' has NOT been deleted from bucket #{self.bucket} because this bucket does not belong to us !"
