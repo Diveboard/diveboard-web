@@ -94,7 +94,7 @@ every 1.hour do
 end
 
 every 1.day, :at => '5:00 am' do
-  rake "-s sitemap:refresh"
+  rake "-s sitemap:refresh:no_ping"
 end
 
 every 1.day, :at => '3pm' do
