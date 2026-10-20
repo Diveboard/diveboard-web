@@ -934,6 +934,16 @@ class User < ActiveRecord::Base
     Picture.select('distinct pictures.*').where(:user_id => self.id).includes([:cloud_thumb, :cloud_large, :cloud_small, :cloud_medium, :cloud_original_video, :cloud_original_image]).sort{|a,b| b.created_at<=>a.created_at}
   end
 
+  # Bytes of pictures this user uploaded in the last 24 hours that are not attached to one of their dives.
+  # Used for the daily upload cap (config.max_orphan_size). storage_used[:orphan_pictures] is a
+  # lifetime total, which made the "per day" cap a lifetime one.
+  def recent_unattached_upload_bytes
+    connection.select_value("SELECT COALESCE(SUM(p.size), 0) FROM pictures p
+      WHERE p.user_id = #{self.id.to_i} AND p.created_at >= NOW() - INTERVAL 1 DAY
+        AND NOT EXISTS (SELECT 1 FROM picture_album_pictures pap JOIN dives d ON d.album_id = pap.picture_album_id
+                        WHERE pap.picture_id = p.id AND d.user_id = #{self.id.to_i})").to_i
+  end
+
   def storage_used
     raw = connection.select_one "select SUM(CASE dived when 0 then 0 else size END) dive_pictures,
       SUM(CASE when dived > 0 AND  DATE_ADD(created_at, INTERVAL 1 MONTH) >= NOW() then size else 0 END) monthly_dive_pictures,

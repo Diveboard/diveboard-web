@@ -74,7 +74,7 @@ DiveBoard::Application.configure do
 
   config.default_storage_per_dive = 2.megabyte
   config.default_storage_per_month = 500.megabyte
-  config.max_orphan_size = 1.gigabyte
+  config.max_orphan_size = 200.megabytes   # per 24 hours, pictures not attached to a dive (task #49)
 
   config.workers_count = 4
   config.workers_process_name = "delayed_job_worker.production"

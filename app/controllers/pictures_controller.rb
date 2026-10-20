@@ -66,7 +66,7 @@ class PicturesController < ApplicationController
         file.write(File.read("public/tmp_upload/"+params[:from_tmp_file].gsub('/','')))
       end
 
-      if user.storage_used[:orphan_pictures] + file.size > Rails.application.config.max_orphan_size then
+      if user.recent_unattached_upload_bytes + file.size > Rails.application.config.max_orphan_size then
         raise DBArgumentError.new "You have reached the maximum upload per day"
       elsif user.quota_type == 'per_user' && user.storage_used[:dive_pictures] > user.quota_limit then
         raise DBArgumentError.new "You have reached your quota of upload available"
