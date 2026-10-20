@@ -38,9 +38,12 @@ class LogbookController < ApplicationController
     if @owner.nil? then
       #user doesn't exist
       logger.debug "apparently can't find the user with url #{params[:vanity_url]} "
-      render 'layouts/404', :layout => false
+      render 'layouts/404', :layout => false, :status => :not_found
       return
     end
+
+    # Profiles with no dives are almost all spam accounts: keep them out of search engines (task #49).
+    response.headers['X-Robots-Tag'] = 'noindex' unless @owner.dives.exists?
 
 
 
