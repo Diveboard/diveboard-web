@@ -40,9 +40,6 @@ class PicturesController < ApplicationController
       if !@user.can_edit?(user) then
         raise DBArgumentError.new "Cannot create pic with user", owner_id: user.id, user_id: @user.id
       end
-      unless user.can_add_pictures? || @user.can_add_pictures?
-        raise DBArgumentError.new "Log your first dive to upload photos"
-      end
 
 
       file = Tempfile.new('dive_picture')

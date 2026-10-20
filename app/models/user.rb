@@ -463,12 +463,6 @@ class User < ActiveRecord::Base
     c.name
   end
 
-  # Spam task #49: almost every picture from accounts without a logged dive was spam, so only
-  # divers (at least one dive), dive-shop accounts and admins may add pictures.
-  def can_add_pictures?
-    admin_rights.to_i > 0 || !shop_proxy_id.nil? || dives.exists?
-  end
-
   def avatars
     avatar_album || Album.create(:user_id => self.id, :kind => 'avatar')
   end
@@ -482,7 +476,6 @@ class User < ActiveRecord::Base
     if img[:selected_pic].to_i == 1 then
       logger.debug "updating picture for user #{self.id} with #{img} >>> #{img[:selected_pic]}"
       raise DBArgumentError.new 'crop_pictname must be provided' if img[:crop_pictname].blank?
-      raise DBArgumentError.new 'Log your first dive to upload photos' unless can_add_pictures?
 
       logger.debug "using image "+img[:crop_pictname].gsub('/','')
       image = MiniMagick::Image.open("public/tmp_upload/"+img[:crop_pictname].gsub('/','')) rescue raise(DBArgumentError.new "Impossible to open file", file: img[:crop_pictname].gsub('/',''), msg: $!.message)
