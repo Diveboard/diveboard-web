@@ -23,8 +23,10 @@ class ApplicationController < ActionController::Base
 
   def signup_block_reason
     return nil if request.user_agent.to_s =~ /\ADalvik\//
-    # "website" is a decoy field on the signup form (see home/register_3.html.erb): hidden from people,
-    # named and labelled like a real field so bots fill it in. Any value means a bot.
+    # Honeypot: home/register_3.html.erb has a decoy "Website" field, positioned off-screen, aria-hidden
+    # and skipped by Tab, so people never see or fill it. It is named and labelled like a real field
+    # on purpose (no "leave empty" hint) so bots, including ones that read labels, fill it in.
+    # Any value means a bot.
     return "honeypot filled" unless params[:website].blank?
     first_view = session[:first_page_view_at].to_i
     return "no page viewed in this session" if first_view == 0
