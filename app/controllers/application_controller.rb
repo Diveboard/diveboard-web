@@ -36,9 +36,10 @@ class ApplicationController < ActionController::Base
   end
 
   # Production logs only errors, so blocked signups get their own file (log/signup_blocked.log).
+  # Rails' logger formatter drops timestamps, so the line carries its own (the weekly report counts by it).
   def log_blocked_signup(reason)
     @@signup_block_log ||= Logger.new(Rails.root.join('log', 'signup_blocked.log').to_s)
-    @@signup_block_log.info "SIGNUP BLOCKED: #{reason}; path=#{request.path} ip=#{request.remote_ip} ua=#{request.user_agent.to_s[0, 150]}"
+    @@signup_block_log.info "#{Time.now.utc.strftime('%Y-%m-%dT%H:%M:%SZ')} SIGNUP BLOCKED: #{reason}; path=#{request.path} ip=#{request.remote_ip} ua=#{request.user_agent.to_s[0, 150]}"
   rescue
     nil
   end
