@@ -35,8 +35,12 @@ class ApplicationController < ActionController::Base
     nil
   end
 
+  # Production logs only errors, so blocked signups get their own file (log/signup_blocked.log).
   def log_blocked_signup(reason)
-    Rails.logger.warn "SIGNUP BLOCKED: #{reason}; path=#{request.path} ip=#{request.remote_ip} ua=#{request.user_agent.to_s[0, 150]}"
+    @@signup_block_log ||= Logger.new(Rails.root.join('log', 'signup_blocked.log').to_s)
+    @@signup_block_log.info "SIGNUP BLOCKED: #{reason}; path=#{request.path} ip=#{request.remote_ip} ua=#{request.user_agent.to_s[0, 150]}"
+  rescue
+    nil
   end
 
 
