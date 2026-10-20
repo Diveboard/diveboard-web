@@ -569,6 +569,16 @@ class ApiController < ApplicationController
 
   def register_email
     begin
+      if (reason = signup_block_reason)
+        log_blocked_signup(reason)
+        errors = [{:error => "Please reload the page and try again", :params => "email"}]
+        if params[:callback].blank?
+          render :json => {:success => false, :errors => errors}
+        else
+          render :js => {:success => false, :errors => errors, :callback => params[:callback]}
+        end
+        return
+      end
       e = []
       begin
         raise DBArgumentError.new "Email can't be null" if params[:email].blank?

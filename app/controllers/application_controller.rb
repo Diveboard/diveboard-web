@@ -7,7 +7,33 @@ class ApplicationController < ActionController::Base
   helper_method :unit_temp, :unit_distance, :unit_weight
   before_filter :set_locale
   before_filter :log_user_agent, :init_google_analytics, :track_conversion_origin, :signup_popup_hidden
+  before_filter :note_first_page_view
   rescue_from  ActionView::MissingTemplate, :with => :missing_template
+
+  # Signup bot guard (spam task #49). A person signing up has viewed at least one page first,
+  # in the same session, a few seconds earlier. Bots that post straight to the signup
+  # endpoints have not. The Android app (Volley, "Dalvik/" user agent) is exempt.
+  SIGNUP_MIN_SECONDS = 3
+
+  def note_first_page_view
+    session[:first_page_view_at] ||= Time.now.to_i if request.get? && request.format.html?
+  rescue
+    nil
+  end
+
+  def signup_block_reason
+    return nil if request.user_agent.to_s =~ /\ADalvik\//
+    return "honeypot filled" unless params[:website].blank?
+    first_view = session[:first_page_view_at].to_i
+    return "no page viewed in this session" if first_view == 0
+    elapsed = Time.now.to_i - first_view
+    return "submitted #{elapsed}s after first page view" if elapsed < SIGNUP_MIN_SECONDS
+    nil
+  end
+
+  def log_blocked_signup(reason)
+    Rails.logger.warn "SIGNUP BLOCKED: #{reason}; path=#{request.path} ip=#{request.remote_ip} ua=#{request.user_agent.to_s[0, 150]}"
+  end
 
 
   def track_conversion_origin

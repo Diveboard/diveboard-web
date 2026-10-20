@@ -147,6 +147,12 @@ class LoginController < ApplicationController
   end
 
   def register_post
+    if (reason = signup_block_reason)
+      log_blocked_signup(reason)
+      flash[:notice] = "Please try again"
+      redirect_to "/login/register"
+      return
+    end
     begin
       @user = User.new
       begin
