@@ -255,10 +255,6 @@
             </div>
             <%end%>
             <div id="register_user_info">
-              <%# Honeypot (spam task #49): a decoy field that looks like a normal "Website" input to bots. %>
-              <%# People never see it (off-screen, hidden from screen readers, skipped by Tab), so any value %>
-              <%# means a bot filled the form; ApplicationController#signup_block_reason rejects it. %>
-              <%# Keep the name and label plausible on purpose; don't add instructions like "leave empty". %>
               <div style="position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden;" aria-hidden="true"><label>Website <input type="text" name="website" value="" tabindex="-1" autocomplete="off"/></label></div>
               <label><%= it("Email:", scope: ['home', 'register_3']) %></label><% if @user_email.nil?%><%= f.text_field :email,:class => "register_main_input user_email_jq"%><%else%><%= f.text_field :email,:class => "register_main_input user_email_jq", :value => @user_email%><%end%><div style="position: absolute; margin-top: -49px; margin-left: 604px;"><img id="email_ok" src="/img/ok.png" align="absmiddle" style="display:none;"/><img  id="email_nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/><img  id="email_search" style="display:none;" align="absmiddle" src="/img/indicator.gif"/></div><br/>
               <label><%= it("Password (5-20chrs):", scope: ['home', 'register_3']) %></label><%= f.password_field :password, :class => "register_main_input"%><div style="position: absolute; margin-top: -50px; margin-left: 604px;"><img id="password_ok" src="/img/ok.png" align="absmiddle" style="display:none;"/><img  id="password_nok" style="display:none;" align="absmiddle" src="/img/ok-not.png"/></div><br/>
