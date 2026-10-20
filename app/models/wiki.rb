@@ -112,13 +112,10 @@ class Wiki < ActiveRecord::Base
               Rails.logger.warn "wiki mentions Picture #{sid[1]} which could not be found"
             end
           else
-            begin
-              new_picture = Picture.create_image :url => img_url, :user_id => self.user_id
-              pics << new_picture
-              new_pics << new_picture ## we'll need to do the gsub dance
-            rescue
-              Rails.logger.warn "Wiki mentions image with url #{img_url} which came back invalid"
-            end
+            # Images linked from other websites are no longer downloaded and stored (spam task #49):
+            # nearly all were spam, and fetching user-supplied URLs from the server is unsafe.
+            # Only pictures uploaded to Diveboard can appear in posts; the external image is dropped.
+            node.remove
           end
         rescue
           Rails.logger.warn "Could not analyze node #{node.to_json}"
