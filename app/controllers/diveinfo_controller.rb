@@ -1065,8 +1065,13 @@ class DiveinfoController < ApplicationController
     # Notify the client about the last update so that he can cache it correctly
     response.headers['Last-Modified'] = @dive.updated_at.httpdate
     response.headers["Pragma"] = ""
-    response.headers["expires"] = "-1"
-    response.headers["Cache-Control"] = "must-revalidate, private"
+    if @dive.privacy == 0 then
+      response.headers.delete("expires")
+      response.headers["Cache-Control"] = "public, max-age=3600"
+    else
+      response.headers["expires"] = "-1"
+      response.headers["Cache-Control"] = "must-revalidate, private"
+    end
 
 
     cachedFilename = nil
