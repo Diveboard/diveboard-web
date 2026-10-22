@@ -4,8 +4,17 @@
 # User-Agent: *
 # Disallow: /
 
+User-agent: GPTBot
+Disallow: /
+
 User-agent: ShapBot
 Disallow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
 
 User-agent: *
 Allow: /
