@@ -4,6 +4,9 @@
 # User-Agent: *
 # Disallow: /
 
+User-agent: ShapBot
+Disallow: /
+
 User-agent: *
 Allow: /
 Sitemap: https://www.diveboard.com/sitemap.xml.gz
