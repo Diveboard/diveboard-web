@@ -97,10 +97,17 @@ SitemapGenerator::Sitemap.create do
     end
   end
 
-  # Public spots only (private spots belong to one user's logbook), and not ones merged into another spot.
-  # `next`, not `return`: returning from this block aborted the whole sitemap at the first hidden spot.
-  Spot.where("id > 1 AND redirect_id IS NULL AND (flag_moderate_private_to_public IS NULL OR flag_moderate_private_to_public = 1)").find_each do |c|
-    next unless c.is_visible_for?(nil)
+  # Public spots only (private spots belong to one user's logbook), and not ones merged into another
+  # spot. This is Spot#is_visible_for?(nil) expressed in SQL: a spot is visible when the moderation
+  # flag is NULL, or when it is set and the spot sits inside its country and has at least one dive.
+  # Calling the Ruby method per spot segfaulted Ruby 1.9.3 partway through the 185,191 rows, in
+  # ActiveRecord relation cloning reached through composite_primary_keys (task #59).
+  Spot.where(
+    "id > 1 AND redirect_id IS NULL AND (" \
+    "  flag_moderate_private_to_public IS NULL" \
+    "  OR (flag_moderate_private_to_public = 1 AND within_country_bounds = 1" \
+    "      AND EXISTS (SELECT 1 FROM dives d WHERE d.spot_id = spots.id)))"
+  ).find_each do |c|
     add_page c.permalink, :changefreq => 'weekly', :priority => 0.8
   end
 
