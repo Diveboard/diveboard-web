@@ -3914,6 +3914,8 @@ en:
       : "BULK UPLOAD / MANAGE"
       ? "CREATE NEW DIVE"
       : "CREATE NEW DIVE"
+      ? "See all dives"
+      : "See all dives"
     trip_view:
       ? "%{owner_nickname}%{superscript:'}%{smaller:s trip} %{tripname}"
       : "%{owner_nickname}%{superscript:'}%{smaller:s trip} %{tripname}"
