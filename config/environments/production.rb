@@ -52,8 +52,16 @@ DiveBoard::Application.configure do
   config.active_support.deprecation = :notify
   
   config.action_mailer.delivery_method = :smtp
+  # ENV rather than the SENDGRID_API constant: that is defined further down this file,
+  # so it does not exist yet at this point.
   config.action_mailer.smtp_settings = {
-    :address              => "localhost" 
+    :user_name            => "apikey",
+    :password             => ENV["SENDGRID_API"],
+    :domain               => "diveboard.com",
+    :address              => "smtp.sendgrid.net",
+    :port                 => 587,
+    :authentication       => :plain,
+    :enable_starttls_auto => true
     }
     
   config.current_machine_name = `hostname -s`.chop ## we need to divfferentiate machines
