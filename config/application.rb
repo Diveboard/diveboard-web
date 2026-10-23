@@ -131,6 +131,7 @@ module DiveBoard
 
     ##use oink
     #config.middleware.use Oink::Middleware, :logger => Rails.logger
+    config.middleware.use "BadRequestBody"
     config.middleware.use "FixHttpAcceptHeader"
 
     config.middleware.insert 0, Rack::UTF8Sanitizer
