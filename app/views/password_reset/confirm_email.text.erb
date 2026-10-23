@@ -1,0 +1,11 @@
+<%= it("Dear %{user},", scope: ['password_reset', 'confirm_email', 'text'], user: @user.nickname) %>
+
+<%= it("Welcome to Diveboard. Please confirm this is your email address so you can publish posts and hear from us : %{url}", scope: ['password_reset', 'confirm_email', 'text'], url: @confirm_url) %>
+
+
+<%= it("You can log dives straight away. If you did not create this account you can ignore this message.", scope: ['password_reset', 'confirm_email', 'text']) %>
+
+<%= it("Happy Diving !", scope: ['password_reset', 'confirm_email', 'text']) %>
+--
+<%= it("The Diveboard team", scope: ['password_reset', 'confirm_email', 'text']) %>
+https://www.diveboard.com

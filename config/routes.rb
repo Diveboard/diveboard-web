@@ -29,6 +29,7 @@ DiveBoard::Application.routes.draw do
   match '/login/callback' => 'login#callback'
   match '/login/register' => 'login#register_get', :via => :get
   match '/login/register' => 'login#register_post', :via => :post
+  match '/login/confirm/:token' => 'login#confirm_email', :token => /[0-9a-f]+/
   match '/login/forgot' => 'home#forgot' #forgot password
   match '/login/forgot/:email/:token' => 'home#pwd_reset', :email => /[a-z0-9._%+-@]*/ #create new pwd after getting reset email
   match '/login/pwd_reset' => 'login#pwd_reset'
