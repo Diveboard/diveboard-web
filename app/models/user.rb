@@ -189,6 +189,27 @@ class User < ActiveRecord::Base
 ############################
 
 
+  # Email confirmation (task #49/#54). Accounts that existed before this was introduced were
+  # backfilled as confirmed, and Facebook signups are confirmed on creation because the provider
+  # has already verified the address. An unconfirmed account works normally except that it cannot
+  # publish posts - blocking login instead would lock out a real diver whose mail never arrived.
+  def email_confirmed?
+    !self.email_confirmed_at.nil?
+  end
+
+  def start_email_confirmation!
+    self.email_confirmation_token = SecureRandom.hex(32)
+    self.email_confirmed_at = nil
+    self.save!
+    self.email_confirmation_token
+  end
+
+  def confirm_email!
+    self.email_confirmed_at = Time.now
+    self.email_confirmation_token = nil
+    self.save!
+  end
+
   def is_private_for?(options={})
     return true if options[:private]
     return true if options[:caller] == self
