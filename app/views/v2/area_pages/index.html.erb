@@ -16,6 +16,7 @@
   <meta property="article:publisher" content="https://www.facebook.com/Diveboard" />
   <meta property="og:description" content="<%= it("Find out the best places to scuba dive in %{location_name} and the best period of the year", scope: ['area_pages', 'v2', 'index'], location_name: @area.geonames_core.name) %>" />
   <meta property="og:url"    content="<%="#{@area.fullpermalink(:canonical)}"%>" />
+  <link rel="canonical" href="<%=HtmlHelper.find_canonical_for(@area)%>" />
   <meta property="og:title"  content="<%= it("Diving in %{location_name}", scope: ['area_pages', 'v2', 'cover_pic'], location_name: location_name) %>" />
   <meta property="og:image"  content="<%=begin @area.best_pictures.sample.large rescue ROOT_URL+"img/logo_50.png" end%>"/>
 <%end%>

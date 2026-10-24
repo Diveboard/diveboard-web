@@ -299,9 +299,14 @@ module HtmlHelper
 
   # Canonical URL of the page being served: always on the www host, whatever locale
   # subdomain (fr/es/zh) the request came in on, so the localised copies consolidate
-  # into the www page instead of being indexed as duplicates.
-  def HtmlHelper.find_canonical_for path
-    path = path.to_s
+  # into the www page instead of being indexed as duplicates. Takes a request path, or a
+  # record that knows its own permalink. Place names inside a permalink are translated
+  # (Country#cname, and the slugs built from it in Location, Spot, Region and Area), so a
+  # record's canonical URL is built in the default locale: fr has to declare the same
+  # .../spots/belgium/... URL as www, not .../spots/belgique/....
+  def HtmlHelper.find_canonical_for target
+    return I18n.with_locale(I18n.default_locale) { target.fullpermalink(:canonical) } if target.respond_to? :fullpermalink
+    path = target.to_s
     path = "/" + path unless path.start_with? "/"
     HtmlHelper.find_root_for(:canonical).chomp("/") + path
   end

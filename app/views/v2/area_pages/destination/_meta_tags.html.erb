@@ -11,6 +11,7 @@
 <meta property="og:title" content="Diving in <%=@name%>" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="<%= request.original_url %>" />
+<link rel="canonical" href="<%=HtmlHelper.find_canonical_for request.path%>" />
 
 <% if !@mark.nil? %>
 <meta property="og:description" content="Diving in <%= @name %> is <%= if @mark >=4 then 'amazing' elsif @mark >= 3 then 'great' elsif @mark >= 2 then 'nice' elsif @mark >= 1 then 'correct' else 'poor' end %> according to the <%= @dives.count %> dives logged in the vicinity with an average mark of <%= @mark %>"/>
