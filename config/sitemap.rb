@@ -1,7 +1,6 @@
 
 # One sitemap of canonical www pages. The fr/es/zh subdomains declare the www page as their
-# canonical URL, so they are not listed separately (search engines ignore hreflang links that
-# point at non-canonical URLs).
+# canonical URL, so they are not listed separately.
 SitemapGenerator::Sitemap.default_host = HtmlHelper.find_root_for(:canonical).gsub(/\/$/, '')
 SitemapGenerator::Sitemap.sitemaps_path = "."
 

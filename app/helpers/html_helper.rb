@@ -297,6 +297,15 @@ module HtmlHelper
     end
   end
 
+  # Canonical URL of the page being served: always on the www host, whatever locale
+  # subdomain (fr/es/zh) the request came in on, so the localised copies consolidate
+  # into the www page instead of being indexed as duplicates.
+  def HtmlHelper.find_canonical_for path
+    path = path.to_s
+    path = "/" + path unless path.start_with? "/"
+    HtmlHelper.find_root_for(:canonical).chomp("/") + path
+  end
+
   def HtmlHelper.find_hostname_for option=nil
     URI.parse(HtmlHelper.find_root_for option).hostname
   end

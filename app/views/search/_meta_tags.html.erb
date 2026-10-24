@@ -26,12 +26,7 @@ if @meta_obj.nil? then
   <meta property="og:description" content="<%=description%>" />
 
   <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-  <%I18n.available_locales.each do |locale|%>
-    <link rel='alternate' href='<%=HtmlHelper.find_root_for(locale)%><%=url%>' hreflang="<%=locale%>" />
-    <%if locale != I18n.locale then%>
-      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
-    <%end%>
-  <%end%>
+  <link rel="canonical" href="<%=HtmlHelper.find_root_for :canonical%><%=url%>" />
 
   <%
 
@@ -77,12 +72,7 @@ elsif @meta_obj.class.to_s == 'Dive' then
   <meta property="og:title" content="<%=title%>" />
   <meta property="og:description" content="<%=description%>" />
   <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-  <%I18n.available_locales.each do |locale|%>
-    <link rel='alternate' href='<%=HtmlHelper.find_root_for(locale)%>explore/dives/<%=@meta_obj.id%>' hreflang="<%=locale%>" />
-    <%if locale != I18n.locale then%>
-      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
-    <%end%>
-  <%end%>
+  <link rel="canonical" href="<%=HtmlHelper.find_root_for :canonical%>explore/dives/<%=@meta_obj.id%>" />
   <!-- og:image tag-->
   <%=@meta_obj.generate_image_tag.html_safe%>
   <!-- end of og:image tag-->
@@ -122,12 +112,7 @@ elsif @meta_obj.class.to_s == 'User' then
   <meta property="og:image" content="<%=@meta_obj.picture%>" />
   <meta property="og:description" content="<%=description%>" />
   <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-  <%I18n.available_locales.each do |locale|%>
-    <link rel='alternate' href='<%=HtmlHelper.find_root_for(locale)%>explore/divers/<%=@meta_obj.vanity_url%>' hreflang="<%=locale%>" />
-    <%if locale != I18n.locale then%>
-      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
-    <%end%>
-  <%end%>
+  <link rel="canonical" href="<%=HtmlHelper.find_root_for :canonical%>explore/divers/<%=@meta_obj.vanity_url%>" />
   <%@meta_obj.dives.each do |d|%>
   <%if d.privacy == 0%>
   <meta property="diveboard:dives" content="<%=d.fullpermalink(:canonical)%>" />
@@ -156,12 +141,7 @@ elsif @meta_obj.class.to_s == 'Country' then
   <meta property="og:title" content="<%=title%>" />
   <meta property="og:description" content="<%=description%>" />
   <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-  <%I18n.available_locales.each do |locale|%>
-    <link rel='alternate' href='<%=@meta_obj.fullpermalink(locale)%>' hreflang="<%=locale%>" />
-    <%if locale != I18n.locale then%>
-      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
-    <%end%>
-  <%end%>
+  <link rel="canonical" href="<%=@meta_obj.fullpermalink(:canonical)%>" />
   <meta property="diveboard:type"      content="Country" />
 
   <% @meta_obj.locations.each do |l| %>
@@ -191,12 +171,7 @@ elsif @meta_obj.class.to_s == 'Region' then
   <meta property="og:title" content="<%=title%>" />
   <meta property="og:description" content="<%=description%>" />
   <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-  <%I18n.available_locales.each do |locale|%>
-    <link rel='alternate' href='<%=@meta_obj.fullpermalink(locale)%>' hreflang="<%=locale%>" />
-    <%if locale != I18n.locale then%>
-      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
-    <%end%>
-  <%end%>
+  <link rel="canonical" href="<%=@meta_obj.fullpermalink(:canonical)%>" />
 
   <meta property="diveboard:type"      content="Body of Water" />
   <% @meta_obj.locations.each do |l| %>
@@ -230,12 +205,7 @@ elsif @meta_obj.class.to_s == 'Location' then
   <meta property="og:title" content="<%=title%>" />
   <meta property="og:description" content="<%=description%>" />
   <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-  <%I18n.available_locales.each do |locale|%>
-    <link rel='alternate' href='<%=@meta_obj.fullpermalink(locale)%>' hreflang="<%=locale%>" />
-    <%if locale != I18n.locale then%>
-      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
-    <%end%>
-  <%end%>
+  <link rel="canonical" href="<%=@meta_obj.fullpermalink(:canonical)%>" />
 
   <meta property="diveboard:type"      content="Location" />
   <% @meta_obj.spots.each do |s| %>
@@ -263,12 +233,7 @@ elsif @meta_obj.class.to_s == 'Spot' then
   <meta property="og:description" content="<%=description%>" />
   <meta property="og:image" content="<%=@meta_obj.staticmap%>" />
   <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-  <%I18n.available_locales.each do |locale|%>
-    <link rel='alternate' href='<%=@meta_obj.fullpermalink(locale)%>' hreflang="<%=locale%>" />
-    <%if locale != I18n.locale then%>
-      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
-    <%end%>
-  <%end%>
+  <link rel="canonical" href="<%=@meta_obj.fullpermalink(:canonical)%>" />
 
   <meta property="diveboard:position:latitude"  content="<%=@meta_obj.lat%>" />
   <meta property="diveboard:position:longitude" content="<%=@meta_obj.lng%>" />
@@ -306,12 +271,7 @@ elsif @meta_obj.class.to_s == 'Spot' then
   <meta property="og:title" content="<%=title%>" />
   <meta property="og:description" content="<%=description%>" />
   <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-  <%I18n.available_locales.each do |locale|%>
-    <link rel='alternate' href='<%=HtmlHelper.find_root_for locale%>explore/shops/<%=@meta_obj.shop_vanity%>' hreflang="<%=locale%>" />
-    <%if locale != I18n.locale then%>
-      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
-    <%end%>
-  <%end%>
+  <link rel="canonical" href="<%=HtmlHelper.find_root_for :canonical%>explore/shops/<%=@meta_obj.shop_vanity%>" />
 
   <meta property="diveboard:position:latitude"  content="<%=@meta_obj.lat%>" />
   <meta property="diveboard:position:longitude" content="<%=@meta_obj.lng%>" />

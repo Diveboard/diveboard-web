@@ -47,12 +47,7 @@ end
 <meta property="og:description"           content="<%=desc%>" />
 <meta property="og:image"                 content="<%=@shop.user_proxy.avatars.pictures.last.medium rescue @shop.user_proxy.picture%>" />
 <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-<%I18n.available_locales.each do |locale|%>
-  <link rel='alternate' href='<%=@shop.fullpermalink(locale)%><%=relative_path%>' hreflang="<%=locale%>" />
-  <%if locale != I18n.locale then%>
-    <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
-  <%end%>
-<%end%>
+<link rel="canonical" href="<%=@shop.fullpermalink(:canonical)%><%=relative_path%>" />
 <meta property="diveboard:type"           content="<%=@shop.category%>" />
 <meta property="place:location:latitude"  content="<%=@shop.lat rescue ""%>" />
 <meta property="place:location:longitude" content="<%=@shop.lng rescue ""%>" />

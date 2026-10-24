@@ -42,12 +42,7 @@
   <meta property="og:image" content="<%=@owner.picture%>" />
   <meta property="og:description" content="<%=description%>" />
   <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-  <%I18n.available_locales.each do |locale|%>
-    <link rel='alternate' href='<%=@owner.fullpermalink(locale)%>' hreflang="<%=locale%>" />
-    <%if locale != I18n.locale then%>
-      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
-    <%end%>
-  <%end%>
+  <link rel="canonical" href="<%=@owner.fullpermalink(:canonical)%>" />
   <meta property="og:site_name" content="<%=diveboard_tagline%>" />
   <%@owner.dives.includes(:user).each do |d|%>
     <%if d.privacy == 0%><meta property="diveboard:dive" content="<%=d.fullpermalink(:canonical)%>" /><%end%>
@@ -98,12 +93,7 @@
   <meta property="og:updated_time" content="<%=@picture.updated_at.iso8601%>" />
   <meta property="og:url" content="<%=@picture.fullpermalink(@dive.user, :canonical)%>" />
   <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-  <%I18n.available_locales.each do |locale|%>
-    <link rel='alternate' href='<%=@picture.fullpermalink(@dive.user, locale)%>' hreflang="<%=locale%>" />
-    <%if locale != I18n.locale then%>
-      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
-    <%end%>
-  <%end%>
+  <link rel="canonical" href="<%=@picture.fullpermalink(@dive.user, :canonical)%>" />
   <%=@picture.og_tag.html_safe%>
   <meta property="og:description" content="<%= it("Picture from %{dive_user_nickname}'s scuba dive in %{dive_spot_country_cname}, %{dive_spot_location_name}: %{dive_spot_name} - species spotted : %{species} - Title: %{notes}", scope: ['logbook', 'meta_tags'], dive_user_nickname: @dive.user.nickname, dive_spot_country_cname: @dive.spot.country.cname.titleize, dive_spot_location_name: @dive.spot.location.name.titleize, dive_spot_name: @dive.spot.name.titleize, species: species, notes: notes) %>" />
   <meta property="diveboard:spot"        content="<%=ROOT_URL%><%=@dive.spot.fullpermalink(:canonical)%>" />
@@ -137,12 +127,7 @@
   <meta property="og:description" content="<%=description%>" />
   <meta property="og:site_name" content="<%=diveboard_tagline%>" />
   <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-  <%I18n.available_locales.each do |locale|%>
-    <link rel='alternate' href='<%=@trip.fullpermalink(locale)%>' hreflang="<%=locale%>" />
-    <%if locale != I18n.locale then%>
-      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
-    <%end%>
-  <%end%>
+  <link rel="canonical" href="<%=@trip.fullpermalink(:canonical)%>" />
   <meta property="fb:app_id" content="<%=FB_APP_ID%>" />
   <%if !@owner.fb_id.nil?%><meta property="fb:admins" content="<%=@owner.fb_id%>" /><%end%>
   <%@trip.dives.each do |d| %>
@@ -205,12 +190,6 @@
   <meta property="og:url" content="<%=@dive.fullpermalink(:canonical)%>" />
   <meta property="og:updated_time" content="<%=@dive.updated_at.iso8601%>" />
   <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-  <%I18n.available_locales.each do |locale|%>
-    <link rel='alternate' href='<%=@dive.fullpermalink(locale)%>' hreflang="<%=locale%>" />
-    <%if locale != I18n.locale then%>
-      <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
-    <%end%>
-  <%end%>
   <!-- og:image tag-->
   <%=@dive.generate_image_tag.html_safe%>
   <!-- end of og:image tag-->
