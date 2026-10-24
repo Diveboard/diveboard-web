@@ -12,12 +12,7 @@
     <meta property="og:description" content="<%= it("Sign up for diveboard and start looging and sharing your dives now.", scope: ['home', 'register_3']) %>" />
     <meta property="og:site_name" content="<%= it("Diveboard: Your online scuba logbook", scope: ['home', 'register_3']) %>" />
     <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-    <%I18n.available_locales.each do |locale|%>
-      <link rel='alternate' href='<%=HtmlHelper.find_root_for locale%>register' hreflang="<%=locale%>" />
-      <%if locale != I18n.locale then%>
-        <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
-      <%end%>
-    <%end%>
+    <link rel="canonical" href="<%=HtmlHelper.find_canonical_for request.path%>" />
     <meta property="fb:admins" content="680251975" />
     <meta property="fb:admins" content="1077557400" />
 

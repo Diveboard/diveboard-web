@@ -13,11 +13,6 @@
 <meta property="fb:admins" content="1077557400" />
 
 <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-<%I18n.available_locales.each do |locale|%>
-  <link rel='alternate' href='<%=HtmlHelper.find_root_for locale%>' hreflang="<%=locale%>" />
-  <%if locale != I18n.locale then%>
-    <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
-  <%end%>
-<%end%>
+<link rel="canonical" href="<%=HtmlHelper.find_root_for :canonical%>" />
 
 <!-- END FB Opengraph Tags -->

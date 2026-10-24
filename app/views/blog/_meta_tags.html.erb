@@ -19,12 +19,7 @@
       <meta property="og:image"  content="<%=begin @post.wiki.pictures.first.large rescue ROOT_URL+"img/logo_50.png" end%>" />
 
       <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-      <%I18n.available_locales.each do |locale|%>
-        <link rel='alternate' href='<%=@post.fullpermalink(locale)%>' hreflang="<%=locale%>" />
-        <%if locale != I18n.locale then%>
-          <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
-        <%end%>
-      <%end%>
+      <link rel="canonical" href="<%=@post.fullpermalink(:canonical)%>" />
 
 
     <% when :user%>
@@ -37,12 +32,7 @@
       <meta property="og:image"  content="<%=@author.picture_large%>" />
       <meta property="og:site_name" content="<%=diveboard_tagline%>" />
       <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-      <%I18n.available_locales.each do |locale|%>
-        <link rel='alternate' href="<%=@author.fullpermalink(locale)%>/posts" hreflang="<%=locale%>" />
-        <%if locale != I18n.locale then%>
-          <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
-        <%end%>
-      <%end%>
+      <link rel="canonical" href="<%=@author.fullpermalink(:canonical)%>/posts" />
       <%@author.blog_posts.includes(:user).each do |d|%>
         <%if !d.published_at.nil?%><meta property="diveboard:article" content="<%=d.fulltinypermalink%>" /><%end%>
       <%end%>
@@ -59,12 +49,7 @@
       <meta property="og:image"  content="<%=ROOT_URL+"img/logo_50.png"%>" />
       <meta property="og:site_name" content="<%=diveboard_tagline%>" />
       <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-      <%I18n.available_locales.each do |locale|%>
-        <link rel='alternate' href="<%=HtmlHelper.find_root_for locale%>community" hreflang="<%=locale%>" />
-        <%if locale != I18n.locale then%>
-          <meta property="og:locale:alternate" content="<%=Rails.configuration.map_og_locales[locale]%>" />
-        <%end%>
-      <%end%>
+      <link rel="canonical" href="<%=HtmlHelper.find_root_for :canonical%>community" />
       <%BlogPost.where(:published=>true).each do |d|%>
         <%if !d.published_at.nil?%><meta property="diveboard:article" content="<%=d.fulltinypermalink%>" /><%end%>
       <%end%>
