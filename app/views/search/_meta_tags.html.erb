@@ -141,7 +141,7 @@ elsif @meta_obj.class.to_s == 'Country' then
   <meta property="og:title" content="<%=title%>" />
   <meta property="og:description" content="<%=description%>" />
   <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-  <link rel="canonical" href="<%=@meta_obj.fullpermalink(:canonical)%>" />
+  <link rel="canonical" href="<%=HtmlHelper.find_canonical_for(@meta_obj)%>" />
   <meta property="diveboard:type"      content="Country" />
 
   <% @meta_obj.locations.each do |l| %>
@@ -171,7 +171,7 @@ elsif @meta_obj.class.to_s == 'Region' then
   <meta property="og:title" content="<%=title%>" />
   <meta property="og:description" content="<%=description%>" />
   <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-  <link rel="canonical" href="<%=@meta_obj.fullpermalink(:canonical)%>" />
+  <link rel="canonical" href="<%=HtmlHelper.find_canonical_for(@meta_obj)%>" />
 
   <meta property="diveboard:type"      content="Body of Water" />
   <% @meta_obj.locations.each do |l| %>
@@ -205,7 +205,7 @@ elsif @meta_obj.class.to_s == 'Location' then
   <meta property="og:title" content="<%=title%>" />
   <meta property="og:description" content="<%=description%>" />
   <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-  <link rel="canonical" href="<%=@meta_obj.fullpermalink(:canonical)%>" />
+  <link rel="canonical" href="<%=HtmlHelper.find_canonical_for(@meta_obj)%>" />
 
   <meta property="diveboard:type"      content="Location" />
   <% @meta_obj.spots.each do |s| %>
@@ -233,7 +233,7 @@ elsif @meta_obj.class.to_s == 'Spot' then
   <meta property="og:description" content="<%=description%>" />
   <meta property="og:image" content="<%=@meta_obj.staticmap%>" />
   <meta property="og:locale" content="<%=Rails.configuration.map_og_locales[I18n.locale]%>" />
-  <link rel="canonical" href="<%=@meta_obj.fullpermalink(:canonical)%>" />
+  <link rel="canonical" href="<%=HtmlHelper.find_canonical_for(@meta_obj)%>" />
 
   <meta property="diveboard:position:latitude"  content="<%=@meta_obj.lat%>" />
   <meta property="diveboard:position:longitude" content="<%=@meta_obj.lng%>" />

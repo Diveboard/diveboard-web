@@ -13,6 +13,7 @@
      else desc = it("Reviews, infos, bookings and more for %{shop_name} on Diveboard. Check out what other have experienced with them and share your own story.", scope: ['shop_pages', 'v2', 'index'], shop_name: @shop.name) end%>
   <meta property="og:description" content="<%=desc%>" />
   <meta property="og:url"    content="<%="#{@shop.fullpermalink(:canonical)}"%>" />
+  <link rel="canonical" href="<%=HtmlHelper.find_canonical_for(@shop)%>" />
   <meta property="og:title"  content="<%= it("Scuba Dive Shop %{shop_name} in %{city}, %{country}", scope: ['shop_pages', 'v2', 'cover_pic'], shop_name: @shop.name, city: @shop.city, country: @shop.country.cname) %>" />
   <meta property="og:image"  content="<%=begin Album.find_by_id(@shop.user_proxy.gallery_album_id).pictures.sample.large rescue ROOT_URL+"img/logo_50.png" end%>"/>
 <%end%>

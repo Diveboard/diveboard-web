@@ -5,6 +5,7 @@
   <meta property="article:publisher" content="https://www.facebook.com/Diveboard" />
   <meta property="og:description" content="Hand picked selection of the best dive pictures uploaded every day by the Diveboard community. Discover wonderful fish, wrecks, sharks, nudibranchs but also sponges and even some mermaids !" />
   <meta property="og:url"    content="<%=ROOT_URL + 'explore/gallery' %>" />
+  <link rel="canonical" href="<%=HtmlHelper.find_root_for :canonical%>explore/gallery" />
   <meta property="og:title"  content="Great dive pictures from Diveboard community, hand picked every day" />
   <meta property="og:image"  content="<%=begin pictures.first.large rescue ROOT_URL+"img/logo_50.png" end%>"/>
 <%end%>
