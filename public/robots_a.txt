@@ -10,6 +10,12 @@ Disallow: /
 User-agent: ShapBot
 Disallow: /
 
+# ClaudeBot blocked 2026-10-26 (task #62): 39,119 of 60,000 requests in a 70-minute window,
+# 9.3 a second from one address, mostly re-reading the fr/es/zh copies of pages that
+# canonicalise to www. nginx enforces this too, since the site cannot absorb that rate.
+User-agent: ClaudeBot
+Disallow: /
+
 User-agent: OAI-SearchBot
 Allow: /
 
