@@ -146,6 +146,22 @@ class LoginController < ApplicationController
     return
   end
 
+  def confirm_email
+    user = params[:token].blank? ? nil : User.find_by_email_confirmation_token(params[:token])
+    if user.nil?
+      flash[:notice] = "That confirmation link is not valid - it may already have been used."
+    else
+      user.confirm_email!
+      begin
+        PasswordReset.registration_ok(user).deliver
+      rescue
+        logger.warn "Could not send the welcome email to user #{user.id}: #{$!.message}"
+      end
+      flash[:notice] = "Thanks - your email address is confirmed."
+    end
+    redirect_to "/"
+  end
+
   def register_post
     if (reason = signup_block_reason)
       log_blocked_signup(reason)
@@ -216,7 +232,7 @@ class LoginController < ApplicationController
         @user.accept_newsletter_email = !params["token"].match(/true/i).nil? ## needs done AFTER user exists or association can't be done
         @user.save!
         user_login ## this will login the user properly
-        PasswordReset.registration_ok(@user).deliver ## send him hellp email
+        PasswordReset.confirm_email(@user).deliver ## welcome mail follows once the address is confirmed
         session[:ga_track_events].push :category => 'account', :action => 'register', :label => 'email'
         return
       end

@@ -121,7 +121,10 @@ class ApiController < ApplicationController
         user.save!
       end
 
-      PasswordReset.registration_ok(user).deliver if new_account && !user.contact_email.blank? ## send welcome email
+      if new_account && !user.contact_email.blank? then
+        user.confirm_email! ## Facebook has already verified the address
+        PasswordReset.registration_ok(user).deliver
+      end
 
 
       if params[:extralong_token] == "true"
@@ -621,7 +624,7 @@ class ApiController < ApplicationController
         user.password = Password::update(params[:password])
         user.save!
         logger.debug "User created with id #{user.id}"
-        PasswordReset.registration_ok(user).deliver ## send him hellp email
+        PasswordReset.confirm_email(user).deliver ## welcome mail follows once the address is confirmed
 
         #assigning vanity if requested
         if user.vanity_url.blank? && params[:assign_vanity_url] then

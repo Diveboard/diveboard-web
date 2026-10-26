@@ -278,6 +278,7 @@ class BlogController < ApplicationController
     ## must be called via post
     begin
       raise DBArgumentError.new "User is not logged" if @user.nil?
+      raise DBArgumentError.new "Please confirm your email address before publishing. Check your inbox for the confirmation link." unless @user.email_confirmed?
       if params["id"].blank?
         post = BlogPost.new
         post.user_id = @user.id

@@ -30,6 +30,13 @@ class PasswordReset < ActionMailer::Base
     mail(:to => @user.contact_email, :subject => "Diveboard password reset")
   end
 
+  def confirm_email user
+    @user = user
+    token = user.start_email_confirmation!
+    @confirm_url = HtmlHelper.find_root_for(@user.preferred_locale)+"login/confirm/"+token
+    mail(:to => @user.contact_email, :subject => "Confirm your Diveboard email address", :from => "team@diveboard.com")
+  end
+
   def registration_ok user
     @user = user
     @logbook_url = @user.preferred_root_url+@user.vanity_url rescue ROOT_URL
