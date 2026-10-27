@@ -711,6 +711,65 @@ class User < ActiveRecord::Base
     return []
   end
 
+  # Candidate lists behind the randomised boxes on the logbook home page
+  # ("Favorite Pictures", "Species Spotted", "Favorite Dives"). They hold ids and
+  # plain hashes rather than rendered HTML so that the surrounding fragment can be
+  # a single cache entry per user: the random pick runs per request, outside the
+  # cache, instead of being baked into it. They take the cache store's own expiry,
+  # the same one the fragment they came out of had, and are invalidated for the
+  # owner in ApplicationController#init_logged_user.
+  HOME_SPECIES_CANDIDATES = 30
+
+  def home_picture_dive_ids
+    Rails.cache.fetch("user_#{id}_home1_pic_dive_ids") do
+      full_public_dives_with_picture.map(&:id)
+    end
+  end
+
+  def home_favorite_dive_ids
+    Rails.cache.fetch("user_#{id}_home1_fav_dive_ids") do
+      ids = favorite_dives.map(&:id)
+      ids = full_public_dives.map(&:id) if ids.empty?
+      ids
+    end
+  end
+
+  # Species with a usable thumbnail, paired with a dive they were seen on.
+  # Gathered in two passes so neither is a query per row: eolcnames is preloaded
+  # with the dives, and the eolsnames behind them are then fetched in one go.
+  # About a fifth of species have no thumbnail, so collect candidates generously
+  # and trim after filtering. eolsname is not preloaded with the dives because its
+  # data column is a LONGTEXT blob and loading one per species would cost memory.
+  def home_species_candidates
+    Rails.cache.fetch("user_#{id}_home1_species") do
+      seen = {}
+      pairs = []
+      full_dives.includes(:eolcnames).each do |dive|
+        dive.eolcnames.each do |cname|
+          next if cname.eolsname_id.nil? || seen[cname.cname]
+          seen[cname.cname] = true
+          pairs << [cname, dive.id]
+        end
+        break if pairs.length >= HOME_SPECIES_CANDIDATES * 2
+      end
+      snames = Eolsname.where(:id => pairs.map { |cname, _| cname.eolsname_id }.uniq).index_by(&:id)
+      found = []
+      pairs.each do |cname, dive_id|
+        sname = snames[cname.eolsname_id]
+        href = sname && (sname.thumbnail_href rescue nil)
+        next if href.nil? || href.empty?
+        found << { :cname => cname.cname, :thumb => href, :dive_id => dive_id }
+        break if found.length >= HOME_SPECIES_CANDIDATES
+      end
+      found
+    end
+  end
+
+  def home_dives_by_id(ids)
+    return {} if ids.nil? || ids.empty?
+    dives.where(:id => ids).includes([:user, :spot => [:country, :location, :region]]).index_by(&:id)
+  end
+
   def trip_names
     trips.map(&:name).sort
   end

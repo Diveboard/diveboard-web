@@ -385,11 +385,12 @@ class ApplicationController < ActionController::Base
       if !@user.nil? then
         lt = Time.now
         I18n.available_locales.each do |locale|
-          expire_fragment "#{locale} user_#{@user.id}_home1_0"
-          expire_fragment "#{locale} user_#{@user.id}_home1_1"
-          expire_fragment "#{locale} user_#{@user.id}_home1_2"
+          expire_fragment "#{locale} user_#{@user.id}_home1"
           expire_fragment "#{locale} user_#{@user.id}_home2"
         end
+        Rails.cache.delete("user_#{@user.id}_home1_pic_dive_ids")
+        Rails.cache.delete("user_#{@user.id}_home1_fav_dive_ids")
+        Rails.cache.delete("user_#{@user.id}_home1_species")
         logger.info "Purging the cache for #{@user.id} took #{(1000*(Time.now-lt)).round(1).to_f} ms"
       end
     rescue
