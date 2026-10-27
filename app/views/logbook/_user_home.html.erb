@@ -170,7 +170,7 @@ function content_initialize()
 
       <div class="single_container">
 
-        <% cache "#{I18n.locale} user_#{@owner.id}_home1_#{(rand*3).floor}" do # expiration done in application_controller.rb %>
+        <% cache "#{I18n.locale} user_#{@owner.id}_home1" do %>
         <div id=profile_stat class="triple_box">
         <ul>
           <li class='editable_form'><strong><%= it("Total number of dives not on diveboard", scope: ['logbook', 'user_home']) %>:</strong><input id=userhome_edit_total_ext_dives class='editable_input' type=text size=3 value='<%=@owner.total_ext_dives%>' /><br/><i><%= it("This number is added to the total number of dives logged in Diveboard (public+private) for the stat \"Total number of dives\".", scope: ['logbook', 'user_home']) %></i></li>
@@ -196,11 +196,16 @@ function content_initialize()
           <%end%>
         </ul>
         </div>
+        <%end%>
 
         <div class="triple_box" id="logbook_fav_pics">
         <h2 class='unstyle small_h2'><%= it("Favorite Pictures", scope: ['logbook', 'user_home']) %></h2>
         <ul class="small_pic_row">
-        <% @owner.full_public_dives_with_picture.sort_by{rand}[0..5].each{|dive| %>
+        <% pic_dive_ids = @owner.home_picture_dive_ids.sort_by{rand}[0..5]
+        pic_dives = @owner.home_dives_by_id(pic_dive_ids)
+        pic_dive_ids.each{|dive_id|
+          dive = pic_dives[dive_id]
+          next if dive.nil? %>
           <li><a href="<%=dive.fullpermalink(:locale)%>" onclick='showDive(<%=dive.id%>); return(false);'><img src="<%=if dive.featured_picture.nil? then dive.static_map_url else dive.featured_picture.thumbnail end%>" alt="#" class="triple_box_content"/></a></li>
           <%}%>
         </ul>
@@ -209,17 +214,12 @@ function content_initialize()
         <div class="triple_box" id="species_spotted">
         <div style="margin-bottom: 5px;"><h2 class='unstyle small_h2'><%= it("Species Spotted", scope: ['logbook', 'user_home']) %></h2></div>
         <ul>
-          <% all_spotted_fishes = []
-          link_fish_to_dive = {}
-          @owner.full_dives.sort_by{rand} .map{|dive|
-            all_spotted_fishes |= dive.eolcnames.keep_if{|cname| !cname.eolsname.thumbnail_href.nil? && !cname.eolsname.thumbnail_href.empty?}
-            dive.eolcnames.each{|fish|
-              link_fish_to_dive[fish.cname] = dive
-            }
-            break if all_spotted_fishes.length > 6
-          }
-          all_spotted_fishes.sort_by{rand}[0..5].each { |fish| %>
-          <li><a href="<%=link_fish_to_dive[fish.cname].fullpermalink(:locale)%>" onclick='showDive(<%=link_fish_to_dive[fish.cname].id%>);return(false);'><img src="<%=fish.eolsname.thumbnail_href%>" alt="#" class="triple_box_content"/><%=fish.cname%></a></li>
+          <% spotted_species = @owner.home_species_candidates.sort_by{rand}[0..5]
+          species_dives = @owner.home_dives_by_id(spotted_species.map{|fish| fish[:dive_id]})
+          spotted_species.each{|fish|
+            dive = species_dives[fish[:dive_id]]
+            next if dive.nil? %>
+          <li><a href="<%=dive.fullpermalink(:locale)%>" onclick='showDive(<%=dive.id%>);return(false);'><img src="<%=fish[:thumb]%>" alt="#" class="triple_box_content"/><%=fish[:cname]%></a></li>
           <%}%>
           <p><%= it("Data provided by EOL.org", scope: ['logbook', 'user_home']) %></p>
         </ul>
@@ -245,13 +245,11 @@ function content_initialize()
             <% if @owner.full_public_dives.count == 0 then %>
               <li><%= it("There are no public dives !", scope: ['logbook', 'user_home']) %></li>
             <%end%>
-            <% displayed_dives = []
-            if @owner.favorite_dives.count > 0 then
-              displayed_dives = @owner.favorite_dives
-            else
-              displayed_dives = @owner.full_public_dives
-            end
-            displayed_dives.sort_by{rand}[0..3].each{|dive| %>
+            <% fav_dive_ids = @owner.home_favorite_dive_ids.sort_by{rand}[0..3]
+            fav_dives = @owner.home_dives_by_id(fav_dive_ids)
+            fav_dive_ids.each{|dive_id|
+              dive = fav_dives[dive_id]
+              next if dive.nil? %>
             <li class="fav_dive_body">
 
             <a href="<%=dive.fullpermalink(:locale)%>" onclick='showDive(<%=dive.id%>); return(false);'>
@@ -265,7 +263,6 @@ function content_initialize()
             <%}%>
 
           </ul>
-        <%end%>
         </div>
 
 
